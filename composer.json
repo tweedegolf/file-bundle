@@ -3,6 +3,10 @@
     "description": "File and image manager for Symfony 3 projects",
     "type": "symfony-bundle",
     "license": "proprietary",
+    "dist": {
+        "url": "git@tgrep.nl:tweedegolf/file-bundle.git",
+        "type": "git"
+    },
     "authors": [
         {
             "name": "Marlon Baeten",
@@ -21,5 +25,10 @@
         "vich/uploader-bundle": "^1.0",
         "oneup/flysystem-bundle": "^1.2",
         "liip/imagine-bundle": "^1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tweedegolf\\FileBundle\\": ""
+        }
     }
 }
