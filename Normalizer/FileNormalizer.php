@@ -6,7 +6,7 @@ use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use TweedeGolf\FileBundle\Entity\File;
 use TweedeGolf\FileBundle\Entity\Folder;
-use TweedeGolf\Util\SizeHumanizer;
+use TweedeGolf\FileBundle\Util\SizeHumanizer;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class FileNormalizer implements NormalizerInterface
