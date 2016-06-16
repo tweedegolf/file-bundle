@@ -39,6 +39,12 @@ class Cache {
         });
     }
 
+    removeFolders(folder_ids) {
+        _.forEach(this.data, (folder) => {
+            folder.folders = _.filter(folder.folders, (folder) => (folder_ids.indexOf(folder.id) === -1));
+        });
+    }
+
     getFiles(folder_id) {
         if (!this.data[folder_id]) {
             return [];

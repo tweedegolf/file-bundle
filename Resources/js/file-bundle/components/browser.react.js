@@ -130,6 +130,7 @@ export default class Browser extends React.Component {
                                 loading_folder={this.state.loading_folder}
                                 images_only={this.props.options ? this.props.options.images_only : false}
                                 onDelete={this.onDelete.bind(this)}
+                                onDeleteFolder={this.onDeleteFolder.bind(this)}
                                 onConfirmDelete={this.onConfirmDelete.bind(this)}
                                 onOpenFolder={this.onOpenFolder.bind(this)}
                             />
@@ -205,6 +206,25 @@ export default class Browser extends React.Component {
                 errors: [{
                     file: file.name,
                     type: 'delete'
+                }]
+            });
+        });
+    }
+    
+    onDeleteFolder(id) {
+        api.deleteFolder(id, () => {
+            // success
+            this.setState({
+                folders: _.sortBy(cache.getFolders(this.state.current_folder.id), this.state.sort)
+            });
+        }, () => {
+            // error
+            let folder = cache.findFolder(id);
+            this.setState({
+                confirm_delete: null,
+                errors: [{
+                    folder: folder.name,
+                    type: 'delete_folder'
                 }]
             });
         });

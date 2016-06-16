@@ -5,7 +5,7 @@ import cache from './cache';
 class Api {
 
     deleteFile(file_id, onSuccess, onError) {
-        var req = request.post('/admin/file/' + file_id + '/delete');
+        var req = request.post('/admin/file/delete/' + file_id);
         req.end((err, res) => {
             if (err || res.body.error) {
                 onError(res.body.error);
@@ -56,6 +56,19 @@ class Api {
                 }
                 cache.storeFolders(folders, folder_id);
                 onSuccess(errors);
+            }
+        });
+    }
+    
+    deleteFolder(folder_id, onSuccess, onError) {
+        let url = '/admin/file/delete/folder/' + folder_id;
+        var req = request.post(url).type('form');
+        req.end((err, res) => {
+            if (err) {
+                onError();
+            } else {
+                cache.removeFolders([folder_id]);
+                onSuccess();
             }
         });
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import cache from '../cache';
 
 import File from './file.react.js';
 import Folder from './folder.react.js';
@@ -43,8 +44,10 @@ export default class List extends React.Component {
             return <Folder
                 hovering={this.props.hover === index}
                 key={'folder-' + folder.id}
+                parent={false}
                 folder={folder}
                 onOpenFolder={this.props.onOpenFolder.bind(this)}
+                onDelete={this.props.onDeleteFolder.bind(this)}
                 loading={this.props.loading_folder}
             />;
         });
@@ -59,8 +62,9 @@ export default class List extends React.Component {
         let parent = null;
         if (this.props.current_folder.parent !== undefined) {
             parent = <Folder
-                key={this.props.current_folder.parent}
-                folder={{id: this.props.current_folder.parent, name: '..'}}
+                key={'folder-' + this.props.current_folder.parent}
+                parent={true}
+                folder={cache.findFolder(this.props.current_folder.parent)}
                 loading={this.props.loading_folder}
                 onOpenFolder={this.props.onOpenFolder.bind(this)}
             />;

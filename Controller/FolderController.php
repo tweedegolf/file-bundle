@@ -2,6 +2,7 @@
 
 namespace TweedeGolf\FileBundle\Controller;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -80,5 +81,28 @@ class FolderController extends Controller
             'errors' => $messages,
             'new_folders' => $serializer->normalize([$folder]),
         ]);
+    }
+
+    /**
+     * @param Folder $folder
+     *
+     * @return JsonResponse
+     *
+     * @Route("/delete/folder/{id}")
+     * @Method({"POST"})
+     */
+    public function deleteAction(Folder $folder)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($folder);
+        $error = false;
+
+        try {
+            $manager->flush();
+        } catch (ForeignKeyConstraintViolationException $e) {
+            $error = true;
+        }
+
+        return new JsonResponse(['error' => $error]);
     }
 }

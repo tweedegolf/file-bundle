@@ -61,6 +61,8 @@ class FileNormalizer implements NormalizerInterface
                 'created' => $object->getCreatedAt()->format('d-m-Y H:i'),
                 'thumb' => null,
                 'type' => 'folder',
+                'file_count' => $object->getFiles()->count(),
+                'folder_count' => $object->getChildren()->count(),
             ];
         }
 
@@ -78,7 +80,7 @@ class FileNormalizer implements NormalizerInterface
             ];
         }
 
-        return;
+        return null;
     }
 
     /**

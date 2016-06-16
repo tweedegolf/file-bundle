@@ -14,10 +14,11 @@ x Upload to folder
 
 Nice:
 - Delete folder
+- Edit folder name
+- Soft delete all files
 - Model
 - Translations
 - Configure URL's
-- Edit folder name
 - Delete message listener tag
 - Download button
 - List and sort by file type

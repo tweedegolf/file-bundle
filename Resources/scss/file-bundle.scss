@@ -169,6 +169,14 @@
         }
       }
 
+      &.size {
+        color: #999;
+        .fa {
+          margin: 0 4px;
+          font-size: 12px;
+        }
+      }
+
       .actions {
         .confirm {
           width: 250px;
@@ -191,6 +199,10 @@
         .fa {
           font-size: 23px;
           vertical-align: bottom;
+          &.fa-chevron-up {
+            position: relative;
+            bottom: 2px;
+          }
         }
       }
       &:nth-child(3) {

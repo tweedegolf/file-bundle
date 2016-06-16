@@ -51,7 +51,7 @@ class FileController extends Controller
      *
      * @return JsonResponse
      *
-     * @Route("/{id}/delete")
+     * @Route("/delete/{id}")
      * @Method({"POST"})
      */
     public function deleteAction(File $file)
