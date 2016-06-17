@@ -146,6 +146,14 @@
     }
   }
 
+  &.fullpage {
+    table {
+      thead {
+        padding-right: 0;
+      }
+    }
+  }
+
   tr {
     display: table;
     position: relative;
@@ -170,10 +178,12 @@
       }
 
       &.size {
-        color: #999;
         .fa {
           margin: 0 4px;
-          font-size: 12px;
+          &:before {
+            color: #666;
+            font-size: 12px;
+          }
         }
       }
 
@@ -189,7 +199,6 @@
           }
         }
       }
-
       &:nth-child(1) {
         width: 35px;
       }

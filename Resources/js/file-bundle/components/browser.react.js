@@ -99,12 +99,13 @@ export default class Browser extends React.Component {
         }
 
         let browser = null;
+        let browser_class = "file-browser text-left" + (this.props.browser ? " fullpage" : "");
 
         if (this.state.expanded) {
             browser = (
             <div className="text-center">
                 {selected}
-                <div className="file-browser text-left">
+                <div className={browser_class}>
                     <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
                         {toolbar}
                         <Errors errors={this.state.errors} onDismiss={this.onDismiss.bind(this)} />

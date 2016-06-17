@@ -23,16 +23,30 @@ export default class Folder extends React.Component {
             // class_name = 'folder muted';
         }
 
+        let file_count = null;
+        if (folder.file_count > 0) {
+            file_count = <span>
+                {folder.file_count}
+                <span className="fa fa-file-o" />
+            </span>;
+        }
+
+        let folder_count = null;
+        if (folder.folder_count > 0) {
+            folder_count = <span>
+                {folder.folder_count}
+                <span className="fa fa-folder-o" />
+            </span>;
+        }
+
         return (
             <tr className={class_name} onClick={this.props.onOpenFolder.bind(this, folder.id)}>
                 <td />
                 <td>{icon}</td>
                 <td>{folder.name}</td>
                 <td className="size">
-                    <span className="fa fa-folder" />
-                    {folder.folder_count}
-                    <span className="fa fa-file" />
-                    {folder.file_count}
+                    {folder_count}
+                    {file_count}
                 </td>
                 <td>{folder.created}</td>
                 <td>{delete_btn}</td>
