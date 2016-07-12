@@ -242,3 +242,36 @@
     }
   }
 }
+
+@media (max-width: 767px) {
+  #tg_file_browser {
+    .file-browser {
+      table {
+        td, th {
+          .btn {
+            .text-label {
+              display: none;
+            }
+            .fa {
+              margin: 0;
+            }
+          }
+          &:nth-child(4), &:nth-child(5) {
+            display: none;
+          }
+          .actions {
+            .confirm {
+              width: auto;
+              button {
+                margin: 0;
+                .fa {
+                  margin: 0;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

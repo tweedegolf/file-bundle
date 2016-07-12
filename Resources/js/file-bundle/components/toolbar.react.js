@@ -24,7 +24,7 @@ export default class Toolbar extends React.Component {
                     disabled={this.props.selected.length === 0}
                     onClick={this.props.onCut.bind(this)}>
                     <span className="fa fa-cut" />
-                    Knippen
+                    <span className="text-label">Knippen</span>
                     {this.props.selected.length > 0 ? ' (' + this.props.selected.length + ')' : null}
                 </button>
                 <button
@@ -33,7 +33,7 @@ export default class Toolbar extends React.Component {
                     disabled={this.props.clipboard.length === 0}
                     onClick={this.props.onPaste.bind(this)}>
                     <span className="fa fa-paste" />
-                    Plakken
+                    <span className="text-label">Plakken</span>
                     {this.props.clipboard.length > 0 ? ' (' + this.props.clipboard.length + ')' : null}
                 </button>
                 <button
@@ -42,7 +42,7 @@ export default class Toolbar extends React.Component {
                     disabled={this.props.clipboard.length + this.props.selected.length === 0}
                     onClick={this.props.onCancel.bind(this)}>
                     <span className="fa fa-times-circle-o" />
-                    Annuleren
+                    <span className="text-label">Annuleren</span>
                 </button>
             </div>;
         }
@@ -56,7 +56,7 @@ export default class Toolbar extends React.Component {
                     onClick={this.onShowForm.bind(this)}
                     disabled={this.state.folder_loading}>
                     <span className="fa fa-folder-o" />
-                    Nieuwe map
+                    <span className="text-label">Nieuwe map</span>
                     {this.state.folder_loading ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
                 </button>
                 <div className={'form-inline pull-right ' + (this.state.show_form ? '' : 'hide')}>
@@ -71,13 +71,13 @@ export default class Toolbar extends React.Component {
                         className="btn btn-sm btn-success pull-right"
                         onClick={this.onAddFolder.bind(this)}>
                         <span className="fa fa-save" />
-                        Opslaan
+                        <span className="text-label">Opslaan</span>
                     </button>
                 </div>
                 <span className="btn btn-sm btn-default btn-file pull-right"
                       disabled={this.props.uploading}>
                     <span className="fa fa-arrow-circle-o-up" />
-                    Upload
+                    <span className="text-label">Upload</span>
                     {loader}
                     <input
                         type="file"
