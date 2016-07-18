@@ -72,6 +72,20 @@ class File
     private $folder;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="original_name", type="string", length=255)
+     */
+    private $originalName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="mime_type", type="string", length=255)
+     */
+    private $mimeType;
+
+    /**
      * @return string
      */
     public function __toString()
@@ -138,13 +152,22 @@ class File
     }
 
     /**
-     * Get the original filename without prepended unique id.
-     *
      * @return string
      */
     public function getOriginalName()
     {
-        return substr($this->name, 14);
+        return $this->originalName;
+    }
+
+    /**
+     * @param string $originalName
+     * @return $this
+     */
+    public function setOriginalName($originalName)
+    {
+        $this->originalName = $originalName;
+
+        return $this;
     }
 
     /**
@@ -183,6 +206,26 @@ class File
     public function setFolder(Folder $folder = null)
     {
         $this->folder = $folder;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMimeType()
+    {
+        return $this->mimeType;
+    }
+
+    /**
+     * @param string $mimeType
+     *
+     * @return $this
+     */
+    public function setMimeType($mimeType)
+    {
+        $this->mimeType = $mimeType;
 
         return $this;
     }
