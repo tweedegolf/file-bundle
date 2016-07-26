@@ -2,11 +2,7 @@
     "name": "tweedegolf/file-bundle",
     "description": "File and image manager for Symfony 3 projects",
     "type": "symfony-bundle",
-    "license": "proprietary",
-    "dist": {
-        "url": "git@github.com:tweedegolf/file-bundle.git",
-        "type": "git"
-    },
+    "license": "MIT",
     "authors": [
         {
             "name": "Marlon Baeten",
