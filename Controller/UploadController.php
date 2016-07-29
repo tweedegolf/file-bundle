@@ -43,6 +43,21 @@ class UploadController extends Controller
                 $file = new File();
                 $file->setFile($uploaded_file);
                 $file->setSize($uploaded_file->getSize());
+
+                // client original filename could be null, assume current base name by default
+                $originalName = $uploaded_file->getClientOriginalName();
+                if ($originalName === null) {
+                    $originalName = $uploaded_file->getBasename();
+                }
+                $file->setOriginalName($originalName);
+
+                // mime type could be null, assume generic binary file by default
+                $mimeType = $uploaded_file->getMimeType();
+                if ($mimeType === null) {
+                    $mimeType = 'application/octet-stream';
+                }
+                $file->setMimeType($mimeType);
+
                 if (null !== $folder) {
                     $file->setFolder($folder);
                 }

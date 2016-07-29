@@ -55,6 +55,8 @@ class LoadFileData extends AbstractFixture implements ContainerAwareInterface, O
             $file = new File();
             $file->setFile($image);
             $file->setSize($image->getSize());
+            $file->setOriginalName($image->getClientOriginalName());
+            $file->setMimeType($image->getMimeType());
             $file->setFolder($this->getReference('folder'));
 
             $this->addReference('file-'.$i, $file);
