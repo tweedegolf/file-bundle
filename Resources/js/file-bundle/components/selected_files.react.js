@@ -9,7 +9,7 @@ export default class SelectedFiles extends React.Component {
 
             let preview = <span className="fa fa-file" />;
             if (file.thumb) {
-                preview = <img src={file.thumb} alt={file.name} />
+                preview = <img src={file.thumb} alt={file.name} onClick={this.props.onPreview.bind(this, file.original)} />
             }
 
             return <div key={id} className="btn btn-default" onClick={this.props.onSelect.bind(this, id)}>

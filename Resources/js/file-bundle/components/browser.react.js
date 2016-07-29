@@ -19,6 +19,7 @@ export default class Browser extends React.Component {
             files: [],
             folders: [],
             hover: -1,
+            preview: null,
             selected: this.getSelected(),
             clipboard: [],
             confirm_delete: null,
@@ -95,6 +96,7 @@ export default class Browser extends React.Component {
                 selected={this.state.selected}
                 name={this.props.options.name}
                 onSelect={this.onSelect.bind(this)}
+                onPreview={this.onPreview.bind(this)}
             />;
         }
 
@@ -105,6 +107,11 @@ export default class Browser extends React.Component {
             browser = (
             <div className="text-center">
                 {selected}
+                {this.state.preview ? <div
+                    className="preview-image"
+                    onClick={this.onPreview.bind(this, null)}>
+                    <div style={{backgroundImage: 'url(' + this.state.preview + ')'}}></div>
+                </div> : null}
                 <div className={browser_class}>
                     <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
                         {toolbar}
@@ -123,6 +130,7 @@ export default class Browser extends React.Component {
                                 folders={this.state.folders}
                                 current_folder={this.state.current_folder}
                                 onSelect={this.onSelect.bind(this)}
+                                onPreview={this.onPreview.bind(this)}
                                 hover={this.state.hover}
                                 selected={this.state.selected}
                                 clipboard={this.state.clipboard}
@@ -174,13 +182,14 @@ export default class Browser extends React.Component {
     }
 
     setHover(target) {
-        console.log(target);
-
         let len = this.state.folders.length + this.state.files.length;
         target = target < 0 ? len - 1 : target % len;
-
-        console.log(target);
         this.setState({hover: target});
+    }
+
+    onPreview(state, e) {
+        e.stopPropagation();
+        this.setState({preview: state});
     }
 
     onDismiss(index) {
@@ -275,9 +284,7 @@ export default class Browser extends React.Component {
             } else {
                 this.state.selected = [id];
             }
-        }
-
-        if (index > -1) {
+        } else if (index > -1) {
             this.state.selected.splice(index, 1);
         } else {
             this.state.selected.push(id);

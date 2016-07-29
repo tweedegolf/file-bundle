@@ -25,6 +25,7 @@ export default class List extends React.Component {
                 file={file}
                 hovering={this.props.hover === index}
                 onSelect={this.props.onSelect.bind(this)}
+                onPreview={this.props.onPreview.bind(this)}
                 selected={this.props.selected}
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}

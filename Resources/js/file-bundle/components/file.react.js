@@ -15,7 +15,8 @@ export default class File extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            confirm_delete: false
+            confirm_delete: false,
+            preview: false
         };
 
         this.onDelete = this.onDelete.bind(this);
@@ -82,7 +83,11 @@ export default class File extends React.Component {
         }
 
         if (file.thumb) {
-            preview = <img src={file.thumb} alt={file.name} />;
+            preview = <img
+                src={file.thumb}
+                alt={file.name}
+                onClick={this.props.onPreview.bind(this, file.original)}
+            />;
         }
         
         return (
