@@ -10,6 +10,23 @@ import Toolbar from './toolbar.react.js';
 import SelectedFiles from './selected_files.react.js';
 import Errors from './errors.react.js';
 
+import Actions from '../redux/actions.js';
+
+import {connect} from 'react-redux'
+
+const mapStateToProps = (state) => {
+  //let {} = state
+  return {
+  }
+}
+
+const mapDispatchToProps = function(dispatch){
+  return {
+    dispatch,
+    }
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Browser extends React.Component {
 
     constructor(props) {
@@ -220,7 +237,7 @@ export default class Browser extends React.Component {
             });
         });
     }
-    
+
     onDeleteFolder(id) {
         api.deleteFolder(id, () => {
             // success
@@ -344,7 +361,7 @@ export default class Browser extends React.Component {
             });
         });
     }
-    
+
     onAddFolder(errors) {
         this.setState({
             folders: _.sortBy(cache.getFolders(this.state.current_folder.id), this.state.sort),
@@ -358,7 +375,9 @@ export default class Browser extends React.Component {
         if (this.state.uploading || this.state.loading_folder) {
             return;
         }
+        Actions.upload(file_list, this.state.current_folder)
 
+/*
         this.setState({uploading:true});
         api.upload(file_list, this.state.current_folder.id, (errors) => {
             // success
@@ -375,5 +394,6 @@ export default class Browser extends React.Component {
                 uploading: false
             });
         });
+*/
     }
 }

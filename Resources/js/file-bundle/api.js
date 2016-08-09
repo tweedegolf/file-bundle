@@ -59,7 +59,7 @@ class Api {
             }
         });
     }
-    
+
     deleteFolder(folder_id, onSuccess, onError) {
         let url = '/admin/file/delete/folder/' + folder_id;
         var req = request.post(url).type('form');
@@ -92,8 +92,8 @@ class Api {
                     file: file,
                     messages: messages
                 }));
-                cache.storeFiles(files, folder_id);
-                onSuccess(errors);
+                //cache.storeFiles(files, folder_id);
+                onSuccess(errors, files, folder_id);
             }
         });
     }
