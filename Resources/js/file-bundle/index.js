@@ -2,12 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Browser from './components/browser.react.js';
 import _ from 'lodash';
+import {Provider} from 'react-redux'
+import getStore from './get_store'
+
+
 
 // an element with the id 'tg_file_browser' will be converted to a interactive file browser
 // note that there can only be one of these
 var browser = document.getElementById('tg_file_browser');
 if (null !== browser) {
-     ReactDOM.render(<Browser browser={true} />, browser);
+     ReactDOM.render(
+        <Provider store={getStore()}>
+          <Browser browser={true}/>
+        </Provider>,
+        browser
+    );
 }
 
 // an element with the class 'tg_file_picker' will be converted to a file selector
@@ -18,4 +27,5 @@ if (pickers.length > 0) {
         var options = JSON.parse(element.dataset.options);
         ReactDOM.render(<Browser browser={false} options={options} />, element);
     });
+
 }

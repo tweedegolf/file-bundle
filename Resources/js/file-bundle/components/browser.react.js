@@ -10,19 +10,33 @@ import Toolbar from './toolbar.react.js';
 import SelectedFiles from './selected_files.react.js';
 import Errors from './errors.react.js';
 
-import Actions from '../redux/actions.js';
-
+import Actions from '../actions/tree_actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
-  //let {} = state
-  return {
-  }
+
+    console.log(state.tree)
+
+    let sort = state.ui.sort
+    let files =  _.sortBy(state.tree.files, sort)
+    let folders =  _.sortBy(state.tree.folders, sort)
+
+    return {
+        folders,
+        files,
+        sort,
+        loading_folder: state.tree.loading_folder,
+        current_folder: state.tree.current_folder,
+        uploading: state.tree.uploading,
+        ascending: state.ui.ascending,
+        preview: state.ui.preview,
+        hover: state.ui.hover,
+    }
 }
 
 const mapDispatchToProps = function(dispatch){
-  return {
-    dispatch,
+    return {
+        dispatch,
     }
 }
 
@@ -33,19 +47,10 @@ export default class Browser extends React.Component {
         super(props);
 
         this.state = {
-            files: [],
-            folders: [],
-            hover: -1,
-            preview: null,
             selected: this.getSelected(),
             clipboard: [],
             confirm_delete: null,
-            sort: 'name',
-            ascending: true,
-            uploading: false,
-            loading_folder: null,
             expanded: this.props.browser,
-            current_folder: cache.findFolder(null),
             errors: []
         };
     }
@@ -65,7 +70,7 @@ export default class Browser extends React.Component {
     }
 
     componentDidMount() {
-        this.onOpenFolder(this.state.current_folder.id);
+        this.onOpenFolder(this.props.current_folder.id);
 
         if (this.props.browser) {
             document.addEventListener('keydown', this.onKeyDown.bind(this), false);
@@ -97,7 +102,7 @@ export default class Browser extends React.Component {
         let toolbar =  <Toolbar
             selected={this.state.selected}
             clipboard={this.state.clipboard}
-            current_folder={this.state.current_folder}
+            current_folder={this.props.current_folder}
             browser={this.props.browser}
             onCut={this.onCut.bind(this)}
             onPaste={this.onPaste.bind(this)}
@@ -143,9 +148,9 @@ export default class Browser extends React.Component {
                             </tr>
                             </thead>
                             <List
-                                files={this.state.files}
-                                folders={this.state.folders}
-                                current_folder={this.state.current_folder}
+                                files={this.props.files}
+                                folders={this.props.folders}
+                                current_folder={this.props.current_folder}
                                 onSelect={this.onSelect.bind(this)}
                                 onPreview={this.onPreview.bind(this)}
                                 hover={this.state.hover}
@@ -199,7 +204,7 @@ export default class Browser extends React.Component {
     }
 
     setHover(target) {
-        let len = this.state.folders.length + this.state.files.length;
+        let len = this.props.folders.length + this.props.files.length;
         target = target < 0 ? len - 1 : target % len;
         this.setState({hover: target});
     }
@@ -222,7 +227,7 @@ export default class Browser extends React.Component {
         api.deleteFile(id, () => {
             // success
             this.setState({
-                files: _.sortBy(cache.getFiles(this.state.current_folder.id), this.state.sort),
+                files: _.sortBy(cache.getFiles(this.props.current_folder.id), this.state.sort),
                 confirm_delete: null
             });
         }, () => {
@@ -242,7 +247,7 @@ export default class Browser extends React.Component {
         api.deleteFolder(id, () => {
             // success
             this.setState({
-                folders: _.sortBy(cache.getFolders(this.state.current_folder.id), this.state.sort)
+                folders: _.sortBy(cache.getFolders(this.props.current_folder.id), this.state.sort)
             });
         }, () => {
             // error
@@ -272,10 +277,10 @@ export default class Browser extends React.Component {
     }
 
     onPaste() {
-        api.paste(this.state.clipboard, this.state.current_folder.id, () => {
+        api.paste(this.state.clipboard, this.props.current_folder.id, () => {
             // success
             this.setState({
-                files: _.sortBy(cache.getFiles(this.state.current_folder.id), this.state.sort),
+                files: _.sortBy(cache.getFiles(this.props.current_folder.id), this.state.sort),
                 selected: [],
                 clipboard: []
             });
@@ -319,7 +324,7 @@ export default class Browser extends React.Component {
         this.setState({
             ascending: this.state.ascending,
             sort: column,
-            folders: _.sortBy(this.state.folders, column),
+            folders: _.sortBy(this.props.folders, column),
             files: _.sortBy(this.state.files, column)
         });
     }
@@ -337,10 +342,14 @@ export default class Browser extends React.Component {
     }
 
     onOpenFolder(id) {
+        if (this.props.uploading || this.props.loading_folder) {
+            return;
+        }
+        Actions.openFolder(id)
+/*
         if (this.state.uploading || this.state.loading_folder) {
             return;
         }
-
         // store the selected folder
         let folder = cache.findFolder(id);
 
@@ -360,11 +369,12 @@ export default class Browser extends React.Component {
                 loading_folder: null
             });
         });
+*/
     }
 
     onAddFolder(errors) {
         this.setState({
-            folders: _.sortBy(cache.getFolders(this.state.current_folder.id), this.state.sort),
+            folders: _.sortBy(cache.getFolders(this.props.current_folder.id), this.state.sort),
             sort: 'create_ts',
             ascending: false,
             errors: errors
@@ -372,12 +382,17 @@ export default class Browser extends React.Component {
     }
 
     doUpload(file_list) {
+        if (this.props.uploading || this.props.loading_folder) {
+            return;
+        }
+
+        Actions.upload(file_list, this.props.current_folder)
+
+/*
         if (this.state.uploading || this.state.loading_folder) {
             return;
         }
-        Actions.upload(file_list, this.state.current_folder)
 
-/*
         this.setState({uploading:true});
         api.upload(file_list, this.state.current_folder.id, (errors) => {
             // success

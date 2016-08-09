@@ -99,6 +99,21 @@ class Api {
     }
 
     openFolder(folder_id, onSuccess, onError) {
+
+        let url = '/admin/file/list' + (folder_id ? '/' + folder_id : '');
+        var req = request.get(url);
+        req.end((err, res) => {
+            if (err) {
+                onError(err);
+                //cache.storeFolder(folder_id, [], []);
+            } else {
+                onSuccess(res.body.folders, res.body.files)
+                //cache.storeFolder(folder_id, res.body.folders, res.body.files);
+            }
+        });
+
+
+/*
         cache.loadFolder(folder_id, () => {
             // no cache hit
             let url = '/admin/file/list' + (folder_id ? '/' + folder_id : '');
@@ -115,6 +130,7 @@ class Api {
             // cache hit
             onSuccess();
         });
+*/
     }
 }
 

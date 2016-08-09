@@ -1,9 +1,10 @@
-import ActionTypes from './constants'
+import * as ActionTypes from '../constants'
 import _ from 'lodash';
-import getStore from './store'
+import getStore from '../get_store'
 import api from '../api'
 
-const dispatch = getStore().dispatch
+const store = getStore()
+const dispatch = store.dispatch
 
 export default {
 
@@ -71,6 +72,7 @@ export default {
       })
     },
 
+
     storeFolder(key, folders, files) {
       dispatch({
         type: ActionTypes.STORE_FOLDER,
@@ -79,29 +81,52 @@ export default {
     },
 
 
-    upload(file_list, currentfolder, sort){
+    openFolder(id){
+      dispatch({
+        type: ActionTypes.LOAD_FOLDER,
+        payload: {id}
+      })
 
+      api.openFolder(id, (folders, files) => {
+        // success
         dispatch({
-            type: ActionTypes.UPLOAD_START
+          type: ActionTypes.FOLDER_LOADED,
+          payload: {
+            folders,
+            files,
+          }
         })
+      }, () => {
+        // error
+        dispatch({
+          type: ActionTypes.FOLDER_LOADED,
+          payload: {
+            loading_folder: null
+          }
+        })
+      })
+    },
 
-        api.upload(file_list, current_folder.id, (errors, files) => {
-            // success
-            dispatch({
-                type: ActionTypes.UPLOAD_DONE,
-                files,
-                sort: 'create_ts',
-                ascending: false,
-                errors: errors
-            });
 
-        }, () => {
-            // error
-            dispatch({
-                type: ActionTypes.UPLOAD_DONE
-            });
+    upload(file_list, current_folder){
+      dispatch({
+        type: ActionTypes.UPLOAD_START
+      })
 
-        });
+      api.upload(file_list, current_folder.id, (errors, files) => {
+        // success
+        dispatch({
+          type: ActionTypes.UPLOAD_DONE,
+          payload: {
+            files,
+            errors,
+          }
+        })
+      }, () => {
+        // error
+        dispatch({
+          type: ActionTypes.UPLOAD_ERROR
+        })
+      })
     }
-
 }
