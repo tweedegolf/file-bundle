@@ -1,7 +1,19 @@
 import * as ActionTypes from '../constants'
 
 export const treeInitialState = {
-  folders: {},
+  all_folders: {
+    null: {
+      id: null,
+      name: '..'
+    }
+  },
+  all_files: {},
+  folders: {
+    null: {
+      id: null,
+      name: '..'
+    }
+  },
   files: {},
   data: {},
   error: '',
@@ -9,7 +21,7 @@ export const treeInitialState = {
   loading_folder: null,
   current_folder: {
     id: null,
-    name: '..',
+    name: '..'
   },
 }
 
@@ -26,23 +38,25 @@ export function tree(state = treeInitialState, action){
 
     case ActionTypes.FOLDER_LOADED:
       let folder_id = state.loading_folder
-      let folders = action.payload.folders
+      let folders = {...state.all_folders}
+      let current_folder = state.folders[folder_id]
 
-      folders.forEach(folder => {
-        state.folders[folder.id] = folder
+      action.payload.folders.forEach(folder => {
+        all_folders[folder.id] = folder
       })
 
       // if(folder_id !== undefined && this.data[folder_id]){
       //   this.data[folder_id].folders = this.data[folder_id].folders.concat(folders);
       // }
-      console.log(folders, folder_id)
+      // console.log(folders)
+
 
       return {
         ...state,
         hover: -1,
         loading_folder: null,
-        current_folder: folders[folder_id],
         files: action.payload.files,
+        current_folder,
         folders,
       }
 

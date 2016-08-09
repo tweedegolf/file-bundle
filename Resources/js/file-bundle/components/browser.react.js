@@ -15,8 +15,6 @@ import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
 
-    console.log(state.tree)
-
     let sort = state.ui.sort
     let files =  _.sortBy(state.tree.files, sort)
     let folders =  _.sortBy(state.tree.folders, sort)
