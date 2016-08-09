@@ -220,7 +220,7 @@ export default class Browser extends React.Component {
             });
         });
     }
-    
+
     onDeleteFolder(id) {
         api.deleteFolder(id, () => {
             // success
@@ -344,7 +344,7 @@ export default class Browser extends React.Component {
             });
         });
     }
-    
+
     onAddFolder(errors) {
         this.setState({
             folders: _.sortBy(cache.getFolders(this.state.current_folder.id), this.state.sort),
