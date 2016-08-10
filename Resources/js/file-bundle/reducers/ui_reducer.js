@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants';
+import * as ActionTypes from '../constants'
 
 export const uiInitialState = {
   sort: 'create_ts',
@@ -11,9 +11,8 @@ export const uiInitialState = {
 export function ui(state = uiInitialState, action){
 
   switch (action.type) {
-
     default:
-        return state
+      return state
 
   }
 }

@@ -8,14 +8,9 @@ export const treeInitialState = {
     }
   },
   all_files: {},
-  folders: {
-    null: {
-      id: null,
-      name: '..'
-    }
-  },
-  files: {},
-  data: {},
+  tree: {},
+  files: [],
+  folders: [],
   error: '',
   uploading: false,
   loading_folder: null,
@@ -23,6 +18,7 @@ export const treeInitialState = {
     id: null,
     name: '..'
   },
+  parent_folder: null,
 }
 
 
@@ -38,33 +34,43 @@ export function tree(state = treeInitialState, action){
 
     case ActionTypes.FOLDER_LOADED:
       let folder_id = state.loading_folder
-      let files = {...state.all_files}
-      let folders = {...state.all_folders}
-      let current_folder = state.folders[folder_id]
+      let current_folder = state.all_folders[folder_id]
+      let parent_folder = null
+
+      if(typeof current_folder.parent !== 'undefined'){
+        parent_folder = state.all_folders[current_folder.parent]
+      }
 
       action.payload.folders.forEach(folder => {
-        all_folders[folder.id] = folder
+        state.all_folders[folder.id] = folder
       })
 
       action.payload.files.forEach(file => {
-        all_files[file.id] = file
+        state.all_files[file.id] = file
       })
 
-      // if(folder_id !== undefined && this.data[folder_id]){
-      //   this.data[folder_id].folders = this.data[folder_id].folders.concat(folders);
+      let files = action.payload.files
+      let folders = action.payload.folders
+
+      // if(typeof folder_id !== 'undefined' && typeof tree[folder_id] !== 'undefined'){
+      //   folders = [...folders, ...action.payload.folders]
       // }
-      // console.log(folders)
+
+      tree[folder_id] = {
+        ...current_folder,
+        files,
+        folders,
+      }
 
 
       return {
         ...state,
         hover: -1,
         loading_folder: null,
-        files: action.payload.files,
         current_folder,
+        parent_folder,
+        files,
         folders,
-        all_folders,
-        all_files,
       }
 
 

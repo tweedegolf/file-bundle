@@ -15,7 +15,7 @@ export default function getStore() {
       combineReducers({
         ui,
         tree,
-      }),{
+      }), {
         ui: uiInitialState,
         tree: treeInitialState,
       },
