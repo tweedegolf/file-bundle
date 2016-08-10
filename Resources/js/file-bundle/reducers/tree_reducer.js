@@ -38,11 +38,16 @@ export function tree(state = treeInitialState, action){
 
     case ActionTypes.FOLDER_LOADED:
       let folder_id = state.loading_folder
+      let files = {...state.all_files}
       let folders = {...state.all_folders}
       let current_folder = state.folders[folder_id]
 
       action.payload.folders.forEach(folder => {
         all_folders[folder.id] = folder
+      })
+
+      action.payload.files.forEach(file => {
+        all_files[file.id] = file
       })
 
       // if(folder_id !== undefined && this.data[folder_id]){
@@ -58,6 +63,8 @@ export function tree(state = treeInitialState, action){
         files: action.payload.files,
         current_folder,
         folders,
+        all_folders,
+        all_files,
       }
 
 
