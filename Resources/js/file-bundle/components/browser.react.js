@@ -24,9 +24,12 @@ const mapStateToProps = (state) => {
     files,
     sort,
     loading_folder: state.tree.loading_folder,
+    adding_folder: state.tree.adding_folder,
     current_folder: state.tree.current_folder,
     parent_folder: state.tree.parent_folder,
     uploading: state.tree.uploading,
+    selected: state.tree.selected,
+    //clipboard: state.tree.clipboard,
     ascending: state.ui.ascending,
     preview: state.ui.preview,
     hover: state.ui.hover,
@@ -46,29 +49,19 @@ export default class Browser extends React.Component {
     super(props);
 
     this.state = {
-      selected: this.getSelected(),
-      clipboard: [],
       confirm_delete: null,
-      expanded: this.props.browser,
-      errors: []
+      expanded: this.props.browser, // should be moved to ui_reducer
+      errors: [],
+      clipboard: [],
     };
   }
 
-  getSelected() {
-    let selected = [];
-
-    if (this.props.options && this.props.options.selected) {
-      selected = this.props.options.selected;
-      cache.storeFiles(selected);
-      selected = _.map(selected, (file) => {
-        return file.id;
-      });
-    }
-
-    return selected;
-  }
 
   componentDidMount() {
+
+    if (this.props.options && this.props.options.selected) {
+      Actions.cacheSelectedFiles(this.props.options.selected)
+    }
 
     this.onOpenFolder(this.props.current_folder.id);
 
@@ -100,9 +93,10 @@ export default class Browser extends React.Component {
     );
 
     let toolbar = <Toolbar
-      selected={this.state.selected}
+      selected={this.props.selected}
       clipboard={this.state.clipboard}
       current_folder={this.props.current_folder}
+      adding_folder={this.props.adding_folder}
       browser={this.props.browser}
       onCut={this.onCut.bind(this)}
       onPaste={this.onPaste.bind(this)}
@@ -113,9 +107,9 @@ export default class Browser extends React.Component {
     />;
 
     let selected = null;
-    if (!this.props.browser && this.state.selected.length > 0) {
+    if (!this.props.browser && this.props.selected.length > 0) {
       selected = <SelectedFiles
-        selected={this.state.selected}
+        selected={this.props.selected}
         name={this.props.options.name}
         onSelect={this.onSelect.bind(this)}
         onPreview={this.onPreview.bind(this)}
@@ -155,7 +149,7 @@ export default class Browser extends React.Component {
                 onSelect={this.onSelect.bind(this)}
                 onPreview={this.onPreview.bind(this)}
                 hover={this.state.hover}
-                selected={this.state.selected}
+                selected={this.props.selected}
                 clipboard={this.state.clipboard}
                 browser={this.props.browser}
                 confirm_delete={this.state.confirm_delete}
@@ -217,7 +211,7 @@ export default class Browser extends React.Component {
 
   onDismiss(index) {
     this.state.errors.splice(index, 1);
-    this.setState({ errors: this.state.errors});
+    this.setState({errors: this.state.errors});
   }
 
   onConfirmDelete(id) {
@@ -250,7 +244,7 @@ export default class Browser extends React.Component {
   onCut() {
     this.setState({
       selected: [],
-      clipboard: this.state.selected
+      clipboard: this.props.selected
     });
   }
 
@@ -283,23 +277,16 @@ export default class Browser extends React.Component {
       return;
     }
 
-    let index = this.state.selected.indexOf(id);
-
-    if (!this.props.browser && !this.props.options.multiple) {
-      if (index > -1) {
-        this.state.selected = [];
-      } else {
-        this.state.selected = [id];
-      }
-    } else if (index > -1) {
-      this.state.selected.splice(index, 1);
-    } else {
-      this.state.selected.push(id);
+    let multiple = true
+    if(this.props.options && this.props.options.multiple) {
+      multiple = this.props.options.multiple
     }
 
-    this.setState({
-      selected: this.state.selected
-    });
+    Actions.selectFile({
+      id,
+      multiple,
+      browser: this.props.browser,
+    })
   }
 
   sortBy(column) {
@@ -334,12 +321,13 @@ export default class Browser extends React.Component {
   }
 
   onAddFolder(errors) {
-    this.setState({
-      folders: _.sortBy(cache.getFolders(this.props.current_folder.id), this.state.sort),
-      sort: 'create_ts',
-      ascending: false,
-      errors: errors
-    });
+    Actions.addFolder()
+    // this.setState({
+    //   folders: _.sortBy(cache.getFolders(this.props.current_folder.id), this.state.sort),
+    //   sort: 'create_ts',
+    //   ascending: false,
+    //   errors: errors
+    // });
   }
 
   doUpload(file_list) {

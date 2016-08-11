@@ -11,6 +11,9 @@ export const treeInitialState = {
   tree: {},
   files: [],
   folders: [],
+  selected: [],
+  clipboard: [],
+  numSelected: 0,
   error: '',
   uploading: false,
   deleting_file: null,
@@ -20,14 +23,17 @@ export const treeInitialState = {
     name: '..'
   },
   parent_folder: null,
+  adding_folder: false,
 }
 
 
 export function tree(state = treeInitialState, action){
 
+  let index
   let file
   let files
   let folders
+  let selected
 
   switch (action.type) {
 
@@ -55,12 +61,12 @@ export function tree(state = treeInitialState, action){
         parent_folder = state.all_folders[current_folder.parent]
       }
 
-      action.payload.folders.forEach(folder => {
-        state.all_folders[folder.id] = folder
+      action.payload.folders.forEach(f => {
+        state.all_folders[f.id] = f
       })
 
-      action.payload.files.forEach(file => {
-        state.all_files[file.id] = file
+      action.payload.files.forEach(f => {
+        state.all_files[f.id] = f
       })
 
       files = action.payload.files
@@ -111,8 +117,8 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.FILE_DELETED:
       files = [...state.files]
       if(state.deleting_file !== null){
-        files = state.files.filter(file => {
-          return file.id !== state.deleting_file
+        files = state.files.filter(f => {
+          return f.id !== state.deleting_file
         })
       }
       return {
@@ -139,14 +145,83 @@ export function tree(state = treeInitialState, action){
 
     case ActionTypes.UPLOAD_DONE:
       files = [...state.files]
-      action.payload.files.forEach(file => {
-        state.all_files[file.id] = file
-        files.push(file)
+      action.payload.files.forEach(f => {
+        state.all_files[f.id] = f
+        files.push(f)
       })
       return {
         ...state,
         files,
         uploading: false
+      }
+
+
+    // SELECT FILES
+
+    case ActionTypes.SELECT_FILE:
+      let {
+        id,
+        browser,
+        multiple,
+      } = action.payload
+
+      file = null
+      index = state.selected.findIndex(f => {
+        return f.id === id
+      })
+
+      if(index === -1){
+        file = state.files.find(f => {
+          return f.id === id
+        })
+      }
+
+      selected = [...state.selected]
+      if(browser === false && multiple === false){
+        if(index === -1){
+          selected = [file]
+        }else{
+          selected = []
+        }
+      }else if(index === -1){
+        selected.push(file)
+      }else{
+        selected.splice(index, 1)
+      }
+
+      return {
+        ...state,
+        selected
+      }
+
+
+    case ActionTypes.CACHE_SELECTED_FILES:
+      return {
+        ...state,
+        selected: action.payload.files,
+      }
+
+
+    // ADD FOLDER
+
+    case ActionTypes.ADD_FOLDER:
+      return {
+        ...state,
+        adding_folder: true,
+      }
+
+    case ActionTypes.ERROR_ADD_FOLDER:
+      return {
+        ...state,
+        adding_folder: false,
+      }
+
+    case ActionTypes.FOLDER_ADDED:
+      return {
+        ...state,
+        adding_folder: false,
+        folders: [...state.folders, ...action.payload.folders],
+        errors: action.payload.errors,
       }
 
     default:

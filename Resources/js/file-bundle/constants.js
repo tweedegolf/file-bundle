@@ -21,3 +21,12 @@ export const DELETE_FILE = 'delete file';
 export const FILE_DELETED = 'file deleted';
 export const DELETE_FILE_ERROR = 'error deleting file';
 
+export const CACHE_SELECTED_FILES = 'cache selected files';
+export const SELECT_FILE = 'select file';
+
+
+export const ADD_FOLDER = 'add folder';
+export const FOLDER_ADDED = 'folder added';
+export const ERROR_ADD_FOLDER = 'error add folder';
+
+

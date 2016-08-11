@@ -27,7 +27,9 @@ export default class File extends React.Component {
   render() {
     let file = this.props.file;
     let checked = this.props.clipboard.indexOf(file.id) > -1;
-    let selected = this.props.selected.indexOf(file.id) > -1;
+    let selected = typeof this.props.selected.find(f => {
+      return f.id === file.id
+    }) !== 'undefined';
     let class_name = 'cutable' + (file.new ? ' success' : '') + (this.props.hovering ? ' selected' : '');
     let preview = <span className={'fa fa-' + (icons[file.type] ? icons[file.type] : 'file')} />;
 

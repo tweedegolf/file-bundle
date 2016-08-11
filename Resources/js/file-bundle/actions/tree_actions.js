@@ -8,6 +8,22 @@ const dispatch = store.dispatch
 
 export default {
 
+  selectFile(payload){
+    dispatch({
+      type: ActionTypes.SELECT_FILE,
+      payload,
+    })
+  },
+
+
+  cacheSelectedFiles(files){
+    dispatch({
+      type: ActionTypes.CACHE_SELECTED_FILES,
+      payload: {files}
+    })
+  },
+
+
   deleteFile(id){
 
     dispatch({
@@ -54,22 +70,48 @@ export default {
       type: ActionTypes.UPLOAD_START
     })
 
-    api.upload(file_list, current_folder.id, (errors, files) => {
-      // success
-      dispatch({
-        type: ActionTypes.UPLOAD_DONE,
-        payload: {
-          files,
-          errors,
-        }
-      })
-    }, () => {
-      // error
-      dispatch({
-        type: ActionTypes.UPLOAD_ERROR
-      })
+    api.upload(file_list, current_folder.id,
+      (errors, files) => {
+        dispatch({
+          type: ActionTypes.UPLOAD_DONE,
+          payload: {
+            files,
+            errors,
+          }
+        })
+      },
+      () => {
+        dispatch({
+          type: ActionTypes.UPLOAD_ERROR
+        })
+      }
+    )
+  },
+
+
+  addFolder(new_folder_name, current_folder_id){
+    dispatch({
+      type: ActionTypes.ADD_FOLDER,
     })
-  }
+
+    api.addFolder(new_folder_name, current_folder_id,
+      (folders, errors) => {
+        dispatch({
+          type: ActionTypes.FOLDER_ADDED,
+          payload: {
+            folders,
+            errors,
+          }
+        })
+      },
+      () => {
+        dispatch({
+          type: ActionTypes.ERROR_ADD_FOLDER,
+        })
+      }
+    )
+  },
+
 }
 
 
