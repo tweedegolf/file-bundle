@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import cache from '../cache';
 
 import File from './file.react.js';
 import Folder from './folder.react.js';
@@ -13,7 +12,7 @@ export default class List extends React.Component {
 
       // hide non-images when the images only option is passed to the form
       if (!this.props.browser && this.props.images_only && !file.thumb) {
-        return;
+        return null;
       }
 
       index = this.props.ascending

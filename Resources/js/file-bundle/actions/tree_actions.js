@@ -87,7 +87,6 @@ export default {
       payload: {id}
     })
 
-    console.log(id)
     api.openFolder(id, (folders, files) => {
       // success
       dispatch({

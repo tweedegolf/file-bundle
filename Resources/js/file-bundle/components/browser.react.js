@@ -16,8 +16,8 @@ import {connect} from 'react-redux'
 const mapStateToProps = (state) => {
 
   let sort = state.ui.sort
-  let files =  _.sortBy(state.tree.files, sort)
-  let folders =  _.sortBy(state.tree.folders, sort)
+  let files = _.sortBy(state.tree.files, sort)
+  let folders = _.sortBy(state.tree.folders, sort)
 
   return {
     folders,
@@ -57,6 +57,7 @@ export default class Browser extends React.Component {
   getSelected() {
     let selected = [];
 
+    console.log(this.props)
     if (this.props.options && this.props.options.selected) {
       selected = this.props.options.selected;
       cache.storeFiles(selected);

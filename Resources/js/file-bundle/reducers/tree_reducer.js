@@ -56,11 +56,11 @@ export function tree(state = treeInitialState, action){
       //   folders = [...folders, ...action.payload.folders]
       // }
 
-      tree[folder_id] = {
-        ...current_folder,
-        files,
-        folders,
-      }
+      // tree[folder_id] = {
+      //   ...current_folder,
+      //   files,
+      //   folders,
+      // }
 
 
       return {
