@@ -57,7 +57,6 @@ export default class Browser extends React.Component {
   getSelected() {
     let selected = [];
 
-    console.log(this.props)
     if (this.props.options && this.props.options.selected) {
       selected = this.props.options.selected;
       cache.storeFiles(selected);
@@ -226,23 +225,7 @@ export default class Browser extends React.Component {
   }
 
   onDelete(id) {
-    api.deleteFile(id, () => {
-      // success
-      this.setState({
-        files: _.sortBy(cache.getFiles(this.props.current_folder.id), this.state.sort),
-        confirm_delete: null
-      });
-    }, () => {
-      // error
-      let file = cache.findFile(id);
-      this.setState({
-        confirm_delete: null,
-        errors: [{
-          file: file.name,
-          type: 'delete'
-        }]
-      });
-    });
+    Actions.deleteFile(id)
   }
 
   onDeleteFolder(id) {
@@ -348,30 +331,6 @@ export default class Browser extends React.Component {
       return;
     }
     Actions.openFolder(id)
-/*
-    if (this.state.uploading || this.state.loading_folder) {
-      return;
-    }
-    // store the selected folder
-    let folder = cache.findFolder(id);
-
-    this.setState({loading_folder: id});
-    api.openFolder(id, () => {
-      // success
-      this.setState({
-        hover: -1,
-        folders: _.sortBy(cache.getFolders(id), this.state.sort),
-        files: _.sortBy(cache.getFiles(id), this.state.sort),
-        current_folder: folder,
-        loading_folder: null
-      });
-    }, () => {
-      // error
-      this.setState({
-        loading_folder: null
-      });
-    });
-*/
   }
 
   onAddFolder(errors) {
@@ -389,28 +348,5 @@ export default class Browser extends React.Component {
     }
 
     Actions.upload(file_list, this.props.current_folder)
-
-/*
-    if (this.state.uploading || this.state.loading_folder) {
-      return;
-    }
-
-    this.setState({uploading:true});
-    api.upload(file_list, this.state.current_folder.id, (errors) => {
-      // success
-      this.setState({
-        files: _.sortBy(cache.getFiles(this.state.current_folder.id), this.state.sort),
-        uploading: false,
-        sort: 'create_ts',
-        ascending: false,
-        errors: errors
-      });
-    }, () => {
-      // error
-      this.setState({
-        uploading: false
-      });
-    });
-*/
   }
 }

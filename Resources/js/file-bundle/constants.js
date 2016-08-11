@@ -15,5 +15,9 @@ export const UPLOAD_ERROR = 'upload error';
 
 export const LOAD_FOLDER = 'load folder';
 export const FOLDER_LOADED = 'folder loaded';
-export const FOLDER_ERROR = 'folder error';
+export const LOAD_FOLDER_ERROR = 'folder error';
+
+export const DELETE_FILE = 'delete file';
+export const FILE_DELETED = 'file deleted';
+export const DELETE_FILE_ERROR = 'error deleting file';
 

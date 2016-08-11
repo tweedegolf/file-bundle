@@ -8,6 +8,73 @@ const dispatch = store.dispatch
 
 export default {
 
+  deleteFile(id){
+
+    dispatch({
+      type: ActionTypes.DELETE_FILE,
+      payload: {id}
+    })
+
+    api.deleteFile(id, () => {
+      dispatch({
+        type: ActionTypes.FILE_DELETED
+      })
+    }, () => {
+      dispatch({
+        type: ActionTypes.DELETE_FILE_ERROR
+      })
+    })
+  },
+
+
+  openFolder(id){
+    dispatch({
+      type: ActionTypes.LOAD_FOLDER,
+      payload: {id}
+    })
+
+    api.openFolder(id, (folders, files) => {
+      dispatch({
+        type: ActionTypes.FOLDER_LOADED,
+        payload: {
+          folders,
+          files,
+        }
+      })
+    }, () => {
+      dispatch({
+        type: ActionTypes.LOAD_FOLDER_ERROR,
+      })
+    })
+  },
+
+
+  upload(file_list, current_folder){
+    dispatch({
+      type: ActionTypes.UPLOAD_START
+    })
+
+    api.upload(file_list, current_folder.id, (errors, files) => {
+      // success
+      dispatch({
+        type: ActionTypes.UPLOAD_DONE,
+        payload: {
+          files,
+          errors,
+        }
+      })
+    }, () => {
+      // error
+      dispatch({
+        type: ActionTypes.UPLOAD_ERROR
+      })
+    })
+  }
+}
+
+
+/*
+
 
   findFile(id) {
     dispatch({
@@ -80,53 +147,4 @@ export default {
     })
   },
 
-
-  openFolder(id){
-    dispatch({
-      type: ActionTypes.LOAD_FOLDER,
-      payload: {id}
-    })
-
-    api.openFolder(id, (folders, files) => {
-      // success
-      dispatch({
-        type: ActionTypes.FOLDER_LOADED,
-        payload: {
-          folders,
-          files,
-        }
-      })
-    }, () => {
-      // error
-      dispatch({
-        type: ActionTypes.FOLDER_LOADED,
-        payload: {
-          loading_folder: null
-        }
-      })
-    })
-  },
-
-
-  upload(file_list, current_folder){
-    dispatch({
-      type: ActionTypes.UPLOAD_START
-    })
-
-    api.upload(file_list, current_folder.id, (errors, files) => {
-      // success
-      dispatch({
-        type: ActionTypes.UPLOAD_DONE,
-        payload: {
-          files,
-          errors,
-        }
-      })
-    }, () => {
-      // error
-      dispatch({
-        type: ActionTypes.UPLOAD_ERROR
-      })
-    })
-  }
-}
+*/
