@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants';
+import _ from 'lodash';
 
 export const uiInitialState = {
   sort: 'create_ts',
@@ -15,7 +16,7 @@ export function ui(state = uiInitialState, action){
     case ActionTypes.SELECT_ITEMS:
       return {
         ...state,
-        selected_items: action.payload.items // TODO: Reducer logic for combining previously selected_items with new ones
+        selected_items: [...state.selected_items, ...action.payload.items],
       }
 
     default:

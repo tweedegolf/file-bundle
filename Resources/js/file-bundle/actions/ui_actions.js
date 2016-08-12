@@ -9,7 +9,7 @@ export default {
   selectItems(files) {
     dispatch({
       type: ActionTypes.SELECT_ITEMS,
-      payload: [items]
+      payload: items
     });
   }
 }
