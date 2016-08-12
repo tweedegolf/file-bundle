@@ -10,44 +10,27 @@ import Toolbar from './toolbar.react.js';
 import SelectedFiles from './selected_files.react.js';
 import Errors from './errors.react.js';
 
-import Actions from '../actions/ui_actions'
-import { connect } from 'react-redux'
-
-const mapStateToProps = (state) => {
-
-  let sort = state.ui.sort
-  let files = _.sortBy(state.tree.files, sort)
-  let folders = _.sortBy(state.tree.folders, sort)
-
-  return {
-    folders,
-    files,
-    sort,
-    ascending: state.ui.ascending,
-    preview: state.ui.preview,
-    hover: state.ui.hover,
-    selected: state.ui.selected
-  }
-}
-
-const mapDispatchToProps = function(dispatch) {
-  return {
-    dispatch,
-  }
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
 export default class Browser extends React.Component {
 
     constructor(props) {
-      super(props);
+        super(props);
 
-      this.state = {
-        confirm_delete: null,
-        expanded: this.props.browser, // should be moved to ui_reducer
-        errors: [],
-        clipboard: [],
-      };
+        this.state = {
+            files: [],
+            folders: [],
+            hover: -1,
+            preview: null,
+            selected: this.getSelected(), // TODO: Update to use Redux state
+            clipboard: [],
+            confirm_delete: null,
+            sort: 'name',
+            ascending: true,
+            uploading: false,
+            loading_folder: null,
+            expanded: this.props.browser,
+            current_folder: cache.findFolder(null),
+            errors: []
+        };
     }
 
     getSelected() {
