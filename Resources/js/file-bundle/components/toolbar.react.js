@@ -7,11 +7,13 @@ export default class Toolbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show_form: false
+      show_form: this.props.adding_folder,
+      folder_loading: false
     };
   }
 
   render() {
+    console.log(this.props.adding_folder, this.state.folder_loading)
     let loader = this.props.uploading ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
     let new_folder_class = 'btn btn-sm btn-default pull-right ' + (this.state.show_form ? 'hide' : '');
     let actions = null;
@@ -54,10 +56,10 @@ export default class Toolbar extends React.Component {
           type="button"
           className={new_folder_class}
           onClick={this.onShowForm.bind(this)}
-          disabled={this.props.adding_folder}>
+          disabled={this.state.folder_loading}>
           <span className="fa fa-folder-o" />
           <span className="text-label">Nieuwe map</span>
-          {this.props.adding_folder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
+          {this.state.folder_loading ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
         </button>
         <div className={'form-inline pull-right ' + (this.state.show_form ? '' : 'hide')}>
           <input
@@ -99,6 +101,7 @@ export default class Toolbar extends React.Component {
     this.setState({
       show_form: true
     }, () => {
+      //this.refs.folder_name.value = '';
       this.refs.folder_name.focus();
     });
   }
@@ -111,7 +114,9 @@ export default class Toolbar extends React.Component {
   }
 
   onAddFolder() {
-    Actions.addFolder(this.refs.folder_name.value, this.props.current_folder.id)
+    //Actions.addFolder(this.refs.folder_name.value, this.props.current_folder.id)
+    this.setState({folder_loading: true});
+
 /*
     this.setState({folder_loading: true});
 
