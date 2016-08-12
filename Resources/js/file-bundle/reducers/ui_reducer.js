@@ -13,7 +13,10 @@ export function ui(state = uiInitialState, action){
   switch (action.type) {
 
     case ActionTypes.SELECT_ITEMS:
-      return {...state, selected_items: action.payload.items}
+      return {
+        ...state,
+        selected_items: action.payload.items // TODO: Reducer logic for combining previously selected_items with new ones
+      }
 
     default:
       return state
