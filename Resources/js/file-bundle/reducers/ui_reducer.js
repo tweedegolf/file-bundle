@@ -6,7 +6,7 @@ export const uiInitialState = {
   ascending: false,
   preview: null,
   hover: -1,
-  selected: ,
+  selected: [],
 }
 
 export function ui(state = uiInitialState, action){
