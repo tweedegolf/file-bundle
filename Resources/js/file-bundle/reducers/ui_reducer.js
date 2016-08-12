@@ -6,17 +6,17 @@ export const uiInitialState = {
   ascending: false,
   preview: null,
   hover: -1,
-  selected_items: ,
+  selected: ,
 }
 
 export function ui(state = uiInitialState, action){
 
   switch (action.type) {
 
-    case ActionTypes.SELECT_ITEMS:
+    case ActionTypes.UPDATE_SELECTED:
       return {
         ...state,
-        selected_items: [...state.selected_items, ...action.payload.items],
+        selected: [...state.selected_items, ...action.payload.items],
       }
 
     default:

@@ -6,9 +6,9 @@ const dispatch = store.dispatch;
 
 export default {
 
-  selectItems(files) {
+  updateSelected(files) {
     dispatch({
-      type: ActionTypes.SELECT_ITEMS,
+      type: ActionTypes.UPDATE_SELECTED,
       payload: items
     });
   }
