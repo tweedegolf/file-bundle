@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\File as HttpFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**agram g
+/**
  * File.
  *
  * @ORM\Table(name="tg_file")
