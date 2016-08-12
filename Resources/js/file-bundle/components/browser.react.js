@@ -20,7 +20,7 @@ export default class Browser extends React.Component {
             folders: [],
             hover: -1,
             preview: null,
-            selected: this.getSelected(),
+            selected: this.getSelected(), // TODO: Update to use Redux state
             clipboard: [],
             confirm_delete: null,
             sort: 'name',
@@ -271,6 +271,7 @@ export default class Browser extends React.Component {
         });
     }
 
+    // TODO: Fire new corresponding action for updating UI state
     onSelect(id) {
         if (this.state.clipboard.length > 0) {
             return;
