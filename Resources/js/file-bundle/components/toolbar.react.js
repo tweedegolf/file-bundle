@@ -1,5 +1,4 @@
 import React from 'react';
-//import api from '../api';
 import Actions from '../actions/tree_actions';
 
 export default class Toolbar extends React.Component {
@@ -7,13 +6,12 @@ export default class Toolbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show_form: this.props.adding_folder,
-      folder_loading: false
-    };
+      show_form: false
+    }
   }
 
   render() {
-    console.log(this.props.adding_folder, this.state.folder_loading)
+
     let loader = this.props.uploading ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
     let new_folder_class = 'btn btn-sm btn-default pull-right ' + (this.state.show_form ? 'hide' : '');
     let actions = null;
@@ -56,10 +54,10 @@ export default class Toolbar extends React.Component {
           type="button"
           className={new_folder_class}
           onClick={this.onShowForm.bind(this)}
-          disabled={this.state.folder_loading}>
+          disabled={this.props.adding_folder}>
           <span className="fa fa-folder-o" />
           <span className="text-label">Nieuwe map</span>
-          {this.state.folder_loading ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
+          {this.props.adding_folder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
         </button>
         <div className={'form-inline pull-right ' + (this.state.show_form ? '' : 'hide')}>
           <input
@@ -101,33 +99,13 @@ export default class Toolbar extends React.Component {
     this.setState({
       show_form: true
     }, () => {
-      //this.refs.folder_name.value = '';
+      this.refs.folder_name.value = '';
       this.refs.folder_name.focus();
     });
   }
 
-  reset() {
-    this.setState({
-      show_form: false,
-    });
-    this.refs.folder_name.value = '';
-  }
-
   onAddFolder() {
-    //Actions.addFolder(this.refs.folder_name.value, this.props.current_folder.id)
-    this.setState({folder_loading: true});
-
-/*
-    this.setState({folder_loading: true});
-
-    api.addFolder(this.refs.folder_name.value, this.props.current_folder.id, (errors) => {
-      // success
-      this.reset();
-      this.props.onAddFolder(errors);
-    }, () => {
-      // error
-      this.reset();
-    });
-*/
+    this.setState({show_form: false})
+    Actions.addFolder(this.refs.folder_name.value, this.props.current_folder.id)
   }
 }

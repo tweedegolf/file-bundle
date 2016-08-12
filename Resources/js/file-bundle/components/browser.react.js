@@ -18,16 +18,21 @@ const mapStateToProps = (state) => {
   let folders = _.sortBy(state.tree.folders, sort)
 
   return {
+
+    // tree props
     folders,
     files,
-    sort,
     loading_folder: state.tree.loading_folder,
     adding_folder: state.tree.adding_folder,
     current_folder: state.tree.current_folder,
     parent_folder: state.tree.parent_folder,
-    uploading: state.tree.uploading,
+    uploading_files: state.tree.uploading_files,
     selected: state.tree.selected,
     clipboard: state.tree.clipboard,
+    errors: state.tree.errors, // to ui_reducer?
+
+    // ui props
+    sort,
     ascending: state.ui.ascending,
     preview: state.ui.preview,
     hover: state.ui.hover,
@@ -47,9 +52,8 @@ export default class Browser extends React.Component {
     super(props);
 
     this.state = {
-      confirm_delete: null,
-      expanded: this.props.browser, // should be moved to ui_reducer
-      errors: [],
+      confirm_delete: null, // local state
+      expanded: this.props.browser, // local state
     };
   }
 
@@ -100,7 +104,7 @@ export default class Browser extends React.Component {
       onCancel={this.onCancel.bind(this)}
       onUpload={this.onUpload.bind(this)}
       onAddFolder={this.onAddFolder.bind(this)}
-      uploading={this.state.uploading}
+      uploading={this.props.uploading_files !== null}
     />;
 
     let selected = null;
@@ -128,7 +132,7 @@ export default class Browser extends React.Component {
         <div className={browser_class}>
           <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
             {toolbar}
-            <Errors errors={this.state.errors} onDismiss={this.onDismiss.bind(this)} />
+            <Errors errors={this.props.errors} onDismiss={this.onDismiss.bind(this)} />
             <table className="table table-condensed">
               <thead>
               <tr>
@@ -207,8 +211,8 @@ export default class Browser extends React.Component {
   }
 
   onDismiss(index) {
-    this.state.errors.splice(index, 1);
-    this.setState({errors: this.state.errors});
+    this.props.errors.splice(index, 1);
+    this.setState({errors: this.props.errors});
   }
 
   onConfirmDelete(id) {
@@ -277,18 +281,18 @@ export default class Browser extends React.Component {
   }
 
   onOpenFolder(id) {
-    if (this.props.uploading || this.props.loading_folder) {
+    if (this.props.uploading_files !== null || this.props.loading_folder === true) {
       return;
     }
     Actions.openFolder(id)
   }
 
-  onAddFolder(errors) {
+  onAddFolder() {
     Actions.addFolder()
   }
 
   doUpload(file_list) {
-    if (this.props.uploading || this.props.loading_folder) {
+    if (this.props.uploading_files !== null || this.props.loading_folder === true) {
       return;
     }
 

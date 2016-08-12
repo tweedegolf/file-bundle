@@ -92,7 +92,8 @@ export default {
 
   upload(file_list, current_folder){
     dispatch({
-      type: ActionTypes.UPLOAD_START
+      type: ActionTypes.UPLOAD_START,
+      payload: {file_list}
     })
 
     api.upload(file_list, current_folder.id,
@@ -105,9 +106,10 @@ export default {
           }
         })
       },
-      () => {
+      error => {
         dispatch({
-          type: ActionTypes.UPLOAD_ERROR
+          type: ActionTypes.UPLOAD_ERROR,
+          payload: {error}
         })
       }
     )
@@ -119,22 +121,26 @@ export default {
       type: ActionTypes.ADD_FOLDER,
     })
 
-    api.addFolder(new_folder_name, current_folder_id,
-      (folders, errors) => {
-        dispatch({
-          type: ActionTypes.FOLDER_ADDED,
-          payload: {
-            folders,
-            errors,
-          }
-        })
-      },
-      () => {
-        dispatch({
-          type: ActionTypes.ERROR_ADD_FOLDER,
-        })
-      }
-    )
+    // add a bit of delay to see the spinner (remove delay in production version!)
+    setTimeout(() => {
+      api.addFolder(new_folder_name, current_folder_id,
+        (folders, errors) => {
+          dispatch({
+            type: ActionTypes.FOLDER_ADDED,
+            payload: {
+              folders,
+              errors,
+            }
+          })
+        },
+        () => {
+          dispatch({
+            type: ActionTypes.ERROR_ADD_FOLDER,
+          })
+        }
+      )
+    }, 1000)
+
   },
 
 
@@ -177,8 +183,13 @@ export default {
 }
 
 
-/*
 
+
+
+
+
+
+/*
 
   findFile(id) {
     dispatch({
@@ -252,3 +263,4 @@ export default {
   },
 
 */
+

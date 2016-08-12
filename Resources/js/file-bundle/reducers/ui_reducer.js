@@ -11,6 +11,11 @@ export const uiInitialState = {
 export function ui(state = uiInitialState, action){
 
   switch (action.type) {
+
+    case ActionTypes.ADD_FOLDER:
+      return state
+
+
     default:
       return state
 

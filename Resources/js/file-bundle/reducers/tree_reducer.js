@@ -15,10 +15,10 @@ export const treeInitialState = {
   clipboard: [],
   numSelected: 0,
   error: '',
-  uploading: false,
   deleting_file: null,
   deleting_folder: null,
   loading_folder: null,
+  uploading_files: null,
   current_folder: {
     id: null,
     name: '..'
@@ -75,6 +75,7 @@ export function tree(state = treeInitialState, action){
       folders = action.payload.folders
 
       // No tree or cache yet!
+      //
       // if(typeof folder_id !== 'undefined' && typeof tree[folder_id] !== 'undefined'){
       //   folders = [...folders, ...action.payload.folders]
       // }
@@ -174,13 +175,23 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.UPLOAD_START:
       return {
         ...state,
-        uploading: true
+        uploading_files: [...action.payload.file_list],
       }
 
     case ActionTypes.UPLOAD_ERROR:
+      let errors = []
+      state.uploading_files.forEach(f => {
+        errors.push({
+          file: f.name,
+          type: 'upload',
+          messages: [action.payload.error]
+        })
+      })
+
       return {
         ...state,
-        uploading: false
+        errors,
+        uploading_files: null,
       }
 
     case ActionTypes.UPLOAD_DONE:
@@ -192,7 +203,7 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         files,
-        uploading: false
+        uploading_files: null,
       }
 
 
@@ -282,6 +293,9 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.FILES_PASTED:
+      state.clipboard.forEach(f => {
+        f.new = true
+      })
       files = [...state.files, ...state.clipboard]
 
       return {
