@@ -17,3 +17,4 @@ export const LOAD_FOLDER = 'load folder';
 export const FOLDER_LOADED = 'folder loaded';
 export const FOLDER_ERROR = 'folder error';
 
+export const SELECT_ITEMS = 'selectItems';
