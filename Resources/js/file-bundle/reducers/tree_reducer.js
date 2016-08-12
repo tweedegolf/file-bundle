@@ -8,7 +8,7 @@ export const treeInitialState = {
     }
   },
   all_files: {},
-  tree: {},
+//  tree: {},
   files: [],
   folders: [],
   selected: [],
@@ -17,6 +17,7 @@ export const treeInitialState = {
   error: '',
   uploading: false,
   deleting_file: null,
+  deleting_folder: null,
   loading_folder: null,
   current_folder: {
     id: null,
@@ -32,6 +33,7 @@ export function tree(state = treeInitialState, action){
   let index
   let file
   let files
+  let folder
   let folders
   let selected
 
@@ -72,6 +74,7 @@ export function tree(state = treeInitialState, action){
       files = action.payload.files
       folders = action.payload.folders
 
+      // No tree or cache yet!
       // if(typeof folder_id !== 'undefined' && typeof tree[folder_id] !== 'undefined'){
       //   folders = [...folders, ...action.payload.folders]
       // }
@@ -121,10 +124,47 @@ export function tree(state = treeInitialState, action){
           return f.id !== state.deleting_file
         })
       }
+      delete state.all_files[state.deleting_file]
       return {
         ...state,
         files,
         deleting_file: null,
+        confirm_delete: null, // should be moved to ui_reducer
+      }
+
+
+    // DELETE FOLDER
+
+    case ActionTypes.DELETE_FOLDER:
+      return {
+        ...state,
+        deleting_folder: action.payload.id,
+      }
+
+    case ActionTypes.DELETE_FOLDER_ERROR:
+      folder = state.all_folders[state.deleting_folder]
+      return {
+        ...state,
+        confirm_delete: null, // should be moved to ui_reducer
+        deleting_folder: null,
+        errors: {
+          folder: folder.name,
+          type: 'delete_folder',
+        }
+      }
+
+    case ActionTypes.FOLDER_DELETED:
+      folders = [...state.folders]
+      if(state.deleting_folder !== null){
+        folders = state.folders.filter(f => {
+          return f.id !== state.deleting_folder
+        })
+      }
+      delete state.all_folders[state.deleting_folder]
+      return {
+        ...state,
+        folders,
+        deleting_folder: null,
         confirm_delete: null, // should be moved to ui_reducer
       }
 
@@ -223,6 +263,34 @@ export function tree(state = treeInitialState, action){
         folders: [...state.folders, ...action.payload.folders],
         errors: action.payload.errors,
       }
+
+
+    // CUT AND PASTE
+
+    case ActionTypes.CUT_FILES:
+      return {
+        ...state,
+        clipboard: [...state.selected],
+        selected: []
+      }
+
+    case ActionTypes.CANCEL_CUT_AND_PASTE_FILES:
+      return {
+        ...state,
+        clipboard: [],
+        selected: []
+      }
+
+    case ActionTypes.FILES_PASTED:
+      files = [...state.files, ...state.clipboard]
+
+      return {
+        ...state,
+        files,
+        clipboard: [],
+        selected: []
+      }
+
 
     default:
       return state

@@ -1,8 +1,6 @@
 import React from 'react';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import _ from 'lodash';
-import api from '../api';
-import cache from '../cache';
 
 import List from './list.react.js';
 import SortHeader from './sort_header.react.js';
@@ -29,7 +27,7 @@ const mapStateToProps = (state) => {
     parent_folder: state.tree.parent_folder,
     uploading: state.tree.uploading,
     selected: state.tree.selected,
-    //clipboard: state.tree.clipboard,
+    clipboard: state.tree.clipboard,
     ascending: state.ui.ascending,
     preview: state.ui.preview,
     hover: state.ui.hover,
@@ -52,7 +50,6 @@ export default class Browser extends React.Component {
       confirm_delete: null,
       expanded: this.props.browser, // should be moved to ui_reducer
       errors: [],
-      clipboard: [],
     };
   }
 
@@ -94,7 +91,7 @@ export default class Browser extends React.Component {
 
     let toolbar = <Toolbar
       selected={this.props.selected}
-      clipboard={this.state.clipboard}
+      clipboard={this.props.clipboard}
       current_folder={this.props.current_folder}
       adding_folder={this.props.adding_folder}
       browser={this.props.browser}
@@ -150,7 +147,7 @@ export default class Browser extends React.Component {
                 onPreview={this.onPreview.bind(this)}
                 hover={this.state.hover}
                 selected={this.props.selected}
-                clipboard={this.state.clipboard}
+                clipboard={this.props.clipboard}
                 browser={this.props.browser}
                 confirm_delete={this.state.confirm_delete}
                 loading_folder={this.state.loading_folder}
@@ -223,57 +220,23 @@ export default class Browser extends React.Component {
   }
 
   onDeleteFolder(id) {
-    api.deleteFolder(id, () => {
-      // success
-      this.setState({
-        folders: _.sortBy(cache.getFolders(this.props.current_folder.id), this.state.sort)
-      });
-    }, () => {
-      // error
-      let folder = cache.findFolder(id);
-      this.setState({
-        confirm_delete: null,
-        errors: [{
-          folder: folder.name,
-          type: 'delete_folder'
-        }]
-      });
-    });
+    Actions.deleteFolder(id)
   }
 
   onCut() {
-    this.setState({
-      selected: [],
-      clipboard: this.props.selected
-    });
+    Actions.cutFiles(this.props.selected)
   }
 
   onCancel() {
-    this.setState({
-      selected: [],
-      clipboard: []
-    });
+    Actions.cancelCutAndPasteFiles()
   }
 
   onPaste() {
-    api.paste(this.state.clipboard, this.props.current_folder.id, () => {
-      // success
-      this.setState({
-        files: _.sortBy(cache.getFiles(this.props.current_folder.id), this.state.sort),
-        selected: [],
-        clipboard: []
-      });
-    }, () => {
-      // error
-      this.setState({
-        selected: [],
-        clipboard: []
-      });
-    });
+    Actions.pasteFiles(this.props.clipboard, this.props.current_folder.id)
   }
 
   onSelect(id) {
-    if (this.state.clipboard.length > 0) {
+    if (this.props.clipboard.length > 0) {
       return;
     }
 
@@ -322,12 +285,6 @@ export default class Browser extends React.Component {
 
   onAddFolder(errors) {
     Actions.addFolder()
-    // this.setState({
-    //   folders: _.sortBy(cache.getFolders(this.props.current_folder.id), this.state.sort),
-    //   sort: 'create_ts',
-    //   ascending: false,
-    //   errors: errors
-    // });
   }
 
   doUpload(file_list) {

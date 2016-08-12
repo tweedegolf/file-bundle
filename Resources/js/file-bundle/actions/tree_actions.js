@@ -31,15 +31,40 @@ export default {
       payload: {id}
     })
 
-    api.deleteFile(id, () => {
-      dispatch({
-        type: ActionTypes.FILE_DELETED
-      })
-    }, () => {
-      dispatch({
-        type: ActionTypes.DELETE_FILE_ERROR
-      })
+    api.deleteFile(id,
+      () => {
+        dispatch({
+          type: ActionTypes.FILE_DELETED
+        })
+      },
+      () => {
+        dispatch({
+          type: ActionTypes.DELETE_FILE_ERROR
+        })
+      }
+    )
+  },
+
+
+  deleteFolder(id){
+
+    dispatch({
+      type: ActionTypes.DELETE_FOLDER,
+      payload: {id}
     })
+
+    api.deleteFolder(id,
+      () => {
+        dispatch({
+          type: ActionTypes.FOLDER_DELETED
+        })
+      },
+      () => {
+        dispatch({
+          type: ActionTypes.DELETE_FOLDER_ERROR
+        })
+      }
+    )
   },
 
 
@@ -111,6 +136,43 @@ export default {
       }
     )
   },
+
+
+  cutFiles(files){
+    dispatch({
+      type: ActionTypes.CUT_FILES,
+      payload: {
+        files
+      }
+    })
+  },
+
+
+  pasteFiles(files, current_folder_id){
+    let file_ids = files.map(file => {
+      return file.id
+    })
+    api.paste(file_ids, current_folder_id,
+      () => {
+        dispatch({
+          type: ActionTypes.FILES_PASTED
+        })
+      },
+      error => {
+        dispatch({
+          type: ActionTypes.ERROR_PASTE_FILES,
+          error: error
+        })
+      }
+    )
+  },
+
+
+  cancelCutAndPasteFiles(){
+    dispatch({
+      type: ActionTypes.CANCEL_CUT_AND_PASTE_FILES,
+    })
+  }
 
 }
 

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import request from 'superagent';
-import cache from './cache';
+//import cache from './cache';
 
 class Api {
 
@@ -10,7 +10,7 @@ class Api {
       if (err || res.body.error) {
         onError(res.body.error);
       } else {
-        cache.removeFiles([file_id]);
+        //cache.removeFiles([file_id]);
         onSuccess();
       }
     });
@@ -28,8 +28,8 @@ class Api {
           file.new = true;
           return file;
         });
-        cache.removeFiles(file_ids);
-        cache.storeFiles(files, folder_id);
+        //cache.removeFiles(file_ids);
+        //cache.storeFiles(files, folder_id);
         onSuccess();
       }
     });
@@ -67,7 +67,7 @@ class Api {
       if (err) {
         onError();
       } else {
-        cache.removeFolders([folder_id]);
+        //cache.removeFolders([folder_id]);
         onSuccess();
       }
     });
