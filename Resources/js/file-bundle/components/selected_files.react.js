@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import cache from '../cache';
 
 export default class SelectedFiles extends React.Component {
