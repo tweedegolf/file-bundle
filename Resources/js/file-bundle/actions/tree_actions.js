@@ -121,26 +121,22 @@ export default {
       type: ActionTypes.ADD_FOLDER,
     })
 
-    // add a bit of delay to see the spinner (remove delay in production version!)
-    setTimeout(() => {
-      api.addFolder(new_folder_name, current_folder_id,
-        (folders, errors) => {
-          dispatch({
-            type: ActionTypes.FOLDER_ADDED,
-            payload: {
-              folders,
-              errors,
-            }
-          })
-        },
-        () => {
-          dispatch({
-            type: ActionTypes.ERROR_ADD_FOLDER,
-          })
-        }
-      )
-    }, 1000)
-
+    api.addFolder(new_folder_name, current_folder_id,
+      (folders, errors) => {
+        dispatch({
+          type: ActionTypes.FOLDER_ADDED,
+          payload: {
+            folders,
+            errors,
+          }
+        })
+      },
+      () => {
+        dispatch({
+          type: ActionTypes.ERROR_ADD_FOLDER,
+        })
+      }
+    )
   },
 
 
