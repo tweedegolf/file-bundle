@@ -281,7 +281,7 @@ export default class Browser extends React.Component {
   }
 
   onOpenFolder(id) {
-    if (this.props.uploading_files !== null || this.props.loading_folder === true) {
+    if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
       return;
     }
     Actions.openFolder(id)
@@ -292,7 +292,7 @@ export default class Browser extends React.Component {
   }
 
   doUpload(file_list) {
-    if (this.props.uploading_files !== null || this.props.loading_folder === true) {
+    if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
       return;
     }
 
