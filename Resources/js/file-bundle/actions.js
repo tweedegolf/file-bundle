@@ -15,7 +15,7 @@ export default {
     })
   },
 
-
+  // store currently selected folder in local storage or similar (only for filepicker mode)
   cacheSelectedFiles(files){
     dispatch({
       type: ActionTypes.CACHE_SELECTED_FILES,
@@ -25,7 +25,6 @@ export default {
 
 
   deleteFile(id){
-
     dispatch({
       type: ActionTypes.DELETE_FILE,
       payload: {id}
@@ -47,7 +46,6 @@ export default {
 
 
   deleteFolder(id){
-
     dispatch({
       type: ActionTypes.DELETE_FOLDER,
       payload: {id}
@@ -131,7 +129,9 @@ export default {
           }
         })
       },
-      () => {
+      error => {
+        console.log(error)
+
         dispatch({
           type: ActionTypes.ERROR_ADD_FOLDER,
         })

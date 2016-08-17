@@ -1,5 +1,4 @@
 import React from 'react';
-import Actions from '../actions/tree_actions';
 
 export default class Toolbar extends React.Component {
 
@@ -106,6 +105,6 @@ export default class Toolbar extends React.Component {
 
   onAddFolder() {
     this.setState({show_form: false})
-    Actions.addFolder(this.refs.folder_name.value, this.props.current_folder.id)
+    this.props.onAddFolder(this.refs.folder_name.value, this.props.current_folder.id)
   }
 }

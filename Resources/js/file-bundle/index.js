@@ -20,10 +20,11 @@ var options = {
 //<Browser browser={false} options={options}/> --> file not found error (need to implement local cache)
 //<Browser browser={true}/>
 
+
 if (null !== browser) {
      ReactDOM.render(
         <Provider store={getStore()}>
-            <Browser browser={true}/>
+            <Browser browser={true} />
         </Provider>,
         browser
     );

@@ -8,7 +8,7 @@ import Toolbar from './toolbar.react.js';
 import SelectedFiles from './selected_files.react.js';
 import Errors from './errors.react.js';
 
-import Actions from '../actions/tree_actions';
+import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
@@ -287,15 +287,14 @@ export default class Browser extends React.Component {
     Actions.openFolder(id)
   }
 
-  onAddFolder() {
-    Actions.addFolder()
+  onAddFolder(new_folder_name, parent_folder_id) {
+    Actions.addFolder(new_folder_name, parent_folder_id)
   }
 
   doUpload(file_list) {
     if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
       return;
     }
-
     Actions.upload(file_list, this.props.current_folder)
   }
 }
