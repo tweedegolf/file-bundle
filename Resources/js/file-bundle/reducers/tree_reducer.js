@@ -79,28 +79,20 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.DELETE_FILE_ERROR:
-      file = state.all_files[state.deleting_file]
       return {
         ...state,
         confirm_delete: null, // should be moved to ui_reducer
         deleting_file: null,
         errors: {
-          file,
+          file: action.payload.file,
           type: 'delete',
         }
       }
 
     case ActionTypes.FILE_DELETED:
-      files = [...state.files]
-      if(state.deleting_file !== null){
-        files = state.files.filter(f => {
-          return f.id !== state.deleting_file
-        })
-      }
-      delete state.all_files[state.deleting_file]
       return {
         ...state,
-        files,
+        files: action.payload.files,
         deleting_file: null,
         confirm_delete: null, // should be moved to ui_reducer
       }
@@ -115,28 +107,21 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.DELETE_FOLDER_ERROR:
-      folder = state.all_folders[state.deleting_folder]
       return {
         ...state,
         confirm_delete: null, // should be moved to ui_reducer
         deleting_folder: null,
         errors: {
-          folder: folder.name,
+          folder: action.payload.folder.name,
           type: 'delete_folder',
         }
       }
 
     case ActionTypes.FOLDER_DELETED:
-      folders = [...state.folders]
-      if(state.deleting_folder !== null){
-        folders = state.folders.filter(f => {
-          return f.id !== state.deleting_folder
-        })
-      }
-      delete state.all_folders[state.deleting_folder]
       return {
         ...state,
-        folders,
+        current_folder: action.payload.current_folder,
+        folders: action.payload.folders,
         deleting_folder: null,
         confirm_delete: null, // should be moved to ui_reducer
       }
@@ -242,6 +227,7 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.FOLDER_ADDED:
       return {
         ...state,
+        current_folder: action.payload.current_folder,
         adding_folder: false,
         folders: [...state.folders, ...action.payload.folders],
         errors: action.payload.errors,

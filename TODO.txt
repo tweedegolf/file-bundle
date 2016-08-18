@@ -31,3 +31,8 @@ Nice:
 ? Directory namer based on date or PK
 X Directory cache
 X Document icons (word pdf etc)
+
+
+
+Issues:
+x delete folder -> folder not found -> should return a json error object instead of a Symfony error page

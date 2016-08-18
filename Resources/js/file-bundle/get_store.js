@@ -21,7 +21,7 @@ export default function getStore() {
       },
       applyMiddleware(
         //thunkMiddleware,
-        createLogger(),
+        //createLogger(),
       )
     )
   }

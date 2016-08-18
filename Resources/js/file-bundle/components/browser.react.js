@@ -220,11 +220,11 @@ export default class Browser extends React.Component {
   }
 
   onDelete(id) {
-    Actions.deleteFile(id)
+    Actions.deleteFile(id, this.props.current_folder)
   }
 
   onDeleteFolder(id) {
-    Actions.deleteFolder(id)
+    Actions.deleteFolder(id, this.props.current_folder)
   }
 
   onCut() {
@@ -287,8 +287,8 @@ export default class Browser extends React.Component {
     Actions.openFolder(id)
   }
 
-  onAddFolder(new_folder_name, parent_folder_id) {
-    Actions.addFolder(new_folder_name, parent_folder_id)
+  onAddFolder(new_folder_name, parent_folder) {
+    Actions.addFolder(new_folder_name, parent_folder)
   }
 
   doUpload(file_list) {
