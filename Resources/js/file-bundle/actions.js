@@ -1,7 +1,8 @@
-import * as ActionTypes from '../constants'
+import * as ActionTypes from './constants'
 import _ from 'lodash';
-import getStore from '../get_store'
-import api from '../api'
+import getStore from './get_store'
+import api from './api'
+import tree from './tree'
 
 const store = getStore()
 const dispatch = store.dispatch
@@ -72,19 +73,21 @@ export default {
       payload: {id}
     })
 
-    api.openFolder(id, (folders, files) => {
-      dispatch({
-        type: ActionTypes.FOLDER_LOADED,
-        payload: {
-          folders,
-          files,
-        }
-      })
-    }, () => {
-      dispatch({
-        type: ActionTypes.LOAD_FOLDER_ERROR,
-      })
-    })
+    tree.loadFolder(id)
+    .then(
+      payload => {
+        dispatch({
+          type: ActionTypes.FOLDER_LOADED,
+          payload,
+        })
+      },
+      payload => {
+        dispatch({
+          type: ActionTypes.LOAD_FOLDER_ERROR,
+          payload
+        })
+      }
+    )
   },
 
 

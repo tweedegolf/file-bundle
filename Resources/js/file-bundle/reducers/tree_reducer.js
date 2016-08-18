@@ -3,11 +3,11 @@ import * as ActionTypes from '../constants'
 export const treeInitialState = {
   all_folders: {
     null: {
-      // id: null,
-      // name: '..',
-      // changed: false,
-      // file_ids: [],
-      // folder_ids: [],
+      id: null,
+      name: '..',
+      file_ids: {},
+      folder_ids: {},
+      loadContents: true,
     }
   },
   all_files: {},
@@ -30,7 +30,6 @@ export const treeInitialState = {
   adding_folder: false,
 }
 
-
 export function tree(state = treeInitialState, action){
 
   let index
@@ -42,6 +41,7 @@ export function tree(state = treeInitialState, action){
   let folder_id
   let current_folder
   let parent_folder
+  let payload
 
   switch (action.type) {
 
@@ -49,42 +49,9 @@ export function tree(state = treeInitialState, action){
     // LOAD FOLDER
 
     case ActionTypes.LOAD_FOLDER:
-
-      folder_id = action.payload.id
-      folder = state.all_folders[folder_id]
-
-      if(typeof folder !== 'undefined' && folder.changed === false){
-        console.log('fetch from local state')
-
-        current_folder = state.all_folders[folder_id]
-        parent_folder = null
-
-        if(typeof current_folder.parent !== 'undefined'){
-          parent_folder = state.all_folders[current_folder.parent]
-        }
-
-        files = current_folder.file_ids.map(id => {
-          return state.all_files[id]
-        })
-
-        folders = current_folder.folder_ids.map(id => {
-          return state.all_folders[id]
-        })
-
-        return {
-          ...state,
-          hover: -1,
-          loading_folder: null,
-          current_folder,
-          parent_folder,
-          files,
-          folders,
-        }
-      }
-
       return {
         ...state,
-        loading_folder: id
+        loading_folder: folder_id
       }
 
     case ActionTypes.LOAD_FOLDER_ERROR:
@@ -94,49 +61,12 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.FOLDER_LOADED:
-      folder_id = state.loading_folder
-      console.log(folder_id)
-      current_folder = state.all_folders[folder_id]
-      parent_folder = null
-
-      if(typeof current_folder.parent !== 'undefined'){
-        parent_folder = state.all_folders[current_folder.parent]
-      }
-
-      action.payload.folders.forEach(f => {
-        state.all_folders[f.id] = f
-        current_folder.folder_ids[f.id] = f
-      })
-
-      action.payload.files.forEach(f => {
-        state.all_files[f.id] = f
-        current_folder.file_ids[f.id] = f
-      })
-
-      files = action.payload.files
-      folders = action.payload.folders
-
-      // No tree or cache yet!
-      //
-      // if(typeof folder_id !== 'undefined' && typeof tree[folder_id] !== 'undefined'){
-      //   folders = [...folders, ...action.payload.folders]
-      // }
-
-      // tree[folder_id] = {
-      //   ...current_folder,
-      //   files,
-      //   folders,
-      // }
-
-
+      payload = action.payload
       return {
         ...state,
+        ...payload,
         hover: -1,
         loading_folder: null,
-        current_folder,
-        parent_folder,
-        files,
-        folders,
       }
 
 
