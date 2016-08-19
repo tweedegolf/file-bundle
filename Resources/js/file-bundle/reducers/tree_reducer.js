@@ -20,28 +20,17 @@ export const treeInitialState = {
   cutting_from_folder: null,
 }
 
+
 export function tree(state = treeInitialState, action){
 
-  let index
-  let file
-  let files
-  let folder
-  let folders
-  let selected
-  let folder_id
-  let current_folder
-  let parent_folder
-  let payload
-
   switch (action.type) {
-
 
     // LOAD FOLDER
 
     case ActionTypes.LOAD_FOLDER:
       return {
         ...state,
-        loading_folder: folder_id
+        loading_folder: action.payload.id
       }
 
     case ActionTypes.LOAD_FOLDER_ERROR:
@@ -51,10 +40,13 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.FOLDER_LOADED:
-      payload = action.payload
       return {
         ...state,
-        ...payload,
+        //...action.payload, //nice but harder to understand which keys are added
+        current_folder: action.payload.current_folder,
+        parent_folder: action.payload.parent_folder,
+        files: action.payload.files,
+        folders: action.payload.folders,
         hover: -1,
         loading_folder: null,
       }
@@ -110,8 +102,8 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.FOLDER_DELETED:
       return {
         ...state,
-        current_folder: action.payload.current_folder,
         folders: action.payload.folders,
+        current_folder: action.payload.current_folder,
         deleting_folder: null,
         confirm_delete: null, // should be moved to ui_reducer
       }
@@ -149,8 +141,8 @@ export function tree(state = treeInitialState, action){
         multiple,
       } = action.payload
 
-      file = null
-      index = state.selected.findIndex(f => {
+      let file = null
+      let index = state.selected.findIndex(f => {
         return f.id === id
       })
 
@@ -160,7 +152,7 @@ export function tree(state = treeInitialState, action){
         })
       }
 
-      selected = [...state.selected]
+      let selected = [...state.selected]
       if(browser === false && multiple === false){
         if(index === -1){
           selected = [file]
