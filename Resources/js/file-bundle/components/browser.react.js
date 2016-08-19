@@ -29,6 +29,7 @@ const mapStateToProps = (state) => {
     uploading_files: state.tree.uploading_files,
     selected: state.tree.selected,
     clipboard: state.tree.clipboard,
+    cutting_from_folder: state.tree.cutting_from_folder,
     errors: state.tree.errors, // to ui_reducer?
 
     // ui props
@@ -100,6 +101,7 @@ export default class Browser extends React.Component {
       adding_folder={this.props.adding_folder}
       browser={this.props.browser}
       onCut={this.onCut.bind(this)}
+      cuttingFromFolder={this.props.cutting_from_folder}
       onPaste={this.onPaste.bind(this)}
       onCancel={this.onCancel.bind(this)}
       onUpload={this.onUpload.bind(this)}
@@ -228,7 +230,7 @@ export default class Browser extends React.Component {
   }
 
   onCut() {
-    Actions.cutFiles(this.props.selected)
+    Actions.cutFiles(this.props.current_folder.id)
   }
 
   onCancel() {
@@ -236,7 +238,7 @@ export default class Browser extends React.Component {
   }
 
   onPaste() {
-    Actions.pasteFiles(this.props.clipboard, this.props.current_folder.id)
+    Actions.pasteFiles(this.props.clipboard, this.props.cutting_from_folder, this.props.current_folder)
   }
 
   onSelect(id) {

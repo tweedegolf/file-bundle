@@ -1,7 +1,5 @@
 import * as ActionTypes from './constants'
-import _ from 'lodash';
 import getStore from './get_store'
-import api from './api'
 import tree from './tree'
 
 const store = getStore()
@@ -55,7 +53,7 @@ export default {
       payload: {file_id}
     })
 
-    tree.deleteFile(file_id, {...current_folder})
+    tree.deleteFile(file_id, current_folder)
     .then(
       payload => {
         dispatch({
@@ -79,7 +77,7 @@ export default {
       payload: {folder_id}
     })
 
-    tree.deleteFolder(folder_id, {...current_folder})
+    tree.deleteFolder(folder_id, current_folder)
     .then(
       payload => {
         dispatch({
@@ -97,30 +95,31 @@ export default {
   },
 
 
-  cutFiles(files){
+  cutFiles(current_folder_id){
     dispatch({
       type: ActionTypes.CUT_FILES,
       payload: {
-        files
+        id: current_folder_id
       }
     })
   },
 
 
-  pasteFiles(files, current_folder_id){
-    let file_ids = files.map(file => {
-      return file.id
-    })
-    api.paste(file_ids, current_folder_id,
-      () => {
+  pasteFiles(files, old_folder_id, new_folder){
+    // ui state action here?
+
+    tree.moveFiles(files, old_folder_id, new_folder)
+    .then(
+      payload => {
         dispatch({
-          type: ActionTypes.FILES_PASTED
+          type: ActionTypes.FILES_PASTED,
+          payload,
         })
       },
-      error => {
+      payload => {
         dispatch({
           type: ActionTypes.ERROR_PASTE_FILES,
-          error: error
+          payload
         })
       }
     )
@@ -140,20 +139,18 @@ export default {
       payload: {file_list}
     })
 
-    api.upload(file_list, current_folder.id,
-      (errors, files) => {
+    tree.addFiles(file_list, current_folder)
+    .then(
+      payload => {
         dispatch({
           type: ActionTypes.UPLOAD_DONE,
-          payload: {
-            files,
-            errors,
-          }
+          payload,
         })
       },
-      error => {
+      payload => {
         dispatch({
           type: ActionTypes.UPLOAD_ERROR,
-          payload: {error}
+          payload
         })
       }
     )
@@ -165,7 +162,7 @@ export default {
       type: ActionTypes.ADD_FOLDER,
     })
 
-    tree.addFolder(folder_name, {...current_folder})
+    tree.addFolder(folder_name, current_folder)
     .then(
       payload => {
         dispatch({

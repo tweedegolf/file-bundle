@@ -16,7 +16,6 @@ let tree = {
 }
 
 const loadFolder = function(folder_id){
-
   return new Promise((resolve, reject) => {
 
     let folder = all_folders[folder_id]
@@ -75,8 +74,66 @@ const loadFolder = function(folder_id){
 }
 
 
-const deleteFile = function(file_id, current_folder){
+const addFiles = function(file_list, current_folder){
+  return new Promise((resolve, reject) => {
+    api.upload(file_list, current_folder.id,
+      (errors, files) => {
 
+        files.forEach(f => {
+          all_files[f.id] = f
+        })
+
+        resolve({
+          files,
+          errors,
+        })
+      },
+      error => {
+        let errors = []
+        Array.from(file_list).forEach(f => {
+          errors.push({
+            file: f.name,
+            type: 'upload',
+            messages: [error]
+          })
+        })
+        reject({errors})
+      }
+    )
+  })
+}
+
+
+const moveFiles = function(files, old_folder_id, new_folder){
+  let old_folder = {...all_folders[old_folder_id]}
+  new_folder = {...new_folder}
+  return new Promise((resolve, reject) => {
+    let file_ids = files.map(file => {
+      return file.id
+    })
+    api.paste(file_ids, new_folder.id,
+      () => {
+        files.forEach(f => {
+          f.new = true
+          new_folder.files.push(f)
+          let index = old_folder.files.indexOf(f)
+          if(index !== -1){
+            old_folder.files.splice(index, 1)
+          }
+        })
+        new_folder.file_count = new_folder.files.length
+        old_folder.file_count = old_folder.files.length
+        resolve({files})
+      },
+      error => {
+        reject({error})
+      }
+    )
+  })
+}
+
+
+const deleteFile = function(file_id, current_folder){
   return new Promise((resolve, reject) => {
     api.deleteFile(file_id,
       () => {
@@ -104,7 +161,6 @@ const deleteFile = function(file_id, current_folder){
 
 
 const deleteFolder = function(folder_id, current_folder){
-  console.log(folder_id, current_folder)
   return new Promise((resolve, reject) => {
     api.deleteFolder(folder_id,
       () => {
@@ -132,7 +188,6 @@ const deleteFolder = function(folder_id, current_folder){
 
 
 const addFolder = function(folder_name, current_folder){
-
   return new Promise((resolve, reject) => {
     api.addFolder(folder_name, current_folder.id,
       (folders, errors) => {
@@ -162,4 +217,6 @@ export default {
   deleteFile,
   deleteFolder,
   addFolder,
+  addFiles,
+  moveFiles,
 }

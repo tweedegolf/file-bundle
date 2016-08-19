@@ -1,17 +1,6 @@
 import * as ActionTypes from '../constants'
 
 export const treeInitialState = {
-  all_folders: {
-    null: {
-      id: null,
-      name: '..',
-      file_ids: {},
-      folder_ids: {},
-      loadContents: true,
-    }
-  },
-  all_files: {},
-//  tree: {},
   files: [],
   folders: [],
   selected: [],
@@ -28,6 +17,7 @@ export const treeInitialState = {
   },
   parent_folder: null,
   adding_folder: false,
+  cutting_from_folder: null,
 }
 
 export function tree(state = treeInitialState, action){
@@ -136,30 +126,16 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.UPLOAD_ERROR:
-      let errors = []
-      state.uploading_files.forEach(f => {
-        errors.push({
-          file: f.name,
-          type: 'upload',
-          messages: [action.payload.error]
-        })
-      })
-
       return {
         ...state,
-        errors,
+        errors: action.payload.errors,
         uploading_files: null,
       }
 
     case ActionTypes.UPLOAD_DONE:
-      files = [...state.files]
-      action.payload.files.forEach(f => {
-        state.all_files[f.id] = f
-        files.push(f)
-      })
       return {
         ...state,
-        files,
+        files: [...state.files, ...action.payload.files],
         uploading_files: null,
       }
 
@@ -240,6 +216,7 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         clipboard: [...state.selected],
+        cutting_from_folder: action.payload.id,
         selected: []
       }
 
@@ -251,14 +228,9 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.FILES_PASTED:
-      state.clipboard.forEach(f => {
-        f.new = true
-      })
-      files = [...state.files, ...state.clipboard]
-
       return {
         ...state,
-        files,
+        files: [...state.files, ...action.payload.files],
         clipboard: [],
         selected: []
       }
