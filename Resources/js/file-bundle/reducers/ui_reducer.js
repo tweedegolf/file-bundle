@@ -6,18 +6,43 @@ export const uiInitialState = {
   ascending: false,
   preview: null,
   hover: -1,
-  selected: [],
+  selected: []
 }
 
 export function ui(state = uiInitialState, action){
 
   switch (action.type) {
 
-    case ActionTypes.UPDATE_SELECTED:
+    /* This is a WIP commented out so the app isn't broken
+
+    case ActionTypes.SELECT_FILE:
+
+      console.log("SELECT FILE ACTION")
+      console.log("state:", state)
+      console.log("payload:", action.payload)
+
+      // Get currently selected items from state
+      let index = state.selected.findIndex(f => {
+        console.log(f.id === id)
+        return f.id === id
+      })
+
+      // If already selected,
+
+        // Deselect (remove from "selected")
+
+      // If not yet selected,
+
+        // Select (add to "selected")
+
+      // Return new state
+
       return {
         ...state,
-        selected: [...state.selected_items, ...action.payload.items],
+        selected: selected,
       }
+
+    */
 
     default:
       return state

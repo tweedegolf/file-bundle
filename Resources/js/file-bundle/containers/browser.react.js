@@ -2,13 +2,13 @@ import React from 'react';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import _ from 'lodash';
 
-import List from './list.react.js';
-import SortHeader from './sort_header.react.js';
-import Toolbar from './toolbar.react.js';
-import SelectedFiles from './selected_files.react.js';
-import Errors from './errors.react.js';
+import List from '../components/list.react.js';
+import SortHeader from '../components/sort_header.react.js';
+import Toolbar from '../components/toolbar.react.js';
+import SelectedFiles from '../components/selected_files.react.js';
+import Errors from '../components/errors.react.js';
 
-import Actions from '../actions/tree_actions';
+import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
