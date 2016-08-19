@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Browser from './components/browser.react.js';
+import Browser from './containers/browser.react.js';
 import _ from 'lodash';
 import {Provider} from 'react-redux'
 import getStore from './get_store'
