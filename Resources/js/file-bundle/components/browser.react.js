@@ -8,7 +8,7 @@ import Toolbar from './toolbar.react.js';
 import SelectedFiles from './selected_files.react.js';
 import Errors from './errors.react.js';
 
-import Actions from '../actions/tree_actions';
+import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {

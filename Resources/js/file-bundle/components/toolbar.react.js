@@ -1,5 +1,5 @@
 import React from 'react';
-import Actions from '../actions/tree_actions';
+import Actions from '../actions';
 
 export default class Toolbar extends React.Component {
 
