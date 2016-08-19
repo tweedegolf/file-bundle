@@ -209,6 +209,8 @@ export function tree(state = treeInitialState, action){
 
     // SELECT FILES
 
+    /* NOTE: In the process of moving this to ui_reducer:
+
     case ActionTypes.SELECT_FILE:
       let {
         id,
@@ -244,7 +246,7 @@ export function tree(state = treeInitialState, action){
         ...state,
         selected
       }
-
+    */
 
     case ActionTypes.CACHE_SELECTED_FILES:
       return {
