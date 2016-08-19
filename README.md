@@ -17,6 +17,6 @@ The Bootstrap javascript components are not required.
 ## Architecture (WIP)
 
 ![Architecture overview]
-(https://lh4.googleusercontent.com/QMLvla2r7xG4LrwSgcmzw1RyS1pDGZZwixX0w33riBcGEUw-HgCz0J9Fpsy9IUKwyLNQ8UevMp-qU8c=w1855-h1103-rw)
+(https://lh4.googleusercontent.com/8kjAvCXpV8aymX_SNXV9rvgTEaFf_d1qzmP4GNHBJGkdaGEM8eAKM8JfjkQO3OpGAutWo9MYl1bQcbY=w1855-h1059-rw)
 
 [Edit in Google Drive](https://docs.google.com/drawings/d/191uT_e2LmWlZeQWWRQsmIzznixTXfE55AfuddNL6jks/edit)
