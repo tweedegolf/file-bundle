@@ -103,7 +103,10 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         folders: action.payload.folders,
-        current_folder: action.payload.current_folder,
+        current_folder: {
+          ...state.current_folder,
+          folder_count: action.payload.folder_count,
+        },
         deleting_folder: null,
         confirm_delete: null, // should be moved to ui_reducer
       }
@@ -127,6 +130,10 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.UPLOAD_DONE:
       return {
         ...state,
+        current_folder: {
+          ...state.current_folder,
+          file_count: action.payload.file_count
+        },
         files: [...state.files, ...action.payload.files],
         uploading_files: null,
       }
@@ -195,7 +202,10 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.FOLDER_ADDED:
       return {
         ...state,
-        current_folder: action.payload.current_folder,
+        current_folder: {
+          ...state.current_folder,
+          folder_count: action.payload.folder_count,
+        },
         adding_folder: false,
         folders: [...state.folders, ...action.payload.folders],
         errors: action.payload.errors,

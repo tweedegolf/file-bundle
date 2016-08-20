@@ -1,35 +1,53 @@
 import api from './api'
 
 
+let all_files = {}
 let all_folders = {
   null: {
     id: null,
     name: '..',
   }
 }
-let all_files = {}
-let tree = {
+let tree = {}
 
-}
+
+const folderProps = [
+  'create_ts',
+  'created',
+  'file_count',
+  'folder_count',
+  'id',
+  'name',
+  'parent',
+  'size',
+  'size_bytes',
+  'thumb',
+  'type',
+]
+
 
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
 
-    let folder = all_folders[folder_id]
+    let tree_folder = tree[folder_id]
+    let current_folder = {...all_folders[folder_id]}
+    let parent_folder = null
+    if(folder_id !== null){
+      parent_folder = {...all_folders[all_folders[folder_id].parent]}
+    }
 
-    if(typeof folder !== 'undefined' && folder.loadContents === false){
+    if(typeof tree_folder !== 'undefined' && tree_folder.needsUpdate === false){
 
-      //console.log('fetch from local state')
-      let current_folder = all_folders[folder_id]
-      let files = current_folder.file_ids.map(id => {
+      let files = tree_folder.file_ids.map(id => {
         return all_files[id]
       })
-      let folders = current_folder.folder_ids.map(id => {
+      let folders = tree_folder.folder_ids.map(id => {
         return all_folders[id]
       })
+
       resolve({
         current_folder,
-        parent_folder: current_folder.parent_folder,
+        parent_folder,
         files,
         folders,
       })
@@ -40,26 +58,22 @@ const loadFolder = function(folder_id){
         folder_id,
         (folders, files) => {
 
-          let current_folder = all_folders[folder_id]
-          current_folder.loadContents = false
-          current_folder.folder_ids = []
-          current_folder.file_ids = []
-
-          let parent_folder = null
-          if(typeof current_folder.parent !== 'undefined'){
-            parent_folder = all_folders[current_folder.parent]
-          }
-          current_folder.parent_folder = parent_folder
+          tree_folder = {}
+          tree_folder.needsUpdate = false
+          tree_folder.folder_ids = []
+          tree_folder.file_ids = []
 
           folders.forEach(f => {
             all_folders[f.id] = f
-            current_folder.folder_ids.push(f.id)
+            tree_folder.folder_ids.push(f.id)
           })
 
           files.forEach(f => {
             all_files[f.id] = f
-            current_folder.file_ids.push(f.id)
+            tree_folder.file_ids.push(f.id)
           })
+
+          tree[folder_id] = tree_folder
 
           resolve({
             current_folder,
@@ -77,17 +91,24 @@ const loadFolder = function(folder_id){
 }
 
 
-const addFiles = function(file_list, current_folder){
+const addFiles = function(file_list, current_folder_id){
+
+  let tree_folder = tree[current_folder_id]
+
   return new Promise((resolve, reject) => {
-    api.upload(file_list, current_folder.id,
+    api.upload(file_list, current_folder_id,
       (errors, files) => {
 
         files.forEach(f => {
           all_files[f.id] = f
-          current_folder.file_ids.push(f.id)
+          tree_folder.file_ids.push(f.id)
         })
 
+        let file_count = tree_folder.file_ids.length
+        all_folders[current_folder_id].file_count = file_count
+
         resolve({
+          file_count,
           files,
           errors,
         })
@@ -164,22 +185,60 @@ const deleteFile = function(file_id, current_folder){
 }
 
 
-const deleteFolder = function(folder_id, current_folder){
+const addFolder = function(folder_name, current_folder_id){
+  let tree_folder = tree[current_folder_id]
+
+  return new Promise((resolve, reject) => {
+    api.addFolder(folder_name, current_folder_id,
+      (folders, errors) => {
+
+        folders.forEach(f => {
+          all_folders[f.id] = f
+          tree_folder.folder_ids.push(f.id)
+        })
+
+        let folder_count = tree_folder.folder_ids.length
+        tree_folder.folder_count = folder_count
+        all_folders[current_folder_id].folder_count = folder_count
+
+        resolve({
+          folder_count,
+          folders,
+          errors,
+        })
+      },
+      error => {
+        reject({error})
+      }
+    )
+  })
+}
+
+
+const deleteFolder = function(folder_id, current_folder_id){
+  let tree_folder = tree[current_folder_id]
+
   return new Promise((resolve, reject) => {
     api.deleteFolder(folder_id,
       () => {
-        let folders = current_folder.folders.filter(f => {
-          return f.id !== folder_id
+        let folders = []
+        let folder_ids = []
+        tree_folder.folder_ids.forEach(id => {
+          if(id !== folder_id){
+            folders.push(all_folders[id])
+            folder_ids.push(id)
+          }
         })
-        current_folder.folders = folders
+        let folder_count = folder_ids.length
+        tree_folder.folder_ids = folder_ids
+        tree_folder.folder_count = folder_count
+        all_folders[current_folder_id].folder_count = folder_count
+
         delete all_folders[folder_id]
-        let c = current_folder.folder_count - 1
-        current_folder.folder_count = c < 0 ? 0 : c
-        all_folders[current_folder.id] = current_folder
 
         resolve({
+          folder_count,
           folders,
-          current_folder,
         })
       },
       error => {
@@ -191,36 +250,11 @@ const deleteFolder = function(folder_id, current_folder){
 }
 
 
-const addFolder = function(folder_name, current_folder){
-  return new Promise((resolve, reject) => {
-    api.addFolder(folder_name, current_folder.id,
-      (folders, errors) => {
-        folders.forEach(f => {
-          all_folders[f.id] = f
-          current_folder.folders.push(f)
-        })
-        current_folder.folder_count = current_folder.folders.length
-        all_folders[current_folder.id] = current_folder
-
-        resolve({
-          folders,
-          errors,
-          current_folder,
-        })
-      },
-      error => {
-        reject({error})
-      }
-    )
-  })
-}
-
-
 export default {
   loadFolder,
-  deleteFile,
-  deleteFolder,
-  addFolder,
   addFiles,
   moveFiles,
+  deleteFile,
+  addFolder,
+  deleteFolder,
 }

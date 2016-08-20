@@ -71,13 +71,13 @@ export default {
   },
 
 
-  deleteFolder(folder_id, current_folder){
+  deleteFolder(folder_id, current_folder_id){
     dispatch({
       type: ActionTypes.DELETE_FOLDER,
       payload: {folder_id}
     })
 
-    tree.deleteFolder(folder_id, current_folder)
+    tree.deleteFolder(folder_id, current_folder_id)
     .then(
       payload => {
         dispatch({
@@ -157,12 +157,12 @@ export default {
   },
 
 
-  addFolder(folder_name, current_folder){
+  addFolder(folder_name, current_folder_id){
     dispatch({
       type: ActionTypes.ADD_FOLDER,
     })
 
-    tree.addFolder(folder_name, current_folder)
+    tree.addFolder(folder_name, current_folder_id)
     .then(
       payload => {
         dispatch({

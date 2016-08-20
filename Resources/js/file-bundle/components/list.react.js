@@ -66,7 +66,6 @@ export default class List extends React.Component {
         key={'folder-' + this.props.parent_folder.name}
         parent={true}
         folder={this.props.parent_folder}
-        folder={{new: false}}
         loading={this.props.loading_folder}
         onOpenFolder={() => {
           this.props.onOpenFolder(this.props.parent_folder.id)

@@ -2,11 +2,11 @@ import React from 'react';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import _ from 'lodash';
 
-import List from './list.react.js';
-import SortHeader from './sort_header.react.js';
-import Toolbar from './toolbar.react.js';
-import SelectedFiles from './selected_files.react.js';
-import Errors from './errors.react.js';
+import List from '../components/list.react.js';
+import SortHeader from '../components/sort_header.react.js';
+import Toolbar from '../components/toolbar.react.js';
+import SelectedFiles from '../components/selected_files.react.js';
+import Errors from '../components//errors.react.js';
 
 import Actions from '../actions';
 import {connect} from 'react-redux'
@@ -226,7 +226,7 @@ export default class Browser extends React.Component {
   }
 
   onDeleteFolder(id) {
-    Actions.deleteFolder(id, this.props.current_folder)
+    Actions.deleteFolder(id, this.props.current_folder.id)
   }
 
   onCut() {
@@ -289,14 +289,14 @@ export default class Browser extends React.Component {
     Actions.openFolder(id)
   }
 
-  onAddFolder(new_folder_name, parent_folder) {
-    Actions.addFolder(new_folder_name, parent_folder)
+  onAddFolder(new_folder_name, current_folder_id) {
+    Actions.addFolder(new_folder_name, current_folder_id)
   }
 
   doUpload(file_list) {
     if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
       return;
     }
-    Actions.upload(file_list, this.props.current_folder)
+    Actions.upload(file_list, this.props.current_folder.id)
   }
 }

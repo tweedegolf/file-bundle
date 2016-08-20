@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Browser from './components/browser.react.js';
+import Browser from './containers/browser.react.js';
 import _ from 'lodash';
 import {Provider} from 'react-redux'
 import getStore from './get_store'
@@ -28,6 +28,7 @@ if (null !== browser) {
         </Provider>,
         browser
     );
+
 }
 
 // an element with the class 'tg_file_picker' will be converted to a file selector
