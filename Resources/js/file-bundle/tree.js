@@ -5,9 +5,6 @@ let all_folders = {
   null: {
     id: null,
     name: '..',
-    files: {},
-    folders: {},
-    loadContents: true,
   }
 }
 let all_files = {}
@@ -24,11 +21,17 @@ const loadFolder = function(folder_id){
 
       //console.log('fetch from local state')
       let current_folder = all_folders[folder_id]
+      let files = current_folder.file_ids.map(id => {
+        return all_files[id]
+      })
+      let folders = current_folder.folder_ids.map(id => {
+        return all_folders[id]
+      })
       resolve({
         current_folder,
         parent_folder: current_folder.parent_folder,
-        files: current_folder.files,
-        folders: current_folder.folders,
+        files,
+        folders,
       })
 
     }else {
@@ -39,8 +42,8 @@ const loadFolder = function(folder_id){
 
           let current_folder = all_folders[folder_id]
           current_folder.loadContents = false
-          current_folder.folders = []
-          current_folder.files = []
+          current_folder.folder_ids = []
+          current_folder.file_ids = []
 
           let parent_folder = null
           if(typeof current_folder.parent !== 'undefined'){
@@ -50,12 +53,12 @@ const loadFolder = function(folder_id){
 
           folders.forEach(f => {
             all_folders[f.id] = f
-            current_folder.folders.push(f)
+            current_folder.folder_ids.push(f.id)
           })
 
           files.forEach(f => {
             all_files[f.id] = f
-            current_folder.files.push(f)
+            current_folder.file_ids.push(f.id)
           })
 
           resolve({
@@ -81,6 +84,7 @@ const addFiles = function(file_list, current_folder){
 
         files.forEach(f => {
           all_files[f.id] = f
+          current_folder.file_ids.push(f.id)
         })
 
         resolve({
