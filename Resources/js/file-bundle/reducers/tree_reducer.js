@@ -17,7 +17,6 @@ export const treeInitialState = {
   },
   parent_folder: null,
   adding_folder: false,
-  cutting_from_folder: null,
 }
 
 
@@ -74,6 +73,10 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.FILE_DELETED:
       return {
         ...state,
+        current_folder: {
+          ...state.current_folder,
+          file_count: action.payload.file_count,
+        },
         files: action.payload.files,
         deleting_file: null,
         confirm_delete: null, // should be moved to ui_reducer
@@ -218,7 +221,6 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         clipboard: [...state.selected],
-        cutting_from_folder: action.payload.id,
         selected: []
       }
 
@@ -232,6 +234,10 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.FILES_PASTED:
       return {
         ...state,
+        current_folder: {
+          ...state.current_folder,
+          file_count: action.payload.file_count,
+        },
         files: [...state.files, ...action.payload.files],
         clipboard: [],
         selected: []

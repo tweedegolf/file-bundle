@@ -26,6 +26,22 @@ const folderProps = [
 ]
 
 
+const removeFilesFromFolders = function(file_ids, exclude_folder_id){
+  Object.keys(tree).forEach(folder_id => {
+    if(folder_id !== exclude_folder_id){
+      let folder = tree[folder_id]
+      file_ids.forEach(id => {
+        let index = folder.file_ids.indexOf(id)
+        if(index !== -1){
+          folder.file_ids.splice(index, 1)
+          folder.file_count--
+        }
+      })
+    }
+  })
+}
+
+
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
 
@@ -129,26 +145,30 @@ const addFiles = function(file_list, current_folder_id){
 }
 
 
-const moveFiles = function(files, old_folder_id, new_folder){
-  let old_folder = {...all_folders[old_folder_id]}
-  new_folder = {...new_folder}
+const moveFiles = function(files, current_folder_id){
+  let tree_folder = tree[current_folder_id]
+
   return new Promise((resolve, reject) => {
+
     let file_ids = files.map(file => {
       return file.id
     })
-    api.paste(file_ids, new_folder.id,
+
+    api.paste(file_ids, current_folder_id,
       () => {
         files.forEach(f => {
           f.new = true
-          new_folder.files.push(f)
-          let index = old_folder.files.indexOf(f)
-          if(index !== -1){
-            old_folder.files.splice(index, 1)
-          }
+          tree_folder.file_ids.push(f.id)
         })
-        new_folder.file_count = new_folder.files.length
-        old_folder.file_count = old_folder.files.length
-        resolve({files})
+        let file_count = tree_folder.file_ids.length
+        all_folders[current_folder_id].file_count = file_count
+
+        removeFilesFromFolders(file_ids, current_folder_id)
+
+        resolve({
+          file_count,
+          files,
+        })
       },
       error => {
         reject({error})
@@ -158,22 +178,30 @@ const moveFiles = function(files, old_folder_id, new_folder){
 }
 
 
-const deleteFile = function(file_id, current_folder){
+const deleteFile = function(file_id, current_folder_id){
+  let tree_folder = tree[current_folder_id]
+
   return new Promise((resolve, reject) => {
     api.deleteFile(file_id,
       () => {
-        let files = current_folder.files.filter(f => {
-          return f.id !== file_id
+
+        let files = []
+        let file_ids = []
+        tree_folder.file_ids.forEach(id => {
+          if(id !== file_id){
+            files.push(all_files[id])
+            file_ids.push(id)
+          }
         })
-        current_folder.files = files
+        let file_count = file_ids.length
+        tree_folder.file_ids = file_ids
+        all_folders[current_folder_id].file_count = file_count
+
         delete all_files[file_id]
-        let c = current_folder.file_count - 1
-        current_folder.file_count = c < 0 ? 0 : c
-        all_folders[current_folder.id] = current_folder
 
         resolve({
+          file_count,
           files,
-          current_folder,
         })
       },
       error => {
@@ -231,7 +259,6 @@ const deleteFolder = function(folder_id, current_folder_id){
         })
         let folder_count = folder_ids.length
         tree_folder.folder_ids = folder_ids
-        tree_folder.folder_count = folder_count
         all_folders[current_folder_id].folder_count = folder_count
 
         delete all_folders[folder_id]

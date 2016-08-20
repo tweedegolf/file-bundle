@@ -47,13 +47,13 @@ export default {
   },
 
 
-  deleteFile(file_id, current_folder){
+  deleteFile(file_id, current_folder_id){
     dispatch({
       type: ActionTypes.DELETE_FILE,
       payload: {file_id}
     })
 
-    tree.deleteFile(file_id, current_folder)
+    tree.deleteFile(file_id, current_folder_id)
     .then(
       payload => {
         dispatch({
@@ -95,20 +95,17 @@ export default {
   },
 
 
-  cutFiles(current_folder_id){
+  cutFiles(){
     dispatch({
       type: ActionTypes.CUT_FILES,
-      payload: {
-        id: current_folder_id
-      }
     })
   },
 
 
-  pasteFiles(files, old_folder_id, new_folder){
+  pasteFiles(files, current_folder_id){
     // ui state action here?
 
-    tree.moveFiles(files, old_folder_id, new_folder)
+    tree.moveFiles(files, current_folder_id)
     .then(
       payload => {
         dispatch({
