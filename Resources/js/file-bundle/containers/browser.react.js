@@ -86,8 +86,8 @@ export default class Browser extends React.Component {
       <SortHeader
         key={column}
         sortBy={this.sortBy.bind(this)}
-        sort={this.state.sort}
-        ascending={this.state.ascending}
+        sort={this.props.sort}
+        ascending={this.props.ascending}
         column={column}
         name={name}
       />
@@ -118,16 +118,16 @@ export default class Browser extends React.Component {
     }
 
     let browser = null;
-    let browser_class = "file-browser text-left" + (this.props.browser ? " fullpage" : "");
+    let browser_class = 'file-browser text-left' + (this.props.browser ? ' fullpage' : '');
 
     if (this.state.expanded) {
       browser = (
       <div className="text-center">
         {selected}
-        {this.state.preview ? <div
+        {this.props.preview ? <div
           className="preview-image"
           onClick={this.onPreview.bind(this, null)}>
-          <div style={{backgroundImage: 'url(' + this.state.preview + ')'}}></div>
+          <div style={{backgroundImage: 'url(' + this.props.preview + ')'}}></div>
         </div> : null}
         <div className={browser_class}>
           <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
@@ -149,12 +149,12 @@ export default class Browser extends React.Component {
                 parent_folder={this.props.parent_folder}
                 onSelect={this.onSelect.bind(this)}
                 onPreview={this.onPreview.bind(this)}
-                hover={this.state.hover}
+                hover={this.props.hover}
                 selected={this.props.selected}
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
                 confirm_delete={this.state.confirm_delete}
-                loading_folder={this.state.loading_folder}
+                loading_folder={this.props.loading_folder}
                 images_only={this.props.options ? this.props.options.images_only : false}
                 onDelete={this.onDelete.bind(this)}
                 onDeleteFolder={this.onDeleteFolder.bind(this)}
@@ -193,9 +193,9 @@ export default class Browser extends React.Component {
 
   onKeyDown(event) {
     if (event.keyCode === 38) {
-      this.setHover(this.state.hover - 1);
+      this.setHover(this.props.hover - 1);
     } else if (event.keyCode === 40) {
-      this.setHover(this.state.hover + 1);
+      this.setHover(this.props.hover + 1);
     }
   }
 
@@ -257,6 +257,7 @@ export default class Browser extends React.Component {
   }
 
   sortBy(column) {
+    // does not work, need implementation of ui_reducer
     if (this.state.sort === column) {
       this.state.ascending = !this.state.ascending;
     }

@@ -1,6 +1,5 @@
 import api from './api'
 
-
 let all_files = {}
 let all_folders = {
   null: {
