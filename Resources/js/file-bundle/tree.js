@@ -1,5 +1,6 @@
 import api from './api'
 
+let tree = {}
 let all_files = {}
 let all_folders = {
   null: {
@@ -7,7 +8,6 @@ let all_folders = {
     name: '..',
   }
 }
-let tree = {}
 
 
 const folderProps = [
@@ -23,6 +23,18 @@ const folderProps = [
   'thumb',
   'type',
 ]
+
+
+// for parsing JSON, not needed for now
+const reviver = function(k, v){
+  let tmp = parseInt(v, 10)
+  if(isNaN(tmp) === false){
+    return tmp
+  }else if(v === 'null'){
+    return null
+  }
+  return v
+}
 
 
 const removeFilesFromFolders = function(file_ids, exclude_folder_id){
@@ -103,6 +115,44 @@ const loadFolder = function(folder_id){
       )
     }
   })
+}
+
+
+const loadFromLocalStorage = function(){
+
+  return new Promise(resolve => {
+
+    let tmp = localStorage.getItem('tree')
+    let current_folder = {id: null}
+    let selected = []
+
+    if(tmp !== null){
+      tree = JSON.parse(tmp)
+      all_files = JSON.parse(localStorage.getItem('all_files'))
+      all_folders = JSON.parse(localStorage.getItem('all_folders'))
+      current_folder = JSON.parse(localStorage.getItem('current_folder'))
+      selected = JSON.parse(localStorage.getItem('selected'))
+    }
+
+    loadFolder(current_folder.id)
+    .then(
+      payload => {
+        resolve({
+          ...payload,
+          selected
+        })
+      }
+    )
+  })
+}
+
+
+const saveToLocalStorage = function(state){
+  localStorage.setItem('current_folder', JSON.stringify(state.tree.current_folder))
+  localStorage.setItem('selected', JSON.stringify(state.tree.selected))
+  localStorage.setItem('tree', JSON.stringify(tree))
+  localStorage.setItem('all_files', JSON.stringify(all_files))
+  localStorage.setItem('all_folders', JSON.stringify(all_folders))
 }
 
 
@@ -277,6 +327,8 @@ const deleteFolder = function(folder_id, current_folder_id){
 
 
 export default {
+  loadFromLocalStorage,
+  saveToLocalStorage,
   loadFolder,
   addFiles,
   moveFiles,

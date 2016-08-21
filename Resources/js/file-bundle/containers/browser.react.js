@@ -64,7 +64,8 @@ export default class Browser extends React.Component {
       Actions.cacheSelectedFiles(this.props.options.selected)
     }
 
-    this.onOpenFolder(this.props.current_folder.id);
+    //this.onOpenFolder(this.props.current_folder.id);
+    Actions.loadFromLocalStorage()
 
     if (this.props.browser) {
       document.addEventListener('keydown', this.onKeyDown.bind(this), false);
@@ -75,6 +76,7 @@ export default class Browser extends React.Component {
     if (this.props.browser) {
       document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
     }
+    Actions.saveToLocalStorage() // not working when window or tabs is closed, or when user navigates away from the page!
   }
 
   render() {

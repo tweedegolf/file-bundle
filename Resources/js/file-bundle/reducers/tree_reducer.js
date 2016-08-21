@@ -46,6 +46,7 @@ export function tree(state = treeInitialState, action){
         parent_folder: action.payload.parent_folder,
         files: action.payload.files,
         folders: action.payload.folders,
+        selected: action.payload.selected || state.selected,
         hover: -1,
         loading_folder: null,
       }

@@ -23,6 +23,24 @@ export default {
   },
 
 
+  loadFromLocalStorage(){
+    tree.loadFromLocalStorage()
+    .then(
+      payload => {
+        dispatch({
+          type: ActionTypes.FOLDER_LOADED,
+          payload,
+        })
+      }
+    )
+  },
+
+
+  saveToLocalStorage(){
+    tree.saveToLocalStorage(store.getState())
+  },
+
+
   openFolder(id){
     dispatch({
       type: ActionTypes.LOAD_FOLDER,
