@@ -1,7 +1,7 @@
-import * as ActionTypes from '../constants'
+import * as ActionTypes from './constants'
 import _ from 'lodash';
-import getStore from '../get_store'
-import api from '../api'
+import getStore from './get_store'
+import api from './api'
 
 const store = getStore()
 const dispatch = store.dispatch
