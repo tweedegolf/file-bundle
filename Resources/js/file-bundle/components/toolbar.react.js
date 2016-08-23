@@ -43,6 +43,16 @@ export default class Toolbar extends React.Component {
           <span className="fa fa-times-circle-o" />
           <span className="text-label">Annuleren</span>
         </button>
+        <button
+          type="button"
+          className="btn btn-sm btn-default"
+          disabled={this.props.recycle_bin.length === 0}
+          onClick={() => {
+            console.log('implement something!')
+          }}>
+          <span className="fa fa-trash-o" />
+          <span className="text-label">Prullenbak</span>
+        </button>
       </div>;
     }
 

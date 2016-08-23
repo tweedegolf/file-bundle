@@ -123,7 +123,7 @@ const loadFromLocalStorage = function(){
 
   return new Promise(resolve => {
 
-    let tmp = null//localStorage.getItem('tree')
+    let tmp = localStorage.getItem('tree')
     let current_folder = {id: null}
     let selected = []
 
@@ -133,6 +133,7 @@ const loadFromLocalStorage = function(){
       all_folders = JSON.parse(localStorage.getItem('all_folders'))
       current_folder = JSON.parse(localStorage.getItem('current_folder'))
       selected = JSON.parse(localStorage.getItem('selected'))
+      recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
     }
 
     loadFolder(current_folder.id)

@@ -17,6 +17,7 @@ export const treeInitialState = {
   },
   parent_folder: null,
   adding_folder: false,
+  recycle_bin: [],
 }
 
 
@@ -58,6 +59,7 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         deleting_file: action.payload.id,
+        recycle_bin: [...state.recycle_bin, action.payload.id],
       }
 
     case ActionTypes.DELETE_FILE_ERROR:
@@ -90,6 +92,7 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         deleting_folder: action.payload.id,
+        recycle_bin: [...state.recycle_bin, action.payload.id],
       }
 
     case ActionTypes.DELETE_FOLDER_ERROR:
