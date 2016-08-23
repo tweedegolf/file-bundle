@@ -1,6 +1,7 @@
 import api from './api'
 
 let tree = {}
+let recycle_bin = {}
 let all_files = {}
 let all_folders = {
   null: {
@@ -122,7 +123,7 @@ const loadFromLocalStorage = function(){
 
   return new Promise(resolve => {
 
-    let tmp = localStorage.getItem('tree')
+    let tmp = null//localStorage.getItem('tree')
     let current_folder = {id: null}
     let selected = []
 
@@ -153,6 +154,7 @@ const saveToLocalStorage = function(state){
   localStorage.setItem('tree', JSON.stringify(tree))
   localStorage.setItem('all_files', JSON.stringify(all_files))
   localStorage.setItem('all_folders', JSON.stringify(all_folders))
+  localStorage.setItem('recycle_bin', JSON.stringify(recycle_bin))
 }
 
 
@@ -246,6 +248,13 @@ const deleteFile = function(file_id, current_folder_id){
         tree_folder.file_ids = file_ids
         all_folders[current_folder_id].file_count = file_count
 
+        // move to recycle bin
+        if(typeof recycle_bin[current_folder_id] === 'undefined'){
+          recycle_bin[current_folder_id] = []
+        }
+        recycle_bin[current_folder_id].push(all_files[file_id])
+
+        // then delete
         delete all_files[file_id]
 
         resolve({
@@ -310,6 +319,13 @@ const deleteFolder = function(folder_id, current_folder_id){
         tree_folder.folder_ids = folder_ids
         all_folders[current_folder_id].folder_count = folder_count
 
+        // move to recycle bin
+        if(typeof recycle_bin[current_folder_id] === 'undefined'){
+          recycle_bin[current_folder_id] = []
+        }
+        recycle_bin[current_folder_id].push(all_folders[folder_id])
+
+        // then delete
         delete all_folders[folder_id]
 
         resolve({
@@ -326,6 +342,20 @@ const deleteFolder = function(folder_id, current_folder_id){
 }
 
 
+const emptyRecycleBin = function(){
+  recycle_bin = {}
+  localStorage.clearItem('recycle_bin')
+}
+
+
+const restoreRecycleBin = function(){
+  Object.keys(recycle_bin).forEach(id => {
+    // @todo: implement
+  })
+  emptyRecycleBin()
+}
+
+
 export default {
   loadFromLocalStorage,
   saveToLocalStorage,
@@ -335,4 +365,6 @@ export default {
   deleteFile,
   addFolder,
   deleteFolder,
+  emptyRecycleBin,
+  restoreRecycleBin,
 }
