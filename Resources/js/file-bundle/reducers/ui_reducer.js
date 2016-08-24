@@ -13,8 +13,6 @@ export function ui(state = uiInitialState, action){
 
   switch (action.type) {
 
-    /* This is a WIP commented out so the app isn't broken
-
     case ActionTypes.SELECT_FILE:
 
       console.log("SELECT FILE ACTION")
@@ -41,8 +39,6 @@ export function ui(state = uiInitialState, action){
         ...state,
         selected: selected,
       }
-
-    */
 
     default:
       return state
