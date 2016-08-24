@@ -193,4 +193,9 @@ export default {
       }
     )
   },
+
+  restoreFromRecycleBin(current_folder_id){
+    tree.restoreRecycleBin()
+    this.openFolder(current_folder_id)
+  }
 }

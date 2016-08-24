@@ -42,5 +42,5 @@ export const FILES_PASTED = 'files pasted'
 export const ERROR_PASTE_FILES = 'error paste files'
 
 export const EMPTY_RECYCLE_BIN = 'empty recycle bin'
-export const RESTORE_RECYCLE_BIN = 'restore recycle bin'
+export const RESTORE_FROM_RECYCLE_BIN = 'restore from recycle bin'
 

@@ -1,13 +1,16 @@
 import api from './api'
 
 let tree = {}
-let recycle_bin = {}
 let all_files = {}
 let all_folders = {
   null: {
     id: null,
     name: '..',
   }
+}
+let recycle_bin = {
+  files: {},
+  folders: {},
 }
 
 
@@ -56,6 +59,7 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
 
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
+    let recycle_bin_empty = Object.keys(recycle_bin.files).length > 0 && Object.keys(recycle_bin.folders).length
 
     let tree_folder = tree[folder_id]
     let current_folder = {...all_folders[folder_id]}
@@ -74,6 +78,7 @@ const loadFolder = function(folder_id){
       })
 
       resolve({
+        recycle_bin_empty,
         current_folder,
         parent_folder,
         files,
@@ -104,6 +109,7 @@ const loadFolder = function(folder_id){
           tree[folder_id] = tree_folder
 
           resolve({
+            recycle_bin_empty,
             current_folder,
             parent_folder,
             files,
@@ -127,21 +133,21 @@ const loadFromLocalStorage = function(){
     let current_folder = {id: null}
     let selected = []
 
-    if(tmp !== null){
-      tree = JSON.parse(tmp)
-      all_files = JSON.parse(localStorage.getItem('all_files'))
-      all_folders = JSON.parse(localStorage.getItem('all_folders'))
-      current_folder = JSON.parse(localStorage.getItem('current_folder'))
-      selected = JSON.parse(localStorage.getItem('selected'))
-      recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
-    }
+    // if(tmp !== null){
+    //   tree = JSON.parse(tmp)
+    //   all_files = JSON.parse(localStorage.getItem('all_files'))
+    //   all_folders = JSON.parse(localStorage.getItem('all_folders'))
+    //   current_folder = JSON.parse(localStorage.getItem('current_folder'))
+    //   selected = JSON.parse(localStorage.getItem('selected'))
+    //   recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
+    // }
 
     loadFolder(current_folder.id)
     .then(
       payload => {
         resolve({
           ...payload,
-          selected
+          selected,
         })
       }
     )
@@ -150,6 +156,7 @@ const loadFromLocalStorage = function(){
 
 
 const saveToLocalStorage = function(state){
+  return
   localStorage.setItem('current_folder', JSON.stringify(state.tree.current_folder))
   localStorage.setItem('selected', JSON.stringify(state.tree.selected))
   localStorage.setItem('tree', JSON.stringify(tree))
@@ -250,10 +257,10 @@ const deleteFile = function(file_id, current_folder_id){
         all_folders[current_folder_id].file_count = file_count
 
         // move to recycle bin
-        if(typeof recycle_bin[current_folder_id] === 'undefined'){
-          recycle_bin[current_folder_id] = []
+        if(typeof recycle_bin.files[current_folder_id] === 'undefined'){
+          recycle_bin.files[current_folder_id] = []
         }
-        recycle_bin[current_folder_id].push(all_files[file_id])
+        recycle_bin.files[current_folder_id].push(all_files[file_id])
 
         // then delete
         delete all_files[file_id]
@@ -321,13 +328,13 @@ const deleteFolder = function(folder_id, current_folder_id){
         all_folders[current_folder_id].folder_count = folder_count
 
         // move to recycle bin
-        if(typeof recycle_bin[current_folder_id] === 'undefined'){
-          recycle_bin[current_folder_id] = []
-        }
-        recycle_bin[current_folder_id].push(all_folders[folder_id])
+        recycle_bin.folders[folder_id] = all_folders[folder_id]
 
         // then delete
         delete all_folders[folder_id]
+
+        console.log(recycle_bin)
+        console.log(all_folders)
 
         resolve({
           folder_count,
@@ -344,15 +351,48 @@ const deleteFolder = function(folder_id, current_folder_id){
 
 
 const emptyRecycleBin = function(){
-  recycle_bin = {}
-  localStorage.clearItem('recycle_bin')
+  recycle_bin = {
+    files: {},
+    folders: {},
+  }
+  localStorage.setItem('recycle_bin', recycle_bin)
 }
 
 
 const restoreRecycleBin = function(){
-  Object.keys(recycle_bin).forEach(id => {
-    // @todo: implement
+  let folder_ids = Object.keys(recycle_bin.folders)
+  folder_ids.forEach(id => {
+    let folder = recycle_bin.folders[id]
+    let parent = all_folders[folder.parent]
+    if(typeof parent !== 'undefined' || folder_ids.findIndex(id) !== -1){ // improve this!
+      all_folders[id] = folder
+      parent.folder_count++
+      tree[parent.id].folder_ids.push(id)
+    }else{
+      // the parent folder of this folder does not exist or has been removed, add it to the root folder
+      folder.parent = null
+      all_folders[id] = folder
+      parent.folder_count++
+      tree[parent.id].folder_ids.push(file.id)
+      // @todo: yield a warning?
+    }
   })
+
+  Object.keys(recycle_bin.files).forEach(id => {
+    let parent = all_folders[id]
+    let files = recycle_bin.files[id]
+    files.forEach(file => {
+      // the parent folder of this file does not exist or has been removed, add it to the root folder
+      if(typeof parent === 'undefined'){
+        parent = all_folders[null]
+        // @todo: yield a warning?
+      }
+      all_files[file.id] = file
+      parent.file_count++
+      tree[id].file_ids.push(file.id)
+    })
+  })
+
   emptyRecycleBin()
 }
 

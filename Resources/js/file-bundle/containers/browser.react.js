@@ -29,7 +29,7 @@ const mapStateToProps = (state) => {
     uploading_files: state.tree.uploading_files,
     selected: state.tree.selected,
     clipboard: state.tree.clipboard,
-    recycle_bin: state.tree.recycle_bin,
+    recycle_bin_empty: state.tree.recycle_bin_empty,
     errors: state.tree.errors, // to ui_reducer?
 
     // ui props
@@ -107,7 +107,8 @@ export default class Browser extends React.Component {
       onCancel={this.onCancel.bind(this)}
       onUpload={this.onUpload.bind(this)}
       onAddFolder={this.onAddFolder.bind(this)}
-      recycle_bin={this.props.recycle_bin}
+      recycle_bin_empty={this.props.recycle_bin_empty}
+      restoreFromRecycleBin={this.restoreFromRecycleBin.bind(this)}
       uploading={this.props.uploading_files !== null}
     />;
 
@@ -301,5 +302,9 @@ export default class Browser extends React.Component {
       return;
     }
     Actions.upload(file_list, this.props.current_folder.id)
+  }
+
+  restoreFromRecycleBin(){
+    Actions.restoreFromRecycleBin(this.props.current_folder.id)
   }
 }

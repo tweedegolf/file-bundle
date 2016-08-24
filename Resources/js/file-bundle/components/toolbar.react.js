@@ -46,10 +46,8 @@ export default class Toolbar extends React.Component {
         <button
           type="button"
           className="btn btn-sm btn-default"
-          disabled={this.props.recycle_bin.length === 0}
-          onClick={() => {
-            console.log('implement something!')
-          }}>
+          disabled={this.props.recycle_bin_empty}
+          onClick={this.props.restoreFromRecycleBin}>
           <span className="fa fa-trash-o" />
           <span className="text-label">Prullenbak</span>
         </button>
