@@ -4,6 +4,9 @@ import getStore from '../get_store'
 import api from '../api'
 
 
+/** NOT IN USE ANYMORE!!!! **/
+
+
 const store = getStore()
 const dispatch = store.dispatch
 

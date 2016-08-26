@@ -133,14 +133,14 @@ const loadFromLocalStorage = function(){
     let current_folder = {id: null}
     let selected = []
 
-    // if(tmp !== null){
-    //   tree = JSON.parse(tmp)
-    //   all_files = JSON.parse(localStorage.getItem('all_files'))
-    //   all_folders = JSON.parse(localStorage.getItem('all_folders'))
-    //   current_folder = JSON.parse(localStorage.getItem('current_folder'))
-    //   selected = JSON.parse(localStorage.getItem('selected'))
-    //   recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
-    // }
+    if(tmp !== null){
+      tree = JSON.parse(tmp)
+      all_files = JSON.parse(localStorage.getItem('all_files'))
+      all_folders = JSON.parse(localStorage.getItem('all_folders'))
+      current_folder = JSON.parse(localStorage.getItem('current_folder'))
+      selected = JSON.parse(localStorage.getItem('selected'))
+      recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
+    }
 
     loadFolder(current_folder.id)
     .then(
@@ -156,7 +156,6 @@ const loadFromLocalStorage = function(){
 
 
 const saveToLocalStorage = function(state){
-  return
   localStorage.setItem('current_folder', JSON.stringify(state.tree.current_folder))
   localStorage.setItem('selected', JSON.stringify(state.tree.selected))
   localStorage.setItem('tree', JSON.stringify(tree))
@@ -272,7 +271,13 @@ const deleteFile = function(file_id, current_folder_id){
       },
       error => {
         let file = all_files[file_id]
-        reject({error, file})
+        let errors = []
+        errors.push({
+          file: file.name,
+          type: 'delete',
+          messages: [error]
+        })
+        reject({errors})
       }
     )
   })

@@ -6,8 +6,10 @@ import request from 'superagent';
 const deleteFile = (file_id, onSuccess, onError) => {
   var req = request.post('/admin/file/delete/' + file_id);
   req.end((err, res) => {
-    if (err || res.body.error) {
-      onError(res.body.error);
+    if (err) {
+      onError(err.toString());
+    // } else if(res.body.error){
+    //   onError(res.body.error);
     } else {
       //cache.removeFiles([file_id]);
       onSuccess();
@@ -84,18 +86,23 @@ const upload = (file_list, folder_id, onSuccess, onError) => {
   });
   req.end((err, res) => {
     if (err) {
-      onError(err);
+      //console.log('Error', err)
+      //console.log('Response', res)
+      //onError(err);
+      onError(res.error.message);
     } else {
       let files = _.map(res.body.uploads, (file) => {
         file.new = true;
         return file;
       });
+      //console.log(res.body.errors)
       let errors = _.map(res.body.errors, (messages, file) => ({
         type: 'upload',
         file: file,
         messages: messages
       }));
       //cache.storeFiles(files, folder_id);
+      //console.log(errors)
       onSuccess(errors, files, folder_id);
     }
   });

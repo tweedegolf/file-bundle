@@ -6,7 +6,7 @@ export const treeInitialState = {
   selected: [],
   clipboard: [],
   numSelected: 0,
-  error: '',
+  errors: '',
   deleting_file: null,
   deleting_folder: null,
   loading_folder: null,
@@ -40,6 +40,7 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.FOLDER_LOADED:
+      //console.log(action.payload.selected)
       return {
         ...state,
         //...action.payload, //nice but harder to understand which keys are added
@@ -66,12 +67,10 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.DELETE_FILE_ERROR:
       return {
         ...state,
+        // errors: action.payload.errors,
+        errors: [...state.errors, ...action.payload.errors],
         confirm_delete: null, // should be moved to ui_reducer
         deleting_file: null,
-        errors: {
-          file: action.payload.file,
-          type: 'delete',
-        }
       }
 
     case ActionTypes.FILE_DELETED:
@@ -97,14 +96,13 @@ export function tree(state = treeInitialState, action){
       }
 
     case ActionTypes.DELETE_FOLDER_ERROR:
+      console.log(action.payload.errors)
       return {
         ...state,
+        //errors: action.payload.errors,
+        errors: [...state.errors, ...action.payload.errors],
         confirm_delete: null, // should be moved to ui_reducer
         deleting_folder: null,
-        errors: {
-          folder: action.payload.folder.name,
-          type: 'delete_folder',
-        }
       }
 
     case ActionTypes.FOLDER_DELETED:
@@ -131,7 +129,7 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.UPLOAD_ERROR:
       return {
         ...state,
-        errors: action.payload.errors,
+        errors: [...state.errors, ...action.payload.errors],
         uploading_files: null,
       }
 
@@ -143,6 +141,7 @@ export function tree(state = treeInitialState, action){
           file_count: action.payload.file_count
         },
         files: [...state.files, ...action.payload.files],
+        errors: [...state.errors, ...action.payload.errors],
         uploading_files: null,
       }
 
@@ -180,6 +179,11 @@ export function tree(state = treeInitialState, action){
         selected.splice(index, 1)
       }
 
+      // let a = selected.map(f => {
+      //   return f.id
+      // })
+      // console.log(id, a)
+
       return {
         ...state,
         selected
@@ -216,7 +220,7 @@ export function tree(state = treeInitialState, action){
         },
         adding_folder: false,
         folders: [...state.folders, ...action.payload.folders],
-        errors: action.payload.errors,
+        errors: [...state.errors, ...action.payload.errors],
       }
 
 
