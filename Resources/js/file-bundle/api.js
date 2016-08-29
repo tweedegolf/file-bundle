@@ -6,11 +6,7 @@ const deleteFile = (file_id, onSuccess, onError) => {
   var req = request.post('/admin/file/delete/' + file_id)
   req.end((err, res) => {
     if (err) {
-      onError({
-        type: 'delete file',
-        file: file_id,
-        messages: [res.error.message, err.toString()],
-      })
+      onError([res.error.message, err.toString()])
     } else {
       onSuccess()
     }
@@ -24,11 +20,7 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
   req.send({'files[]': file_ids})
   req.end((err, res) => {
     if (err) {
-      onError({
-        type: 'move files',
-        folder: folder_id,
-        messages: [res.error.message, err.toString()],
-      })
+      onError([res.error.message, err.toString()])
     } else {
       onSuccess()
     }
@@ -39,27 +31,12 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
 const addFolder = (name, folder_id, onSuccess, onError) => {
   let url = '/admin/file/create/folder' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url).type('form')
-  req.send({name: name})
+  req.send({name})
   req.end((err, res) => {
     if (err) {
-      onError({
-        type: 'add folder',
-        folder: folder_id,
-        messages: [res.error.message, err.toString()],
-      })
+      onError([res.error.message, err.toString()])
     } else {
-      let folders = _.map(res.body.new_folders, (folder) => {
-        folder.new = true
-        return folder
-      })
-      let errors = []
-      if (res.body.errors.length > 0) {
-        errors = [{
-          messages: res.body.errors,
-          type: 'folder'
-        }]
-      }
-      onSuccess(folders, errors)
+      onSuccess(res.body.folders, res.body.errors)
     }
   })
 }
@@ -70,11 +47,7 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
   var req = request.post(url).type('form')
   req.end((err, res) => {
     if (err) {
-      onError({
-        type: 'delete_folder',
-        folder: folder_id,
-        messages: [res.error.message, err.toString()],
-      })
+      onError([res.error.message, err.toString()])
     } else {
       onSuccess()
     }
@@ -83,7 +56,7 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
 
 
 const upload = (file_list, folder_id, onSuccess, onError) => {
-  let url = '/admin/file/uploads' + (folder_id ? '/' + folder_id : '')
+  let url = '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url)
   _(file_list).forEach((file) => {
     req.attach(file.name, file)
@@ -103,11 +76,7 @@ const openFolder = (folder_id, onSuccess, onError) => {
   var req = request.get(url)
   req.end((err, res) => {
     if (err) {
-      onError({
-        type: 'delete folder',
-        folder: folder_id,
-        messages: [res.error.message, err.toString()],
-      })
+      onError([res.error.message, err.toString()])
     } else {
       onSuccess(res.body.folders, res.body.files)
     }

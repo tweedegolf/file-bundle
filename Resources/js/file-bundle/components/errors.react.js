@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import * as ErrorTypes from '../constants'
 
+
 export default class UploadErrors extends React.Component {
 
 
@@ -12,22 +13,37 @@ export default class UploadErrors extends React.Component {
     let messages = _.map(this.props.errors, (error, index) => {
       let message = null;
 
-      if (error.type === ErrorTypes.ERROR_UPLOAD_FILE) {
+      if (error.type === ErrorTypes.ERROR_UPLOADING_FILE) {
         message = <span>
           <strong>Uploaden van "{error.file}" niet gelukt.</strong>
           {error.messages.join(' ')}
         </span>
-      } else if (error.type === 'delete') {
+      } else if (error.type === ErrorTypes.ERROR_DELETING_FILE) {
         message = <span>
           <strong>Verwijderen van "{error.file}" niet gelukt.</strong>
           {error.messages.join(' ')}
           {/*Het bestand is in gebruik.*/}
         </span>
-      } else if (error.type === 'delete_folder') {
+      } else if (error.type === ErrorTypes.ERROR_DELETING_FOLDER) {
         message = <span>
-          <strong>Verwijderen van "{error.folder}" niet gelukt.</strong>
+          <strong>Verwijderen van de folder "{error.folder}" is niet gelukt.</strong>
           {error.messages.join(' ')}
           {/*De map is niet helemaal leeg.*/}
+        </span>
+      } else if (error.type === ErrorTypes.ERROR_ADDING_FOLDER) {
+        message = <span>
+          <strong>Aanmaken van de folder "{error.folder}" is niet gelukt.</strong>
+          {error.messages.join(' ')}
+        </span>
+      } else if (error.type === ErrorTypes.ERROR_OPENING_FOLDER) {
+        message = <span>
+          <strong>Kan de folder "{error.folder}" niet openen.</strong>
+          {error.messages.join(' ')}
+        </span>
+      } else if (error.type === ErrorTypes.ERROR_MOVING_FILES) {
+        message = <span>
+          <strong>Kan de file niet "{error.file}" niet verplaatsen.</strong>
+          {error.messages.join(' ')}
         </span>
       } else {
         message = <span>

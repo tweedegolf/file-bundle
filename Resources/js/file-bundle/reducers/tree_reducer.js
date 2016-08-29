@@ -33,10 +33,11 @@ export function tree(state = treeInitialState, action){
         loading_folder: action.payload.id
       }
 
-    case ActionTypes.LOAD_FOLDER_ERROR:
+    case ActionTypes.ERROR_OPENING_FOLDER:
       return {
         ...state,
-        loading_folder: null
+        loading_folder: null,
+        errors: [...state.errors, action.payload.error],
       }
 
     case ActionTypes.FOLDER_LOADED:
@@ -64,7 +65,7 @@ export function tree(state = treeInitialState, action){
         deleting_file: action.payload.id,
       }
 
-    case ActionTypes.DELETE_FILE_ERROR:
+    case ActionTypes.ERROR_DELETING_FILE:
       return {
         ...state,
         errors: [...state.errors, action.payload.error],
@@ -94,8 +95,7 @@ export function tree(state = treeInitialState, action){
         deleting_folder: action.payload.folder_id,
       }
 
-    case ActionTypes.DELETE_FOLDER_ERROR:
-      console.log(action.payload.errors)
+    case ActionTypes.ERROR_DELETING_FOLDER:
       return {
         ...state,
         errors: [...state.errors, action.payload.error],
@@ -124,7 +124,7 @@ export function tree(state = treeInitialState, action){
         uploading_files: [...action.payload.file_list],
       }
 
-    case ActionTypes.ERROR_UPLOAD_FILE:
+    case ActionTypes.ERROR_UPLOADING_FILE:
       return {
         ...state,
         errors: [...state.errors, ...action.payload.errors],
@@ -203,10 +203,11 @@ export function tree(state = treeInitialState, action){
         adding_folder: true,
       }
 
-    case ActionTypes.ERROR_ADD_FOLDER:
+    case ActionTypes.ERROR_ADDING_FOLDER:
       return {
         ...state,
         adding_folder: false,
+        errors: [...state.errors, action.payload.error],
       }
 
     case ActionTypes.FOLDER_ADDED:
@@ -218,7 +219,7 @@ export function tree(state = treeInitialState, action){
         },
         adding_folder: false,
         folders: [...state.folders, ...action.payload.folders],
-        errors: [...state.errors, ...action.payload.errors],
+        errors: [...state.errors, action.payload.errors],
       }
 
 
@@ -238,7 +239,15 @@ export function tree(state = treeInitialState, action){
         selected: []
       }
 
-    case ActionTypes.FILES_PASTED:
+    case ActionTypes.ERROR_MOVING_FILES:
+      return {
+        ...state,
+        errors: [...state.errors, ...action.payload.errors],
+        //clipboard: [],
+        //selected: []
+      }
+
+    case ActionTypes.FILES_MOVED:
       return {
         ...state,
         current_folder: {

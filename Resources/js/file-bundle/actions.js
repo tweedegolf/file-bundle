@@ -57,7 +57,7 @@ export default {
       },
       payload => {
         dispatch({
-          type: ActionTypes.LOAD_FOLDER_ERROR,
+          type: ActionTypes.ERROR_OPENING_FOLDER,
           payload
         })
       }
@@ -81,7 +81,7 @@ export default {
       },
       payload => {
         dispatch({
-          type: ActionTypes.DELETE_FILE_ERROR,
+          type: ActionTypes.ERROR_DELETING_FILE,
           payload
         })
       }
@@ -105,7 +105,7 @@ export default {
       },
       payload => {
         dispatch({
-          type: ActionTypes.DELETE_FOLDER_ERROR,
+          type: ActionTypes.ERROR_DELETING_FOLDER,
           payload
         })
       }
@@ -127,13 +127,13 @@ export default {
     .then(
       payload => {
         dispatch({
-          type: ActionTypes.FILES_PASTED,
+          type: ActionTypes.FILES_MOVED,
           payload,
         })
       },
       payload => {
         dispatch({
-          type: ActionTypes.ERROR_PASTE_FILES,
+          type: ActionTypes.ERROR_MOVING_FILES,
           payload
         })
       }
@@ -164,7 +164,7 @@ export default {
       },
       payload => {
         dispatch({
-          type: ActionTypes.ERROR_UPLOAD_FILE,
+          type: ActionTypes.ERROR_UPLOADING_FILE,
           payload
         })
       }
@@ -187,7 +187,7 @@ export default {
       },
       payload => {
         dispatch({
-          type: ActionTypes.ERROR_ADD_FOLDER,
+          type: ActionTypes.ERROR_ADDING_FOLDER,
           payload
         })
       }

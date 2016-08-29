@@ -118,8 +118,13 @@ const loadFolder = function(folder_id){
             folders
           })
         },
-        error => {
-          reject(error)
+        messages => {
+          let error = {
+            folder: current_folder.name,
+            type: ErrorTypes.ERROR_OPENING_FOLDER,
+            messages
+          }
+          reject({error})
         }
       )
     }
@@ -182,7 +187,7 @@ const addFiles = function(file_list, current_folder_id){
         })
 
         let errors = Object.keys(rejected).map(key => ({
-          type: ErrorTypes.ERROR_UPLOAD_FILE,
+          type: ErrorTypes.ERROR_UPLOADING_FILE,
           file: key,
           messages: rejected[key]
         }))
@@ -201,7 +206,7 @@ const addFiles = function(file_list, current_folder_id){
         let errors = []
         Array.from(file_list).forEach(f => {
           errors.push({
-            type: ErrorTypes.ERROR_UPLOAD_FILE,
+            type: ErrorTypes.ERROR_UPLOADING_FILE,
             file: f.name,
             messages: error
           })
@@ -238,8 +243,13 @@ const moveFiles = function(files, current_folder_id){
           files,
         })
       },
-      error => {
-        reject({error})
+      messages => {
+        let errors = files.map(file => ({
+          file: file.name,
+          type: ErrorTypes.ERROR_MOVING_FILES,
+          messages
+        }))
+        reject({errors})
       }
     )
   })
@@ -279,15 +289,14 @@ const deleteFile = function(file_id, current_folder_id){
           files,
         })
       },
-      error => {
+      messages => {
         let file = all_files[file_id]
-        let errors = []
-        errors.push({
+        let error = {
           file: file.name,
-          type: 'delete',
-          messages: [error]
-        })
-        reject({errors})
+          type: ErrorTypes.ERROR_DELETING_FILE,
+          messages
+        }
+        reject({error})
       }
     )
   })
@@ -299,11 +308,12 @@ const addFolder = function(folder_name, current_folder_id){
 
   return new Promise((resolve, reject) => {
     api.addFolder(folder_name, current_folder_id,
-      (folders, errors) => {
+      (folders, error_messages) => {
 
         folders.forEach(f => {
           all_folders[f.id] = f
           tree_folder.folder_ids.push(f.id)
+          f.new = true
         })
 
         let folder_count = tree_folder.folder_ids.length
@@ -313,10 +323,19 @@ const addFolder = function(folder_name, current_folder_id){
         resolve({
           folder_count,
           folders,
-          errors,
+          errors: [{
+            folder: folder_name,
+            type: ErrorTypes.ERROR_ADDING_FOLDER,
+            messages: error_messages
+          }],
         })
       },
-      error => {
+      messages => {
+        let error = {
+          folder: folder_name,
+          type: ErrorTypes.ERROR_ADDING_FOLDER,
+          messages
+        }
         reject({error})
       }
     )
@@ -356,9 +375,13 @@ const deleteFolder = function(folder_id, current_folder_id){
           folders,
         })
       },
-      errors => {
-        let folder = all_folders[folder_id]
-        reject({errors, folder})
+      message => {
+        let error = {
+          type: ErrorTypes.ERROR_DELETING_FOLDER,
+          folder: all_folders[folder_id].name,
+          messages: [message]
+        }
+        reject({error})
       }
     )
   })
