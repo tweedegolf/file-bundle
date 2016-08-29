@@ -378,7 +378,7 @@ const restoreRecycleBin = function(){
       folder.parent = null
       all_folders[id] = folder
       parent.folder_count++
-      tree[parent.id].folder_ids.push(file.id)
+      tree[parent.id].folder_ids.push(id)
       // @todo: yield a warning?
     }
   })

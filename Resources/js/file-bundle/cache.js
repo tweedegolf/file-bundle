@@ -1,3 +1,5 @@
+/* not in use anymore */
+
 import _ from 'lodash';
 
 class Cache {
@@ -72,7 +74,7 @@ class Cache {
             this.data[folder_id].folders = this.data[folder_id].folders.concat(folders);
         }
     }
-    
+
     loadFolder(key, mis, hit) {
         if (this.data[key]) {
             if(!this.data[key].loading) {
