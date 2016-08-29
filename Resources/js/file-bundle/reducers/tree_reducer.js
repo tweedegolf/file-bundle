@@ -67,8 +67,7 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.DELETE_FILE_ERROR:
       return {
         ...state,
-        // errors: action.payload.errors,
-        errors: [...state.errors, ...action.payload.errors],
+        errors: [...state.errors, action.payload.error],
         confirm_delete: null, // should be moved to ui_reducer
         deleting_file: null,
       }
@@ -99,8 +98,7 @@ export function tree(state = treeInitialState, action){
       console.log(action.payload.errors)
       return {
         ...state,
-        //errors: action.payload.errors,
-        errors: [...state.errors, ...action.payload.errors],
+        errors: [...state.errors, action.payload.error],
         confirm_delete: null, // should be moved to ui_reducer
         deleting_folder: null,
       }
@@ -126,7 +124,7 @@ export function tree(state = treeInitialState, action){
         uploading_files: [...action.payload.file_list],
       }
 
-    case ActionTypes.UPLOAD_ERROR:
+    case ActionTypes.ERROR_UPLOAD_FILE:
       return {
         ...state,
         errors: [...state.errors, ...action.payload.errors],

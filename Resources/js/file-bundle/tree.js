@@ -1,4 +1,6 @@
 import api from './api'
+import * as ErrorTypes from './constants'
+
 
 let tree = {}
 let all_files = {}
@@ -171,12 +173,19 @@ const addFiles = function(file_list, current_folder_id){
 
   return new Promise((resolve, reject) => {
     api.upload(file_list, current_folder_id,
-      (errors, files) => {
+      (rejected, files) => {
 
         files.forEach(f => {
           all_files[f.id] = f
           tree_folder.file_ids.push(f.id)
+          f.new = true
         })
+
+        let errors = Object.keys(rejected).map(key => ({
+          type: ErrorTypes.ERROR_UPLOAD_FILE,
+          file: key,
+          messages: rejected[key]
+        }))
 
         let file_count = tree_folder.file_ids.length
         all_folders[current_folder_id].file_count = file_count
@@ -188,12 +197,13 @@ const addFiles = function(file_list, current_folder_id){
         })
       },
       error => {
+        //console.log(error)
         let errors = []
         Array.from(file_list).forEach(f => {
           errors.push({
+            type: ErrorTypes.ERROR_UPLOAD_FILE,
             file: f.name,
-            type: 'upload',
-            messages: [error]
+            messages: error
           })
         })
         reject({errors})
@@ -346,9 +356,9 @@ const deleteFolder = function(folder_id, current_folder_id){
           folders,
         })
       },
-      error => {
+      errors => {
         let folder = all_folders[folder_id]
-        reject({error, folder})
+        reject({errors, folder})
       }
     )
   })

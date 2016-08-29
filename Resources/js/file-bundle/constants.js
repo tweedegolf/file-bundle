@@ -12,7 +12,7 @@
 
 export const UPLOAD_START = 'start upload'
 export const UPLOAD_DONE = 'upload done'
-export const UPLOAD_ERROR = 'upload error'
+export const ERROR_UPLOAD_FILE = 'error uploading file(s)'
 
 export const LOAD_FOLDER = 'load folder'
 export const FOLDER_LOADED = 'folder loaded'

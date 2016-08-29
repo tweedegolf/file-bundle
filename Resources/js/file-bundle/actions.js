@@ -164,7 +164,7 @@ export default {
       },
       payload => {
         dispatch({
-          type: ActionTypes.UPLOAD_ERROR,
+          type: ActionTypes.ERROR_UPLOAD_FILE,
           payload
         })
       }

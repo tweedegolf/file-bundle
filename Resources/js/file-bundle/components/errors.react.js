@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import * as ErrorTypes from '../constants'
 
 export default class UploadErrors extends React.Component {
 
@@ -11,7 +12,7 @@ export default class UploadErrors extends React.Component {
     let messages = _.map(this.props.errors, (error, index) => {
       let message = null;
 
-      if (error.type === 'upload') {
+      if (error.type === ErrorTypes.ERROR_UPLOAD_FILE) {
         message = <span>
           <strong>Uploaden van "{error.file}" niet gelukt.</strong>
           {error.messages.join(' ')}
