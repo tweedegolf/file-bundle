@@ -11,8 +11,8 @@ let all_folders = {
   }
 }
 let recycle_bin = {
-  files: {},
-  folders: {},
+  files: [],
+  folders: [],
 }
 
 
@@ -61,7 +61,7 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
 
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
-    let recycle_bin_empty = Object.keys(recycle_bin.files).length > 0 && Object.keys(recycle_bin.folders).length
+    let recycle_bin_empty = recycle_bin.files.length === 0 && recycle_bin.folders.length === 0
 
     let tree_folder = tree[folder_id]
     let current_folder = {...all_folders[folder_id]}
@@ -73,10 +73,14 @@ const loadFolder = function(folder_id){
     if(typeof tree_folder !== 'undefined' && tree_folder.needsUpdate === false){
 
       let files = tree_folder.file_ids.map(id => {
-        return all_files[id]
+        let f = all_files[id]
+        f.new = false
+        return f
       })
       let folders = tree_folder.folder_ids.map(id => {
-        return all_folders[id]
+        let f = all_folders[id]
+        f.new = false
+        return f
       })
 
       resolve({
@@ -119,12 +123,12 @@ const loadFolder = function(folder_id){
           })
         },
         messages => {
-          let error = {
+          let errors = [{
             folder: current_folder.name,
             type: ErrorTypes.ERROR_OPENING_FOLDER,
             messages
-          }
-          reject({error})
+          }]
+          reject({errors})
         }
       )
     }
@@ -163,6 +167,7 @@ const loadFromLocalStorage = function(){
 
 
 const saveToLocalStorage = function(state){
+  return
   localStorage.setItem('current_folder', JSON.stringify(state.tree.current_folder))
   localStorage.setItem('selected', JSON.stringify(state.tree.selected))
   localStorage.setItem('tree', JSON.stringify(tree))
@@ -279,7 +284,9 @@ const deleteFile = function(file_id, current_folder_id){
         if(typeof recycle_bin.files[current_folder_id] === 'undefined'){
           recycle_bin.files[current_folder_id] = []
         }
-        recycle_bin.files[current_folder_id].push(all_files[file_id])
+        let file = {...all_files[file_id]}
+        file.folder_id = current_folder_id
+        recycle_bin.files.push(file)
 
         // then delete
         delete all_files[file_id]
@@ -291,12 +298,12 @@ const deleteFile = function(file_id, current_folder_id){
       },
       messages => {
         let file = all_files[file_id]
-        let error = {
+        let errors = [{
           file: file.name,
           type: ErrorTypes.ERROR_DELETING_FILE,
           messages
-        }
-        reject({error})
+        }]
+        reject({errors})
       }
     )
   })
@@ -320,23 +327,28 @@ const addFolder = function(folder_name, current_folder_id){
         tree_folder.folder_count = folder_count
         all_folders[current_folder_id].folder_count = folder_count
 
-        resolve({
-          folder_count,
-          folders,
-          errors: [{
+        let errors = []
+        if(error_messages.length > 0){
+          errors = [{
             folder: folder_name,
             type: ErrorTypes.ERROR_ADDING_FOLDER,
             messages: error_messages
-          }],
+          }]
+        }
+
+        resolve({
+          folder_count,
+          folders,
+          errors,
         })
       },
       messages => {
-        let error = {
+        let errors = [{
           folder: folder_name,
           type: ErrorTypes.ERROR_ADDING_FOLDER,
           messages
-        }
-        reject({error})
+        }]
+        reject({errors})
       }
     )
   })
@@ -362,13 +374,10 @@ const deleteFolder = function(folder_id, current_folder_id){
         all_folders[current_folder_id].folder_count = folder_count
 
         // move to recycle bin
-        recycle_bin.folders[folder_id] = all_folders[folder_id]
+        recycle_bin.folders.push({...all_folders[folder_id]})
 
         // then delete
         delete all_folders[folder_id]
-
-        console.log(recycle_bin)
-        console.log(all_folders)
 
         resolve({
           folder_count,
@@ -376,12 +385,12 @@ const deleteFolder = function(folder_id, current_folder_id){
         })
       },
       message => {
-        let error = {
+        let errors = [{
           type: ErrorTypes.ERROR_DELETING_FOLDER,
           folder: all_folders[folder_id].name,
           messages: [message]
-        }
-        reject({error})
+        }]
+        reject({errors})
       }
     )
   })
@@ -390,48 +399,46 @@ const deleteFolder = function(folder_id, current_folder_id){
 
 const emptyRecycleBin = function(){
   recycle_bin = {
-    files: {},
-    folders: {},
+    files: [],
+    folders: [],
   }
   localStorage.setItem('recycle_bin', recycle_bin)
 }
 
 
-const restoreRecycleBin = function(){
-  let folder_ids = Object.keys(recycle_bin.folders)
-  folder_ids.forEach(id => {
-    let folder = recycle_bin.folders[id]
-    let parent = all_folders[folder.parent]
-    if(typeof parent !== 'undefined' || folder_ids.findIndex(id) !== -1){ // improve this!
-      all_folders[id] = folder
-      parent.folder_count++
-      tree[parent.id].folder_ids.push(id)
-    }else{
-      // the parent folder of this folder does not exist or has been removed, add it to the root folder
-      folder.parent = null
-      all_folders[id] = folder
-      parent.folder_count++
-      tree[parent.id].folder_ids.push(id)
-      // @todo: yield a warning?
+const restoreRecycleBin = function(current_folder_id){
+
+  let promises = []
+
+  for(let i = recycle_bin.folders.length - 1; i >= 0; i--){
+    let folder = recycle_bin.folders[i]
+    promises.push(addFolder(folder.name, folder.parent))
+  }
+
+  for(let i = recycle_bin.files.length - 1; i >= 0; i--){
+    let file = recycle_bin.files[i]
+    let folder_id = file.folder_id
+    delete file.folder_id
+    promises.push(addFiles([file], folder_id))
+  }
+
+  promises.push(Promise.resolve(emptyRecycleBin()))
+
+  let tree_folder = tree[current_folder_id]
+  tree_folder.needsUpdate = true
+  promises.push(loadFolder(current_folder_id))
+
+  return Promise.all(promises)
+  .then(
+    values => {
+      let payload = values[values.length - 1]
+      return payload
+    },
+    error => {
+      console.log(error)
+      // @todo return error object
     }
-  })
-
-  Object.keys(recycle_bin.files).forEach(id => {
-    let parent = all_folders[id]
-    let files = recycle_bin.files[id]
-    files.forEach(file => {
-      // the parent folder of this file does not exist or has been removed, add it to the root folder
-      if(typeof parent === 'undefined'){
-        parent = all_folders[null]
-        // @todo: yield a warning?
-      }
-      all_files[file.id] = file
-      parent.file_count++
-      tree[id].file_ids.push(file.id)
-    })
-  })
-
-  emptyRecycleBin()
+  )
 }
 
 

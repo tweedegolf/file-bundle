@@ -37,6 +37,7 @@ X Document icons (word pdf etc)
 Issues:
 x delete folder -> folder not found -> should return a json error object instead of a Symfony error page
 x symfony validator returns after first error, so only the first error is sent to the client, but the client is setup to receive an array of errors
+x recycle bin should be implemented on server
 
 
 Roadmap:

@@ -37,7 +37,7 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         loading_folder: null,
-        errors: [...state.errors, action.payload.error],
+        errors: [...state.errors, ...action.payload.errors],
       }
 
     case ActionTypes.FOLDER_LOADED:
@@ -68,7 +68,7 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.ERROR_DELETING_FILE:
       return {
         ...state,
-        errors: [...state.errors, action.payload.error],
+        errors: [...state.errors, ...action.payload.errors],
         confirm_delete: null, // should be moved to ui_reducer
         deleting_file: null,
       }
@@ -98,7 +98,7 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.ERROR_DELETING_FOLDER:
       return {
         ...state,
-        errors: [...state.errors, action.payload.error],
+        errors: [...state.errors, ...action.payload.errors],
         confirm_delete: null, // should be moved to ui_reducer
         deleting_folder: null,
       }
@@ -207,7 +207,7 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         adding_folder: false,
-        errors: [...state.errors, action.payload.error],
+        errors: [...state.errors, ...action.payload.errors],
       }
 
     case ActionTypes.FOLDER_ADDED:
@@ -219,7 +219,7 @@ export function tree(state = treeInitialState, action){
         },
         adding_folder: false,
         folders: [...state.folders, ...action.payload.folders],
-        errors: [...state.errors, action.payload.errors],
+        errors: [...state.errors, ...action.payload.errors],
       }
 
 

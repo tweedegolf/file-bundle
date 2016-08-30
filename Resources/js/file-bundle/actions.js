@@ -149,6 +149,7 @@ export default {
 
 
   upload(file_list, current_folder){
+    file_list = Array.from(file_list)
     dispatch({
       type: ActionTypes.UPLOAD_START,
       payload: {file_list}
@@ -195,7 +196,14 @@ export default {
   },
 
   restoreFromRecycleBin(current_folder_id){
-    tree.restoreRecycleBin()
-    this.openFolder(current_folder_id)
+    tree.restoreRecycleBin(current_folder_id)
+    .then(
+      payload => {
+        dispatch({
+          type: ActionTypes.FOLDER_LOADED,
+          payload,
+        })
+      }
+    )
   }
 }

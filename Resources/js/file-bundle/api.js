@@ -36,7 +36,7 @@ const addFolder = (name, folder_id, onSuccess, onError) => {
     if (err) {
       onError([res.error.message, err.toString()])
     } else {
-      onSuccess(res.body.folders, res.body.errors)
+      onSuccess(res.body.new_folders, res.body.errors)
     }
   })
 }
@@ -58,7 +58,7 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
 const upload = (file_list, folder_id, onSuccess, onError) => {
   let url = '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url)
-  _(file_list).forEach((file) => {
+  file_list.forEach(file => {
     req.attach(file.name, file)
   })
   req.end((err, res) => {
