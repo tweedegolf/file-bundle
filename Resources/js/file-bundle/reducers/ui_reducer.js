@@ -13,10 +13,8 @@ export function ui(state = uiInitialState, action){
 
   switch (action.type) {
 
-    // cases
-
-    // spinner
-    // future: only show spinner on api call? API_CALL_START and API_CALL_END?
+    // Loading spinner indication
+    // Future: only show spinner on api call? API_CALL_START and API_CALL_END?
 
     case ActionTypes.ADD_FOLDER:
     case ActionTypes.DELETE_FILE:
