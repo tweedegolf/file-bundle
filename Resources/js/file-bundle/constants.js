@@ -39,5 +39,3 @@ export const CANCEL_CUT_AND_PASTE_FILES = 'cancel cut and paste files'
 
 export const FILES_PASTED = 'files pasted'
 export const ERROR_PASTE_FILES = 'error paste files'
-
-export const UPDATE_SELECTED = 'updateSelected';
