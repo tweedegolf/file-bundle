@@ -406,39 +406,84 @@ const emptyRecycleBin = function(){
 }
 
 
+const chainPromises = function(index, promises, resolve, reject){
+
+  let func = promises[index].func
+  let args = promises[index].args
+
+  func(...args)
+  .then(
+    payload => {
+      index++
+      if(index === promises.length){
+        resolve(payload)
+      }else{
+        chainPromises(index, promises, resolve, reject)
+      }
+    },
+    error => {
+      reject(error)
+    }
+  )
+}
+
+
 const restoreRecycleBin = function(current_folder_id){
 
   let promises = []
 
   for(let i = recycle_bin.folders.length - 1; i >= 0; i--){
     let folder = recycle_bin.folders[i]
-    promises.push(addFolder(folder.name, folder.parent))
+    //promises.push(addFolder(folder.name, folder.parent))
+    promises.push({
+      func: addFolder,
+      args: [folder.name, folder.parent]
+    })
   }
 
   for(let i = recycle_bin.files.length - 1; i >= 0; i--){
     let file = recycle_bin.files[i]
     let folder_id = file.folder_id
     delete file.folder_id
-    promises.push(addFiles([file], folder_id))
+    //promises.push(addFiles([file], folder_id))
+    promises.push({
+      func: addFiles,
+      args: [[file], folder_id]
+    })
   }
 
-  promises.push(Promise.resolve(emptyRecycleBin()))
+  //promises.push(Promise.resolve(emptyRecycleBin()))
+  promises.push({
+    func: () => {
+      return Promise.resolve(emptyRecycleBin())
+    },
+    args: []
+  })
 
   let tree_folder = tree[current_folder_id]
   tree_folder.needsUpdate = true
-  promises.push(loadFolder(current_folder_id))
+  //promises.push(loadFolder(current_folder_id))
+  promises.push({
+    func: loadFolder,
+    args: [current_folder_id]
+  })
 
-  return Promise.all(promises)
-  .then(
-    values => {
-      let payload = values[values.length - 1]
-      return payload
-    },
-    error => {
-      console.log(error)
-      // @todo return error object
-    }
-  )
+  return new Promise((resolve, reject) => {
+    chainPromises(0, promises, resolve, reject)
+  })
+
+  /* This doesn't work because promises are not executed one after eachother */
+  // return Promise.all(promises)
+  // .then(
+  //   values => {
+  //     let payload = values[values.length - 1]
+  //     return payload
+  //   },
+  //   error => {
+  //     console.log(error)
+  //     // @todo return error object
+  //   }
+  // )
 }
 
 
