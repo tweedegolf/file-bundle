@@ -6,32 +6,79 @@ export const uiInitialState = {
   ascending: false,
   preview: null,
   hover: -1,
-  loading_indicator: false
+  adding_folder_indicator: false,
+  deleting_file_indicator: false,
+  folder_loading_indicator: false,
+  uploading_file_indicator: false,
+  receiving_updates_indicator: false
 }
 
 export function ui(state = uiInitialState, action){
 
   switch (action.type) {
 
-    // Loading spinner indication
-    // Future: only show spinner on api call? API_CALL_START and API_CALL_END?
+    // Request/user action based loading indicators
 
     case ActionTypes.ADD_FOLDER:
-    case ActionTypes.DELETE_FILE:
-    case ActionTypes.LOAD_FOLDER:
-    case ActionTypes.UPLOAD_START:
       return {
         ...state,
-        loading_indicator: true,
+        adding_folder_indicator: true
       }
 
     case ActionTypes.FOLDER_ADDED:
+      return {
+        ...state,
+        adding_folder_indicator: false
+      }
+
+    case ActionTypes.DELETE_FILE:
+      return {
+        ...state,
+        deleting_file_indicator: true
+      }
+
     case ActionTypes.FILE_DELETED:
+      return {
+        ...state,
+        deleting_file_indicator: false
+      }
+
+    case ActionTypes.LOAD_FOLDER:
+      return {
+        ...state,
+        folder_loading_indicator: true
+      }
+
     case ActionTypes.FOLDER_LOADED:
+      return {
+        ...state,
+        folder_loading_indicator: false
+      }
+
+    case ActionTypes.UPLOAD_START:
+      return {
+        ...state,
+        uploading_file_indicator: true
+      }
+
     case ActionTypes.UPLOAD_DONE:
       return {
         ...state,
-        loading_indicator: false,
+        uploading_file_indicator: false
+      }
+
+    // Server (pushing updates through sockets) initiated loading indicators
+
+    case ActionTypes.RECEIVING_UPDATES:
+      return {
+        ...state,
+        receiving_updates_indicator: true
+      }
+
+    case ActionTypes.APPLIED_UPDATES:
+      return {
+        ...state,
+        receiving_updates_indicator: false
       }
 
     // sorting

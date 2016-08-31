@@ -36,6 +36,11 @@ const mapStateToProps = (state) => {
     ascending: state.ui.ascending,
     preview: state.ui.preview,
     hover: state.ui.hover,
+    adding_folder_indicator: state.ui.adding_folder_indicator,
+    deleting_file_indicator: state.ui.deleting_file_indicator,
+    folder_loading_indicator: state.ui.folder_loading_indicator,
+    uploading_file_indicator: state.ui.uploading_file_indicator,
+    receiving_updates_indicator: state.ui.receiving_updates_indicator
   }
 }
 
