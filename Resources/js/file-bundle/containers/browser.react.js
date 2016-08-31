@@ -109,7 +109,7 @@ export default class Browser extends React.Component {
       onCancel={this.onCancel.bind(this)}
       onUpload={this.onUpload.bind(this)}
       onAddFolder={this.onAddFolder.bind(this)}
-      uploading={this.props.uploading_files !== null}
+      uploading={this.props.uploading_file_indicator}
     />;
 
     let selected = null;
