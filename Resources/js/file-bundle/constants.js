@@ -28,6 +28,8 @@ export const DELETE_FOLDER_ERROR = 'error deleting folder'
 export const CACHE_SELECTED_FILES = 'cache selected files'
 export const SELECT_FILE = 'select file'
 
+export const RECEIVING_UPDATES = 'receiving updates'
+export const APPLIED_UPDATES = 'applied updates'
 
 export const ADD_FOLDER = 'add folder'
 export const FOLDER_ADDED = 'folder added'
