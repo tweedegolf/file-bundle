@@ -6,7 +6,7 @@ export const uiInitialState = {
   ascending: false,
   preview: null,
   hover: -1,
-  selected: []
+  loading_indicator: 0
 }
 
 export function ui(state = uiInitialState, action){
@@ -14,6 +14,12 @@ export function ui(state = uiInitialState, action){
   switch (action.type) {
 
     // cases
+
+    // loading should listen to all sorts of actions
+
+    // sorting
+
+    // preview (future; preloading states based on common actions)
 
     default:
       return state
