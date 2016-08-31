@@ -1,4 +1,5 @@
 import api from './api'
+import {chainPromises} from './util'
 import * as ErrorTypes from './constants'
 
 
@@ -403,28 +404,6 @@ const emptyRecycleBin = function(){
     folders: [],
   }
   localStorage.setItem('recycle_bin', recycle_bin)
-}
-
-
-const chainPromises = function(index, promises, resolve, reject){
-
-  let func = promises[index].func
-  let args = promises[index].args
-
-  func(...args)
-  .then(
-    payload => {
-      index++
-      if(index === promises.length){
-        resolve(payload)
-      }else{
-        chainPromises(index, promises, resolve, reject)
-      }
-    },
-    error => {
-      reject(error)
-    }
-  )
 }
 
 

@@ -84,7 +84,7 @@ const openFolder = (folder_id, onSuccess, onError) => {
 }
 
 
-const delay = 500 // simulating network delay in milliseconds
+const delay = 0 // simulating network delay in milliseconds
 
 export default {
   deleteFile(...args){
