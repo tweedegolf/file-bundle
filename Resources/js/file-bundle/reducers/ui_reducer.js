@@ -6,7 +6,7 @@ export const uiInitialState = {
   ascending: false,
   preview: null,
   hover: -1,
-  loading_indicator: 0
+  loading_indicator: false
 }
 
 export function ui(state = uiInitialState, action){
@@ -15,7 +15,26 @@ export function ui(state = uiInitialState, action){
 
     // cases
 
-    // loading should listen to all sorts of actions
+    // spinner
+    // future: only show spinner on api call? API_CALL_START and API_CALL_END?
+
+    case ActionTypes.ADD_FOLDER:
+    case ActionTypes.DELETE_FILE:
+    case ActionTypes.LOAD_FOLDER:
+    case ActionTypes.UPLOAD_START:
+      return {
+        ...state,
+        loading_indicator: true,
+      }
+
+    case ActionTypes.FOLDER_ADDED:
+    case ActionTypes.FILE_DELETED:
+    case ActionTypes.FOLDER_LOADED:
+    case ActionTypes.UPLOAD_DONE:
+      return {
+        ...state,
+        loading_indicator: false,
+      }
 
     // sorting
 
