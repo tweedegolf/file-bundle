@@ -159,7 +159,7 @@ export default class Browser extends React.Component {
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
                 confirm_delete={this.state.confirm_delete}
-                loading_folder={this.state.loading_folder}
+                loading={this.props.loading_folder_indicator}
                 images_only={this.props.options ? this.props.options.images_only : false}
                 onDelete={this.onDelete.bind(this)}
                 onDeleteFolder={this.onDeleteFolder.bind(this)}
