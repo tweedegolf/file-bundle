@@ -211,43 +211,36 @@ const restoreFromRecycleBin = function(current_folder_id){
 }
 
 
-const deleteMultiple = function(actiontype, ids, currentFolder){
-  let actionSuccess
-  let actionError
-  let func
-  if(actiontype === ActionTypes.DELETE_FOLDER){
-    actionSuccess = ActionTypes.FOLDER_DELETED
-    actionError = ActionTypes.ERROR_DELETING_FOLDER
-    func = tree.deleteFolder
-  }else if(actiontype === ActionTypes.DELETE_FILE){
-    actionSuccess = ActionTypes.FILE_DELETED
-    actionError = ActionTypes.ERROR_DELETING_FILE
-    func = tree.deleteFile
-  }
+const deleteFolders = function(ids, currentFolder){
 
   if(ids instanceof Array === false){
     ids = [ids]
   }
+
   let promises = []
   ids.forEach(id => {
     promises.push({
-      id: actiontype,
-      func,
+      id: ActionTypes.DELETE_FOLDER,
+      func: tree.deleteFolder,
       args: [id, currentFolder],
     })
   })
+
   chainPromises(0, promises,
     (values, errors) => {
       //console.log(values, errors)
+      let data = values[values.length - 1]
+
       let err = []
       errors.forEach(obj => {
         err.push(...obj.errors)
       })
 
       dispatch({
-        type: actionSuccess,
+        type: ActionTypes.FOLDER_DELETED,
         payload: {
-          values,
+          folder_count: data.folder_count,
+          folders: data.folders,
           errors,
         }
       })
@@ -258,7 +251,104 @@ const deleteMultiple = function(actiontype, ids, currentFolder){
         err.push(...obj.errors)
       })
       dispatch({
-        type: actionError,
+        type: ActionTypes.ERROR_DELETING_FOLDER,
+        payload: {errors: err}
+      })
+    }
+  )
+}
+
+
+const deleteFiles = function(ids, currentFolder){
+
+  if(ids instanceof Array === false){
+    ids = [ids]
+  }
+
+  let promises = []
+  ids.forEach(id => {
+    promises.push({
+      id: ActionTypes.DELETE_FILE,
+      func: tree.deleteFile,
+      args: [id, currentFolder],
+    })
+  })
+
+  chainPromises(0, promises,
+    (values, errors) => {
+      //console.log(values, errors)
+      let data = values[values.length - 1]
+
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+
+      dispatch({
+        type: ActionTypes.FILE_DELETED,
+        payload: {
+          file_count: data.file_count,
+          files: data.files,
+          errors,
+        }
+      })
+    },
+    errors => {
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+      dispatch({
+        type: ActionTypes.ERROR_DELETING_FILE,
+        payload: {errors: err}
+      })
+    }
+  )
+}
+
+
+const addFolders = function(folders){
+  let promises = []
+  folders.forEach(folder => {
+    promises.push({
+      id: ActionTypes.ADD_FOLDER,
+      func: tree.addFolder,
+      args: folder
+    })
+  })
+
+  chainPromises(0, promises,
+    (values, errors) => {
+      //console.log(values, errors)
+
+      folders = []
+      let folder_count = 0
+      values.forEach(value => {
+        folders.push(...value.folders)
+        folder_count += value.folder_count
+      })
+
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+
+      dispatch({
+        type: ActionTypes.FOLDER_ADDED,
+        payload: {
+          folders,
+          folder_count,
+          errors: err,
+        }
+      })
+    },
+    errors => {
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+      dispatch({
+        type: ActionTypes.ERROR_ADDING_FOLDER,
         payload: {errors: err}
       })
     }
@@ -280,6 +370,13 @@ const bufferUserActions = function(type, args){
     userActions[type][0].push(args[0])
     console.log('scheduled for deletion:', userActions[type][0])
 
+  }else if(type === ActionTypes.ADD_FOLDER){
+    if(typeof userActions[type] === 'undefined'){
+      userActions[type] = [args]
+    }
+    userActions[type].push(args)
+    console.log('adding folders:', userActions[type])
+
   }else {
     userActions[type] = args
   }
@@ -294,11 +391,11 @@ const bufferUserActions = function(type, args){
             break
 
           case ActionTypes.ADD_FOLDER:
-            addFolder(...userActions[actiontype])
+            addFolders(userActions[actiontype])
             break
 
           case ActionTypes.DELETE_FOLDER:
-            deleteMultiple(actiontype, ...userActions[actiontype])
+            deleteFolders(...userActions[actiontype])
             break
 
           case ActionTypes.UPLOAD_START:
@@ -306,7 +403,7 @@ const bufferUserActions = function(type, args){
             break
 
           case ActionTypes.DELETE_FILE:
-            deleteMultiple(actiontype, ...userActions[actiontype])
+            deleteFiles(...userActions[actiontype])
             break
 
           default:
@@ -348,3 +445,76 @@ export default {
   loadFromLocalStorage,
   selectFile,
 }
+
+
+/*
+  const deleteMultiple = function(actiontype, ids, currentFolder){
+  let actionSuccess
+  let actionError
+  let func
+  if(actiontype === ActionTypes.DELETE_FOLDER){
+    actionSuccess = ActionTypes.FOLDER_DELETED
+    actionError = ActionTypes.ERROR_DELETING_FOLDER
+    func = tree.deleteFolder
+  }else if(actiontype === ActionTypes.DELETE_FILE){
+    actionSuccess = ActionTypes.FILE_DELETED
+    actionError = ActionTypes.ERROR_DELETING_FILE
+    func = tree.deleteFile
+  }
+
+  if(ids instanceof Array === false){
+    ids = [ids]
+  }
+  let promises = []
+  ids.forEach(id => {
+    promises.push({
+      id: actiontype,
+      func,
+      args: [id, currentFolder],
+    })
+  })
+  chainPromises(0, promises,
+    (values, errors) => {
+      console.log(values, errors)
+
+      let folders = []
+      let folder_count = 0
+      values.forEach(value => {
+        folders.push(...value.folders)
+        folder_count += value.folder_count
+      })
+
+      let files = []
+      let file_count = 0
+      values.forEach(value => {
+        folders.push(...value.files)
+        file_count += value.file_count
+      })
+
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+
+      dispatch({
+        type: actionSuccess,
+        payload: {
+          values,
+          errors,
+        }
+      })
+    },
+    errors => {
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+      dispatch({
+        type: actionError,
+        payload: {errors: err}
+      })
+    }
+  )
+}
+*/
+

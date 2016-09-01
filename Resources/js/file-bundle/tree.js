@@ -454,7 +454,7 @@ const restoreRecycleBin = function(current_folder_id){
   let tree_folder = tree[current_folder_id]
   tree_folder.needsUpdate = true
   //promises.push(loadFolder(current_folder_id))
-
+/*
   // force an error, just for testing
   promises.push({
     id: Constants.DELETE_FOLDER,
@@ -462,7 +462,7 @@ const restoreRecycleBin = function(current_folder_id){
     //args: 555, // 500
     args: [555, current_folder_id], // 4-4
   })
-
+*/
   promises.push({
     id: Constants.OPEN_FOLDER,
     func: loadFolder,
