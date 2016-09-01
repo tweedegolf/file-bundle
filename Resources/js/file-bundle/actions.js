@@ -231,16 +231,23 @@ const deleteMultiple = function(actiontype, ids, currentFolder){
   let promises = []
   ids.forEach(id => {
     promises.push({
+      id: actiontype,
       func,
       args: [id, currentFolder],
     })
   })
   chainPromises(0, promises,
     (values, errors) => {
+      //console.log(values, errors)
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+
       dispatch({
         type: actionSuccess,
         payload: {
-          ...values[values.length - 1], //@todo: come up with something more intelligent
+          values,
           errors,
         }
       })

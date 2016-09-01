@@ -42,12 +42,16 @@ export function tree(state = treeInitialState, action){
 
     case ActionTypes.FOLDER_OPENED:
       //console.log(action.payload.selected)
+      if(action.payload.errors instanceof Array === false){
+        action.payload.errors = []
+      }
       return {
         ...state,
         //...action.payload, //nice but harder to understand which keys are added
         recycle_bin_emtpy: action.payload.recycle_bin_emtpy,
         current_folder: action.payload.current_folder,
         parent_folder: action.payload.parent_folder,
+        errors: [...state.errors, ...action.payload.errors],
         files: action.payload.files,
         folders: action.payload.folders,
         selected: action.payload.selected || state.selected,

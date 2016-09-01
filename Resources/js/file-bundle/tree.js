@@ -1,6 +1,6 @@
 import api from './api'
 import {chainPromises} from './util'
-import * as ErrorTypes from './constants'
+import * as Constants from './constants'
 
 
 let tree = {}
@@ -126,7 +126,7 @@ const loadFolder = function(folder_id){
         messages => {
           let errors = [{
             folder: current_folder.name,
-            type: ErrorTypes.ERROR_OPENING_FOLDER,
+            type: Constants.ERROR_OPENING_FOLDER,
             messages
           }]
           reject({errors})
@@ -193,7 +193,7 @@ const addFiles = function(file_list, current_folder_id){
         })
 
         let errors = Object.keys(rejected).map(key => ({
-          type: ErrorTypes.ERROR_UPLOADING_FILE,
+          type: Constants.ERROR_UPLOADING_FILE,
           file: key,
           messages: rejected[key]
         }))
@@ -212,7 +212,7 @@ const addFiles = function(file_list, current_folder_id){
         let errors = []
         Array.from(file_list).forEach(f => {
           errors.push({
-            type: ErrorTypes.ERROR_UPLOADING_FILE,
+            type: Constants.ERROR_UPLOADING_FILE,
             file: f.name,
             messages: error
           })
@@ -252,7 +252,7 @@ const moveFiles = function(files, current_folder_id){
       messages => {
         let errors = files.map(file => ({
           file: file.name,
-          type: ErrorTypes.ERROR_MOVING_FILES,
+          type: Constants.ERROR_MOVING_FILES,
           messages
         }))
         reject({errors})
@@ -301,7 +301,7 @@ const deleteFile = function(file_id, current_folder_id){
         let file = all_files[file_id]
         let errors = [{
           file: file.name,
-          type: ErrorTypes.ERROR_DELETING_FILE,
+          type: Constants.ERROR_DELETING_FILE,
           messages
         }]
         reject({errors})
@@ -332,7 +332,7 @@ const addFolder = function(folder_name, current_folder_id){
         if(error_messages.length > 0){
           errors = [{
             folder: folder_name,
-            type: ErrorTypes.ERROR_ADDING_FOLDER,
+            type: Constants.ERROR_ADDING_FOLDER,
             messages: error_messages
           }]
         }
@@ -346,7 +346,7 @@ const addFolder = function(folder_name, current_folder_id){
       messages => {
         let errors = [{
           folder: folder_name,
-          type: ErrorTypes.ERROR_ADDING_FOLDER,
+          type: Constants.ERROR_ADDING_FOLDER,
           messages
         }]
         reject({errors})
@@ -386,9 +386,16 @@ const deleteFolder = function(folder_id, current_folder_id){
         })
       },
       message => {
+        let folder = 'no name'
+        if(folder_id){
+          folder = all_folders[folder_id]
+          if(typeof folder !== 'undefined'){
+            folder = folder.name
+          }
+        }
         let errors = [{
-          type: ErrorTypes.ERROR_DELETING_FOLDER,
-          folder: all_folders[folder_id].name,
+          type: Constants.ERROR_DELETING_FOLDER,
+          folder,
           messages: [message]
         }]
         reject({errors})
@@ -415,6 +422,7 @@ const restoreRecycleBin = function(current_folder_id){
     let folder = recycle_bin.folders[i]
     //promises.push(addFolder(folder.name, folder.parent))
     promises.push({
+      id: Constants.ADD_FOLDER,
       func: addFolder,
       args: [folder.name, folder.parent]
     })
@@ -436,6 +444,7 @@ const restoreRecycleBin = function(current_folder_id){
 
   //promises.push(Promise.resolve(emptyRecycleBin()))
   promises.push({
+    id: Constants.EMPTY_RECYCLE_BIN,
     func: () => {
       return Promise.resolve(emptyRecycleBin())
     },
@@ -445,16 +454,46 @@ const restoreRecycleBin = function(current_folder_id){
   let tree_folder = tree[current_folder_id]
   tree_folder.needsUpdate = true
   //promises.push(loadFolder(current_folder_id))
+
+  // force an error, just for testing
   promises.push({
+    id: Constants.DELETE_FOLDER,
+    func: deleteFolder,
+    //args: 555, // 500
+    args: [555, current_folder_id], // 4-4
+  })
+
+  promises.push({
+    id: Constants.OPEN_FOLDER,
     func: loadFolder,
-    args: [current_folder_id]
+    args: [current_folder_id],
   })
 
   return new Promise((resolve, reject) => {
-    chainPromises(0, promises, resolve, reject)
+    chainPromises(0, promises,
+      (values, errors) => {
+        //console.log(values, errors)
+        let err = []
+        errors.forEach(obj => {
+          err.push(...obj.errors)
+        })
+        let payload = values[values.length - 1]
+        resolve({...payload, errors: err})
+      },
+      errors => {
+        let err = []
+        errors.forEach(obj => {
+          err.push(...obj.errors)
+        })
+        reject({
+          type: 'generic',
+          payload: {errors: err}
+        })
+      }
+    )
   })
 
-  /* This doesn't work because promises are not executed one after eachother */
+  /* This doesn't work because promises are not executed one after each other */
   // return Promise.all(promises)
   // .then(
   //   values => {

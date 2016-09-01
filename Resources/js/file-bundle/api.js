@@ -46,6 +46,7 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
   var req = request.post(url).type('form')
   req.end((err, res) => {
     if (err) {
+      //console.log(err)
       onError([res.error.message, err.toString()])
     } else {
       onSuccess()
