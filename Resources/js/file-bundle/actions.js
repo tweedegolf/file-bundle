@@ -5,6 +5,9 @@ import {chainPromises} from './util'
 
 const store = getStore()
 const dispatch = store.dispatch
+const bufferTime = 3000 // buffering time in milliseconds
+let timer = null
+let userActions = {}
 
 const selectFile = function(payload){
   dispatch({
@@ -27,7 +30,7 @@ const loadFromLocalStorage = function(){
   .then(
     payload => {
       dispatch({
-        type: ActionTypes.FOLDER_LOADED,
+        type: ActionTypes.FOLDER_OPENED,
         payload,
       })
     }
@@ -42,7 +45,7 @@ const saveToLocalStorage = function(){
 
 const openFolder = function(id){
   dispatch({
-    type: ActionTypes.LOAD_FOLDER,
+    type: ActionTypes.OPEN_FOLDER,
     payload: {id}
   })
 
@@ -50,7 +53,7 @@ const openFolder = function(id){
   .then(
     payload => {
       dispatch({
-        type: ActionTypes.FOLDER_LOADED,
+        type: ActionTypes.FOLDER_OPENED,
         payload,
       })
     },
@@ -200,7 +203,7 @@ const restoreFromRecycleBin = function(current_folder_id){
   .then(
     payload => {
       dispatch({
-        type: ActionTypes.FOLDER_LOADED,
+        type: ActionTypes.FOLDER_OPENED,
         payload,
       })
     }
@@ -208,26 +211,102 @@ const restoreFromRecycleBin = function(current_folder_id){
 }
 
 
-let timer = null
-let userActions = []
-const bufferTime = 2500 // buffering time in milliseconds
-const bufferUserActions = function(func, args){
-  userActions.push({
-    func,
-    args,
+const deleteMultiple = function(actiontype, ids, currentFolder){
+  let actionSuccess
+  let actionError
+  let func
+  if(actiontype === ActionTypes.DELETE_FOLDER){
+    actionSuccess = ActionTypes.FOLDER_DELETED
+    actionError = ActionTypes.ERROR_DELETING_FOLDER
+    func = tree.deleteFolder
+  }else if(actiontype === ActionTypes.DELETE_FILE){
+    actionSuccess = ActionTypes.FILE_DELETED
+    actionError = ActionTypes.ERROR_DELETING_FILE
+    func = tree.deleteFile
+  }
+
+  if(ids instanceof Array === false){
+    ids = [ids]
+  }
+  let promises = []
+  ids.forEach(id => {
+    promises.push({
+      func,
+      args: [id, currentFolder],
+    })
   })
+  chainPromises(0, promises,
+    (values, errors) => {
+      dispatch({
+        type: actionSuccess,
+        payload: {
+          ...values[values.length - 1], //@todo: come up with something more intelligent
+          errors,
+        }
+      })
+    },
+    errors => {
+      let err = []
+      errors.forEach(obj => {
+        err.push(...obj.errors)
+      })
+      dispatch({
+        type: actionError,
+        payload: {errors: err}
+      })
+    }
+  )
+}
+
+
+const bufferUserActions = function(type, args){
+
+  if(type === ActionTypes.UPLOAD_START && typeof userActions[type] !== 'undefined'){
+    let file_list1 = Array.from(userActions[type][0])
+    let file_list2 = Array.from(args[0])
+    userActions[type][0] = [...file_list1, ...file_list2]
+
+  }else if((type === ActionTypes.DELETE_FILE || type === ActionTypes.DELETE_FOLDER) && typeof userActions[type] !== 'undefined'){
+    if(userActions[type][0] instanceof Array === false){
+      userActions[type][0] = [userActions[type][0]]
+    }
+    userActions[type][0].push(args[0])
+    console.log('scheduled for deletion:', userActions[type][0])
+
+  }else {
+    userActions[type] = args
+  }
+
   if(timer === null){
     timer = setTimeout(() => {
-      chainPromises(
-        0,
-        userActions,
-        payload =>{
-          console.log(payload)
-        },
-        error => {
-          console.log(error)
+      Object.keys(userActions).forEach(actiontype => {
+
+        switch(actiontype){
+          case ActionTypes.OPEN_FOLDER:
+            openFolder(...userActions[actiontype])
+            break
+
+          case ActionTypes.ADD_FOLDER:
+            addFolder(...userActions[actiontype])
+            break
+
+          case ActionTypes.DELETE_FOLDER:
+            deleteMultiple(actiontype, ...userActions[actiontype])
+            break
+
+          case ActionTypes.UPLOAD_START:
+            upload(...userActions[actiontype])
+            break
+
+          case ActionTypes.DELETE_FILE:
+            deleteMultiple(actiontype, ...userActions[actiontype])
+            break
+
+          default:
+            // let's take a walk into the woods
         }
-      )
+      })
+      userActions = {}
       timer = null
     }, bufferTime)
   }
@@ -236,19 +315,22 @@ const bufferUserActions = function(func, args){
 
 export default {
   openFolder(...args){
-    bufferUserActions(openFolder, args)
+    bufferUserActions(ActionTypes.OPEN_FOLDER, args)
   },
   addFolder(...args){
-    bufferUserActions(addFolder, args)
+    // @todo: implement creating of multiple folders serverside
+    bufferUserActions(ActionTypes.ADD_FOLDER, args)
   },
   deleteFolder(...args){
-    bufferUserActions(deleteFolder, args)
-  },
-  deleteFile(...args){
-    bufferUserActions(deleteFile, args)
+    // @todo: implement deletion of multiple folders serverside
+    bufferUserActions(ActionTypes.DELETE_FOLDER, args)
   },
   upload(...args){
-    bufferUserActions(upload, args)
+    bufferUserActions(ActionTypes.UPLOAD_START, args)
+  },
+  deleteFile(...args){
+    // @todo: implement deletion of multiple files serverside
+    bufferUserActions(ActionTypes.DELETE_FILE, args)
   },
   saveToLocalStorage,
   restoreFromRecycleBin,

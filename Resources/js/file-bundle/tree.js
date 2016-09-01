@@ -420,6 +420,8 @@ const restoreRecycleBin = function(current_folder_id){
     })
   }
 
+// can't restore deleted file because they don't exist on the client (only their descriptions) -> we need to implement a recycle bin on the server
+/*
   for(let i = recycle_bin.files.length - 1; i >= 0; i--){
     let file = recycle_bin.files[i]
     let folder_id = file.folder_id
@@ -430,6 +432,7 @@ const restoreRecycleBin = function(current_folder_id){
       args: [[file], folder_id]
     })
   }
+*/
 
   //promises.push(Promise.resolve(emptyRecycleBin()))
   promises.push({

@@ -1,26 +1,35 @@
-export const chainPromises = function(index, promises, resolve, reject){
+export const chainPromises = function(index, promises, resolve, reject, values = [], errors = []){
 
   let func = promises[index].func
   let args = promises[index].args
+  let numPromises = promises.length
 
   if(typeof func !== 'function'){
     reject('not a function', func)
   }
 
-  console.log(func)
-
-  func(...args)
-  .then(
+  func(...args).then(
     payload => {
       index++
-      if(index === promises.length){
-        resolve(payload)
+      values.push(payload)
+      if(index === numPromises){
+        resolve(values)
       }else{
-        chainPromises(index, promises, resolve, reject)
+        chainPromises(index, promises, resolve, reject, values, errors)
       }
     },
     error => {
-      reject(error)
+      index++
+      errors.push(error)
+      if(index === numPromises){
+        if(errors.length === numPromises){
+          reject(errors)
+        }
+      }else{
+        chainPromises(index, promises, resolve, reject, values, errors)
+      }
+      //reject(error)
     }
   )
 }
+

@@ -27,7 +27,7 @@ export function tree(state = treeInitialState, action){
 
     // LOAD FOLDER
 
-    case ActionTypes.LOAD_FOLDER:
+    case ActionTypes.OPEN_FOLDER:
       return {
         ...state,
         loading_folder: action.payload.id
@@ -40,7 +40,7 @@ export function tree(state = treeInitialState, action){
         errors: [...state.errors, ...action.payload.errors],
       }
 
-    case ActionTypes.FOLDER_LOADED:
+    case ActionTypes.FOLDER_OPENED:
       //console.log(action.payload.selected)
       return {
         ...state,
