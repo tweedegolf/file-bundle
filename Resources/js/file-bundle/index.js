@@ -21,7 +21,6 @@ var options = {
 //<Browser browser={false} options={options}/> --> file not found error (need to implement local cache)
 //<Browser browser={true}/>
 
-
 if (null !== browser) {
    ReactDOM.render(
     <Provider store={store}>
@@ -44,7 +43,7 @@ if (pickers.length > 0) {
 }
 
 
-window.onbeforeunload = () => {
-  tree.saveToLocalStorage(store.getState())
-}
+// window.onbeforeunload = () => {
+//   tree.saveToLocalStorage(store.getState())
+// }
 
