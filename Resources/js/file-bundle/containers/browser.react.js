@@ -6,7 +6,7 @@ import List from '../components/list.react.js';
 import SortHeader from '../components/sort_header.react.js';
 import Toolbar from '../components/toolbar.react.js';
 import SelectedFiles from '../components/selected_files.react.js';
-import Errors from '../components//errors.react.js';
+import Errors from '../components/errors.react.js';
 
 import Actions from '../actions';
 import {connect} from 'react-redux'
@@ -37,6 +37,11 @@ const mapStateToProps = (state) => {
     ascending: state.ui.ascending,
     preview: state.ui.preview,
     hover: state.ui.hover,
+    adding_folder_indicator: state.ui.adding_folder_indicator,
+    deleting_file_indicator: state.ui.deleting_file_indicator,
+    folder_loading_indicator: state.ui.folder_loading_indicator,
+    uploading_file_indicator: state.ui.uploading_file_indicator,
+    receiving_updates_indicator: state.ui.receiving_updates_indicator
   }
 }
 
@@ -109,7 +114,7 @@ export default class Browser extends React.Component {
       onAddFolder={this.onAddFolder.bind(this)}
       recycle_bin_empty={this.props.recycle_bin_empty}
       restoreFromRecycleBin={this.restoreFromRecycleBin.bind(this)}
-      uploading={this.props.uploading_files !== null}
+      uploading={this.props.uploading_file_indicator}
     />;
 
     let selected = null;
@@ -159,7 +164,7 @@ export default class Browser extends React.Component {
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
                 confirm_delete={this.state.confirm_delete}
-                loading_folder={this.props.loading_folder}
+                loading={this.props.loading_folder_indicator}
                 images_only={this.props.options ? this.props.options.images_only : false}
                 onDelete={this.onDelete.bind(this)}
                 onDeleteFolder={this.onDeleteFolder.bind(this)}

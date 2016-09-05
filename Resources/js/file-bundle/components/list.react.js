@@ -66,17 +66,23 @@ export default class List extends React.Component {
         key={'folder-' + this.props.parent_folder.name}
         parent={true}
         folder={this.props.parent_folder}
-        loading={this.props.loading_folder}
+        loading={this.props.loading}
         onOpenFolder={() => {
           this.props.onOpenFolder(this.props.parent_folder.id)
         }}
       />;
     }
 
-    return <tbody>
+    console.log('this props loading', this.props.loading)
+
+    let loading_list = this.props.loading
+      ? 'loaded'
+      : 'loading'
+
+    return <tbody className={loading_list}>
       {parent}
       {folders}
       {files}
-    </tbody>;
+    </tbody>
   }
 }

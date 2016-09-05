@@ -191,7 +191,6 @@ export function tree(state = treeInitialState, action){
         selected
       }
 
-
     case ActionTypes.CACHE_SELECTED_FILES:
       return {
         ...state,
