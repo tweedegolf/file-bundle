@@ -69,14 +69,10 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
 /**
  * Loads a folder.
  *
- * @param      {Number}   folder_id       The folder identifier
- * @param      {Array}    selected_files  Array that contains the ids of the
- *                                        files that have been selected during
- *                                        the previous session -> see
- *                                        loadFromLocalStorage
+ * @param      {Number}   folder_id  The folder identifier
  * @return     {Promise}  { description_of_the_return_value }
  */
-const loadFolder = function(folder_id, selected_files = []){
+const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
     let recycle_bin_empty = recycle_bin.files.length === 0 && recycle_bin.folders.length === 0
 
@@ -111,7 +107,7 @@ const loadFolder = function(folder_id, selected_files = []){
         parent_folder,
         files,
         folders,
-        selected: selected_files,
+        selected
       })
 
     }else {
@@ -144,7 +140,7 @@ const loadFolder = function(folder_id, selected_files = []){
             parent_folder,
             files,
             folders,
-            selected: selected_files,
+            selected
           })
         },
         messages => {
