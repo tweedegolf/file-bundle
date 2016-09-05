@@ -99,9 +99,11 @@ export function ui(state = uiInitialState, action){
       }
 
     case ActionTypes.ERROR_OPENING_FOLDER:
+
       return {
         ...state,
-        errors: [...state.errors, ...action.payload.errors],
+        //errors: [...state.errors, ...action.payload.errors],
+        errors: [...state.errors],
         loading_folder: null,
       }
 

@@ -11,11 +11,8 @@ let all_folders = {
     name: '..',
   }
 }
-let selected = []
-let recycle_bin = {
-  files: [],
-  folders: [],
-}
+let selected = null
+let recycle_bin = null
 
 
 const folderProps = [
@@ -31,6 +28,15 @@ const folderProps = [
   'thumb',
   'type',
 ]
+
+
+const storeToLocalStorage = function(){
+  localStorage.setItem('tree', JSON.stringify(tree))
+  localStorage.setItem('all_files', JSON.stringify(all_files))
+  localStorage.setItem('all_folders', JSON.stringify(all_folders))
+  localStorage.setItem('recycle_bin', JSON.stringify(recycle_bin))
+  localStorage.setItem('selected', JSON.stringify(selected))
+}
 
 
 // for parsing JSON, not needed for now
@@ -79,9 +85,12 @@ const loadFolder = function(folder_id, selected_files = []){
 
     let tree_folder = tree[folder_id]
     let parent_folder = null
+
+
     if(folder_id !== null){
       parent_folder = {...all_folders[all_folders[folder_id].parent]}
     }
+
 
     if(typeof tree_folder !== 'undefined' && tree_folder.needsUpdate === false){
 
@@ -127,9 +136,7 @@ const loadFolder = function(folder_id, selected_files = []){
           })
 
           tree[folder_id] = tree_folder
-          localStorage.setItem('tree', JSON.stringify(tree))
-          localStorage.setItem('all_files', JSON.stringify(all_files))
-          localStorage.setItem('all_folders', JSON.stringify(all_folders))
+          storeToLocalStorage()
 
           resolve({
             recycle_bin_empty,
@@ -156,16 +163,29 @@ const loadFolder = function(folder_id, selected_files = []){
 
 const loadFromLocalStorage = function(){
 
-  let tmp = localStorage.getItem('tree')
-  let current_folder = {id: null}
+  let current_folder = JSON.parse(localStorage.getItem('current_folder'))
 
-  if(tmp !== null){
-    tree = JSON.parse(tmp)
+  if(current_folder !== null){
+    tree = JSON.parse(localStorage.getItem('tree'))
     all_files = JSON.parse(localStorage.getItem('all_files'))
     all_folders = JSON.parse(localStorage.getItem('all_folders'))
-    current_folder = JSON.parse(localStorage.getItem('current_folder'))
     selected = JSON.parse(localStorage.getItem('selected'))
     recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
+  }else{
+    current_folder = {
+      id: null
+    }
+  }
+
+  if(selected === null){
+    selected = []
+  }
+
+  if(recycle_bin === null){
+    recycle_bin = {
+      files: [],
+      folders: [],
+    }
   }
 
   return loadFolder(current_folder.id, selected)
@@ -243,9 +263,7 @@ const addFiles = function(file_list, current_folder_id){
         let file_count = tree_folder.file_ids.length
         all_folders[current_folder_id].file_count = file_count
 
-        localStorage.setItem('tree', JSON.stringify(tree))
-        localStorage.setItem('all_folders', JSON.stringify(all_folders))
-
+        storeToLocalStorage()
 
         resolve({
           file_count,
@@ -289,9 +307,7 @@ const moveFiles = function(files, current_folder_id){
         all_folders[current_folder_id].file_count = file_count
 
         removeFilesFromFolders(file_ids, current_folder_id)
-
-        localStorage.setItem('tree', JSON.stringify(tree))
-        localStorage.setItem('all_folders', JSON.stringify(all_folders))
+        storeToLocalStorage()
 
         resolve({
           file_count,
@@ -340,10 +356,7 @@ const deleteFile = function(file_id, current_folder_id){
 
         // then delete
         delete all_files[file_id]
-
-        localStorage.setItem('all_files', JSON.stringify(all_files))
-        localStorage.setItem('all_folders', JSON.stringify(all_folders))
-
+        storeToLocalStorage()
         resolve({
           file_count,
           files,
