@@ -5,14 +5,16 @@ import {chainPromises} from './util'
 
 const store = getStore()
 const dispatch = store.dispatch
-const bufferTime = 3000 // buffering time in milliseconds
+const bufferTime = 0 // buffering time in milliseconds
 let timer = null
 let userActions = {}
 
-const selectFile = function(payload){
+const selectFile = function(data){
   dispatch({
     type: ActionTypes.SELECT_FILE,
-    payload,
+    payload: {
+      selected: tree.setSelectedFiles(data)
+    },
   })
 }
 
@@ -33,13 +35,14 @@ const loadFromLocalStorage = function(){
         type: ActionTypes.FOLDER_OPENED,
         payload,
       })
+    },
+    payload => {
+      dispatch({
+        type: ActionTypes.ERROR_OPENING_FOLDER,
+        payload,
+      })
     }
   )
-}
-
-
-const saveToLocalStorage = function(){
-  tree.saveToLocalStorage(store.getState())
 }
 
 
@@ -372,7 +375,7 @@ const bufferUserActions = function(type, args){
 
   }else if(type === ActionTypes.ADD_FOLDER){
     if(typeof userActions[type] === 'undefined'){
-      userActions[type] = [args]
+      userActions[type] = []
     }
     userActions[type].push(args)
     console.log('adding folders:', userActions[type])
@@ -416,7 +419,6 @@ const bufferUserActions = function(type, args){
   }
 }
 
-
 export default {
   openFolder(...args){
     bufferUserActions(ActionTypes.OPEN_FOLDER, args)
@@ -436,7 +438,6 @@ export default {
     // @todo: implement deletion of multiple files serverside
     bufferUserActions(ActionTypes.DELETE_FILE, args)
   },
-  saveToLocalStorage,
   restoreFromRecycleBin,
   cutFiles,
   pasteFiles,

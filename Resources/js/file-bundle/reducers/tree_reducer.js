@@ -5,18 +5,12 @@ export const treeInitialState = {
   folders: [],
   selected: [],
   clipboard: [],
-  numSelected: 0,
-  errors: '',
-  deleting_file: null,
-  deleting_folder: null,
-  loading_folder: null,
-  uploading_files: null,
+  errors: [],
   current_folder: {
     id: null,
     name: '..'
   },
   parent_folder: null,
-  adding_folder: false,
   recycle_bin_emtpy: false,
 }
 
@@ -26,19 +20,6 @@ export function tree(state = treeInitialState, action){
   switch (action.type) {
 
     // LOAD FOLDER
-
-    case ActionTypes.OPEN_FOLDER:
-      return {
-        ...state,
-        loading_folder: action.payload.id
-      }
-
-    case ActionTypes.ERROR_OPENING_FOLDER:
-      return {
-        ...state,
-        loading_folder: null,
-        errors: [...state.errors, ...action.payload.errors],
-      }
 
     case ActionTypes.FOLDER_OPENED:
       //console.log(action.payload.selected)
@@ -56,7 +37,6 @@ export function tree(state = treeInitialState, action){
         folders: action.payload.folders,
         selected: action.payload.selected || state.selected,
         hover: -1,
-        loading_folder: null,
       }
 
 
@@ -66,16 +46,8 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         recycle_bin_emtpy: false,
-        deleting_file: action.payload.id,
       }
 
-    case ActionTypes.ERROR_DELETING_FILE:
-      return {
-        ...state,
-        errors: [...state.errors, ...action.payload.errors],
-        confirm_delete: null, // should be moved to ui_reducer
-        deleting_file: null,
-      }
 
     case ActionTypes.FILE_DELETED:
       return {
@@ -85,8 +57,6 @@ export function tree(state = treeInitialState, action){
           file_count: action.payload.file_count,
         },
         files: action.payload.files,
-        deleting_file: null,
-        confirm_delete: null, // should be moved to ui_reducer
       }
 
 
@@ -96,15 +66,6 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         recycle_bin_emtpy: false,
-        deleting_folder: action.payload.folder_id,
-      }
-
-    case ActionTypes.ERROR_DELETING_FOLDER:
-      return {
-        ...state,
-        errors: [...state.errors, ...action.payload.errors],
-        confirm_delete: null, // should be moved to ui_reducer
-        deleting_folder: null,
       }
 
     case ActionTypes.FOLDER_DELETED:
@@ -115,25 +76,10 @@ export function tree(state = treeInitialState, action){
           ...state.current_folder,
           folder_count: action.payload.folder_count,
         },
-        deleting_folder: null,
-        confirm_delete: null, // should be moved to ui_reducer
       }
 
 
     // UPLOAD FILES
-
-    case ActionTypes.UPLOAD_START:
-      return {
-        ...state,
-        uploading_files: [...action.payload.file_list],
-      }
-
-    case ActionTypes.ERROR_UPLOADING_FILE:
-      return {
-        ...state,
-        errors: [...state.errors, ...action.payload.errors],
-        uploading_files: null,
-      }
 
     case ActionTypes.UPLOAD_DONE:
       return {
@@ -144,51 +90,15 @@ export function tree(state = treeInitialState, action){
         },
         files: [...state.files, ...action.payload.files],
         errors: [...state.errors, ...action.payload.errors],
-        uploading_files: null,
       }
 
 
     // SELECT FILES
 
     case ActionTypes.SELECT_FILE:
-      let {
-        id,
-        browser,
-        multiple,
-      } = action.payload
-
-      let file = null
-      let index = state.selected.findIndex(f => {
-        return f.id === id
-      })
-
-      if(index === -1){
-        file = state.files.find(f => {
-          return f.id === id
-        })
-      }
-
-      let selected = [...state.selected]
-      if(browser === false && multiple === false){
-        if(index === -1){
-          selected = [file]
-        }else{
-          selected = []
-        }
-      }else if(index === -1){
-        selected.push(file)
-      }else{
-        selected.splice(index, 1)
-      }
-
-      // let a = selected.map(f => {
-      //   return f.id
-      // })
-      // console.log(id, a)
-
       return {
         ...state,
-        selected
+        selected: action.payload.selected,
       }
 
     case ActionTypes.CACHE_SELECTED_FILES:
@@ -200,19 +110,6 @@ export function tree(state = treeInitialState, action){
 
     // ADD FOLDER
 
-    case ActionTypes.ADD_FOLDER:
-      return {
-        ...state,
-        adding_folder: true,
-      }
-
-    case ActionTypes.ERROR_ADDING_FOLDER:
-      return {
-        ...state,
-        adding_folder: false,
-        errors: [...state.errors, ...action.payload.errors],
-      }
-
     case ActionTypes.FOLDER_ADDED:
       return {
         ...state,
@@ -220,7 +117,6 @@ export function tree(state = treeInitialState, action){
           ...state.current_folder,
           folder_count: action.payload.folder_count,
         },
-        adding_folder: false,
         folders: [...state.folders, ...action.payload.folders],
         errors: [...state.errors, ...action.payload.errors],
       }
@@ -245,7 +141,6 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.ERROR_MOVING_FILES:
       return {
         ...state,
-        errors: [...state.errors, ...action.payload.errors],
         //clipboard: [],
         //selected: []
       }

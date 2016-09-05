@@ -14,6 +14,7 @@ const deleteFile = (file_id, onSuccess, onError) => {
 
 
 const paste = (file_ids, folder_id, onSuccess, onError) => {
+  // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
   let url = '/admin/file/move' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url).type('form')
   req.send({'files[]': file_ids})
@@ -28,7 +29,8 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
 
 
 const addFolder = (name, folder_id, onSuccess, onError) => {
-  let url = '/admin/file/create/folder' + (folder_id ? '/' + folder_id : '')
+  // folder_id is null if a folder is to be added to the root folder
+  let url = '/admin/file/create/folder' + (folder_id !== null ? '/' + folder_id : '')
   var req = request.post(url).type('form')
   req.send({name})
   req.end((err, res) => {
@@ -84,7 +86,7 @@ const openFolder = (folder_id, onSuccess, onError) => {
 }
 
 
-const delay = 0 // simulating network delay in milliseconds
+const delay = 500 // simulating network delay in milliseconds
 
 export default {
   deleteFile(...args){

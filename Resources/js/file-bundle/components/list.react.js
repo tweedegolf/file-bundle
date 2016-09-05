@@ -48,7 +48,7 @@ export default class List extends React.Component {
         folder={folder}
         onOpenFolder={this.props.onOpenFolder.bind(this)}
         onDelete={this.props.onDeleteFolder.bind(this)}
-        loading={this.props.loading_folder}
+        loading={this.props.loading}
       />;
     });
 
@@ -73,7 +73,7 @@ export default class List extends React.Component {
       />;
     }
 
-    console.log('this props loading', this.props.loading)
+    // console.log('this props loading', this.props.loading)
 
     let loading_list = this.props.loading
       ? 'loaded'

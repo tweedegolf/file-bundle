@@ -41,9 +41,3 @@ if (pickers.length > 0) {
   });
 
 }
-
-
-// window.onbeforeunload = () => {
-//   tree.saveToLocalStorage(store.getState())
-// }
-

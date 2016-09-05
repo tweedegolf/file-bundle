@@ -22,26 +22,26 @@ const mapStateToProps = (state) => {
     // tree props
     folders,
     files,
-    loading_folder: state.tree.loading_folder,
-    adding_folder: state.tree.adding_folder,
     current_folder: state.tree.current_folder,
     parent_folder: state.tree.parent_folder,
-    uploading_files: state.tree.uploading_files,
     selected: state.tree.selected,
     clipboard: state.tree.clipboard,
     recycle_bin_empty: state.tree.recycle_bin_empty,
-    errors: state.tree.errors, // to ui_reducer?
 
     // ui props
     sort,
     ascending: state.ui.ascending,
     preview: state.ui.preview,
     hover: state.ui.hover,
-    adding_folder_indicator: state.ui.adding_folder_indicator,
-    deleting_file_indicator: state.ui.deleting_file_indicator,
-    folder_loading_indicator: state.ui.folder_loading_indicator,
-    uploading_file_indicator: state.ui.uploading_file_indicator,
-    receiving_updates_indicator: state.ui.receiving_updates_indicator
+    loading_folder: state.ui.loading_folder, // null or number
+    deleting_file: state.ui.deleting, // null or number
+    deleting_folder: state.ui.deleting, // null or number
+    adding_folder: state.ui.adding_folder, // true or false
+    uploading_files: state.ui.uploading_files, // true or false
+    receiving_updates_indicator: state.ui.receiving_updates_indicator, // not yet used
+
+    // collect all errors
+    errors: [...state.tree.errors, ...state.ui.errors],
   }
 }
 
@@ -82,7 +82,6 @@ export default class Browser extends React.Component {
     if (this.props.browser) {
       document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
     }
-    Actions.saveToLocalStorage() // not working when window or tabs is closed, or when user navigates away from the page!
   }
 
   render() {
@@ -114,7 +113,7 @@ export default class Browser extends React.Component {
       onAddFolder={this.onAddFolder.bind(this)}
       recycle_bin_empty={this.props.recycle_bin_empty}
       restoreFromRecycleBin={this.restoreFromRecycleBin.bind(this)}
-      uploading={this.props.uploading_file_indicator}
+      uploading={this.props.uploading_files}
     />;
 
     let selected = null;
@@ -164,7 +163,7 @@ export default class Browser extends React.Component {
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
                 confirm_delete={this.state.confirm_delete}
-                loading={this.props.loading_folder_indicator}
+                loading={this.props.loading_folder}
                 images_only={this.props.options ? this.props.options.images_only : false}
                 onDelete={this.onDelete.bind(this)}
                 onDeleteFolder={this.onDeleteFolder.bind(this)}
@@ -292,7 +291,7 @@ export default class Browser extends React.Component {
   }
 
   onOpenFolder(id) {
-    if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
+    if (this.props.uploading_files === true || this.props.loading_folder !== null) {
       return;
     }
     Actions.openFolder(id)
@@ -303,7 +302,7 @@ export default class Browser extends React.Component {
   }
 
   doUpload(file_list) {
-    if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
+    if (this.props.uploading_files === true || this.props.loading_folder !== null) {
       return;
     }
     Actions.upload(file_list, this.props.current_folder.id)
