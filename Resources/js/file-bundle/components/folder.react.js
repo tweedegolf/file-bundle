@@ -9,7 +9,7 @@ export default class Folder extends React.Component {
         let delete_btn = null;
 
         if (folder.file_count === 0 && folder.folder_count === 0) {
-            delete_btn = <button type="button" className="btn btn-xs btn-danger" onClick={this.onDelete.bind(this)}>
+            delete_btn = <button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete.bind(this)}>
                 <span className="fa fa-trash-o" />
             </button>;
         }
@@ -41,15 +41,15 @@ export default class Folder extends React.Component {
 
         return (
             <tr className={class_name} onClick={this.props.onOpenFolder.bind(this, folder.id)}>
-                <td />
-                <td>{icon}</td>
-                <td>{folder.name}</td>
+                <td className="select" />
+                <td className="preview">{icon}</td>
+                <td className="name">{folder.name}</td>
                 <td className="size">
                     {folder_count}
                     {file_count}
                 </td>
-                <td>{folder.created}</td>
-                <td>{delete_btn}</td>
+                <td className="date">{folder.created}</td>
+                <td className="buttons">{delete_btn}</td>
             </tr>
         );
     }

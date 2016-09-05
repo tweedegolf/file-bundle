@@ -116,34 +116,36 @@ export default class Browser extends React.Component {
                     <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
                         {toolbar}
                         <Errors errors={this.state.errors} onDismiss={this.onDismiss.bind(this)} />
-                        <table className="table table-condensed">
-                            <thead>
-                            <tr>
-                                <th />
-                                <th />
-                                {headers}
-                                <th />
-                            </tr>
-                            </thead>
-                            <List
-                                files={this.state.files}
-                                folders={this.state.folders}
-                                current_folder={this.state.current_folder}
-                                onSelect={this.onSelect.bind(this)}
-                                onPreview={this.onPreview.bind(this)}
-                                hover={this.state.hover}
-                                selected={this.state.selected}
-                                clipboard={this.state.clipboard}
-                                browser={this.props.browser}
-                                confirm_delete={this.state.confirm_delete}
-                                loading_folder={this.state.loading_folder}
-                                images_only={this.props.options ? this.props.options.images_only : false}
-                                onDelete={this.onDelete.bind(this)}
-                                onDeleteFolder={this.onDeleteFolder.bind(this)}
-                                onConfirmDelete={this.onConfirmDelete.bind(this)}
-                                onOpenFolder={this.onOpenFolder.bind(this)}
-                            />
-                        </table>
+                        <div ref="container" className="table-container">
+                            <table className="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th className="select" />
+                                    <th className="preview" />
+                                    {headers}
+                                    <th className="buttons" />
+                                </tr>
+                                </thead>
+                                <List
+                                    files={this.state.files}
+                                    folders={this.state.folders}
+                                    current_folder={this.state.current_folder}
+                                    onSelect={this.onSelect.bind(this)}
+                                    onPreview={this.onPreview.bind(this)}
+                                    hover={this.state.hover}
+                                    selected={this.state.selected}
+                                    clipboard={this.state.clipboard}
+                                    browser={this.props.browser}
+                                    confirm_delete={this.state.confirm_delete}
+                                    loading_folder={this.state.loading_folder}
+                                    images_only={this.props.options ? this.props.options.images_only : false}
+                                    onDelete={this.onDelete.bind(this)}
+                                    onDeleteFolder={this.onDeleteFolder.bind(this)}
+                                    onConfirmDelete={this.onConfirmDelete.bind(this)}
+                                    onOpenFolder={this.onOpenFolder.bind(this)}
+                                />
+                            </table>
+                        </div>
                     </FileDragAndDrop>
                 </div>
                 {!this.props.browser
@@ -299,11 +301,15 @@ export default class Browser extends React.Component {
         if (this.state.sort === column) {
             this.state.ascending = !this.state.ascending;
         }
+
+        let folders = _.sortBy(this.state.folders, column);
+        let files = _.sortBy(this.state.files, column);
+
         this.setState({
             ascending: this.state.ascending,
             sort: column,
-            folders: _.sortBy(this.state.folders, column),
-            files: _.sortBy(this.state.files, column)
+            folders:  this.state.ascending ? folders : folders.reverse(),
+            files:  this.state.ascending ? files : files.reverse()
         });
     }
 
@@ -369,6 +375,8 @@ export default class Browser extends React.Component {
                 ascending: false,
                 errors: errors
             });
+            // scroll to top after upload
+            this.refs.container.scrollTop = 0;
         }, () => {
             // error
             this.setState({
