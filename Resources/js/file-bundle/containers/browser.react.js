@@ -215,9 +215,8 @@ export default class Browser extends React.Component {
     this.setState({preview: state});
   }
 
-  onDismiss(index) {
-    this.props.errors.splice(index, 1);
-    this.setState({errors: this.props.errors});
+  onDismiss(error_id){
+    Actions.dismissError(error_id)
   }
 
   onConfirmDelete(id) {

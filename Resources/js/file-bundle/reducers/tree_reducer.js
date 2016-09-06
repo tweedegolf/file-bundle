@@ -172,6 +172,16 @@ export function tree(state = treeInitialState, action){
       }
 
 
+    case ActionTypes.DISMISS_ERROR:
+      let errors = state.errors.filter(error => {
+        return error.id !== action.payload.error_id
+      })
+      return {
+        ...state,
+        errors,
+      }
+
+
     default:
       return state
   }

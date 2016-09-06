@@ -367,6 +367,14 @@ const changeSorting = function(payload){
 }
 
 
+const dismissError = function(error_id){
+  dispatch({
+    type: ActionTypes.DISMISS_ERROR,
+    payload: {error_id},
+  })
+}
+
+
 const bufferUserActions = function(type, args){
 
   if(type === ActionTypes.UPLOAD_START && typeof userActions[type] !== 'undefined'){
@@ -454,6 +462,7 @@ export default {
   loadFromLocalStorage,
   selectFile,
   changeSorting,
+  dismissError,
 }
 
 

@@ -147,6 +147,17 @@ export function ui(state = uiInitialState, action){
         ...state,
         sort: action.payload.sort,
         ascending: action.payload.ascending,
+        //errors: [...state.errors, {id: 7777, type: 'generic', messages: ['het gaat hier helemaal mis!']}],
+      }
+
+
+    case ActionTypes.DISMISS_ERROR:
+      let errors = state.errors.filter(error => {
+        return error.id !== action.payload.error_id
+      })
+      return {
+        ...state,
+        errors,
       }
 
 

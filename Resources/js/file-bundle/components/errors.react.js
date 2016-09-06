@@ -52,7 +52,7 @@ export default class UploadErrors extends React.Component {
       }
 
       return <div key={index} className="alert alert-danger alert-dismissible">
-        <button type="button" className="close" onClick={this.props.onDismiss.bind(this, index)}>&times;</button>
+        <button type="button" className="close" onClick={this.props.onDismiss.bind(this, error.id)}>&times;</button>
         <span className="fa fa-bell-o" />
         {message}
       </div>
