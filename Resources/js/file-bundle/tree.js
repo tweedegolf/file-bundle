@@ -1,19 +1,13 @@
 import api from './api'
 import {chainPromises} from './util'
 import * as Constants from './constants'
+import {getLocalState, storeLocal} from './local_storage'
 
-
-let tree = {}
-let all_files = {}
-let all_folders = {
-  null: {
-    id: null,
-    name: '..',
-  }
-}
-let selected = null
-let recycle_bin = null
-
+let tree
+let all_files
+let all_folders
+let recycle_bin
+let selected
 
 const folderProps = [
   'create_ts',
@@ -28,27 +22,6 @@ const folderProps = [
   'thumb',
   'type',
 ]
-
-
-const storeToLocalStorage = function(){
-  localStorage.setItem('tree', JSON.stringify(tree))
-  localStorage.setItem('all_files', JSON.stringify(all_files))
-  localStorage.setItem('all_folders', JSON.stringify(all_folders))
-  localStorage.setItem('recycle_bin', JSON.stringify(recycle_bin))
-  localStorage.setItem('selected', JSON.stringify(selected))
-}
-
-
-// for parsing JSON, not needed for now
-const reviver = function(k, v){
-  let tmp = parseInt(v, 10)
-  if(isNaN(tmp) === false){
-    return tmp
-  }else if(v === 'null'){
-    return null
-  }
-  return v
-}
 
 
 const removeFilesFromFolders = function(file_ids, exclude_folder_id){
@@ -77,7 +50,7 @@ const loadFolder = function(folder_id){
     let recycle_bin_empty = recycle_bin.files.length === 0 && recycle_bin.folders.length === 0
 
     let current_folder = {...all_folders[folder_id]}
-    localStorage.setItem('current_folder', JSON.stringify(current_folder))
+    storeLocal({current_folder_id: folder_id})
 
     let tree_folder = tree[folder_id]
     let parent_folder = null
@@ -132,7 +105,7 @@ const loadFolder = function(folder_id){
           })
 
           tree[folder_id] = tree_folder
-          storeToLocalStorage()
+          storeLocal({tree}, {all_files}, {all_folders})
 
           resolve({
             recycle_bin_empty,
@@ -158,33 +131,17 @@ const loadFolder = function(folder_id){
 
 
 const loadFromLocalStorage = function(){
+  let current_folder_id
+  ({
+    tree,
+    all_files,
+    all_folders,
+    recycle_bin,
+    selected,
+    current_folder_id,
+  } = getLocalState())
 
-  let current_folder = JSON.parse(localStorage.getItem('current_folder'))
-
-  if(current_folder !== null){
-    tree = JSON.parse(localStorage.getItem('tree'))
-    all_files = JSON.parse(localStorage.getItem('all_files'))
-    all_folders = JSON.parse(localStorage.getItem('all_folders'))
-    selected = JSON.parse(localStorage.getItem('selected'))
-    recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
-  }else{
-    current_folder = {
-      id: null
-    }
-  }
-
-  if(selected === null){
-    selected = []
-  }
-
-  if(recycle_bin === null){
-    recycle_bin = {
-      files: [],
-      folders: [],
-    }
-  }
-
-  return loadFolder(current_folder.id, selected)
+  return loadFolder(current_folder_id)
 }
 
 
@@ -226,7 +183,7 @@ const setSelectedFiles = function(data){
     selected.splice(index, 1)
   }
 
-  localStorage.setItem('selected', JSON.stringify(selected))
+  storeLocal({selected})
   return [...selected]
 
   // let a = selected.map(f => {
@@ -259,7 +216,7 @@ const addFiles = function(file_list, current_folder_id){
         let file_count = tree_folder.file_ids.length
         all_folders[current_folder_id].file_count = file_count
 
-        storeToLocalStorage()
+        storeLocal({tree}, {all_files}, {all_folders})
 
         resolve({
           file_count,
@@ -303,7 +260,7 @@ const moveFiles = function(files, current_folder_id){
         all_folders[current_folder_id].file_count = file_count
 
         removeFilesFromFolders(file_ids, current_folder_id)
-        storeToLocalStorage()
+        storeLocal({tree}, {all_folders})
 
         resolve({
           file_count,
@@ -352,7 +309,7 @@ const deleteFile = function(file_id, current_folder_id){
 
         // then delete
         delete all_files[file_id]
-        storeToLocalStorage()
+        storeLocal({tree}, {all_files}, {all_folders})
         resolve({
           file_count,
           files,
@@ -388,6 +345,7 @@ const addFolder = function(folder_name, current_folder_id){
         let folder_count = tree_folder.folder_ids.length
         tree_folder.folder_count = folder_count
         all_folders[current_folder_id].folder_count = folder_count
+        storeLocal({tree}, {all_folders})
 
         let errors = []
         if(error_messages.length > 0){
@@ -440,6 +398,8 @@ const deleteFolder = function(folder_id, current_folder_id){
 
         // then delete
         delete all_folders[folder_id]
+
+        storeLocal({tree}, {all_folders})
 
         resolve({
           folder_count,
