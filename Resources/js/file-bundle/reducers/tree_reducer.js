@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants'
+import {sortBy} from '../util'
 
 export const treeInitialState = {
   files: [],
@@ -155,6 +156,19 @@ export function tree(state = treeInitialState, action){
         files: [...state.files, ...action.payload.files],
         clipboard: [],
         selected: []
+      }
+
+
+    // CHANGE SORTING
+
+    case ActionTypes.CHANGE_SORTING:
+      let {sort, ascending} = action.payload
+      let files = sortBy([...state.files], sort, ascending)
+      let folders = sortBy([...state.folders], sort, ascending)
+      return {
+        ...state,
+        files,
+        folders,
       }
 
 

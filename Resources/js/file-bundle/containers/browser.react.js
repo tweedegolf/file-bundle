@@ -13,15 +13,10 @@ import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
 
-  let sort = state.ui.sort
-  let files = _.sortBy(state.tree.files, sort)
-  let folders = _.sortBy(state.tree.folders, sort)
-
   return {
-
     // tree props
-    folders,
-    files,
+    folders: state.tree.folders,
+    files: state.tree.files,
     current_folder: state.tree.current_folder,
     parent_folder: state.tree.parent_folder,
     selected: state.tree.selected,
@@ -29,7 +24,7 @@ const mapStateToProps = (state) => {
     recycle_bin_empty: state.tree.recycle_bin_empty,
 
     // ui props
-    sort,
+    sort: state.ui.sort,
     ascending: state.ui.ascending,
     preview: state.ui.preview,
     hover: state.ui.hover,
@@ -92,6 +87,7 @@ export default class Browser extends React.Component {
     }, (name, column) =>
       <SortHeader
         key={column}
+
         sortBy={this.sortBy.bind(this)}
         sort={this.props.sort}
         ascending={this.props.ascending}
@@ -265,17 +261,15 @@ export default class Browser extends React.Component {
     })
   }
 
-  sortBy(column) {
-    // does not work, need implementation of ui_reducer
-    if (this.state.sort === column) {
-      this.state.ascending = !this.state.ascending;
+  sortBy(sort) {
+    let ascending
+    if(this.props.sort === sort){
+      ascending = !this.props.ascending
     }
-    this.setState({
-      ascending: this.state.ascending,
-      sort: column,
-      folders: _.sortBy(this.props.folders, column),
-      files: _.sortBy(this.state.files, column)
-    });
+    Actions.changeSorting({
+      ascending,
+      sort,
+    })
   }
 
   toggleExpand() {

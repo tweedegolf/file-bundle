@@ -83,3 +83,16 @@ export const chainPromises = function(index, promises, resolve, reject, values =
   )
 }
 
+
+export function sortBy(array, key, ascending){
+  array.sort((a, b) => {
+    if(a[key] < b[key]){
+      return ascending ? 1 : -1
+    }
+    if(a[key] > b[key]){
+      return ascending ? -1 : 1
+    }
+    return 0
+  })
+  return array
+}

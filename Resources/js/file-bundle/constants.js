@@ -35,3 +35,5 @@ export const ERROR_MOVING_FILES = 'error moving files'
 export const EMPTY_RECYCLE_BIN = 'empty recycle bin'
 export const RESTORE_FROM_RECYCLE_BIN = 'restore from recycle bin'
 
+export const CHANGE_SORTING = 'change the sorting type of files and folders'
+

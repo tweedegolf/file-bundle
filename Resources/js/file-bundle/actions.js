@@ -359,6 +359,14 @@ const addFolders = function(folders){
 }
 
 
+const changeSorting = function(payload){
+  dispatch({
+    type: ActionTypes.CHANGE_SORTING,
+    payload,
+  })
+}
+
+
 const bufferUserActions = function(type, args){
 
   if(type === ActionTypes.UPLOAD_START && typeof userActions[type] !== 'undefined'){
@@ -445,6 +453,7 @@ export default {
   cacheSelectedFiles,
   loadFromLocalStorage,
   selectFile,
+  changeSorting,
 }
 
 

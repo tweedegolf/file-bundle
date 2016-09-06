@@ -14,6 +14,7 @@ export const uiInitialState = {
   receiving_updates_indicator: false
 }
 
+
 export function ui(state = uiInitialState, action){
 
   switch (action.type) {
@@ -139,6 +140,16 @@ export function ui(state = uiInitialState, action){
       }
 
 
+    // CHANGE SORTING
+
+    case ActionTypes.CHANGE_SORTING:
+      return {
+        ...state,
+        sort: action.payload.sort,
+        ascending: action.payload.ascending,
+      }
+
+
     // Server (pushing updates through sockets) initiated loading indicators
 
     case ActionTypes.RECEIVING_UPDATES:
@@ -153,9 +164,6 @@ export function ui(state = uiInitialState, action){
         receiving_updates_indicator: false
       }
 
-    // sorting
-
-    // preview (future; preloading states based on common actions)
 
     default:
       return state
