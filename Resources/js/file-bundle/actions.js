@@ -390,6 +390,15 @@ const confirmDelete = function(id){
   })
 }
 
+
+const setHover = function(diff, folder_id){
+  let max = tree.getItemCount(folder_id)
+  dispatch({
+    type: ActionTypes.SET_HOVER,
+    payload: {diff, max},
+  })
+}
+
 // filepicker mode
 const expandBrowser = function(){
   dispatch({
@@ -489,6 +498,7 @@ export default {
   showPreview,
   confirmDelete,
   expandBrowser,
+  setHover,
 }
 
 

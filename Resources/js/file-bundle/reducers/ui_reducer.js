@@ -149,7 +149,7 @@ export function ui(state = uiInitialState, action){
         ...state,
         sort: action.payload.sort,
         ascending: action.payload.ascending,
-        errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
+        //errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
       }
 
 
@@ -160,6 +160,41 @@ export function ui(state = uiInitialState, action){
       return {
         ...state,
         errors,
+      }
+
+
+    case ActionTypes.SHOW_PREVIEW:
+      return {
+        ...state,
+        preview: action.payload.image_url
+      }
+
+
+    case ActionTypes.CONFIRM_DELETE:
+      return {
+        ...state,
+        confirm_delete: action.payload.id
+      }
+
+
+    case ActionTypes.SET_HOVER:
+      let hover = state.hover + action.payload.diff
+      let max = action.payload.max
+      if(hover > max){
+        hover = 0
+      }else if(hover < 0){
+        hover = max - 1
+      }
+      return {
+        ...state,
+        hover,
+      }
+
+
+    case ActionTypes.EXPAND_BROWSER:
+      return {
+        ...state,
+        expanded: !state.expanded
       }
 
 
@@ -175,24 +210,6 @@ export function ui(state = uiInitialState, action){
       return {
         ...state,
         receiving_updates_indicator: false
-      }
-
-    case ActionTypes.SHOW_PREVIEW:
-      return {
-        ...state,
-        preview: action.payload.image_url
-      }
-
-    case ActionTypes.CONFIRM_DELETE:
-      return {
-        ...state,
-        confirm_delete: action.payload.id
-      }
-
-    case ActionTypes.EXPAND_BROWSER:
-      return {
-        ...state,
-        expanded: !state.expanded
       }
 
 

@@ -195,17 +195,12 @@ export default class Browser extends React.Component {
   }
 
   onKeyDown(event) {
+    event.stopPropagation();
     if (event.keyCode === 38) {
-      this.setHover(this.props.hover - 1);
+      Actions.setHover(-1, this.props.current_folder.id);
     } else if (event.keyCode === 40) {
-      this.setHover(this.props.hover + 1);
+      Actions.setHover(+1, this.props.current_folder.id);
     }
-  }
-
-  setHover(target) {
-    let len = this.props.folders.length + this.props.files.length;
-    target = target < 0 ? len - 1 : target % len;
-    this.setState({hover: target});
   }
 
   onPreview(image_url, e) {

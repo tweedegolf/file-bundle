@@ -8,6 +8,7 @@ let all_files
 let all_folders
 let recycle_bin
 let selected
+let current_folder_id
 
 const folderProps = [
   'create_ts',
@@ -49,7 +50,8 @@ const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
     let recycle_bin_empty = recycle_bin.files.length === 0 && recycle_bin.folders.length === 0
     let current_folder = {...all_folders[folder_id]}
-    storeLocal({current_folder_id: folder_id})
+    current_folder_id = folder_id
+    storeLocal({current_folder_id})
 
     let tree_folder = tree[folder_id]
     let parent_folder = null
@@ -131,7 +133,6 @@ const loadFolder = function(folder_id){
 
 
 const loadFromLocalStorage = function(){
-  let current_folder_id
   ({
     tree,
     all_files,
@@ -193,12 +194,12 @@ const setSelectedFiles = function(data){
 }
 
 
-const addFiles = function(file_list, current_folder_id){
+const addFiles = function(file_list, folder_id){
 
-  let tree_folder = tree[current_folder_id]
+  let tree_folder = tree[folder_id]
 
   return new Promise((resolve, reject) => {
-    api.upload(file_list, current_folder_id,
+    api.upload(file_list, folder_id,
       (rejected, files) => {
 
         files.forEach(f => {
@@ -215,7 +216,7 @@ const addFiles = function(file_list, current_folder_id){
         }))
 
         let file_count = tree_folder.file_ids.length
-        all_folders[current_folder_id].file_count = file_count
+        all_folders[folder_id].file_count = file_count
 
         storeLocal({tree}, {all_files}, {all_folders})
 
@@ -243,8 +244,8 @@ const addFiles = function(file_list, current_folder_id){
 }
 
 
-const moveFiles = function(files, current_folder_id){
-  let tree_folder = tree[current_folder_id]
+const moveFiles = function(files, folder_id){
+  let tree_folder = tree[folder_id]
 
   return new Promise((resolve, reject) => {
 
@@ -252,16 +253,16 @@ const moveFiles = function(files, current_folder_id){
       return file.id
     })
 
-    api.paste(file_ids, current_folder_id,
+    api.paste(file_ids, folder_id,
       () => {
         files.forEach(f => {
           f.new = true
           tree_folder.file_ids.push(f.id)
         })
         let file_count = tree_folder.file_ids.length
-        all_folders[current_folder_id].file_count = file_count
+        all_folders[folder_id].file_count = file_count
 
-        removeFilesFromFolders(file_ids, current_folder_id)
+        removeFilesFromFolders(file_ids, folder_id)
         storeLocal({tree}, {all_folders})
 
         resolve({
@@ -283,8 +284,8 @@ const moveFiles = function(files, current_folder_id){
 }
 
 
-const deleteFile = function(file_id, current_folder_id){
-  let tree_folder = tree[current_folder_id]
+const deleteFile = function(file_id, folder_id){
+  let tree_folder = tree[folder_id]
 
   return new Promise((resolve, reject) => {
     api.deleteFile(file_id,
@@ -300,14 +301,14 @@ const deleteFile = function(file_id, current_folder_id){
         })
         let file_count = file_ids.length
         tree_folder.file_ids = file_ids
-        all_folders[current_folder_id].file_count = file_count
+        all_folders[folder_id].file_count = file_count
 
         // move to recycle bin
-        if(typeof recycle_bin.files[current_folder_id] === 'undefined'){
-          recycle_bin.files[current_folder_id] = []
+        if(typeof recycle_bin.files[folder_id] === 'undefined'){
+          recycle_bin.files[folder_id] = []
         }
         let file = {...all_files[file_id]}
-        file.folder_id = current_folder_id
+        file.folder_id = folder_id
         recycle_bin.files.push(file)
 
         // then delete
@@ -333,11 +334,11 @@ const deleteFile = function(file_id, current_folder_id){
 }
 
 
-const addFolder = function(folder_name, current_folder_id){
-  let tree_folder = tree[current_folder_id]
+const addFolder = function(folder_name, parent_folder_id){
+  let tree_folder = tree[parent_folder_id]
 
   return new Promise((resolve, reject) => {
-    api.addFolder(folder_name, current_folder_id,
+    api.addFolder(folder_name, parent_folder_id,
       (folders, error_messages) => {
 
         folders.forEach(f => {
@@ -348,7 +349,7 @@ const addFolder = function(folder_name, current_folder_id){
 
         let folder_count = tree_folder.folder_ids.length
         tree_folder.folder_count = folder_count
-        all_folders[current_folder_id].folder_count = folder_count
+        all_folders[parent_folder_id].folder_count = folder_count
         storeLocal({tree}, {all_folders})
 
         let errors = []
@@ -381,8 +382,8 @@ const addFolder = function(folder_name, current_folder_id){
 }
 
 
-const deleteFolder = function(folder_id, current_folder_id){
-  let tree_folder = tree[current_folder_id]
+const deleteFolder = function(folder_id, parent_folder_id){
+  let tree_folder = tree[parent_folder_id]
 
   return new Promise((resolve, reject) => {
     api.deleteFolder(folder_id,
@@ -397,7 +398,7 @@ const deleteFolder = function(folder_id, current_folder_id){
         })
         let folder_count = folder_ids.length
         tree_folder.folder_ids = folder_ids
-        all_folders[current_folder_id].folder_count = folder_count
+        all_folders[parent_folder_id].folder_count = folder_count
 
         // move to recycle bin
         recycle_bin.folders.push({...all_folders[folder_id]})
@@ -432,7 +433,6 @@ const deleteFolder = function(folder_id, current_folder_id){
   })
 }
 
-
 const emptyRecycleBin = function(){
   recycle_bin = {
     files: [],
@@ -442,7 +442,7 @@ const emptyRecycleBin = function(){
 }
 
 
-const restoreRecycleBin = function(current_folder_id){
+const restoreRecycleBin = function(folder_id){
 
   let promises = []
 
@@ -479,22 +479,22 @@ const restoreRecycleBin = function(current_folder_id){
     args: []
   })
 
-  let tree_folder = tree[current_folder_id]
+  let tree_folder = tree[folder_id]
   tree_folder.needsUpdate = true
-  //promises.push(loadFolder(current_folder_id))
+  //promises.push(loadFolder(folder_id))
 /*
   // force an error, just for testing
   promises.push({
     id: Constants.DELETE_FOLDER,
     func: deleteFolder,
     //args: 555, // 500
-    args: [555, current_folder_id], // 4-4
+    args: [555, folder_id], // 4-4
   })
 */
   promises.push({
     id: Constants.OPEN_FOLDER,
     func: loadFolder,
-    args: [current_folder_id],
+    args: [folder_id],
   })
 
   return new Promise((resolve, reject) => {
@@ -536,6 +536,12 @@ const restoreRecycleBin = function(current_folder_id){
 }
 
 
+const getItemCount = function(folder_id){
+  let folder = tree[folder_id]
+  return folder.file_ids.length + folder.folder_ids.length
+}
+
+
 export default {
   loadFromLocalStorage,
   loadFolder,
@@ -547,4 +553,5 @@ export default {
   emptyRecycleBin,
   restoreRecycleBin,
   setSelectedFiles,
+  getItemCount,
 }

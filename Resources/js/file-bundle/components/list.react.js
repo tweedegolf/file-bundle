@@ -6,6 +6,9 @@ import Folder from './folder.react.js';
 export default class List extends React.Component {
 
   render() {
+
+    let i = this.props.folders.length + this.props.files.length
+
     // sorted file listing
     let files = Object.entries(this.props.files).map(([index, file]) => {
 
@@ -14,14 +17,14 @@ export default class List extends React.Component {
         return null;
       }
 
-      index = this.props.ascending
-        ? this.props.folders.length + index
-        : this.props.folders.length + this.props.files.length - index - 1;
+      // index = this.props.ascending
+      //   ? this.props.folders.length + index
+      //   : this.props.folders.length + this.props.files.length - index - 1;
 
       return (<File
         key={'file-' + file.id}
         file={file}
-        hovering={this.props.hover === index}
+        hovering={this.props.hover === --i}
         onSelect={this.props.onSelect.bind(this)}
         onPreview={this.props.onPreview.bind(this)}
         selected={this.props.selected}
@@ -36,12 +39,12 @@ export default class List extends React.Component {
     // sorted folder listing
     let folders = Object.entries(this.props.folders).map(([index, folder]) => {
 
-      index = this.props.ascending
-        ? index
-        : this.props.files.length - index + 1;
+      // index = this.props.ascending
+      //   ? index
+      //   : this.props.files.length - index + 1;
 
       return <Folder
-        hovering={this.props.hover === index}
+        hovering={this.props.hover === --i}
         key={'folder-' + folder.id}
         parent={false}
         folder={folder}

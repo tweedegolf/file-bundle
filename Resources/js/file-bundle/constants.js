@@ -40,4 +40,5 @@ export const DISMISS_ERROR = 'dismiss error'
 export const SHOW_PREVIEW = 'show a fullscreen preview of an image'
 export const CONFIRM_DELETE = 'show a confirmation dialog when user deletes file'
 export const EXPAND_BROWSER = 'expand the browser (filepicker mode)'
+export const SET_HOVER = 'set hover when using arrow keys to select a file'
 
