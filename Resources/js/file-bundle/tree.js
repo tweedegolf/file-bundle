@@ -1,5 +1,5 @@
 import api from './api'
-import {chainPromises} from './util'
+import {chainPromises, getUID} from './util'
 import * as Constants from './constants'
 import {getLocalState, storeLocal} from './local_storage'
 
@@ -8,7 +8,6 @@ let all_files
 let all_folders
 let recycle_bin
 let selected
-let error_id
 
 const folderProps = [
   'create_ts',
@@ -119,7 +118,7 @@ const loadFolder = function(folder_id){
         },
         messages => {
           let errors = [{
-            id: `${error_id++}${new Date()}`,
+            id: getUID(),
             folder: current_folder.name,
             type: Constants.ERROR_OPENING_FOLDER,
             messages
@@ -210,7 +209,7 @@ const addFiles = function(file_list, current_folder_id){
         })
 
         let errors = Object.keys(rejected).map(key => ({
-          id: `${error_id++}${new Date()}`,
+          id: getUID(),
           type: Constants.ERROR_UPLOADING_FILE,
           file: key,
           messages: rejected[key]
@@ -232,7 +231,7 @@ const addFiles = function(file_list, current_folder_id){
         let errors = []
         Array.from(file_list).forEach(f => {
           errors.push({
-            id: `${error_id++}${new Date()}`,
+            id: getUID(),
             type: Constants.ERROR_UPLOADING_FILE,
             file: f.name,
             messages: error
@@ -273,7 +272,7 @@ const moveFiles = function(files, current_folder_id){
       },
       messages => {
         let errors = files.map(file => ({
-          id: `${error_id++}${new Date()}`,
+          id: getUID(),
           file: file.name,
           type: Constants.ERROR_MOVING_FILES,
           messages
@@ -323,7 +322,7 @@ const deleteFile = function(file_id, current_folder_id){
       messages => {
         let file = all_files[file_id]
         let errors = [{
-          id: `${error_id++}${new Date()}`,
+          id: getUID(),
           file: file.name,
           type: Constants.ERROR_DELETING_FILE,
           messages
@@ -356,7 +355,7 @@ const addFolder = function(folder_name, current_folder_id){
         let errors = []
         if(error_messages.length > 0){
           errors = [{
-            id: `${error_id++}${new Date()}`,
+            id: getUID(),
             folder: folder_name,
             type: Constants.ERROR_ADDING_FOLDER,
             messages: error_messages
@@ -371,7 +370,7 @@ const addFolder = function(folder_name, current_folder_id){
       },
       messages => {
         let errors = [{
-          id: `${error_id++}${new Date()}`,
+          id: getUID(),
           folder: folder_name,
           type: Constants.ERROR_ADDING_FOLDER,
           messages
@@ -423,7 +422,7 @@ const deleteFolder = function(folder_id, current_folder_id){
           }
         }
         let errors = [{
-          id: `${error_id++}${new Date()}`,
+          id: getUID(),
           type: Constants.ERROR_DELETING_FOLDER,
           folder,
           messages: [message]

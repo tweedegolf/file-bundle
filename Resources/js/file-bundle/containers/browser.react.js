@@ -1,6 +1,5 @@
 import React from 'react';
 import FileDragAndDrop from 'react-file-drag-and-drop';
-import _ from 'lodash';
 
 import List from '../components/list.react.js';
 import SortHeader from '../components/sort_header.react.js';
@@ -61,11 +60,11 @@ export default class Browser extends React.Component {
 
   componentDidMount() {
 
+    // for filepicker mode
     if (this.props.options && this.props.options.selected) {
       Actions.cacheSelectedFiles(this.props.options.selected)
     }
 
-    //this.onOpenFolder(this.props.current_folder.id);
     Actions.loadFromLocalStorage()
 
     if (this.props.browser) {
@@ -80,11 +79,11 @@ export default class Browser extends React.Component {
   }
 
   render() {
-    let headers = _.map({
+    let headers = Object.entries({
       name: 'Naam',
       size_bytes: 'Grootte',
       create_ts: 'Aangemaakt'
-    }, (name, column) =>
+    }).map(([column, name]) =>
       <SortHeader
         key={column}
 

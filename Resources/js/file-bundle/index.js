@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Browser from './containers/browser.react.js';
-import _ from 'lodash';
 import {Provider} from 'react-redux'
 import getStore from './get_store'
-import tree from './tree'
 
 const store = getStore()
 
@@ -22,20 +20,19 @@ var options = {
 //<Browser browser={true}/>
 
 if (null !== browser) {
-   ReactDOM.render(
+  ReactDOM.render(
     <Provider store={store}>
       <Browser browser={true} />
     </Provider>,
     browser
   );
-
 }
 
 // an element with the class 'tg_file_picker' will be converted to a file selector
 // note there can be multiple file selectors in a single form
 var pickers = document.getElementsByClassName('tg_file_picker');
 if (pickers.length > 0) {
-  _.forEach(pickers, (element) => {
+  Array.from(pickers).forEach(element => {
     var options = JSON.parse(element.dataset.options);
     ReactDOM.render(<Browser browser={false} options={options} />, element);
   });

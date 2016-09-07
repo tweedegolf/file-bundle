@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 
 import File from './file.react.js';
 import Folder from './folder.react.js';
@@ -8,7 +7,7 @@ export default class List extends React.Component {
 
   render() {
     // sorted file listing
-    let files = _.map(this.props.files, (file, index) => {
+    let files = Object.entries(this.props.files).map(([index, file]) => {
 
       // hide non-images when the images only option is passed to the form
       if (!this.props.browser && this.props.images_only && !file.thumb) {
@@ -35,7 +34,7 @@ export default class List extends React.Component {
     });
 
     // sorted folder listing
-    let folders = _.map(this.props.folders, (folder, index) => {
+    let folders = Object.entries(this.props.folders).map(([index, folder]) => {
 
       index = this.props.ascending
         ? index

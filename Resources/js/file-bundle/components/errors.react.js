@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import * as ErrorTypes from '../constants'
 
 
@@ -10,7 +9,7 @@ export default class UploadErrors extends React.Component {
 
     //console.log('error.react', this.props.errors)
 
-    let messages = _.map(this.props.errors, (error, index) => {
+    let messages = Object.entries(this.props.errors).map(([index, error]) => {
       let message = null;
 
       if (error.type === ErrorTypes.ERROR_UPLOADING_FILE) {

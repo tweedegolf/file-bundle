@@ -96,3 +96,15 @@ export function sortBy(array, key, ascending){
   })
   return array
 }
+
+
+let id = 0
+export function getUID(){
+  return `${id++}${new Date()}`
+}
+
+export function getUUID(){
+  // not needed yet
+  // see: http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+}
+
