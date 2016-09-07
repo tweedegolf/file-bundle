@@ -37,4 +37,7 @@ export const RESTORE_FROM_RECYCLE_BIN = 'restore from recycle bin'
 
 export const CHANGE_SORTING = 'change the sorting type of files and folders'
 export const DISMISS_ERROR = 'dismiss error'
+export const SHOW_PREVIEW = 'show a fullscreen preview of an image'
+export const CONFIRM_DELETE = 'show a confirmation dialog when user deletes file'
+export const EXPAND_BROWSER = 'expand the browser (filepicker mode)'
 

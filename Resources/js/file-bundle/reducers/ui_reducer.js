@@ -3,7 +3,9 @@ import * as ActionTypes from '../constants';
 export const uiInitialState = {
   sort: 'create_ts',
   ascending: false,
+  expanded: false,
   preview: null,
+  confirm_delete: null,
   hover: -1,
   errors: [],
   loading_folder: null,
@@ -173,6 +175,24 @@ export function ui(state = uiInitialState, action){
       return {
         ...state,
         receiving_updates_indicator: false
+      }
+
+    case ActionTypes.SHOW_PREVIEW:
+      return {
+        ...state,
+        preview: action.payload.image_url
+      }
+
+    case ActionTypes.CONFIRM_DELETE:
+      return {
+        ...state,
+        confirm_delete: action.payload.id
+      }
+
+    case ActionTypes.EXPAND_BROWSER:
+      return {
+        ...state,
+        expanded: !state.expanded
       }
 
 

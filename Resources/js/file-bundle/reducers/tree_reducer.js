@@ -12,7 +12,7 @@ export const treeInitialState = {
     name: '..'
   },
   parent_folder: null,
-  recycle_bin_emtpy: false,
+  recycle_bin_empty: false,
 }
 
 
@@ -30,14 +30,13 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         //...action.payload, //nice but harder to understand which keys are added
-        recycle_bin_emtpy: action.payload.recycle_bin_emtpy,
+        recycle_bin_empty: action.payload.recycle_bin_empty,
         current_folder: action.payload.current_folder,
         parent_folder: action.payload.parent_folder,
         errors: [...state.errors, ...action.payload.errors],
         files: action.payload.files,
         folders: action.payload.folders,
         selected: action.payload.selected || state.selected,
-        hover: -1,
       }
 
 
@@ -46,7 +45,7 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.DELETE_FILE:
       return {
         ...state,
-        recycle_bin_emtpy: false,
+        recycle_bin_empty: false,
       }
 
 
@@ -66,7 +65,7 @@ export function tree(state = treeInitialState, action){
     case ActionTypes.DELETE_FOLDER:
       return {
         ...state,
-        recycle_bin_emtpy: false,
+        recycle_bin_empty: false,
       }
 
     case ActionTypes.FOLDER_DELETED:

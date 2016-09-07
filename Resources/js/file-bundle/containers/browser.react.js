@@ -11,7 +11,6 @@ import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
-
   return {
     // tree props
     folders: state.tree.folders,
@@ -26,6 +25,8 @@ const mapStateToProps = (state) => {
     sort: state.ui.sort,
     ascending: state.ui.ascending,
     preview: state.ui.preview,
+    confirm_delete: state.ui.confirm_delete,
+    expanded: state.ui.expanded,
     hover: state.ui.hover,
     loading_folder: state.ui.loading_folder, // null or number
     deleting_file: state.ui.deleting, // null or number
@@ -50,33 +51,32 @@ export default class Browser extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      confirm_delete: null, // local state
-      expanded: this.props.browser, // local state
-    };
   }
 
 
   componentDidMount() {
 
-    // for filepicker mode
+    // filepicker mode
     if (this.props.options && this.props.options.selected) {
       Actions.cacheSelectedFiles(this.props.options.selected)
     }
 
-    Actions.loadFromLocalStorage()
-
+    // browser mode
     if (this.props.browser) {
       document.addEventListener('keydown', this.onKeyDown.bind(this), false);
     }
+
+    Actions.expandBrowser(this.props.browser)
+    Actions.loadFromLocalStorage()
   }
+
 
   componentWillUnmount() {
     if (this.props.browser) {
       document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
     }
   }
+
 
   render() {
     let headers = Object.entries({
@@ -86,7 +86,6 @@ export default class Browser extends React.Component {
     }).map(([column, name]) =>
       <SortHeader
         key={column}
-
         sortBy={this.sortBy.bind(this)}
         sort={this.props.sort}
         ascending={this.props.ascending}
@@ -124,11 +123,11 @@ export default class Browser extends React.Component {
     let browser = null;
     let browser_class = 'file-browser text-left' + (this.props.browser ? ' fullpage' : '');
 
-    if (this.state.expanded) {
+    if (this.props.expanded) {
       browser = (
       <div className="text-center">
         {selected}
-        {this.props.preview ? <div
+        {this.props.preview !== null ? <div
           className="preview-image"
           onClick={this.onPreview.bind(this, null)}>
           <div style={{backgroundImage: 'url(' + this.props.preview + ')'}}></div>
@@ -157,7 +156,7 @@ export default class Browser extends React.Component {
                 selected={this.props.selected}
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
-                confirm_delete={this.state.confirm_delete}
+                confirm_delete={this.props.confirm_delete}
                 loading={this.props.loading_folder}
                 images_only={this.props.options ? this.props.options.images_only : false}
                 onDelete={this.onDelete.bind(this)}
@@ -168,7 +167,7 @@ export default class Browser extends React.Component {
             </table>
           </FileDragAndDrop>
         </div>
-        {!this.props.browser
+        {this.props.browser === false
           ? <button
             type="button"
             className="btn btn-default btn-xs collapse-button"
@@ -209,9 +208,9 @@ export default class Browser extends React.Component {
     this.setState({hover: target});
   }
 
-  onPreview(state, e) {
+  onPreview(image_url, e) {
     e.stopPropagation();
-    this.setState({preview: state});
+    Actions.showPreview(image_url)
   }
 
   onDismiss(error_id){
@@ -219,7 +218,7 @@ export default class Browser extends React.Component {
   }
 
   onConfirmDelete(id) {
-    this.setState({confirm_delete: id});
+    Actions.confirmDelete(id)
   }
 
   onDelete(id) {
@@ -271,7 +270,7 @@ export default class Browser extends React.Component {
   }
 
   toggleExpand() {
-    this.setState({expanded: !this.state.expanded});
+    Actions.expandBrowser()
   }
 
   handleDrop(dataTransfer) {

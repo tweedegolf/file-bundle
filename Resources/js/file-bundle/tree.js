@@ -48,7 +48,6 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
     let recycle_bin_empty = recycle_bin.files.length === 0 && recycle_bin.folders.length === 0
-
     let current_folder = {...all_folders[folder_id]}
     storeLocal({current_folder_id: folder_id})
 

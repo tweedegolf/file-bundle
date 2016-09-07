@@ -375,6 +375,29 @@ const dismissError = function(error_id){
 }
 
 
+const showPreview = function(image_url){
+  dispatch({
+    type: ActionTypes.SHOW_PREVIEW,
+    payload: {image_url},
+  })
+}
+
+
+const confirmDelete = function(id){
+  dispatch({
+    type: ActionTypes.CONFIRM_DELETE,
+    payload: {id},
+  })
+}
+
+// filepicker mode
+const expandBrowser = function(){
+  dispatch({
+    type: ActionTypes.EXPAND_BROWSER,
+  })
+}
+
+
 const bufferUserActions = function(type, args){
 
   if(type === ActionTypes.UPLOAD_START && typeof userActions[type] !== 'undefined'){
@@ -463,6 +486,9 @@ export default {
   selectFile,
   changeSorting,
   dismissError,
+  showPreview,
+  confirmDelete,
+  expandBrowser,
 }
 
 
