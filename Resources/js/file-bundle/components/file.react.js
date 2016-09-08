@@ -64,7 +64,7 @@ export default class File extends React.Component {
           </a>;
       }
 
-      checkbox = <input type="checkbox" checked={selected} />;
+      checkbox = <input type="checkbox" defaultChecked={selected} />;
       actions = <div className="actions">
         {delete_btn}
         {download_btn}

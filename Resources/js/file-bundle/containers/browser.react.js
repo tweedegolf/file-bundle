@@ -1,6 +1,5 @@
 import React from 'react';
 import FileDragAndDrop from 'react-file-drag-and-drop';
-import _ from 'lodash';
 
 import List from '../components/list.react.js';
 import SortHeader from '../components/sort_header.react.js';
@@ -12,30 +11,30 @@ import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
-
-  let sort = state.ui.sort
-  let files = _.sortBy(state.tree.files, sort)
-  let folders = _.sortBy(state.tree.folders, sort)
-
   return {
-
     // tree props
-    folders,
-    files,
-    loading_folder: state.tree.loading_folder,
-    adding_folder: state.tree.adding_folder,
+    folders: state.tree.folders,
+    files: state.tree.files,
     current_folder: state.tree.current_folder,
     parent_folder: state.tree.parent_folder,
-    uploading_files: state.tree.uploading_files,
     selected: state.tree.selected,
     clipboard: state.tree.clipboard,
-    errors: state.tree.errors, // to ui_reducer?
 
     // ui props
-    sort,
+    sort: state.ui.sort,
     ascending: state.ui.ascending,
     preview: state.ui.preview,
+    confirm_delete: state.ui.confirm_delete,
+    expanded: state.ui.expanded,
     hover: state.ui.hover,
+    loading_folder: state.ui.loading_folder, // null or number
+    deleting_file: state.ui.deleting, // null or number
+    deleting_folder: state.ui.deleting, // null or number
+    adding_folder: state.ui.adding_folder, // true or false
+    uploading_files: state.ui.uploading_files, // true or false
+
+    // collect all errors
+    errors: [...state.tree.errors, ...state.ui.errors],
   }
 }
 
@@ -50,26 +49,25 @@ export default class Browser extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      confirm_delete: null, // local state
-      expanded: this.props.browser, // local state
-    };
   }
 
 
   componentDidMount() {
 
+    // filepicker mode
     if (this.props.options && this.props.options.selected) {
-      Actions.cacheSelectedFiles(this.props.options.selected)
+      Actions.setSelectedFiles(this.props.options.selected)
     }
 
-    this.onOpenFolder(this.props.current_folder.id);
-
-    if (this.props.browser) {
+    // browser mode
+    if (this.props.browser === true) {
       document.addEventListener('keydown', this.onKeyDown.bind(this), false);
+      Actions.expandBrowser()
     }
+
+    Actions.loadFromLocalStorage()
   }
+
 
   componentWillUnmount() {
     if (this.props.browser) {
@@ -77,17 +75,18 @@ export default class Browser extends React.Component {
     }
   }
 
+
   render() {
-    let headers = _.map({
+    let headers = Object.entries({
       name: 'Naam',
       size_bytes: 'Grootte',
       create_ts: 'Aangemaakt'
-    }, (name, column) =>
+    }).map(([column, name]) =>
       <SortHeader
         key={column}
         sortBy={this.sortBy.bind(this)}
-        sort={this.state.sort}
-        ascending={this.state.ascending}
+        sort={this.props.sort}
+        ascending={this.props.ascending}
         column={column}
         name={name}
       />
@@ -104,31 +103,35 @@ export default class Browser extends React.Component {
       onCancel={this.onCancel.bind(this)}
       onUpload={this.onUpload.bind(this)}
       onAddFolder={this.onAddFolder.bind(this)}
-      uploading={this.props.uploading_files !== null}
+      uploading={this.props.uploading_files}
     />;
 
     let selected = null;
     if (!this.props.browser && this.props.selected.length > 0) {
       selected = <SelectedFiles
         selected={this.props.selected}
-        name={this.props.options.name}
         onSelect={this.onSelect.bind(this)}
         onPreview={this.onPreview.bind(this)}
       />;
     }
 
     let browser = null;
-    let browser_class = "file-browser text-left" + (this.props.browser ? " fullpage" : "");
+    let browser_class = 'file-browser text-left' + (this.props.browser ? ' fullpage' : '');
 
-    if (this.state.expanded) {
+    let preview = null
+    if(this.props.preview !== null){
+      preview = <div
+        className="preview-image"
+        onClick={this.onPreview.bind(this, null)}>
+        <div style={{backgroundImage: 'url(' + this.props.preview + ')'}}></div>
+      </div>
+    }
+
+    if (this.props.expanded) {
       browser = (
       <div className="text-center">
         {selected}
-        {this.state.preview ? <div
-          className="preview-image"
-          onClick={this.onPreview.bind(this, null)}>
-          <div style={{backgroundImage: 'url(' + this.state.preview + ')'}}></div>
-        </div> : null}
+        {preview}
         <div className={browser_class}>
           <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
             {toolbar}
@@ -149,12 +152,12 @@ export default class Browser extends React.Component {
                 parent_folder={this.props.parent_folder}
                 onSelect={this.onSelect.bind(this)}
                 onPreview={this.onPreview.bind(this)}
-                hover={this.state.hover}
+                hover={this.props.hover}
                 selected={this.props.selected}
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
-                confirm_delete={this.state.confirm_delete}
-                loading_folder={this.state.loading_folder}
+                confirm_delete={this.props.confirm_delete}
+                loading={this.props.loading_folder}
                 images_only={this.props.options ? this.props.options.images_only : false}
                 onDelete={this.onDelete.bind(this)}
                 onDeleteFolder={this.onDeleteFolder.bind(this)}
@@ -164,7 +167,7 @@ export default class Browser extends React.Component {
             </table>
           </FileDragAndDrop>
         </div>
-        {!this.props.browser
+        {this.props.browser === false
           ? <button
             type="button"
             className="btn btn-default btn-xs collapse-button"
@@ -178,6 +181,7 @@ export default class Browser extends React.Component {
     } else {
       browser = <div>
         {selected}
+        {preview}
         <button
           type="button"
           className="btn btn-default expand-button"
@@ -192,43 +196,37 @@ export default class Browser extends React.Component {
   }
 
   onKeyDown(event) {
+    event.stopPropagation();
     if (event.keyCode === 38) {
-      this.setHover(this.state.hover - 1);
+      Actions.setHover(-1, this.props.current_folder.id);
     } else if (event.keyCode === 40) {
-      this.setHover(this.state.hover + 1);
+      Actions.setHover(+1, this.props.current_folder.id);
     }
   }
 
-  setHover(target) {
-    let len = this.props.folders.length + this.props.files.length;
-    target = target < 0 ? len - 1 : target % len;
-    this.setState({hover: target});
-  }
-
-  onPreview(state, e) {
+  onPreview(image_url, e) {
     e.stopPropagation();
-    this.setState({preview: state});
+    Actions.showPreview(image_url)
   }
 
-  onDismiss(index) {
-    this.props.errors.splice(index, 1);
-    this.setState({errors: this.props.errors});
+  onDismiss(error_id){
+    Actions.dismissError(error_id)
   }
 
   onConfirmDelete(id) {
-    this.setState({confirm_delete: id});
+    Actions.confirmDelete(id)
   }
 
   onDelete(id) {
-    Actions.deleteFile(id)
+    Actions.deleteFile(id, this.props.current_folder.id)
   }
 
   onDeleteFolder(id) {
-    Actions.deleteFolder(id)
+    Actions.deleteFolder(id, this.props.current_folder.id)
   }
 
   onCut() {
-    Actions.cutFiles(this.props.selected)
+    Actions.cutFiles(this.props.current_folder.id)
   }
 
   onCancel() {
@@ -256,20 +254,19 @@ export default class Browser extends React.Component {
     })
   }
 
-  sortBy(column) {
-    if (this.state.sort === column) {
-      this.state.ascending = !this.state.ascending;
+  sortBy(sort) {
+    let ascending
+    if(this.props.sort === sort){
+      ascending = !this.props.ascending
     }
-    this.setState({
-      ascending: this.state.ascending,
-      sort: column,
-      folders: _.sortBy(this.props.folders, column),
-      files: _.sortBy(this.state.files, column)
-    });
+    Actions.changeSorting({
+      ascending,
+      sort,
+    })
   }
 
   toggleExpand() {
-    this.setState({expanded: !this.state.expanded});
+    Actions.expandBrowser()
   }
 
   handleDrop(dataTransfer) {
@@ -281,21 +278,20 @@ export default class Browser extends React.Component {
   }
 
   onOpenFolder(id) {
-    if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
+    if (this.props.uploading_files === true || this.props.loading_folder !== null) {
       return;
     }
     Actions.openFolder(id)
   }
 
-  onAddFolder() {
-    Actions.addFolder()
+  onAddFolder(new_folder_name, current_folder_id) {
+    Actions.addFolder(new_folder_name, current_folder_id)
   }
 
   doUpload(file_list) {
-    if (this.props.uploading_files !== null || this.props.loading_folder !== null) {
+    if (this.props.uploading_files === true || this.props.loading_folder !== null) {
       return;
     }
-
-    Actions.upload(file_list, this.props.current_folder)
+    Actions.upload(file_list, this.props.current_folder.id)
   }
 }

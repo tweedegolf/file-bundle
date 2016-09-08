@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 
 import File from './file.react.js';
 import Folder from './folder.react.js';
@@ -7,22 +6,25 @@ import Folder from './folder.react.js';
 export default class List extends React.Component {
 
   render() {
+
+    let i = this.props.folders.length + this.props.files.length
+
     // sorted file listing
-    let files = _.map(this.props.files, (file, index) => {
+    let files = Object.entries(this.props.files).map(([index, file]) => {
 
       // hide non-images when the images only option is passed to the form
       if (!this.props.browser && this.props.images_only && !file.thumb) {
         return null;
       }
 
-      index = this.props.ascending
-        ? this.props.folders.length + index
-        : this.props.folders.length + this.props.files.length - index - 1;
+      // index = this.props.ascending
+      //   ? this.props.folders.length + index
+      //   : this.props.folders.length + this.props.files.length - index - 1;
 
       return (<File
         key={'file-' + file.id}
         file={file}
-        hovering={this.props.hover === index}
+        hovering={this.props.hover === --i}
         onSelect={this.props.onSelect.bind(this)}
         onPreview={this.props.onPreview.bind(this)}
         selected={this.props.selected}
@@ -35,20 +37,20 @@ export default class List extends React.Component {
     });
 
     // sorted folder listing
-    let folders = _.map(this.props.folders, (folder, index) => {
+    let folders = Object.entries(this.props.folders).map(([index, folder]) => {
 
-      index = this.props.ascending
-        ? index
-        : this.props.files.length - index + 1;
+      // index = this.props.ascending
+      //   ? index
+      //   : this.props.files.length - index + 1;
 
       return <Folder
-        hovering={this.props.hover === index}
+        hovering={this.props.hover === --i}
         key={'folder-' + folder.id}
         parent={false}
         folder={folder}
         onOpenFolder={this.props.onOpenFolder.bind(this)}
         onDelete={this.props.onDeleteFolder.bind(this)}
-        loading={this.props.loading_folder}
+        loading={this.props.loading}
       />;
     });
 
@@ -66,18 +68,23 @@ export default class List extends React.Component {
         key={'folder-' + this.props.parent_folder.name}
         parent={true}
         folder={this.props.parent_folder}
-        folder={{new: false}}
-        loading={this.props.loading_folder}
+        loading={this.props.loading}
         onOpenFolder={() => {
           this.props.onOpenFolder(this.props.parent_folder.id)
         }}
       />;
     }
 
-    return <tbody>
+    // console.log('this props loading', this.props.loading)
+
+    let loading_list = this.props.loading
+      ? 'loaded'
+      : 'loading'
+
+    return <tbody className={loading_list}>
       {parent}
       {folders}
       {files}
-    </tbody>;
+    </tbody>
   }
 }

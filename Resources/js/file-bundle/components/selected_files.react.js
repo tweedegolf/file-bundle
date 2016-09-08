@@ -15,7 +15,7 @@ export default class SelectedFiles extends React.Component {
         {preview}
         <span className="name">{file.name}</span>
         <span className="remove">&times;</span>
-        <input type="hidden" name={this.props.name} value={id} />
+        <input type="hidden" name={file.name} value={id} />
       </div>)
     })
 
