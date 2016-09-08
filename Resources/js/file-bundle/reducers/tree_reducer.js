@@ -12,7 +12,6 @@ export const treeInitialState = {
     name: '..'
   },
   parent_folder: null,
-  recycle_bin_empty: false,
 }
 
 
@@ -30,7 +29,6 @@ export function tree(state = treeInitialState, action){
       return {
         ...state,
         //...action.payload, //nice but harder to understand which keys are added
-        recycle_bin_empty: action.payload.recycle_bin_empty,
         current_folder: action.payload.current_folder,
         parent_folder: action.payload.parent_folder,
         errors: [...state.errors, ...action.payload.errors],
@@ -41,13 +39,6 @@ export function tree(state = treeInitialState, action){
 
 
     // DELETE FILE
-
-    case ActionTypes.DELETE_FILE:
-      return {
-        ...state,
-        recycle_bin_empty: false,
-      }
-
 
     case ActionTypes.FILE_DELETED:
       return {
@@ -61,12 +52,6 @@ export function tree(state = treeInitialState, action){
 
 
     // DELETE FOLDER
-
-    case ActionTypes.DELETE_FOLDER:
-      return {
-        ...state,
-        recycle_bin_empty: false,
-      }
 
     case ActionTypes.FOLDER_DELETED:
       return {
@@ -101,7 +86,7 @@ export function tree(state = treeInitialState, action){
         selected: action.payload.selected,
       }
 
-    case ActionTypes.CACHE_SELECTED_FILES:
+    case ActionTypes.SET_SELECTED_FILES:
       return {
         ...state,
         selected: action.payload.files,

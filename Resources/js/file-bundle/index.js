@@ -13,7 +13,7 @@ let browser = document.getElementById('tg_file_browser');
 if(browser !== null){
   ReactDOM.render(
     <Provider store={store}>
-      <Browser browser={true}/>
+      <Browser browser={false} />
     </Provider>,
     browser
   );

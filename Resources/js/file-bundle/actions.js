@@ -1,13 +1,10 @@
 import * as ActionTypes from './constants'
 import getStore from './get_store'
 import tree from './tree'
-import {chainPromises} from './util'
 
 const store = getStore()
 const dispatch = store.dispatch
-const bufferTime = 0 // buffering time in milliseconds
-let timer = null
-let userActions = {}
+
 
 const selectFile = function(data){
   dispatch({
@@ -15,14 +12,6 @@ const selectFile = function(data){
     payload: {
       selected: tree.setSelectedFiles(data)
     },
-  })
-}
-
-// store currently selected folder in local storage or similar (only for filepicker mode)
-const cacheSelectedFiles = function(files){
-  dispatch({
-    type: ActionTypes.CACHE_SELECTED_FILES,
-    payload: {files}
   })
 }
 
@@ -43,6 +32,15 @@ const loadFromLocalStorage = function(){
       })
     }
   )
+}
+
+
+// filepicker mode: store the files in the options dataset in the `selected` array in the state
+const setSelectedFiles = function(files){
+  dispatch({
+    type: ActionTypes.SET_SELECTED_FILES,
+    payload: {files}
+  })
 }
 
 
@@ -126,7 +124,7 @@ const cutFiles = function(){
 
 
 const pasteFiles = function(files, current_folder_id){
-  // ui state action here?
+  // dispatch ui state action here?
 
   tree.moveFiles(files, current_folder_id)
   .then(
@@ -201,164 +199,6 @@ const addFolder = function(folder_name, current_folder_id){
 }
 
 
-const restoreFromRecycleBin = function(current_folder_id){
-  tree.restoreRecycleBin(current_folder_id)
-  .then(
-    payload => {
-      dispatch({
-        type: ActionTypes.FOLDER_OPENED,
-        payload,
-      })
-    }
-  )
-}
-
-
-const deleteFolders = function(ids, currentFolder){
-
-  if(ids instanceof Array === false){
-    ids = [ids]
-  }
-
-  let promises = []
-  ids.forEach(id => {
-    promises.push({
-      id: ActionTypes.DELETE_FOLDER,
-      func: tree.deleteFolder,
-      args: [id, currentFolder],
-    })
-  })
-
-  chainPromises(0, promises,
-    (values, errors) => {
-      //console.log(values, errors)
-      let data = values[values.length - 1]
-
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-
-      dispatch({
-        type: ActionTypes.FOLDER_DELETED,
-        payload: {
-          folder_count: data.folder_count,
-          folders: data.folders,
-          errors,
-        }
-      })
-    },
-    errors => {
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-      dispatch({
-        type: ActionTypes.ERROR_DELETING_FOLDER,
-        payload: {errors: err}
-      })
-    }
-  )
-}
-
-
-const deleteFiles = function(ids, currentFolder){
-
-  if(ids instanceof Array === false){
-    ids = [ids]
-  }
-
-  let promises = []
-  ids.forEach(id => {
-    promises.push({
-      id: ActionTypes.DELETE_FILE,
-      func: tree.deleteFile,
-      args: [id, currentFolder],
-    })
-  })
-
-  chainPromises(0, promises,
-    (values, errors) => {
-      //console.log(values, errors)
-      let data = values[values.length - 1]
-
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-
-      dispatch({
-        type: ActionTypes.FILE_DELETED,
-        payload: {
-          file_count: data.file_count,
-          files: data.files,
-          errors,
-        }
-      })
-    },
-    errors => {
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-      dispatch({
-        type: ActionTypes.ERROR_DELETING_FILE,
-        payload: {errors: err}
-      })
-    }
-  )
-}
-
-
-const addFolders = function(folders){
-  let promises = []
-  folders.forEach(folder => {
-    promises.push({
-      id: ActionTypes.ADD_FOLDER,
-      func: tree.addFolder,
-      args: folder
-    })
-  })
-
-  chainPromises(0, promises,
-    (values, errors) => {
-      //console.log(values, errors)
-
-      folders = []
-      let folder_count = 0
-      values.forEach(value => {
-        folders.push(...value.folders)
-        folder_count += value.folder_count
-      })
-
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-
-      dispatch({
-        type: ActionTypes.FOLDER_ADDED,
-        payload: {
-          folders,
-          folder_count,
-          errors: err,
-        }
-      })
-    },
-    errors => {
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-      dispatch({
-        type: ActionTypes.ERROR_ADDING_FOLDER,
-        payload: {errors: err}
-      })
-    }
-  )
-}
-
-
 const changeSorting = function(payload){
   dispatch({
     type: ActionTypes.CHANGE_SORTING,
@@ -407,92 +247,18 @@ const expandBrowser = function(){
 }
 
 
-const bufferUserActions = function(type, args){
-
-  if(type === ActionTypes.UPLOAD_START && typeof userActions[type] !== 'undefined'){
-    let file_list1 = Array.from(userActions[type][0])
-    let file_list2 = Array.from(args[0])
-    userActions[type][0] = [...file_list1, ...file_list2]
-
-  }else if((type === ActionTypes.DELETE_FILE || type === ActionTypes.DELETE_FOLDER) && typeof userActions[type] !== 'undefined'){
-    if(userActions[type][0] instanceof Array === false){
-      userActions[type][0] = [userActions[type][0]]
-    }
-    userActions[type][0].push(args[0])
-    console.log('scheduled for deletion:', userActions[type][0])
-
-  }else if(type === ActionTypes.ADD_FOLDER){
-    if(typeof userActions[type] === 'undefined'){
-      userActions[type] = []
-    }
-    userActions[type].push(args)
-    console.log('adding folders:', userActions[type])
-
-  }else {
-    userActions[type] = args
-  }
-
-  if(timer === null){
-    timer = setTimeout(() => {
-      Object.keys(userActions).forEach(actiontype => {
-
-        switch(actiontype){
-          case ActionTypes.OPEN_FOLDER:
-            openFolder(...userActions[actiontype])
-            break
-
-          case ActionTypes.ADD_FOLDER:
-            addFolders(userActions[actiontype])
-            break
-
-          case ActionTypes.DELETE_FOLDER:
-            deleteFolders(...userActions[actiontype])
-            break
-
-          case ActionTypes.UPLOAD_START:
-            upload(...userActions[actiontype])
-            break
-
-          case ActionTypes.DELETE_FILE:
-            deleteFiles(...userActions[actiontype])
-            break
-
-          default:
-            // let's take a walk into the woods
-        }
-      })
-      userActions = {}
-      timer = null
-    }, bufferTime)
-  }
-}
-
 export default {
-  openFolder(...args){
-    bufferUserActions(ActionTypes.OPEN_FOLDER, args)
-  },
-  addFolder(...args){
-    // @todo: implement creating of multiple folders serverside
-    bufferUserActions(ActionTypes.ADD_FOLDER, args)
-  },
-  deleteFolder(...args){
-    // @todo: implement deletion of multiple folders serverside
-    bufferUserActions(ActionTypes.DELETE_FOLDER, args)
-  },
-  upload(...args){
-    bufferUserActions(ActionTypes.UPLOAD_START, args)
-  },
-  deleteFile(...args){
-    // @todo: implement deletion of multiple files serverside
-    bufferUserActions(ActionTypes.DELETE_FILE, args)
-  },
-  restoreFromRecycleBin,
+  upload,
+  deleteFile,
+  openFolder,
+  addFolder,
+  deleteFolder,
+  selectFile,
   cutFiles,
   pasteFiles,
   cancelCutAndPasteFiles,
-  cacheSelectedFiles,
   loadFromLocalStorage,
-  selectFile,
+  setSelectedFiles,
   changeSorting,
   dismissError,
   showPreview,
@@ -500,76 +266,3 @@ export default {
   expandBrowser,
   setHover,
 }
-
-
-/*
-  const deleteMultiple = function(actiontype, ids, currentFolder){
-  let actionSuccess
-  let actionError
-  let func
-  if(actiontype === ActionTypes.DELETE_FOLDER){
-    actionSuccess = ActionTypes.FOLDER_DELETED
-    actionError = ActionTypes.ERROR_DELETING_FOLDER
-    func = tree.deleteFolder
-  }else if(actiontype === ActionTypes.DELETE_FILE){
-    actionSuccess = ActionTypes.FILE_DELETED
-    actionError = ActionTypes.ERROR_DELETING_FILE
-    func = tree.deleteFile
-  }
-
-  if(ids instanceof Array === false){
-    ids = [ids]
-  }
-  let promises = []
-  ids.forEach(id => {
-    promises.push({
-      id: actiontype,
-      func,
-      args: [id, currentFolder],
-    })
-  })
-  chainPromises(0, promises,
-    (values, errors) => {
-      console.log(values, errors)
-
-      let folders = []
-      let folder_count = 0
-      values.forEach(value => {
-        folders.push(...value.folders)
-        folder_count += value.folder_count
-      })
-
-      let files = []
-      let file_count = 0
-      values.forEach(value => {
-        folders.push(...value.files)
-        file_count += value.file_count
-      })
-
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-
-      dispatch({
-        type: actionSuccess,
-        payload: {
-          values,
-          errors,
-        }
-      })
-    },
-    errors => {
-      let err = []
-      errors.forEach(obj => {
-        err.push(...obj.errors)
-      })
-      dispatch({
-        type: actionError,
-        payload: {errors: err}
-      })
-    }
-  )
-}
-*/
-

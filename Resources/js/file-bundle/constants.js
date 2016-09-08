@@ -15,25 +15,17 @@ export const DELETE_FOLDER = 'delete folder'
 export const FOLDER_DELETED = 'folder deleted'
 export const ERROR_DELETING_FOLDER = 'error deleting folder'
 
-export const CACHE_SELECTED_FILES = 'cache selected files'
-export const SELECT_FILE = 'select file'
-
-export const RECEIVING_UPDATES = 'receiving updates'
-export const APPLIED_UPDATES = 'applied updates'
-
 export const ADD_FOLDER = 'add folder'
 export const FOLDER_ADDED = 'folder added'
 export const ERROR_ADDING_FOLDER = 'error adding folder'
 
-
+export const SELECT_FILE = 'select file'
 export const CUT_FILES = 'cut files'
 export const CANCEL_CUT_AND_PASTE_FILES = 'cancel cut and paste files'
+export const SET_SELECTED_FILES = 'set selected file (filepicker mode)'
 
 export const FILES_MOVED = 'files moved'
 export const ERROR_MOVING_FILES = 'error moving files'
-
-export const EMPTY_RECYCLE_BIN = 'empty recycle bin'
-export const RESTORE_FROM_RECYCLE_BIN = 'restore from recycle bin'
 
 export const CHANGE_SORTING = 'change the sorting type of files and folders'
 export const DISMISS_ERROR = 'dismiss error'
@@ -41,4 +33,3 @@ export const SHOW_PREVIEW = 'show a fullscreen preview of an image'
 export const CONFIRM_DELETE = 'show a confirmation dialog when user deletes file'
 export const EXPAND_BROWSER = 'expand the browser (filepicker mode)'
 export const SET_HOVER = 'set hover when using arrow keys to select a file'
-

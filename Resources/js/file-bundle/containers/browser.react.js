@@ -19,7 +19,6 @@ const mapStateToProps = (state) => {
     parent_folder: state.tree.parent_folder,
     selected: state.tree.selected,
     clipboard: state.tree.clipboard,
-    recycle_bin_empty: state.tree.recycle_bin_empty,
 
     // ui props
     sort: state.ui.sort,
@@ -33,7 +32,6 @@ const mapStateToProps = (state) => {
     deleting_folder: state.ui.deleting, // null or number
     adding_folder: state.ui.adding_folder, // true or false
     uploading_files: state.ui.uploading_files, // true or false
-    receiving_updates_indicator: state.ui.receiving_updates_indicator, // not yet used
 
     // collect all errors
     errors: [...state.tree.errors, ...state.ui.errors],
@@ -58,15 +56,15 @@ export default class Browser extends React.Component {
 
     // filepicker mode
     if (this.props.options && this.props.options.selected) {
-      Actions.cacheSelectedFiles(this.props.options.selected)
+      Actions.setSelectedFiles(this.props.options.selected)
     }
 
     // browser mode
-    if (this.props.browser) {
+    if (this.props.browser === true) {
       document.addEventListener('keydown', this.onKeyDown.bind(this), false);
+      Actions.expandBrowser()
     }
 
-    Actions.expandBrowser(this.props.browser)
     Actions.loadFromLocalStorage()
   }
 
@@ -105,8 +103,6 @@ export default class Browser extends React.Component {
       onCancel={this.onCancel.bind(this)}
       onUpload={this.onUpload.bind(this)}
       onAddFolder={this.onAddFolder.bind(this)}
-      recycle_bin_empty={this.props.recycle_bin_empty}
-      restoreFromRecycleBin={this.restoreFromRecycleBin.bind(this)}
       uploading={this.props.uploading_files}
     />;
 
@@ -114,7 +110,6 @@ export default class Browser extends React.Component {
     if (!this.props.browser && this.props.selected.length > 0) {
       selected = <SelectedFiles
         selected={this.props.selected}
-        name={this.props.options.name}
         onSelect={this.onSelect.bind(this)}
         onPreview={this.onPreview.bind(this)}
       />;
@@ -292,9 +287,5 @@ export default class Browser extends React.Component {
       return;
     }
     Actions.upload(file_list, this.props.current_folder.id)
-  }
-
-  restoreFromRecycleBin(){
-    Actions.restoreFromRecycleBin(this.props.current_folder.id)
   }
 }

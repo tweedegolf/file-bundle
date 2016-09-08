@@ -7,10 +7,6 @@ let all_folders = {
   }
 }
 let selected = []
-let recycle_bin = {
-  files: [],
-  folders: [],
-}
 let current_folder_id = null
 
 
@@ -36,7 +32,6 @@ export function getLocalState(){
     all_folders = JSON.parse(localStorage.getItem('all_folders'))
     current_folder_id = JSON.parse(localStorage.getItem('current_folder_id'))
     selected = JSON.parse(localStorage.getItem('selected'))
-    recycle_bin = JSON.parse(localStorage.getItem('recycle_bin'))
 
     if(selected === null){
       selected = []
@@ -44,13 +39,6 @@ export function getLocalState(){
       selected = selected.map(file_id => {
         return all_files[file_id]
       })
-    }
-
-    if(recycle_bin === null){
-      recycle_bin = {
-        files: [],
-        folders: [],
-      }
     }
   }
 
@@ -60,7 +48,6 @@ export function getLocalState(){
     tree,
     all_files,
     all_folders,
-    recycle_bin,
   }
 }
 
@@ -79,7 +66,7 @@ export function storeLocal(...args){
         break
 
       default:
-        // imagine the sound of one clapping hand
+        // imagine the sound of one hand clapping
     }
 
     localStorage.setItem(key, JSON.stringify(value))

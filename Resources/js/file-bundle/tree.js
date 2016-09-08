@@ -1,12 +1,11 @@
 import api from './api'
-import {chainPromises, getUID} from './util'
+import {getUID} from './util'
 import * as Constants from './constants'
 import {getLocalState, storeLocal} from './local_storage'
 
 let tree
 let all_files
 let all_folders
-let recycle_bin
 let selected
 let current_folder_id
 
@@ -48,7 +47,6 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
  */
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
-    let recycle_bin_empty = recycle_bin.files.length === 0 && recycle_bin.folders.length === 0
     let current_folder = {...all_folders[folder_id]}
     current_folder_id = folder_id
     storeLocal({current_folder_id})
@@ -76,7 +74,6 @@ const loadFolder = function(folder_id){
       })
 
       resolve({
-        recycle_bin_empty,
         current_folder,
         parent_folder,
         files,
@@ -109,7 +106,6 @@ const loadFolder = function(folder_id){
           storeLocal({tree}, {all_files}, {all_folders})
 
           resolve({
-            recycle_bin_empty,
             current_folder,
             parent_folder,
             files,
@@ -137,7 +133,6 @@ const loadFromLocalStorage = function(){
     tree,
     all_files,
     all_folders,
-    recycle_bin,
     selected,
     current_folder_id,
   } = getLocalState())
@@ -303,15 +298,6 @@ const deleteFile = function(file_id, folder_id){
         tree_folder.file_ids = file_ids
         all_folders[folder_id].file_count = file_count
 
-        // move to recycle bin
-        if(typeof recycle_bin.files[folder_id] === 'undefined'){
-          recycle_bin.files[folder_id] = []
-        }
-        let file = {...all_files[file_id]}
-        file.folder_id = folder_id
-        recycle_bin.files.push(file)
-
-        // then delete
         delete all_files[file_id]
         storeLocal({tree}, {all_files}, {all_folders})
         resolve({
@@ -400,12 +386,7 @@ const deleteFolder = function(folder_id, parent_folder_id){
         tree_folder.folder_ids = folder_ids
         all_folders[parent_folder_id].folder_count = folder_count
 
-        // move to recycle bin
-        recycle_bin.folders.push({...all_folders[folder_id]})
-
-        // then delete
         delete all_folders[folder_id]
-
         storeLocal({tree}, {all_folders})
 
         resolve({
@@ -433,108 +414,6 @@ const deleteFolder = function(folder_id, parent_folder_id){
   })
 }
 
-const emptyRecycleBin = function(){
-  recycle_bin = {
-    files: [],
-    folders: [],
-  }
-  localStorage.setItem('recycle_bin', recycle_bin)
-}
-
-
-const restoreRecycleBin = function(folder_id){
-
-  let promises = []
-
-  for(let i = recycle_bin.folders.length - 1; i >= 0; i--){
-    let folder = recycle_bin.folders[i]
-    //promises.push(addFolder(folder.name, folder.parent))
-    promises.push({
-      id: Constants.ADD_FOLDER,
-      func: addFolder,
-      args: [folder.name, folder.parent]
-    })
-  }
-
-// can't restore deleted file because they don't exist on the client (only their descriptions) -> we need to implement a recycle bin on the server
-/*
-  for(let i = recycle_bin.files.length - 1; i >= 0; i--){
-    let file = recycle_bin.files[i]
-    let folder_id = file.folder_id
-    delete file.folder_id
-    //promises.push(addFiles([file], folder_id))
-    promises.push({
-      func: addFiles,
-      args: [[file], folder_id]
-    })
-  }
-*/
-
-  //promises.push(Promise.resolve(emptyRecycleBin()))
-  promises.push({
-    id: Constants.EMPTY_RECYCLE_BIN,
-    func: () => {
-      return Promise.resolve(emptyRecycleBin())
-    },
-    args: []
-  })
-
-  let tree_folder = tree[folder_id]
-  tree_folder.needsUpdate = true
-  //promises.push(loadFolder(folder_id))
-/*
-  // force an error, just for testing
-  promises.push({
-    id: Constants.DELETE_FOLDER,
-    func: deleteFolder,
-    //args: 555, // 500
-    args: [555, folder_id], // 4-4
-  })
-*/
-  promises.push({
-    id: Constants.OPEN_FOLDER,
-    func: loadFolder,
-    args: [folder_id],
-  })
-
-  return new Promise((resolve, reject) => {
-    chainPromises(0, promises,
-      (values, errors) => {
-        //console.log(values, errors)
-        let err = []
-        errors.forEach(obj => {
-          err.push(...obj.errors)
-        })
-        let payload = values[values.length - 1]
-        resolve({...payload, errors: err})
-      },
-      errors => {
-        let err = []
-        errors.forEach(obj => {
-          err.push(...obj.errors)
-        })
-        reject({
-          type: 'generic',
-          payload: {errors: err}
-        })
-      }
-    )
-  })
-
-  /* This doesn't work because promises are not executed one after each other */
-  // return Promise.all(promises)
-  // .then(
-  //   values => {
-  //     let payload = values[values.length - 1]
-  //     return payload
-  //   },
-  //   error => {
-  //     console.log(error)
-  //     // @todo return error object
-  //   }
-  // )
-}
-
 
 const getItemCount = function(folder_id){
   let folder = tree[folder_id]
@@ -550,8 +429,6 @@ export default {
   deleteFile,
   addFolder,
   deleteFolder,
-  emptyRecycleBin,
-  restoreRecycleBin,
   setSelectedFiles,
   getItemCount,
 }

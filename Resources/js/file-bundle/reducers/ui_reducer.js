@@ -13,7 +13,6 @@ export const uiInitialState = {
   deleting_folder: null,
   adding_folder: false,
   uploading_files: false,
-  receiving_updates_indicator: false
 }
 
 
@@ -196,22 +195,6 @@ export function ui(state = uiInitialState, action){
         ...state,
         expanded: !state.expanded
       }
-
-
-    // Server (pushing updates through sockets) initiated loading indicators
-
-    case ActionTypes.RECEIVING_UPDATES:
-      return {
-        ...state,
-        receiving_updates_indicator: true
-      }
-
-    case ActionTypes.APPLIED_UPDATES:
-      return {
-        ...state,
-        receiving_updates_indicator: false
-      }
-
 
     default:
       return state
