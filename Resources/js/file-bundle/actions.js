@@ -39,7 +39,10 @@ const loadFromLocalStorage = function(){
 const setSelectedFiles = function(files){
   dispatch({
     type: ActionTypes.SET_SELECTED_FILES,
-    payload: {files}
+    payload: {
+      //selected: tree.addToSelectedFiles(files)
+      selected: files
+    }
   })
 }
 

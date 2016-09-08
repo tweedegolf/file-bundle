@@ -118,15 +118,20 @@ export default class Browser extends React.Component {
     let browser = null;
     let browser_class = 'file-browser text-left' + (this.props.browser ? ' fullpage' : '');
 
+    let preview = null
+    if(this.props.preview !== null){
+      preview = <div
+        className="preview-image"
+        onClick={this.onPreview.bind(this, null)}>
+        <div style={{backgroundImage: 'url(' + this.props.preview + ')'}}></div>
+      </div>
+    }
+
     if (this.props.expanded) {
       browser = (
       <div className="text-center">
         {selected}
-        {this.props.preview !== null ? <div
-          className="preview-image"
-          onClick={this.onPreview.bind(this, null)}>
-          <div style={{backgroundImage: 'url(' + this.props.preview + ')'}}></div>
-        </div> : null}
+        {preview}
         <div className={browser_class}>
           <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
             {toolbar}
@@ -176,6 +181,7 @@ export default class Browser extends React.Component {
     } else {
       browser = <div>
         {selected}
+        {preview}
         <button
           type="button"
           className="btn btn-default expand-button"

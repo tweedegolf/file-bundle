@@ -189,6 +189,19 @@ const setSelectedFiles = function(data){
 }
 
 
+const addToSelectedFiles = function(files){
+  let selectedFiles
+  files.forEach(file => {
+    selectedFiles = setSelectedFiles({
+      id: file.id,
+      browser: false,
+      multiple: true,
+    })
+  })
+  return selectedFiles
+}
+
+
 const addFiles = function(file_list, folder_id){
 
   let tree_folder = tree[folder_id]
@@ -431,4 +444,5 @@ export default {
   deleteFolder,
   setSelectedFiles,
   getItemCount,
+  addToSelectedFiles, // filepicker mode
 }

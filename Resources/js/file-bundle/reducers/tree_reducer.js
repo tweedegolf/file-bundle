@@ -81,15 +81,10 @@ export function tree(state = treeInitialState, action){
     // SELECT FILES
 
     case ActionTypes.SELECT_FILE:
-      return {
-        ...state,
-        selected: action.payload.selected,
-      }
-
     case ActionTypes.SET_SELECTED_FILES:
       return {
         ...state,
-        selected: action.payload.files,
+        selected: action.payload.selected,
       }
 
 
