@@ -128,7 +128,7 @@ const loadFolder = function(folder_id){
 }
 
 
-const loadFromLocalStorage = function(){
+const loadFromLocalStorage = function(files){
   ({
     tree,
     all_files,
@@ -136,6 +136,14 @@ const loadFromLocalStorage = function(){
     selected,
     current_folder_id,
   } = getLocalState())
+
+  // In filepicker mode, selected files can be passed via the HTML element's
+  // dataset; in this case we don't use the selected files array in the local
+  // storage.
+  if(typeof files !== 'undefined'){
+    selected = files
+    storeLocal({selected})
+  }
 
   return loadFolder(current_folder_id)
 }
@@ -186,19 +194,6 @@ const setSelectedFiles = function(data){
   //   return f.id
   // })
   // console.log(id, a)
-}
-
-
-const addToSelectedFiles = function(files){
-  let selectedFiles
-  files.forEach(file => {
-    selectedFiles = setSelectedFiles({
-      id: file.id,
-      browser: false,
-      multiple: true,
-    })
-  })
-  return selectedFiles
 }
 
 
@@ -444,5 +439,4 @@ export default {
   deleteFolder,
   setSelectedFiles,
   getItemCount,
-  addToSelectedFiles, // filepicker mode
 }

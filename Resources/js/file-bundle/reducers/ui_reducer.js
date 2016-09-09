@@ -13,6 +13,7 @@ export const uiInitialState = {
   deleting_folder: null,
   adding_folder: false,
   uploading_files: false,
+  scroll_position: null,
 }
 
 
@@ -121,6 +122,7 @@ export function ui(state = uiInitialState, action){
     case ActionTypes.UPLOAD_DONE:
       return {
         ...state,
+        scroll_position: 0,
         uploading_files: false
       }
 
@@ -187,6 +189,13 @@ export function ui(state = uiInitialState, action){
       return {
         ...state,
         hover,
+      }
+
+
+    case ActionTypes.SET_SCROLL_POSITION:
+      return {
+        ...state,
+        scroll_position: action.payload.scroll
       }
 
 
