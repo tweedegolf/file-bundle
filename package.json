@@ -10,13 +10,15 @@
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.14.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-register": "^6.14.0",
     "chai": "^3.5.0",
     "mocha": "^3.0.2"
   },
   "babel": {
-   "presets": [
-     "es2015"
-   ]
- }
+    "presets": [
+      "es2015",
+      "babel-plugin-transform-decorators-legacy"
+    ]
+  }
 }
