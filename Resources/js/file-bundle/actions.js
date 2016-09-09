@@ -242,6 +242,14 @@ const setHover = function(diff, folder_id){
   })
 }
 
+
+const setScrollPosition = function(scroll){
+  dispatch({
+    type: ActionTypes.SET_SCROLL_POSITION,
+    payload: {scroll}
+  })
+}
+
 // filepicker mode
 const expandBrowser = function(){
   dispatch({
@@ -268,4 +276,5 @@ export default {
   confirmDelete,
   expandBrowser,
   setHover,
+  setScrollPosition,
 }

@@ -11,9 +11,6 @@ import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
-  // @todo: implement this
-  // this.refs.container.scrollTop = 0;
-
   return {
     // tree props
     folders: state.tree.folders,
@@ -35,6 +32,7 @@ const mapStateToProps = (state) => {
     deleting_folder: state.ui.deleting, // null or number
     adding_folder: state.ui.adding_folder, // true or false
     uploading_files: state.ui.uploading_files, // true or false
+    scroll_position: state.ui.scroll_position, // null or numeric value
 
     // collect all errors
     errors: [...state.tree.errors, ...state.ui.errors],
@@ -75,6 +73,14 @@ export default class Browser extends React.Component {
   componentWillUnmount() {
     if (this.props.browser) {
       document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
+    }
+  }
+
+
+  componentDidUpdate(){
+    if(this.props.scroll_position !== null){
+      this.refs.container.scrollTop = this.props.scroll_position
+      Actions.setScrollPosition(null)
     }
   }
 
