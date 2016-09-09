@@ -16,8 +16,8 @@ const selectFile = function(data){
 }
 
 
-const loadFromLocalStorage = function(){
-  tree.loadFromLocalStorage()
+const loadFromLocalStorage = function(files){
+  tree.loadFromLocalStorage(files)
   .then(
     payload => {
       dispatch({
@@ -32,18 +32,6 @@ const loadFromLocalStorage = function(){
       })
     }
   )
-}
-
-
-// filepicker mode: store the files in the options dataset in the `selected` array in the state
-const setSelectedFiles = function(files){
-  dispatch({
-    type: ActionTypes.SET_SELECTED_FILES,
-    payload: {
-      //selected: tree.addToSelectedFiles(files)
-      selected: files
-    }
-  })
 }
 
 
@@ -269,7 +257,6 @@ export default {
   pasteFiles,
   cancelCutAndPasteFiles,
   loadFromLocalStorage,
-  setSelectedFiles,
   changeSorting,
   dismissError,
   showPreview,

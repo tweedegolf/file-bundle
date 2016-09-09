@@ -39,7 +39,7 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = function(dispatch){
+const mapDispatchToProps = function (dispatch) {
   return {
     dispatch,
   }
@@ -55,18 +55,25 @@ export default class Browser extends React.Component {
 
   componentDidMount() {
 
-    // filepicker mode
-    if (this.props.options && this.props.options.selected) {
-      Actions.setSelectedFiles(this.props.options.selected)
+    // Filepicker mode: gets its selected files from a dataset, not from local
+    // storage. In case no selected files are passed in from the dataset, we
+    // pass an empty array to loadFromLocalStorage(). This overrides the
+    // selected files in the local storage.
+    if (this.props.browser === false) {
+      let selected = []
+      if(typeof this.props.options !== 'undefined'){
+        selected = this.props.options.selected
+      }
+      Actions.loadFromLocalStorage(selected)
     }
 
-    // browser mode
+    // Browser mode: by default, the browser is not expanded, therefor we have
+    // to call the expandBrowser action to expand the browser
     if (this.props.browser === true) {
       document.addEventListener('keydown', this.onKeyDown.bind(this), false);
       Actions.expandBrowser()
+      Actions.loadFromLocalStorage()
     }
-
-    Actions.loadFromLocalStorage()
   }
 
 
@@ -77,8 +84,8 @@ export default class Browser extends React.Component {
   }
 
 
-  componentDidUpdate(){
-    if(this.props.scroll_position !== null){
+  componentDidUpdate() {
+    if (this.props.scroll_position !== null) {
       this.refs.container.scrollTop = this.props.scroll_position
       Actions.setScrollPosition(null)
     }
@@ -128,31 +135,31 @@ export default class Browser extends React.Component {
     let browser_class = 'file-browser text-left' + (this.props.browser ? ' fullpage' : '');
 
     let preview = null
-    if(this.props.preview !== null){
+    if (this.props.preview !== null) {
       preview = <div
         className="preview-image"
         onClick={this.onPreview.bind(this, null)}>
-        <div style={{backgroundImage: 'url(' + this.props.preview + ')'}}></div>
+        <div style={{ backgroundImage: 'url(' + this.props.preview + ')' }}></div>
       </div>
     }
 
     if (this.props.expanded) {
       browser = (
-      <div className="text-center">
-        {selected}
-        {preview}
-        <div className={browser_class}>
-          <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
-            {toolbar}
-            <Errors errors={this.props.errors} onDismiss={this.onDismiss.bind(this)} />
+        <div className="text-center">
+          {selected}
+          {preview}
+          <div className={browser_class}>
+            <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
+              {toolbar}
+              <Errors errors={this.props.errors} onDismiss={this.onDismiss.bind(this)}/>
               <div ref="container" className="table-container">
                 <table className="table table-condensed">
                   <thead>
                   <tr>
-                    <th className="select" />
-                    <th className="preview" />
+                    <th className="select"/>
+                    <th className="preview"/>
                     {headers}
-                    <th className="buttons" />
+                    <th className="buttons"/>
                   </tr>
                   </thead>
                   <List
@@ -174,20 +181,20 @@ export default class Browser extends React.Component {
                     onConfirmDelete={this.onConfirmDelete.bind(this)}
                     onOpenFolder={this.onOpenFolder.bind(this)}
                   />
-              </table>
-            </div>
-          </FileDragAndDrop>
-        </div>
-        {this.props.browser === false
-          ? <button
+                </table>
+              </div>
+            </FileDragAndDrop>
+          </div>
+          {this.props.browser === false
+            ? <button
             type="button"
             className="btn btn-default btn-xs collapse-button"
             onClick={this.toggleExpand.bind(this)}>
-            <span className="fa fa-chevron-up" />
-            </button>
-          : null
-        }
-      </div>
+            <span className="fa fa-chevron-up"/>
+          </button>
+            : null
+          }
+        </div>
       );
     } else {
       browser = <div>
@@ -198,7 +205,7 @@ export default class Browser extends React.Component {
           className="btn btn-default expand-button"
           onClick={this.toggleExpand.bind(this)}>
           Bladeren
-          <span className="fa fa-folder-open-o" />
+          <span className="fa fa-folder-open-o"/>
         </button>
       </div>
     }
@@ -220,7 +227,7 @@ export default class Browser extends React.Component {
     Actions.showPreview(image_url)
   }
 
-  onDismiss(error_id){
+  onDismiss(error_id) {
     Actions.dismissError(error_id)
   }
 
@@ -254,7 +261,7 @@ export default class Browser extends React.Component {
     }
 
     let multiple = true
-    if(this.props.options && this.props.options.multiple) {
+    if (this.props.options && this.props.options.multiple) {
       multiple = this.props.options.multiple
     }
 
@@ -267,7 +274,7 @@ export default class Browser extends React.Component {
 
   sortBy(sort) {
     let ascending
-    if(this.props.sort === sort){
+    if (this.props.sort === sort) {
       ascending = !this.props.ascending
     }
     Actions.changeSorting({

@@ -9,11 +9,17 @@ const store = getStore()
 // an element with the id 'tg_file_browser' will be converted to a interactive file browser
 // note that there can only be one of these
 let browser = document.getElementById('tg_file_browser');
+let dataset = {
+    selected: [
+        {"id":1,"name":"Olive.jpg","size_bytes":2087,"size":"2 kB","create_ts":1470914525,"created":"11-08-2016 13:22","thumb":"http:\/\/localhost:8080\/media\/cache\/admin_thumb\/57ac5fdd4aa99_OliveDrab.jpg","original":"\/media\/57ac5fdd4aa99_OliveDrab.jpg","type":"jpg"},
+        {"id":5,"name":"DodgerBlue.jpg","size_bytes":2086,"size":"2 kB","create_ts":1470914525,"created":"11-08-2016 13:22","thumb":"http:\/\/localhost:8080\/media\/cache\/admin_thumb\/57ac5fdd4f51a_DodgerBlue.jpg","original":"\/media\/57ac5fdd4f51a_DodgerBlue.jpg","type":"jpg"},
+    ]
+}
 
 if(browser !== null){
   ReactDOM.render(
     <Provider store={store}>
-      <Browser browser />
+      <Browser browser={true} options={dataset}/>
     </Provider>,
     browser
   );

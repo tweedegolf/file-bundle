@@ -22,7 +22,6 @@ export const ERROR_ADDING_FOLDER = 'error adding folder'
 export const SELECT_FILE = 'select file'
 export const CUT_FILES = 'cut files'
 export const CANCEL_CUT_AND_PASTE_FILES = 'cancel cut and paste files'
-export const SET_SELECTED_FILES = 'set selected file (filepicker mode)'
 
 export const FILES_MOVED = 'files moved'
 export const ERROR_MOVING_FILES = 'error moving files'
