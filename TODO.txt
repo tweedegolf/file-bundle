@@ -45,5 +45,7 @@ Roadmap:
 
 x redux version without local cache
 x redux version with local cache
+x mocha tests
+x sfynx documentation
 
 
