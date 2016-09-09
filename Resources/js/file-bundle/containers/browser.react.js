@@ -11,6 +11,9 @@ import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
+  // @todo: implement this
+  // this.refs.container.scrollTop = 0;
+
   return {
     // tree props
     folders: state.tree.folders,
@@ -136,35 +139,37 @@ export default class Browser extends React.Component {
           <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
             {toolbar}
             <Errors errors={this.props.errors} onDismiss={this.onDismiss.bind(this)} />
-            <table className="table table-condensed">
-              <thead>
-              <tr>
-                <th />
-                <th />
-                {headers}
-                <th />
-              </tr>
-              </thead>
-              <List
-                files={this.props.files}
-                folders={this.props.folders}
-                current_folder={this.props.current_folder}
-                parent_folder={this.props.parent_folder}
-                onSelect={this.onSelect.bind(this)}
-                onPreview={this.onPreview.bind(this)}
-                hover={this.props.hover}
-                selected={this.props.selected}
-                clipboard={this.props.clipboard}
-                browser={this.props.browser}
-                confirm_delete={this.props.confirm_delete}
-                loading={this.props.loading_folder}
-                images_only={this.props.options ? this.props.options.images_only : false}
-                onDelete={this.onDelete.bind(this)}
-                onDeleteFolder={this.onDeleteFolder.bind(this)}
-                onConfirmDelete={this.onConfirmDelete.bind(this)}
-                onOpenFolder={this.onOpenFolder.bind(this)}
-              />
-            </table>
+              <div ref="container" className="table-container">
+                <table className="table table-condensed">
+                  <thead>
+                  <tr>
+                    <th className="select" />
+                    <th className="preview" />
+                    {headers}
+                    <th className="buttons" />
+                  </tr>
+                  </thead>
+                  <List
+                    files={this.props.files}
+                    folders={this.props.folders}
+                    current_folder={this.props.current_folder}
+                    parent_folder={this.props.parent_folder}
+                    onSelect={this.onSelect.bind(this)}
+                    onPreview={this.onPreview.bind(this)}
+                    hover={this.props.hover}
+                    selected={this.props.selected}
+                    clipboard={this.props.clipboard}
+                    browser={this.props.browser}
+                    confirm_delete={this.props.confirm_delete}
+                    loading={this.props.loading_folder}
+                    images_only={this.props.options ? this.props.options.images_only : false}
+                    onDelete={this.onDelete.bind(this)}
+                    onDeleteFolder={this.onDeleteFolder.bind(this)}
+                    onConfirmDelete={this.onConfirmDelete.bind(this)}
+                    onOpenFolder={this.onOpenFolder.bind(this)}
+                  />
+              </table>
+            </div>
           </FileDragAndDrop>
         </div>
         {this.props.browser === false

@@ -30,7 +30,7 @@ export default class File extends React.Component {
     let selected = typeof this.props.selected.find(f => {
       return f.id === file.id
     }) !== 'undefined';
-    let class_name = 'cutable' + (file.new ? ' success' : '') + (this.props.hovering ? ' selected' : '');
+    let class_name = 'cutable' + (this.props.hovering ? ' selected' : '');
     let preview = <span className={'fa fa-' + (icons[file.type] ? icons[file.type] : 'file')} />;
 
     let checkbox = null;
@@ -41,17 +41,17 @@ export default class File extends React.Component {
 
     if (this.props.confirm_delete === file.id) {
       confirm = <div className="confirm">
-        <button type="button" className="btn btn-xs btn-primary" onClick={this.onCancelDelete}>
+        <button type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
           <span className="text-label">Annuleren</span>
           <span className="fa fa-times"/>
         </button>
-        <button type="button" className="btn btn-xs btn-danger" onClick={this.onDelete}>
+        <button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete}>
           <span className="text-label">Definitief verwijderen</span>
           <span className="fa fa-trash-o"/>
         </button>
       </div>;
     } else if (this.props.selected.length + this.props.clipboard.length === 0) {
-      delete_btn = <button type="button" className="btn btn-xs btn-danger" onClick={this.onConfirmDelete}>
+      delete_btn = <button type="button" className="btn btn-sm btn-danger" onClick={this.onConfirmDelete}>
         <span className="fa fa-trash-o" />
       </button>;
     }
@@ -59,7 +59,7 @@ export default class File extends React.Component {
     if (this.props.browser) {
       if (this.props.confirm_delete !== file.id) {
         download_btn =
-          <a className="btn btn-xs btn-primary" title="Download" download={file.name} href={file.original} onClick={(e) => e.stopPropagation()}>
+          <a className="btn btn-sm btn-primary" title="Download" download={file.name} href={file.original} onClick={(e) => e.stopPropagation()}>
             <span className="fa fa-download"/>
           </a>;
       }
@@ -84,6 +84,10 @@ export default class File extends React.Component {
       class_name += ' danger';
     }
 
+    if (file.new) {
+      class_name += ' success';
+    }
+
     if (file.thumb) {
       preview = <img
         src={file.thumb}
@@ -94,22 +98,22 @@ export default class File extends React.Component {
 
     return (
       <tr className={class_name} onClick={this.props.onSelect.bind(this, file.id)}>
-        <td>
+        <td className="select">
           {checkbox}
         </td>
-        <td>
+        <td className="preview">
           {preview}
         </td>
-        <td>
+        <td className="name">
           {file.name}
         </td>
-        <td>
+        <td className="size">
           {file.size}
         </td>
-        <td>
+        <td className="date">
           {file.created}
         </td>
-        <td>
+        <td className="buttons">
           {actions}
         </td>
       </tr>
