@@ -73,7 +73,7 @@ export function tree(state = treeInitialState, action){
           ...state.current_folder,
           file_count: action.payload.file_count
         },
-        files: [...state.files, ...action.payload.files],
+        files: sortBy([...state.files, ...action.payload.files], 'create_ts', false),
         errors: [...state.errors, ...action.payload.errors],
       }
 

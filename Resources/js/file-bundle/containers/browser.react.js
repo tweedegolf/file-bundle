@@ -11,6 +11,7 @@ import Actions from '../actions';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
+
   return {
     // tree props
     folders: state.tree.folders,
