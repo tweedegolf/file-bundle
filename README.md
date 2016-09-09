@@ -17,3 +17,12 @@ The Bootstrap javascript components are not required.
 ## Architecture (WIP)
 
 [Edit in Google Drive](https://docs.google.com/drawings/d/191uT_e2LmWlZeQWWRQsmIzznixTXfE55AfuddNL6jks/edit)
+
+## Front-end tests
+
+Tests with Mocha and Chai may be run separately:
+
+```
+npm install
+npm test
+```
