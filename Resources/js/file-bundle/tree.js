@@ -145,7 +145,7 @@ const loadFromLocalStorage = function(files){
     storeLocal({selected})
   }
 
-  return loadFolder(current_folder_id)
+  return current_folder_id
 }
 
 

@@ -15,152 +15,154 @@ export const treeInitialState = {
 }
 
 
-export function tree(state = treeInitialState, action){
+export function tree(state = treeInitialState, action) {
 
-  switch (action.type) {
-
-    // LOAD FOLDER
-
-    case ActionTypes.FOLDER_OPENED:
-      //console.log(action.payload.selected)
-      if(action.payload.errors instanceof Array === false){
-        action.payload.errors = []
-      }
-      return {
-        ...state,
-        //...action.payload, //nice but harder to understand which keys are added
-        current_folder: action.payload.current_folder,
-        parent_folder: action.payload.parent_folder,
-        errors: [...state.errors, ...action.payload.errors],
-        files: action.payload.files,
-        folders: action.payload.folders,
-        selected: action.payload.selected || state.selected,
-      }
+  // Multiple actions need the 'sort' and 'ascending' values of the ui reducer
+  // to calculate the new tree state. We define them here because otherwise we
+  // would have to define them in every if statement where they are needed. If
+  // the keys are not set in the payload, the values will be undefined but that
+  // is not a problem because in these cases we don't need them anyway.
+  let {
+    sort,
+    ascending,
+  } = action.payload || {}
 
 
-    // DELETE FILE
+  if(action.type === ActionTypes.FOLDER_OPENED) {
 
-    case ActionTypes.FILE_DELETED:
-      return {
-        ...state,
-        current_folder: {
-          ...state.current_folder,
-          file_count: action.payload.file_count,
-        },
-        files: action.payload.files,
-      }
+    //console.log(action.payload.selected)
+    if(action.payload.errors instanceof Array === false) {
+      action.payload.errors = []
+    }
 
-
-    // DELETE FOLDER
-
-    case ActionTypes.FOLDER_DELETED:
-      return {
-        ...state,
-        folders: action.payload.folders,
-        current_folder: {
-          ...state.current_folder,
-          folder_count: action.payload.folder_count,
-        },
-      }
+    return {
+      ...state,
+      current_folder: action.payload.current_folder,
+      parent_folder: action.payload.parent_folder,
+      errors: [...state.errors, ...action.payload.errors],
+      files: sortBy(action.payload.files, sort, ascending),
+      folders: sortBy(action.payload.folders, sort, ascending),
+      selected: action.payload.selected || state.selected,
+    }
 
 
-    // UPLOAD FILES
+  }else if(action.type === ActionTypes.FILE_DELETED){
 
-    case ActionTypes.UPLOAD_DONE:
-      return {
-        ...state,
-        current_folder: {
-          ...state.current_folder,
-          file_count: action.payload.file_count
-        },
-        files: sortBy([...state.files, ...action.payload.files], 'create_ts', false),
-        errors: [...state.errors, ...action.payload.errors],
-      }
+    return {
+      ...state,
+      current_folder: {
+        ...state.current_folder,
+        file_count: action.payload.file_count,
+      },
+      files: sortBy(action.payload.files, sort, ascending),
+    }
 
 
-    // SELECT FILES
+  }else if(action.type === ActionTypes.FOLDER_DELETED){
 
-    case ActionTypes.SELECT_FILE:
-      return {
-        ...state,
-        selected: action.payload.selected,
-      }
-
-
-    // ADD FOLDER
-
-    case ActionTypes.FOLDER_ADDED:
-      return {
-        ...state,
-        current_folder: {
-          ...state.current_folder,
-          folder_count: action.payload.folder_count,
-        },
-        folders: [...state.folders, ...action.payload.folders],
-        errors: [...state.errors, ...action.payload.errors],
-      }
+    return {
+      ...state,
+      folders: sortBy(action.payload.folders, sort, ascending),
+      current_folder: {
+        ...state.current_folder,
+        folder_count: action.payload.folder_count,
+      },
+    }
 
 
-    // CUT AND PASTE
+  }else if(action.type === ActionTypes.UPLOAD_DONE){
 
-    case ActionTypes.CUT_FILES:
-      return {
-        ...state,
-        clipboard: [...state.selected],
-        selected: []
-      }
-
-    case ActionTypes.CANCEL_CUT_AND_PASTE_FILES:
-      return {
-        ...state,
-        clipboard: [],
-        selected: []
-      }
-
-    case ActionTypes.ERROR_MOVING_FILES:
-      return {
-        ...state,
-        //clipboard: [],
-        //selected: []
-      }
-
-    case ActionTypes.FILES_MOVED:
-      return {
-        ...state,
-        current_folder: {
-          ...state.current_folder,
-          file_count: action.payload.file_count,
-        },
-        files: [...state.files, ...action.payload.files],
-        clipboard: [],
-        selected: []
-      }
+    return {
+      ...state,
+      current_folder: {
+        ...state.current_folder,
+        file_count: action.payload.file_count
+      },
+      files: sortBy(action.payload.files, sort, ascending),
+      errors: [...state.errors, ...action.payload.errors],
+    }
 
 
-    // CHANGE SORTING
+  }else if(action.type === ActionTypes.SELECT_FILE){
 
-    case ActionTypes.CHANGE_SORTING:
-      let {sort, ascending} = action.payload
-      let files = sortBy([...state.files], sort, ascending)
-      let folders = sortBy([...state.folders], sort, ascending)
-      return {
-        ...state,
-        files,
-        folders,
-      }
+    return {
+      ...state,
+      selected: action.payload.selected,
+    }
 
 
-    case ActionTypes.DISMISS_ERROR:
-      let errors = state.errors.filter(error => {
-        return error.id !== action.payload.error_id
-      })
-      return {
-        ...state,
-        errors,
-      }
+  }else if(action.type === ActionTypes.FOLDER_ADDED){
+
+    return {
+      ...state,
+      current_folder: {
+        ...state.current_folder,
+        folder_count: action.payload.folder_count,
+      },
+      folders: sortBy([...state.folders, ...action.payload.folders], sort, ascending),
+      errors: [...state.errors, ...action.payload.errors],
+    }
 
 
-    default:
-      return state
+  }else if(action.type === ActionTypes.CUT_FILES){
+
+    return {
+      ...state,
+      clipboard: [...state.selected],
+      selected: []
+    }
+
+
+  }else if(action.type === ActionTypes.CANCEL_CUT_AND_PASTE_FILES){
+
+    return {
+      ...state,
+      clipboard: [],
+      selected: []
+    }
+
+
+  }else if(action.type === ActionTypes.ERROR_MOVING_FILES){
+
+    return {
+      ...state,
+      //clipboard: [],
+      //selected: []
+    }
+
+
+  }else if(action.type === ActionTypes.FILES_MOVED){
+
+    return {
+      ...state,
+      current_folder: {
+        ...state.current_folder,
+        file_count: action.payload.file_count,
+      },
+      files: sortBy([...state.files, ...action.payload.files], sort, ascending),
+      clipboard: [],
+      selected: []
+    }
+
+
+  }else if(action.type === ActionTypes.CHANGE_SORTING){
+    return {
+      ...state,
+      files: sortBy([...state.files], sort, ascending),
+      folders: sortBy([...state.folders], sort, ascending),
+    }
+
+
+  }else if(action.type === ActionTypes.DISMISS_ERROR){
+
+    let errors = state.errors.filter(error => {
+      return error.id !== action.payload.error_id
+    })
+    return {
+      ...state,
+      errors,
+    }
   }
+
+  return state //-> if we return the state here, will it cause a re-render?
 }
