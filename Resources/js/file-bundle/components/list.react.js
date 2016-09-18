@@ -6,7 +6,6 @@ import Folder from './folder.react.js';
 export default class List extends React.Component {
 
   render() {
-
     let i = this.props.folders.length + this.props.files.length
 
     // sorted file listing

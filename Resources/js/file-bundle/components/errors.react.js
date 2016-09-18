@@ -4,6 +4,34 @@ import * as ErrorTypes from '../constants'
 
 export default class UploadErrors extends React.Component {
 
+  shouldComponentUpdate(nextProps){
+    let update = false
+    if(nextProps.errors.length === this.props.errors.length === 0){
+      update = false
+    }else if(nextProps.errors.length === this.props.errors.length){
+      let currentErrorIds = this.props.errors.map(error => {
+        return error.id
+      })
+      for(let error of nextProps.errors){
+        let index = currentErrorIds.findIndex(id => {
+          return id === error.id
+        })
+        if(index === -1){
+          update = true
+          break
+        }
+      }
+    }else{
+      update = true
+    }
+    return update
+  }
+
+
+  componentDidUpdate(){
+    console.debug('Errors.react did update')
+  }
+
 
   render() {
 

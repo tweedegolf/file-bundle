@@ -1,5 +1,4 @@
 import * as ActionTypes from '../constants'
-import {sortBy} from '../util'
 
 export const treeInitialState = {
   files: [],
@@ -17,17 +16,6 @@ export const treeInitialState = {
 
 export function tree(state = treeInitialState, action) {
 
-  // Multiple actions need the 'sort' and 'ascending' values of the ui reducer
-  // to calculate the new tree state. We define them here because otherwise we
-  // would have to define them in every if statement where they are needed. If
-  // the keys are not set in the payload, the values will be undefined but that
-  // is not a problem because in these cases we don't need them anyway.
-  let {
-    sort,
-    ascending,
-  } = action.payload || {}
-
-
   if(action.type === ActionTypes.FOLDER_OPENED) {
 
     //console.log(action.payload.selected)
@@ -40,8 +28,8 @@ export function tree(state = treeInitialState, action) {
       current_folder: action.payload.current_folder,
       parent_folder: action.payload.parent_folder,
       errors: [...state.errors, ...action.payload.errors],
-      files: sortBy(action.payload.files, sort, ascending),
-      folders: sortBy(action.payload.folders, sort, ascending),
+      files: action.payload.files,
+      folders: action.payload.folders,
       selected: action.payload.selected || state.selected,
     }
 
@@ -54,7 +42,7 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         file_count: action.payload.file_count,
       },
-      files: sortBy(action.payload.files, sort, ascending),
+      files: action.payload.files,
     }
 
 
@@ -62,7 +50,7 @@ export function tree(state = treeInitialState, action) {
 
     return {
       ...state,
-      folders: sortBy(action.payload.folders, sort, ascending),
+      folders: action.payload.folders,
       current_folder: {
         ...state.current_folder,
         folder_count: action.payload.folder_count,
@@ -78,7 +66,7 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         file_count: action.payload.file_count
       },
-      files: sortBy(action.payload.files, sort, ascending),
+      files: action.payload.files,
       errors: [...state.errors, ...action.payload.errors],
     }
 
@@ -99,8 +87,8 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         folder_count: action.payload.folder_count,
       },
-      folders: sortBy([...state.folders, ...action.payload.folders], sort, ascending),
-      errors: [...state.errors, ...action.payload.errors],
+      folders: action.payload.folders,
+      errors: action.payload.errors,
     }
 
 
@@ -139,7 +127,7 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         file_count: action.payload.file_count,
       },
-      files: sortBy([...state.files, ...action.payload.files], sort, ascending),
+      files: action.payload.files,
       clipboard: [],
       selected: []
     }
@@ -148,8 +136,8 @@ export function tree(state = treeInitialState, action) {
   }else if(action.type === ActionTypes.CHANGE_SORTING){
     return {
       ...state,
-      files: sortBy([...state.files], sort, ascending),
-      folders: sortBy([...state.folders], sort, ascending),
+      files: action.payload.files,
+      folders: action.payload.folders,
     }
 
 
@@ -164,5 +152,5 @@ export function tree(state = treeInitialState, action) {
     }
   }
 
-  return state //-> if we return the state here, will it cause a re-render?
+  return state
 }

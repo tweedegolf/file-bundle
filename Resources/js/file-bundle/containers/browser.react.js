@@ -274,12 +274,7 @@ export default class Browser extends React.Component {
   }
 
   sortBy(sort) {
-    let ascending
-    if (this.props.sort === sort) {
-      ascending = !this.props.ascending
-    }
     Actions.changeSorting({
-      ascending,
       sort,
     })
   }

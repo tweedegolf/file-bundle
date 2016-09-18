@@ -31,6 +31,23 @@ const getStates = function(...reducers){
   return results
 }
 
+
+const sortItems = function(items, sort = null, ascending = null){
+  if(sort === null){
+    ({
+      sort,
+      ascending,
+    } = getStates('ui').uiState)
+  }
+
+  Object.entries(items).forEach(([key, value]) => {
+    items[key] = sortBy(value, sort, ascending)
+  })
+
+  return items
+}
+
+
 //
 // Adds ids to the selected file ids array in the tree state.
 //
@@ -93,21 +110,22 @@ const loadFromLocalStorage = function(files){
 //                                       file that is selected in the current
 //                                       folder.
 //
-
 const openFolder = function(id){
   dispatch({
     type: ActionTypes.OPEN_FOLDER,
     payload: {id}
   })
 
-
   tree.loadFolder(id)
   .then(
     payload => {
       ({
-        sort: payload.sort,
-        ascending: payload.ascending
-      } = getStates('ui'))
+        files: payload.files,
+        folders: payload.folders,
+      } = sortItems({
+        files: payload.files,
+        folders: payload.folders,
+      }))
 
       dispatch({
         type: ActionTypes.FOLDER_OPENED,
@@ -135,9 +153,10 @@ const deleteFile = function(file_id, current_folder_id){
   .then(
     payload => {
       ({
-        sort: payload.sort,
-        ascending: payload.ascending
-      } = getStates('ui'))
+        files: payload.files,
+      } = sortItems({
+        files: payload.files,
+      }))
 
       dispatch({
         type: ActionTypes.FILE_DELETED,
@@ -165,9 +184,10 @@ const deleteFolder = function(folder_id, current_folder_id){
   .then(
     payload => {
       ({
-        sort: payload.sort,
-        ascending: payload.ascending
-      } = getStates('ui'))
+        folders: payload.folders,
+      } = sortItems({
+        folders: payload.folders,
+      }))
 
       dispatch({
         type: ActionTypes.FOLDER_DELETED,
@@ -198,9 +218,10 @@ const pasteFiles = function(files, current_folder_id){
   .then(
     payload => {
       ({
-        sort: payload.sort,
-        ascending: payload.ascending
-      } = getStates('ui'))
+        files: payload.files,
+      } = sortItems({
+        files: payload.files,
+      }))
 
       dispatch({
         type: ActionTypes.FILES_MOVED,
@@ -260,9 +281,10 @@ const addFolder = function(folder_name, current_folder_id){
   .then(
     payload => {
       ({
-        sort: payload.sort,
-        ascending: payload.ascending
-      } = getStates('ui'))
+        files: payload.files
+      } = sortItems({
+        files: payload.files,
+      }))
 
       dispatch({
         type: ActionTypes.FOLDER_ADDED,
@@ -280,9 +302,37 @@ const addFolder = function(folder_name, current_folder_id){
 
 
 const changeSorting = function(payload){
+  // Check if the user has inverted the order of the current column, or has
+  // chosen a different sorting column.
+  let {
+    sort,
+    ascending,
+  } = getStates('ui').uiState
+
+  if(sort === payload.sort){
+    ascending = !ascending
+  }
+  payload.ascending = ascending;
+
+  // add files and folders to payload
+  ({
+    files: payload.files,
+    folders: payload.folders,
+  } = getStates('tree').treeState);
+
+  // sort files and folders by the newly set sort parameters
+  ({
+    files: payload.files,
+    folders: payload.folders,
+  } = sortItems({
+    files: payload.files,
+    folders: payload.folders,
+  }, sort, ascending))
+
+
   dispatch({
     type: ActionTypes.CHANGE_SORTING,
-    payload
+    payload,
   })
 }
 
