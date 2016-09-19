@@ -108,3 +108,34 @@ export function getUUID(){
   // see: http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 }
 
+
+/**
+ * Sorts items (files and/or folder) inside a folder
+ *
+ * @param      {Object}   items      The items to be sorted.
+ * @param      {String}   sort       The sorting type (creation time, file size,
+ *                                   name, etc.)
+ * @param      {Boolean}  ascending  Whether to sort ascending or not
+ *
+ *
+ * Param items might for instance look like:
+ * <code>
+ *  {
+ *    files: [...],
+ *    folders: [...]
+ *  }
+ * </code>
+ */
+export const sortItems = function(payload){
+  let {
+    items,
+    sort,
+    ascending
+  } = payload
+
+  Object.entries(items).forEach(([key, value]) => {
+    items[key] = sortBy(value, sort, ascending)
+  })
+
+  return items
+}

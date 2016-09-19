@@ -173,9 +173,13 @@ export function ui(state = uiInitialState, action){
 
 
     case ActionTypes.DISMISS_ERROR:
+      let errors = state.errors.filter(error => {
+        return error.id !== action.payload.error_id
+      })
+
       return {
         ...state,
-        errors: action.payload.errors,
+        errors,
       }
 
 

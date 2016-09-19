@@ -1,7 +1,6 @@
 import * as ActionTypes from './constants'
 import getStore from './get_store'
 import tree from './tree'
-import {sortBy} from './util'
 
 const store = getStore()
 const dispatch = store.dispatch
@@ -31,37 +30,8 @@ const getStates = function(...reducers){
   return results
 }
 
-/**
- * Sorts items (files and/or folder) inside a folder
- *
- * @param      {Object}   items      The items to be sorted.
- * @param      {String}   sort       The sorting type (creation time, file size,
- *                                   name, etc.)
- * @param      {Boolean}  ascending  Whether to sort ascending or not
- *
- *
- * Param items might for instance look like:
- * <code>
- *  {
- *    files: [...],
- *    folders: [...]
- *  }
- * </code>
- */
-
-const sortItems = function(items, sort = null, ascending = null){
-  if(sort === null){
-    ({
-      sort,
-      ascending,
-    } = getStates('ui').uiState)
-  }
-
-  Object.entries(items).forEach(([key, value]) => {
-    items[key] = sortBy(value, sort, ascending)
-  })
-
-  return items
+const getState = function(reducer){
+  return store.getState()[reducer]
 }
 
 
@@ -137,12 +107,9 @@ const openFolder = function(id){
   .then(
     payload => {
       ({
-        files: payload.files,
-        folders: payload.folders,
-      } = sortItems({
-        files: payload.files,
-        folders: payload.folders,
-      }))
+        sort: payload.sort,
+        ascending: payload.ascending,
+      } = getState('ui'))
 
       dispatch({
         type: ActionTypes.FOLDER_OPENED,
@@ -165,15 +132,13 @@ const deleteFile = function(file_id, current_folder_id){
     payload: {file_id}
   })
 
-
   tree.deleteFile(file_id, current_folder_id)
   .then(
     payload => {
       ({
-        files: payload.files,
-      } = sortItems({
-        files: payload.files,
-      }))
+        sort: payload.sort,
+        ascending: payload.ascending,
+      } = getState('ui'))
 
       dispatch({
         type: ActionTypes.FILE_DELETED,
@@ -201,10 +166,9 @@ const deleteFolder = function(folder_id, current_folder_id){
   .then(
     payload => {
       ({
-        folders: payload.folders,
-      } = sortItems({
-        folders: payload.folders,
-      }))
+        sort: payload.sort,
+        ascending: payload.ascending,
+      } = getState('ui'))
 
       dispatch({
         type: ActionTypes.FOLDER_DELETED,
@@ -235,10 +199,9 @@ const pasteFiles = function(files, current_folder_id){
   .then(
     payload => {
       ({
-        files: payload.files,
-      } = sortItems({
-        files: payload.files,
-      }))
+        sort: payload.sort,
+        ascending: payload.ascending,
+      } = getState('ui'))
 
       dispatch({
         type: ActionTypes.FILES_MOVED,
@@ -298,10 +261,9 @@ const addFolder = function(folder_name, current_folder_id){
   .then(
     payload => {
       ({
-        folders: payload.folders
-      } = sortItems({
-        folders: payload.folders,
-      }))
+        sort: payload.sort,
+        ascending: payload.ascending,
+      } = getState('ui'))
 
       dispatch({
         type: ActionTypes.FOLDER_ADDED,
@@ -324,28 +286,12 @@ const changeSorting = function(payload){
   let {
     sort,
     ascending,
-  } = getStates('ui').uiState
+  } = getState('ui')
 
   if(sort === payload.sort){
     ascending = !ascending
   }
-  payload.ascending = ascending;
-
-  // add files and folders to payload
-  ({
-    files: payload.files,
-    folders: payload.folders,
-  } = getStates('tree').treeState);
-
-  // sort files and folders by the newly set sort parameters
-  ({
-    files: payload.files,
-    folders: payload.folders,
-  } = sortItems({
-    files: payload.files,
-    folders: payload.folders,
-  }, sort, ascending))
-
+  payload.ascending = ascending
 
   dispatch({
     type: ActionTypes.CHANGE_SORTING,
@@ -355,14 +301,9 @@ const changeSorting = function(payload){
 
 
 const dismissError = function(error_id){
-  let errors = [...getStates('tree').treeState.errors, ...getStates('ui').uiState.errors]
-  errors = errors.filter(error => {
-    return error.id !== error_id
-  })
-
   dispatch({
     type: ActionTypes.DISMISS_ERROR,
-    payload: {errors},
+    payload: {error_id},
   })
 }
 
@@ -384,7 +325,7 @@ const confirmDelete = function(id){
 
 
 const setHover = function(diff, folder_id){
-  let hover = getStates('ui').uiState.hover + diff
+  let hover = getState('ui').hover + diff
   let max = tree.getItemCount(folder_id)
   if(hover > max){
     hover = 0
@@ -406,7 +347,7 @@ const setScrollPosition = function(scroll){
   })
 }
 
-// filepicker mode
+
 const expandBrowser = function(){
   dispatch({
     type: ActionTypes.EXPAND_BROWSER,
