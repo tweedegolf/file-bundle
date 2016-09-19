@@ -65,7 +65,7 @@ export default class Browser extends React.Component {
       if(typeof this.props.options !== 'undefined'){
         selected = this.props.options.selected
       }
-      Actions.loadFromLocalStorage(selected)
+      Actions.init(selected)
     }
 
     // Browser mode: by default, the browser is not expanded, therefor we have
@@ -73,7 +73,7 @@ export default class Browser extends React.Component {
     if (this.props.browser === true) {
       document.addEventListener('keydown', this.onKeyDown.bind(this), false);
       Actions.expandBrowser()
-      Actions.loadFromLocalStorage()
+      Actions.init()
     }
   }
 

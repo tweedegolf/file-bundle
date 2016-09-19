@@ -31,6 +31,23 @@ const getStates = function(...reducers){
   return results
 }
 
+/**
+ * Sorts items (files and/or folder) inside a folder
+ *
+ * @param      {Object}   items      The items to be sorted.
+ * @param      {String}   sort       The sorting type (creation time, file size,
+ *                                   name, etc.)
+ * @param      {Boolean}  ascending  Whether to sort ascending or not
+ *
+ *
+ * Param items might for instance look like:
+ * <code>
+ *  {
+ *    files: [...],
+ *    folders: [...]
+ *  }
+ * </code>
+ */
 
 const sortItems = function(items, sort = null, ascending = null){
   if(sort === null){
@@ -48,15 +65,15 @@ const sortItems = function(items, sort = null, ascending = null){
 }
 
 
-//
-// Adds ids to the selected file ids array in the tree state.
-//
-// @param      {Array}  data    Array containing file ids. The corresponding
-//                              file of an id that is not already stored in the
-//                              tree state, will be selected. If an id is
-//                              already stored in the tree state, the
-//                              corresponding file will be deselected.
-//
+/**
+ * Adds ids to the selected file ids array in the tree state.
+ *
+ * @param      {Array}  data    Array containing file ids. The corresponding
+ *                              file of an id that is not already stored in the
+ *                              tree state, will be selected. If an id is
+ *                              already stored in the tree state, the
+ *                              corresponding file will be deselected.
+ */
 const selectFile = function(data){
   dispatch({
     type: ActionTypes.SELECT_FILE,
@@ -66,18 +83,18 @@ const selectFile = function(data){
   })
 }
 
-
 //
-// Loads data from local storage into the tree state. If no data is found in the
-// local storage default values will be used. In Filepicker mode you can add an
-// array of file ids to the HTML element's dataset; this array is passed as
-// argument.
+// In browser mode: loads data from local storage into the tree state. If no
+// data is found in the local storage default values will be used.
 //
-// @param      {Array}  files   The ids of the files that will be seleceted
-//                              (Filepicker mode)
+// In Filepicker mode: you can add an array of file ids to the HTML element's
+// dataset; this array is passed as argument.
 //
-const loadFromLocalStorage = function(files){
-  let currentFolderId = tree.loadFromLocalStorage(files)
+// @param      {Array}  selected  The ids of the files that will be seleceted
+//                                (Filepicker mode)
+//
+const init = function(selected){
+  let currentFolderId = tree.init(selected)
   openFolder(currentFolderId)
 }
 
@@ -281,9 +298,9 @@ const addFolder = function(folder_name, current_folder_id){
   .then(
     payload => {
       ({
-        files: payload.files
+        folders: payload.folders
       } = sortItems({
-        files: payload.files,
+        folders: payload.folders,
       }))
 
       dispatch({
@@ -338,9 +355,14 @@ const changeSorting = function(payload){
 
 
 const dismissError = function(error_id){
+  let errors = [...getStates('tree').treeState.errors, ...getStates('ui').uiState.errors]
+  errors = errors.filter(error => {
+    return error.id !== error_id
+  })
+
   dispatch({
     type: ActionTypes.DISMISS_ERROR,
-    payload: {error_id},
+    payload: {errors},
   })
 }
 
@@ -362,10 +384,17 @@ const confirmDelete = function(id){
 
 
 const setHover = function(diff, folder_id){
+  let hover = getStates('ui').uiState.hover + diff
   let max = tree.getItemCount(folder_id)
+  if(hover > max){
+    hover = 0
+  }else if(hover < 0){
+    hover = max - 1
+  }
+
   dispatch({
     type: ActionTypes.SET_HOVER,
-    payload: {diff, max},
+    payload: {hover},
   })
 }
 
@@ -395,7 +424,7 @@ export default {
   cutFiles,
   pasteFiles,
   cancelCutAndPasteFiles,
-  loadFromLocalStorage,
+  init,
   changeSorting,
   dismissError,
   showPreview,

@@ -16,141 +16,112 @@ export const treeInitialState = {
 
 export function tree(state = treeInitialState, action) {
 
-  if(action.type === ActionTypes.FOLDER_OPENED) {
+  switch(action.type){
+    case ActionTypes.FOLDER_OPENED:
+      return {
+        ...state,
+        current_folder: action.payload.current_folder,
+        parent_folder: action.payload.parent_folder,
+        files: action.payload.files,
+        folders: action.payload.folders,
+        selected: action.payload.selected,
+      }
 
-    //console.log(action.payload.selected)
-    if(action.payload.errors instanceof Array === false) {
-      action.payload.errors = []
-    }
+    case ActionTypes.FILE_DELETED:
+      return {
+        ...state,
+        current_folder: {
+          ...state.current_folder,
+          file_count: action.payload.file_count,
+        },
+        files: action.payload.files,
+      }
 
-    return {
-      ...state,
-      current_folder: action.payload.current_folder,
-      parent_folder: action.payload.parent_folder,
-      errors: [...state.errors, ...action.payload.errors],
-      files: action.payload.files,
-      folders: action.payload.folders,
-      selected: action.payload.selected || state.selected,
-    }
+    case ActionTypes.FOLDER_DELETED:
+      return {
+        ...state,
+        folders: action.payload.folders,
+        current_folder: {
+          ...state.current_folder,
+          folder_count: action.payload.folder_count,
+        },
+      }
 
+    case ActionTypes.UPLOAD_DONE:
+      return {
+        ...state,
+        current_folder: {
+          ...state.current_folder,
+          file_count: action.payload.file_count
+        },
+        files: [...state.files, ...action.payload.files],
+        errors: [...state.errors, ...action.payload.errors],
+      }
 
-  }else if(action.type === ActionTypes.FILE_DELETED){
+    case ActionTypes.SELECT_FILE:
+      return {
+        ...state,
+        selected: action.payload.selected,
+      }
 
-    return {
-      ...state,
-      current_folder: {
-        ...state.current_folder,
-        file_count: action.payload.file_count,
-      },
-      files: action.payload.files,
-    }
+    case ActionTypes.FOLDER_ADDED:
+      return {
+        ...state,
+        current_folder: {
+          ...state.current_folder,
+          folder_count: action.payload.folder_count,
+        },
+        folders: [...state.folders, ...action.payload.folders],
+        errors: [...state.errors, ...action.payload.errors],
+      }
 
+    case ActionTypes.CUT_FILES:
+      return {
+        ...state,
+        clipboard: [...state.selected],
+        selected: []
+      }
 
-  }else if(action.type === ActionTypes.FOLDER_DELETED){
+    case ActionTypes.CANCEL_CUT_AND_PASTE_FILES:
+      return {
+        ...state,
+        clipboard: [],
+        selected: [...state.clipboard]
+      }
 
-    return {
-      ...state,
-      folders: action.payload.folders,
-      current_folder: {
-        ...state.current_folder,
-        folder_count: action.payload.folder_count,
-      },
-    }
+    case ActionTypes.ERROR_MOVING_FILES:
+      return {
+        ...state,
+        clipboard: [],
+        selected: [...state.clipboard]
+      }
 
+    case ActionTypes.FILES_MOVED:
+      return {
+        ...state,
+        current_folder: {
+          ...state.current_folder,
+          file_count: action.payload.file_count,
+        },
+        files: action.payload.files,
+        clipboard: [],
+        selected: []
+      }
 
-  }else if(action.type === ActionTypes.UPLOAD_DONE){
+    case ActionTypes.CHANGE_SORTING:
+      return {
+        ...state,
+        files: action.payload.files,
+        folders: action.payload.folders,
+      }
 
-    return {
-      ...state,
-      current_folder: {
-        ...state.current_folder,
-        file_count: action.payload.file_count
-      },
-      files: action.payload.files,
-      errors: [...state.errors, ...action.payload.errors],
-    }
+    case ActionTypes.DISMISS_ERROR:
+      return {
+        ...state,
+        errors: action.payload.errors,
+      }
 
-
-  }else if(action.type === ActionTypes.SELECT_FILE){
-
-    return {
-      ...state,
-      selected: action.payload.selected,
-    }
-
-
-  }else if(action.type === ActionTypes.FOLDER_ADDED){
-
-    return {
-      ...state,
-      current_folder: {
-        ...state.current_folder,
-        folder_count: action.payload.folder_count,
-      },
-      folders: action.payload.folders,
-      errors: action.payload.errors,
-    }
-
-
-  }else if(action.type === ActionTypes.CUT_FILES){
-
-    return {
-      ...state,
-      clipboard: [...state.selected],
-      selected: []
-    }
-
-
-  }else if(action.type === ActionTypes.CANCEL_CUT_AND_PASTE_FILES){
-
-    return {
-      ...state,
-      clipboard: [],
-      selected: []
-    }
-
-
-  }else if(action.type === ActionTypes.ERROR_MOVING_FILES){
-
-    return {
-      ...state,
-      //clipboard: [],
-      //selected: []
-    }
-
-
-  }else if(action.type === ActionTypes.FILES_MOVED){
-
-    return {
-      ...state,
-      current_folder: {
-        ...state.current_folder,
-        file_count: action.payload.file_count,
-      },
-      files: action.payload.files,
-      clipboard: [],
-      selected: []
-    }
-
-
-  }else if(action.type === ActionTypes.CHANGE_SORTING){
-    return {
-      ...state,
-      files: action.payload.files,
-      folders: action.payload.folders,
-    }
-
-
-  }else if(action.type === ActionTypes.DISMISS_ERROR){
-
-    let errors = state.errors.filter(error => {
-      return error.id !== action.payload.error_id
-    })
-    return {
-      ...state,
-      errors,
-    }
+    default:
+      return state
   }
-
-  return state
 }

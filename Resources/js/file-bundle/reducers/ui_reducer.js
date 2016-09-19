@@ -119,8 +119,7 @@ export function ui(state = uiInitialState, action){
     case ActionTypes.ERROR_OPENING_FOLDER:
       return {
         ...state,
-        //errors: [...state.errors, ...action.payload.errors],
-        errors: [...state.errors],
+        errors: [...state.errors, ...action.payload.errors],
         loading_folder: null,
       }
 
@@ -169,17 +168,14 @@ export function ui(state = uiInitialState, action){
         ...state,
         sort: action.payload.sort,
         ascending: action.payload.ascending,
-        errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
+        //errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
       }
 
 
     case ActionTypes.DISMISS_ERROR:
-      let errors = state.errors.filter(error => {
-        return error.id !== action.payload.error_id
-      })
       return {
         ...state,
-        errors,
+        errors: action.payload.errors,
       }
 
 
@@ -198,16 +194,9 @@ export function ui(state = uiInitialState, action){
 
 
     case ActionTypes.SET_HOVER:
-      let hover = state.hover + action.payload.diff
-      let max = action.payload.max
-      if(hover > max){
-        hover = 0
-      }else if(hover < 0){
-        hover = max - 1
-      }
       return {
         ...state,
-        hover,
+        hover: action.payload.hover,
       }
 
 

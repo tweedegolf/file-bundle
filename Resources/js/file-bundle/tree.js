@@ -110,7 +110,7 @@ const loadFolder = function(folder_id){
             parent_folder,
             files,
             folders,
-            selected
+            selected,
           })
         },
         messages => {
@@ -128,7 +128,7 @@ const loadFolder = function(folder_id){
 }
 
 
-const loadFromLocalStorage = function(files){
+const init = function(selected_file_ids = null){
   ({
     tree,
     all_files,
@@ -140,8 +140,8 @@ const loadFromLocalStorage = function(files){
   // In filepicker mode, selected files can be passed via the HTML element's
   // dataset; in this case we don't use the selected files array in the local
   // storage.
-  if(typeof files !== 'undefined'){
-    selected = files
+  if(selected_file_ids !== null){
+    selected = selected_file_ids
     storeLocal({selected})
   }
 
@@ -360,6 +360,7 @@ const addFolder = function(folder_name, parent_folder_id){
           folder_count,
           folders,
           errors,
+          //errors: [{id: 7777, type: 'generic', messages: ['oh my, this is an error!']}]
         })
       },
       messages => {
@@ -430,7 +431,7 @@ const getItemCount = function(folder_id){
 
 
 export default {
-  loadFromLocalStorage,
+  init,
   loadFolder,
   addFiles,
   moveFiles,

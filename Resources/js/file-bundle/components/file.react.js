@@ -26,10 +26,21 @@ export default class File extends React.Component {
 
   render() {
     let file = this.props.file;
-    let checked = this.props.clipboard.indexOf(file.id) > -1;
-    let selected = typeof this.props.selected.find(f => {
-      return f.id === file.id
-    }) !== 'undefined';
+    let checked = false
+    if(this.props.clipboard.length > 0){
+      let index = this.props.clipboard.find(f => {
+        return f.id === file.id
+      })
+      checked = index !== 'undefined'
+    }
+    let selected = false
+    if(this.props.selected.length > 0){
+      let index = typeof this.props.selected.find(f => {
+        return f.id === file.id
+      })
+      selected = index !== 'undefined'
+    }
+    //console.log(file.name, selected)
     let class_name = 'cutable' + (this.props.hovering ? ' selected' : '');
     let preview = <span className={'fa fa-' + (icons[file.type] ? icons[file.type] : 'file')} />;
 
@@ -64,7 +75,7 @@ export default class File extends React.Component {
           </a>;
       }
 
-      checkbox = <input type="checkbox" defaultChecked={selected} />;
+      checkbox = <input type="checkbox" checked={selected} readOnly/>;
       actions = <div className="actions">
         {delete_btn}
         {download_btn}
