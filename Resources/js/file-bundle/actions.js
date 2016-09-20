@@ -47,9 +47,7 @@ const getState = function(reducer){
 const selectFile = function(data){
   dispatch({
     type: ActionTypes.SELECT_FILE,
-    payload: {
-      selected: tree.setSelectedFiles(data)
-    },
+    payload: {...data}
   })
 }
 
@@ -63,8 +61,16 @@ const selectFile = function(data){
 // @param      {Array}  selected  The ids of the files that will be seleceted
 //                                (Filepicker mode)
 //
-const init = function(selected){
-  let currentFolderId = tree.init(selected)
+const init = function(selected = null){
+  if(selected !== null){
+    dispatch({
+      type: ActionTypes.SELECT_FILES,
+      payload: {
+        selected
+      }
+    })
+  }
+  let currentFolderId = tree.init()
   openFolder(currentFolderId)
 }
 

@@ -4,7 +4,6 @@ import {sortBy} from '../util'
 export const treeInitialState = {
   files: [],
   folders: [],
-  selected: [],
   clipboard: [],
   errors: [],
   current_folder: {
@@ -30,7 +29,6 @@ export function tree(state = treeInitialState, action) {
       parent_folder: action.payload.parent_folder,
       files: sortBy(action.payload.files, sort, ascending),
       folders: sortBy(action.payload.folders, sort, ascending),
-      selected: action.payload.selected,
     }
 
 
@@ -71,14 +69,6 @@ export function tree(state = treeInitialState, action) {
     }
 
 
-  }else if(action.type === ActionTypes.SELECT_FILE){
-
-    return {
-      ...state,
-      selected: action.payload.selected,
-    }
-
-
   }else if(action.type === ActionTypes.FOLDER_ADDED){
 
     return {
@@ -92,33 +82,6 @@ export function tree(state = treeInitialState, action) {
     }
 
 
-  }else if(action.type === ActionTypes.CUT_FILES){
-
-    return {
-      ...state,
-      clipboard: [...state.selected],
-      selected: []
-    }
-
-
-  }else if(action.type === ActionTypes.CANCEL_CUT_AND_PASTE_FILES){
-
-    return {
-      ...state,
-      clipboard: [],
-      selected: []
-    }
-
-
-  }else if(action.type === ActionTypes.ERROR_MOVING_FILES){
-
-    return {
-      ...state,
-      //clipboard: [],
-      //selected: []
-    }
-
-
   }else if(action.type === ActionTypes.FILES_MOVED){
 
     return {
@@ -128,8 +91,6 @@ export function tree(state = treeInitialState, action) {
         file_count: action.payload.file_count,
       },
       files: sortBy([...state.files, ...action.payload.files], sort, ascending),
-      clipboard: [],
-      selected: []
     }
 
 

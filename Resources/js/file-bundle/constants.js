@@ -20,6 +20,7 @@ export const FOLDER_ADDED = 'folder added'
 export const ERROR_ADDING_FOLDER = 'error adding folder'
 
 export const SELECT_FILE = 'select file'
+export const SELECT_FILES = 'select files (filepicker mode)'
 export const CUT_FILES = 'cut files'
 export const CANCEL_CUT_AND_PASTE_FILES = 'cancel cut and paste files'
 

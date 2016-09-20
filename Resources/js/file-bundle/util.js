@@ -98,9 +98,9 @@ export function sortBy(array, key, ascending){
 }
 
 
-let id = 0
+let uid = 0
 export function getUID(){
-  return `${id++}${new Date()}`
+  return `${uid++}${new Date()}`
 }
 
 export function getUUID(){
@@ -139,3 +139,4 @@ export const sortItems = function(payload){
 
   return items
 }
+

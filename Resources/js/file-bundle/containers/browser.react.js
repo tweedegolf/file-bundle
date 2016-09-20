@@ -18,8 +18,6 @@ const mapStateToProps = (state) => {
     files: state.tree.files,
     current_folder: state.tree.current_folder,
     parent_folder: state.tree.parent_folder,
-    selected: state.tree.selected,
-    clipboard: state.tree.clipboard,
 
     // ui props
     sort: state.ui.sort,
@@ -28,6 +26,8 @@ const mapStateToProps = (state) => {
     confirm_delete: state.ui.confirm_delete,
     expanded: state.ui.expanded,
     hover: state.ui.hover,
+    selected: state.ui.selected,
+    clipboard: state.ui.clipboard,
     loading_folder: state.ui.loading_folder, // null or number
     deleting_file: state.ui.deleting, // null or number
     deleting_folder: state.ui.deleting, // null or number

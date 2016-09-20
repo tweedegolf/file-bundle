@@ -6,7 +6,6 @@ import {getLocalState, storeLocal} from './local_storage'
 let tree
 let all_files
 let all_folders
-let selected
 let current_folder_id
 
 const folderProps = [
@@ -78,7 +77,6 @@ const loadFolder = function(folder_id){
         parent_folder,
         files,
         folders,
-        selected
       })
 
     }else {
@@ -110,7 +108,6 @@ const loadFolder = function(folder_id){
             parent_folder,
             files,
             folders,
-            selected,
           })
         },
         messages => {
@@ -128,72 +125,15 @@ const loadFolder = function(folder_id){
 }
 
 
-const init = function(selected_file_ids = null){
+const init = function(){
   ({
     tree,
     all_files,
     all_folders,
-    selected,
     current_folder_id,
   } = getLocalState())
 
-  // In filepicker mode, selected files can be passed via the HTML element's
-  // dataset; in this case we don't use the selected files array in the local
-  // storage.
-  if(selected_file_ids !== null){
-    selected = selected_file_ids
-    storeLocal({selected})
-  }
-
   return current_folder_id
-}
-
-
-const setSelectedFiles = function(data){
-  let {
-    id,
-    browser,
-    multiple,
-  } = data
-
-  let file = null
-  let index = selected.findIndex(f => {
-    return f.id === id
-  })
-
-  id = parseInt(id, 10)
-
-  if(index === -1){
-    for(let file_id of Object.keys(all_files)){
-      //console.log(typeof file_id)
-      file_id = parseInt(file_id, 10)
-      if(file_id === id){
-        file = all_files[file_id]
-        break
-      }
-    }
-  }
-
-
-  if(browser === false && multiple === false){
-    if(index === -1){
-      selected = [file]
-    }else{
-      selected = []
-    }
-  }else if(index === -1){
-    selected.push(file)
-  }else{
-    selected.splice(index, 1)
-  }
-
-  storeLocal({selected})
-  return [...selected]
-
-  // let a = selected.map(f => {
-  //   return f.id
-  // })
-  // console.log(id, a)
 }
 
 
@@ -430,6 +370,28 @@ const getItemCount = function(folder_id){
 }
 
 
+const getFileById = function(id){
+  for(let file_id of Object.keys(all_files)){
+    file_id = parseInt(file_id, 10)
+    if(file_id === id){
+      return all_files[file_id]
+    }
+  }
+  return null
+}
+
+
+const getFilesByIds = function(ids){
+  let result = []
+  ids.forEach(id => {
+    let file = getFileById(id)
+    if(file !== null){
+      result.push(file)
+    }
+  })
+}
+
+
 export default {
   init,
   loadFolder,
@@ -438,6 +400,7 @@ export default {
   deleteFile,
   addFolder,
   deleteFolder,
-  setSelectedFiles,
   getItemCount,
+  getFilesByIds,
+  getFileById,
 }
