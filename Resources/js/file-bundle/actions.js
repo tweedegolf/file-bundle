@@ -5,35 +5,6 @@ import tree from './tree'
 const store = getStore()
 const dispatch = store.dispatch
 
-//
-// Sometimes we need values from other reducers to calculate the new state of a
-// certain reducer. An example a folder is opened: the state in the tree reducer
-// will be updated with new files and/or folder, but we also need to sort them
-// and therefor we need the values of 'sort' and 'ascending' from the state of
-// the ui reducer.
-//
-// @param      {...String}  reducers  Comma separated list of reducer names
-//                                    whose state we need to query
-//
-const getStates = function(...reducers){
-  let state = store.getState()
-  let results = {}
-
-  reducers.forEach(r => {
-    if(r === 'tree'){
-      results.treeState = state.tree
-    }else if(r === 'ui'){
-      results.uiState = state.ui
-    }
-  })
-
-  return results
-}
-
-const getState = function(reducer){
-  return store.getState()[reducer]
-}
-
 
 /**
  * Adds ids to the selected file ids array in the tree state.
@@ -112,11 +83,6 @@ const openFolder = function(id){
   tree.loadFolder(id)
   .then(
     payload => {
-      ({
-        sort: payload.sort,
-        ascending: payload.ascending,
-      } = getState('ui'))
-
       dispatch({
         type: ActionTypes.FOLDER_OPENED,
         payload,
@@ -141,11 +107,6 @@ const deleteFile = function(file_id, current_folder_id){
   tree.deleteFile(file_id, current_folder_id)
   .then(
     payload => {
-      ({
-        sort: payload.sort,
-        ascending: payload.ascending,
-      } = getState('ui'))
-
       dispatch({
         type: ActionTypes.FILE_DELETED,
         payload,
@@ -171,11 +132,6 @@ const deleteFolder = function(folder_id, current_folder_id){
   tree.deleteFolder(folder_id, current_folder_id)
   .then(
     payload => {
-      ({
-        sort: payload.sort,
-        ascending: payload.ascending,
-      } = getState('ui'))
-
       dispatch({
         type: ActionTypes.FOLDER_DELETED,
         payload,
@@ -204,11 +160,6 @@ const pasteFiles = function(files, current_folder_id){
   tree.moveFiles(files, current_folder_id)
   .then(
     payload => {
-      ({
-        sort: payload.sort,
-        ascending: payload.ascending,
-      } = getState('ui'))
-
       dispatch({
         type: ActionTypes.FILES_MOVED,
         payload,
@@ -241,8 +192,6 @@ const upload = function(file_list, current_folder){
   tree.addFiles(file_list, current_folder)
   .then(
     payload => {
-      payload.sort = 'create_ts'
-      payload.ascending = false
       dispatch({
         type: ActionTypes.UPLOAD_DONE,
         payload,
@@ -266,11 +215,6 @@ const addFolder = function(folder_name, current_folder_id){
   tree.addFolder(folder_name, current_folder_id)
   .then(
     payload => {
-      ({
-        sort: payload.sort,
-        ascending: payload.ascending,
-      } = getState('ui'))
-
       dispatch({
         type: ActionTypes.FOLDER_ADDED,
         payload,
@@ -287,18 +231,6 @@ const addFolder = function(folder_name, current_folder_id){
 
 
 const changeSorting = function(payload){
-  // Check if the user has inverted the order of the current column, or has
-  // chosen a different sorting column.
-  let {
-    sort,
-    ascending,
-  } = getState('ui')
-
-  if(sort === payload.sort){
-    ascending = !ascending
-  }
-  payload.ascending = ascending
-
   dispatch({
     type: ActionTypes.CHANGE_SORTING,
     payload,
@@ -331,17 +263,12 @@ const confirmDelete = function(id){
 
 
 const setHover = function(diff, folder_id){
-  let hover = getState('ui').hover + diff
-  let max = tree.getItemCount(folder_id)
-  if(hover > max){
-    hover = 0
-  }else if(hover < 0){
-    hover = max - 1
-  }
-
   dispatch({
     type: ActionTypes.SET_HOVER,
-    payload: {hover},
+    payload: {
+      diff,
+      max: tree.getItemCount(folder_id)
+    }
   })
 }
 

@@ -40,7 +40,8 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.FOLDER_ADDED){
     return {
       ...state,
-      adding_folder: false
+      adding_folder: false,
+      errors: [...state.errors, ...action.payload.errors],
     }
 
   // something went wrong during connection or at the server, we can remove
@@ -48,8 +49,8 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.ERROR_ADDING_FOLDER){
     return {
       ...state,
-      errors: [...state.errors, ...action.payload.errors],
       adding_folder: false,
+      errors: [...state.errors, ...action.payload.errors],
     }
 
 
@@ -72,8 +73,8 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.ERROR_DELETING_FILE){
     return {
       ...state,
-      errors: [...state.errors, ...action.payload.errors],
       deleting_file: null,
+      errors: [...state.errors, ...action.payload.errors],
     }
 
 
@@ -96,8 +97,8 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.ERROR_DELETING_FOLDER){
     return {
       ...state,
-      errors: [...state.errors, ...action.payload.errors],
       deleting_folder: null,
+      errors: [...state.errors, ...action.payload.errors],
     }
 
 
@@ -122,8 +123,8 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.ERROR_OPENING_FOLDER){
     return {
       ...state,
-      errors: [...state.errors, ...action.payload.errors],
       loading_folder: null,
+      errors: [...state.errors, ...action.payload.errors],
     }
 
 
@@ -144,18 +145,17 @@ export function ui(state = uiInitialState, action){
       ascending: false,
       sort: 'create_ts',
       scroll_position: 0,
-      uploading_files: false
+      uploading_files: false,
+      errors: [...state.errors, ...action.payload.errors],
     }
 
   }else if(action.type === ActionTypes.ERROR_UPLOADING_FILE){
     return {
       ...state,
-      errors: [...state.errors, ...action.payload.errors],
       uploading_files: false,
+      errors: [...state.errors, ...action.payload.errors],
     }
 
-
-  // MOVE FILES
 
   }else if(action.type === ActionTypes.ERROR_MOVING_FILES){
     return {
@@ -164,13 +164,18 @@ export function ui(state = uiInitialState, action){
     }
 
 
-  // CHANGE SORTING
-
   }else if(action.type === ActionTypes.CHANGE_SORTING){
+    // Check if the user has inverted the order of the current column, or has
+    // chosen a different sorting column.
+    let ascending = state.ascending
+    if(state.sort === action.payload.sort){
+      ascending = !ascending
+    }
+
     return {
       ...state,
+      ascending,
       sort: action.payload.sort,
-      ascending: action.payload.ascending,
       //errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
     }
 
@@ -201,6 +206,18 @@ export function ui(state = uiInitialState, action){
 
 
   }else if(action.type === ActionTypes.SET_HOVER){
+    let {
+      diff,
+      max,
+    } = action.payload
+
+    let hover = state.hover + diff
+    if(hover > max){
+      hover = 0
+    }else if(hover < 0){
+      hover = max - 1
+    }
+
     return {
       ...state,
       hover: action.payload.hover,
@@ -294,6 +311,7 @@ export function ui(state = uiInitialState, action){
       clipboard: [],
       selected: []
     }
+
 
   }
   return state

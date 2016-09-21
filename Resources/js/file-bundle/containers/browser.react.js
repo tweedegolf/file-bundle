@@ -9,19 +9,26 @@ import Errors from '../components/errors.react.js';
 
 import Actions from '../actions';
 import {connect} from 'react-redux'
+import {sortBy} from '../util'
+
 
 const mapStateToProps = (state) => {
 
+  let {
+    sort,
+    ascending
+  } = state.ui
+
   return {
     // tree props
-    folders: state.tree.folders,
-    files: state.tree.files,
+    folders: sortBy(state.tree.folders, sort, ascending),
+    files: sortBy(state.tree.files, sort, ascending),
     current_folder: state.tree.current_folder,
     parent_folder: state.tree.parent_folder,
 
     // ui props
-    sort: state.ui.sort,
-    ascending: state.ui.ascending,
+    sort,
+    ascending,
     preview: state.ui.preview,
     confirm_delete: state.ui.confirm_delete,
     expanded: state.ui.expanded,
@@ -34,9 +41,7 @@ const mapStateToProps = (state) => {
     adding_folder: state.ui.adding_folder, // true or false
     uploading_files: state.ui.uploading_files, // true or false
     scroll_position: state.ui.scroll_position, // null or numeric value
-
-    // collect all errors
-    errors: [...state.tree.errors, ...state.ui.errors],
+    errors: state.ui.errors,
   }
 }
 

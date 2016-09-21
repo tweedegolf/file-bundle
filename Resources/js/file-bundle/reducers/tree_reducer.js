@@ -1,5 +1,4 @@
 import * as ActionTypes from '../constants'
-import {sortBy} from '../util'
 
 export const treeInitialState = {
   files: [],
@@ -16,19 +15,14 @@ export const treeInitialState = {
 
 export function tree(state = treeInitialState, action) {
 
-  let {
-    sort,
-    ascending,
-  } = action.payload || {}
-
   if(action.type === ActionTypes.FOLDER_OPENED) {
 
     return {
       ...state,
       current_folder: action.payload.current_folder,
       parent_folder: action.payload.parent_folder,
-      files: sortBy(action.payload.files, sort, ascending),
-      folders: sortBy(action.payload.folders, sort, ascending),
+      files: action.payload.files,
+      folders: action.payload.folders,
     }
 
 
@@ -40,7 +34,7 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         file_count: action.payload.file_count,
       },
-      files: sortBy(action.payload.files, sort, ascending)
+      files: action.payload.files,
     }
 
 
@@ -52,7 +46,7 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         folder_count: action.payload.folder_count,
       },
-      folders: sortBy(action.payload.folders, sort, ascending)
+      folders: action.payload.folders,
     }
 
 
@@ -64,8 +58,7 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         file_count: action.payload.file_count
       },
-      files: sortBy([...state.files, ...action.payload.files], sort, ascending),
-      errors: [...state.errors, ...action.payload.errors],
+      files: [...state.files, ...action.payload.files],
     }
 
 
@@ -77,8 +70,7 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         folder_count: action.payload.folder_count,
       },
-      folders: sortBy([...state.folders, ...action.payload.folders]),
-      errors: action.payload.errors,
+      folders: [...state.folders, ...action.payload.folders],
     }
 
 
@@ -90,27 +82,9 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         file_count: action.payload.file_count,
       },
-      files: sortBy([...state.files, ...action.payload.files], sort, ascending),
+      files: [...state.files, ...action.payload.files],
     }
 
-
-  }else if(action.type === ActionTypes.CHANGE_SORTING){
-    return {
-      ...state,
-      files: sortBy([...state.files], sort, ascending),
-      folders: sortBy([...state.folders], sort, ascending),
-    }
-
-
-  }else if(action.type === ActionTypes.DISMISS_ERROR){
-
-    let errors = state.errors.filter(error => {
-      return error.id !== action.payload.error_id
-    })
-    return {
-      ...state,
-      errors,
-    }
   }
 
   return state

@@ -48,10 +48,10 @@ x redux version with local cache
 
 
 Short term:
-- errors to ui
+x errors to ui
 x selected to ui
 x remove selected from local storage
-- move sorting to component
+x move sorting to component
 - setup testing environment with babel
 
 

@@ -19,7 +19,7 @@ let dataset = {
 if(browser !== null){
   ReactDOM.render(
     <Provider store={store}>
-      <Browser browser={false} options={dataset}/>
+      <Browser browser={true} options={dataset}/>
     </Provider>,
     browser
   );
