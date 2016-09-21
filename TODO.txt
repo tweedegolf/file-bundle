@@ -52,6 +52,6 @@ x errors to ui
 x selected to ui
 x remove selected from local storage
 x move sorting to component
-- setup testing environment with babel
+x setup testing environment with babel
 
 

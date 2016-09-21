@@ -61,12 +61,10 @@ export default class Browser extends React.Component {
 
   componentDidMount() {
 
-    // Filepicker mode: gets its selected files from a dataset, not from local
-    // storage. In case no selected files are passed in from the dataset, we
-    // pass an empty array to loadFromLocalStorage(). This overrides the
-    // selected files in the local storage.
+    // Filepicker mode: the selected files can be set in the dataset of the HTML
+    // element.
     if (this.props.browser === false) {
-      let selected = []
+      let selected = null
       if(typeof this.props.options !== 'undefined'){
         selected = this.props.options.selected
       }
