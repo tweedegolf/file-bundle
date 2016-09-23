@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants';
-import tree from '../tree';
+import cache from '../cache';
 
 export const uiInitialState = {
   sort: 'create_ts',      // sorting type name, creation date (create_ts) or size
@@ -252,12 +252,12 @@ export function ui(state = uiInitialState, action){
 
     if(browser === false && multiple === false){
       if(index === -1){
-        selected = [tree.getFileById(id)]
+        selected = [cache.getFileById(id)]
       }else{
         selected = []
       }
     }else if(index === -1){
-      selected.push(tree.getFileById(id))
+      selected.push(cache.getFileById(id))
     }else{
       selected.splice(index, 1)
     }

@@ -1,3 +1,27 @@
+/**
+ * The cache stores data that has been retrieved from the server. For instance
+ * if a user opens a folder for the first time, its contents will be loaded from
+ * the server and stored in the cache. The next time the user request this
+ * folder, its contents will be loaded from the cache (unless the contents has
+ * been invalidated, not yet implemented).
+ *
+ * If data is needed from the server, the cache calls the server api {@link
+ * ./api.js}. The server api is exclusively called from the cache; the cache
+ * sits between the user actions requesting data and the server.
+ *
+ * The api returns error as an Array of error messages. The cache turns the
+ * messages into an error object that can be processed by the error component
+ * {@link ./components/error.react.js}. An error object looks like so:
+ *
+ * @typedef    {Object}    Error
+ * @param      {Number}    id        Unique id for every error
+ * @param      {String}    type      Type of the error, can be left empty for a
+ *                                   generic error, else you can use the same
+ *                                   constants as used by the Actions {@link
+ *                                   ./constants.js}
+ * @param      {String[]}  messages  The error messages sent by the server
+ */
+
 import api from './api'
 import {getUID} from './util'
 import * as Constants from './constants'
@@ -37,6 +61,19 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
     }
   })
 }
+
+
+const init = function(){
+  ({
+    tree,
+    all_files,
+    all_folders,
+    current_folder_id,
+  } = getLocalState())
+
+  return current_folder_id
+}
+
 
 /**
  * Loads a folder.
@@ -122,18 +159,6 @@ const loadFolder = function(folder_id){
       )
     }
   })
-}
-
-
-const init = function(){
-  ({
-    tree,
-    all_files,
-    all_folders,
-    current_folder_id,
-  } = getLocalState())
-
-  return current_folder_id
 }
 
 

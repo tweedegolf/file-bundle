@@ -1,6 +1,6 @@
 import * as ActionTypes from './constants'
 import getStore from './get_store'
-import tree from './tree'
+import cache from './cache'
 
 const store = getStore()
 const dispatch = store.dispatch
@@ -41,7 +41,7 @@ const init = function(selected = null){
       }
     })
   }
-  let currentFolderId = tree.init()
+  let currentFolderId = cache.init()
   openFolder(currentFolderId)
 }
 
@@ -80,7 +80,7 @@ const openFolder = function(id){
     payload: {id}
   })
 
-  tree.loadFolder(id)
+  cache.loadFolder(id)
   .then(
     payload => {
       dispatch({
@@ -104,7 +104,7 @@ const deleteFile = function(file_id, current_folder_id){
     payload: {file_id}
   })
 
-  tree.deleteFile(file_id, current_folder_id)
+  cache.deleteFile(file_id, current_folder_id)
   .then(
     payload => {
       dispatch({
@@ -129,7 +129,7 @@ const deleteFolder = function(folder_id, current_folder_id){
   })
 
 
-  tree.deleteFolder(folder_id, current_folder_id)
+  cache.deleteFolder(folder_id, current_folder_id)
   .then(
     payload => {
       dispatch({
@@ -157,7 +157,7 @@ const cutFiles = function(){
 const pasteFiles = function(files, current_folder_id){
   // dispatch ui state action here?
 
-  tree.moveFiles(files, current_folder_id)
+  cache.moveFiles(files, current_folder_id)
   .then(
     payload => {
       dispatch({
@@ -212,7 +212,7 @@ const addFolder = function(folder_name, current_folder_id){
     type: ActionTypes.ADD_FOLDER,
   })
 
-  tree.addFolder(folder_name, current_folder_id)
+  cache.addFolder(folder_name, current_folder_id)
   .then(
     payload => {
       dispatch({
@@ -267,7 +267,7 @@ const setHover = function(diff, folder_id){
     type: ActionTypes.SET_HOVER,
     payload: {
       diff,
-      max: tree.getItemCount(folder_id)
+      max: cache.getItemCount(folder_id)
     }
   })
 }

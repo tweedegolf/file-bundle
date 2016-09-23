@@ -3,7 +3,7 @@ import * as ErrorTypes from '../constants'
 
 
 export default class UploadErrors extends React.Component {
-
+/*
   shouldComponentUpdate(nextProps){
     let update = false
     if(nextProps.errors.length === this.props.errors.length === 0){
@@ -31,7 +31,7 @@ export default class UploadErrors extends React.Component {
   componentDidUpdate(){
     console.debug('Errors.react did update')
   }
-
+*/
 
   render() {
 

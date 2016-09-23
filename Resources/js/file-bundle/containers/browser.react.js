@@ -74,6 +74,8 @@ export default class Browser extends React.Component {
     // Browser mode: by default, the browser is not expanded, therefor we have
     // to call the expandBrowser action to expand the browser
     if (this.props.browser === true) {
+      // The keydown listener listens for arrow up and down keys allowing the
+      // user to select files and folders with her keyboard.
       document.addEventListener('keydown', this.onKeyDown.bind(this), false);
       Actions.expandBrowser()
       Actions.init()
@@ -89,6 +91,13 @@ export default class Browser extends React.Component {
 
 
   componentDidUpdate() {
+    // After the component has been updated, we might need to scroll the file
+    // list. For instance after new files have been uploaded, the file list
+    // needs to be scrolled to the top (scroll position 0) to make sure that the
+    // newly uploaded files are in the visible area of the scroll list. Another
+    // use case might be when the user has searched for a certain file; if
+    // found, the scroll list can highlight the file an scroll it into the
+    // visible area if needed.
     if (this.props.scroll_position !== null) {
       this.refs.container.scrollTop = this.props.scroll_position
       Actions.setScrollPosition(null)
