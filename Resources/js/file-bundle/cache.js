@@ -3,22 +3,32 @@
  * if a user opens a folder for the first time, its contents will be loaded from
  * the server and stored in the cache. The next time the user request this
  * folder, its contents will be loaded from the cache (unless the contents has
- * been invalidated, not yet implemented).
+ * been invalidated, which is not yet implemented).
  *
  * If data is needed from the server, the cache calls the server api {@link
  * ./api.js}. The server api is exclusively called from the cache; the cache
  * sits between the user actions requesting data and the server.
  *
- * The api returns error as an Array of error messages. The cache turns the
- * messages into an error object that can be processed by the error component
- * {@link ./components/error.react.js}. An error object looks like so:
+ * The success callback of the api typically returns an array of files and/or
+ * folders
  *
+ * @see        the description of the file and folder objects here {@link ./api.js}
+ *
+ * The error callback returns an Array of error messages. The cache turns these
+ * messages into an error object that can be processed by the error component
+ * {@link ./components/error.react.js}.
+ *
+ * An error object looks like so:
  * @typedef    {Object}    Error
  * @param      {Number}    id        Unique id for every error
- * @param      {String}    type      Type of the error, can be left empty for a
+ * @param      {String}    type      Type of the error, can be omitted for a
  *                                   generic error, else you can use the same
  *                                   constants as used by the Actions {@link
  *                                   ./constants.js}
+ * @param      {String}    data      Can be omitted or a string representing
+ *                                   anything; for instance in case the contents
+ *                                   of a folder can not be loaded you can the
+ *                                   data key to the name of that folder.
  * @param      {String[]}  messages  The error messages sent by the server
  */
 
@@ -32,20 +42,22 @@ let all_files
 let all_folders
 let current_folder_id
 
-const folderProps = [
-  'create_ts',
-  'created',
-  'file_count',
-  'folder_count',
-  'id',
-  'name',
-  'parent',
-  'size',
-  'size_bytes',
-  'thumb',
-  'type',
-]
 
+/**
+ * Utility function that removes files from all folders that contain these
+ * files: if a file exists in multiple folders, it will be removed in all of
+ * these folders.
+ *
+ * @param      {String[]}  file_ids           The ids oft the files that need to
+ *                                            be removed.
+ * @param      {Number}    exclude_folder_id  The id of a folder that should be
+ *                                            skipped; files in this folder will
+ *                                            not be removed. May be left
+ *                                            undefined. Note that if you set it
+ *                                            to null, the root folder will be
+ *                                            skipped since the id of the root
+ *                                            folder is null (not: "null"!)
+ */
 
 const removeFilesFromFolders = function(file_ids, exclude_folder_id){
   Object.keys(tree).forEach(folder_id => {
@@ -63,6 +75,13 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
 }
 
 
+/**
+ * The init folder hydrates the initial states of the reducers. If data is
+ * stored in the local storage it will be loaded into the states of the relevant
+ * reducers. Otherwise the states will be hydrated with default values.
+ *
+ * @see        the code of the reducers in the reducers folder
+ */
 const init = function(){
   ({
     tree,
@@ -76,10 +95,13 @@ const init = function(){
 
 
 /**
- * Loads a folder.
+ * Loads a folder. If the contents of this folder has been cached, the contents
+ * will be loaded from cache, otherwise the contents will be loaded from the
+ * server.
  *
- * @param      {Number}   folder_id  The folder identifier
- * @return     {Promise}  { description_of_the_return_value }
+ * @param      {Number}   folder_id  The id of the folder whose contents needs
+ * @return     {Promise}  A promise that rejects with an Array of error objects
+ *                        or resolves with the necessary data, see below.
  */
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
@@ -109,6 +131,22 @@ const loadFolder = function(folder_id){
         return f
       })
 
+      /**
+       * @typedef    {Object}    Argument passed to the resolved function
+       * @param      {Object}    current_folder  Folder object of the current
+       *                                         folder
+       * @param      {Number}    parent_folder   The id of the parent folder,
+       *                                         null if the parent folder is
+       *                                         the root folder
+       * @param      {Object[]}  files           Array containing objects
+       *                                         representing all files in this
+       *                                         folder
+       * @param      {Object[]}  folders         Array containing objects
+       *                                         representing all folders in
+       *                                         this folder
+       *
+       * @see        description of file and folder object: {@link ./api.js}
+       */
       resolve({
         current_folder,
         parent_folder,
@@ -150,7 +188,7 @@ const loadFolder = function(folder_id){
         messages => {
           let errors = [{
             id: getUID(),
-            folder: current_folder.name,
+            data: current_folder.name,
             type: Constants.ERROR_OPENING_FOLDER,
             messages
           }]
@@ -162,6 +200,17 @@ const loadFolder = function(folder_id){
 }
 
 
+/**
+ * Adds files to a folder. The files will be uploaded to the server and an array
+ * of file objects representing these files will be returned
+ *
+ * @param      {Array}    file_list  FileList with all uploads converted to an
+ *                                   Array
+ * @param      {Number}   folder_id  The id of the folder where the files get
+ *                                   stored.
+ * @return     {Promise}  A promise that reject with an Array of error messages
+ *                        or resolves with data, see below.
+ */
 const addFiles = function(file_list, folder_id){
 
   let tree_folder = tree[folder_id]
@@ -179,7 +228,7 @@ const addFiles = function(file_list, folder_id){
         let errors = Object.keys(rejected).map(key => ({
           id: getUID(),
           type: Constants.ERROR_UPLOADING_FILE,
-          file: key,
+          data: key,
           messages: rejected[key]
         }))
 
@@ -188,6 +237,18 @@ const addFiles = function(file_list, folder_id){
 
         storeLocal({tree}, {all_files}, {all_folders})
 
+        /**
+         * @typedef    {Object}    Data returned by resolve function
+         * @param      {Number}    file_count  Updated number of files in this
+         *                                     folder
+         * @param      {Object[]}  files       Array containing file objects
+         *                                     representing the uploaded files
+         * @param      {String[]}  error       Array containing error messages
+         *                                     for the files that could not be
+         *                                     uploaded, for instance because
+         *                                     they were too large or of an
+         *                                     unsupported file format
+         */
         resolve({
           file_count,
           files,
@@ -201,7 +262,7 @@ const addFiles = function(file_list, folder_id){
           errors.push({
             id: getUID(),
             type: Constants.ERROR_UPLOADING_FILE,
-            file: f.name,
+            data: f.name,
             messages: error
           })
         })
@@ -241,7 +302,7 @@ const moveFiles = function(files, folder_id){
       messages => {
         let errors = files.map(file => ({
           id: getUID(),
-          file: file.name,
+          data: file.name,
           type: Constants.ERROR_MOVING_FILES,
           messages
         }))
@@ -282,7 +343,7 @@ const deleteFile = function(file_id, folder_id){
         let file = all_files[file_id]
         let errors = [{
           id: getUID(),
-          file: file.name,
+          data: file.name,
           type: Constants.ERROR_DELETING_FILE,
           messages
         }]
@@ -315,7 +376,7 @@ const addFolder = function(folder_name, parent_folder_id){
         if(error_messages.length > 0){
           errors = [{
             id: getUID(),
-            folder: folder_name,
+            data: folder_name,
             type: Constants.ERROR_ADDING_FOLDER,
             messages: error_messages
           }]
@@ -331,7 +392,7 @@ const addFolder = function(folder_name, parent_folder_id){
       messages => {
         let errors = [{
           id: getUID(),
-          folder: folder_name,
+          data: folder_name,
           type: Constants.ERROR_ADDING_FOLDER,
           messages
         }]
@@ -379,7 +440,7 @@ const deleteFolder = function(folder_id, parent_folder_id){
         let errors = [{
           id: getUID(),
           type: Constants.ERROR_DELETING_FOLDER,
-          folder,
+          data: folder,
           messages: [message]
         }]
         reject({errors})

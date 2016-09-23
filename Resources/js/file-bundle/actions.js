@@ -189,7 +189,7 @@ const upload = function(file_list, current_folder){
     payload: {file_list}
   })
 
-  tree.addFiles(file_list, current_folder)
+  cache.addFiles(file_list, current_folder)
   .then(
     payload => {
       dispatch({
