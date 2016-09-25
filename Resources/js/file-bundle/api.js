@@ -136,7 +136,15 @@ const openFolder = (folder_id, onSuccess, onError) => {
 }
 
 
-const delay = 500 // simulating network delay in milliseconds
+/**
+ * Every api method is called from a setTimeout function; this way we can
+ * simulate network delay to test for instance loading animations. Apart from
+ * setting a global value for the delay, you can also set individual values per
+ * api method. Delay values are in milliseconds.
+ *
+ * @type       {number}
+ */
+const delay = 500
 
 export default {
   deleteFile(...args){
