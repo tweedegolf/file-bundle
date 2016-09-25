@@ -6,8 +6,8 @@
  * been invalidated, which is not yet implemented).
  *
  * If data is needed from the server, the cache calls the server api {@link
- * ./api.js}. The server api is exclusively called from the cache; the cache
- * sits between the user actions requesting data and the server.
+ * ./api.js}. The server api is exclusively called from the cache; as such the
+ * cache sits between the user actions requesting data and the server.
  *
  * The success callback of the api typically returns an array of files and/or
  * folders
@@ -135,7 +135,7 @@ const loadFolder = function(folder_id){
        * @typedef    {Object}    Argument passed to the resolved function
        * @param      {Object}    current_folder  Folder object of the current
        *                                         folder
-       * @param      {Number}    parent_folder   The id of the parent folder,
+       * @param      {?number}   parent_folder   The id of the parent folder,
        *                                         null if the parent folder is
        *                                         the root folder
        * @param      {Object[]}  files           Array containing objects

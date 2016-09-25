@@ -1,42 +1,102 @@
 import * as ActionTypes from '../constants';
 import cache from '../cache';
 
+/**
+ * Initial ui state
+ *
+ * @type       {Object}
+ * @param      {String}   sort             Sort files and folders by column
+ *                                         ('create_ts'|'type'|'name'|'size')
+ * @param      {boolean}  ascending        Sorting order
+ * @param      {boolean}  expanded         Whether the browser is showing or not:
+ *                                         in filepicker mode you may choose to
+ *                                         hide the browser
+ * @param      {?number}  preview          The id of the file that will be
+ *                                         previewed fullscreen, currently
+ *                                         implemented only for images
+ * @param      {?number}  confirm_delete   The id of the file that the user wants
+ *                                         to delete; a confirmation popup will be
+ *                                         showed and the file will only be deleted
+ *                                         after confirmation
+ * @param      {number}   hover            -1 or the index in the item list of the
+ *                                         current folder of the file or folder
+ *                                         that has currently been selected by the
+ *                                         arrow up and down keys
+ * @param      {Array}    errors           Array of Error objects returned by an
+ *                                         API call: {@link ../cache.js} for a
+ *                                         description of the Error object
+ * @param      {?number}  loading_folder   The id of the folder whose content is
+ *                                         currently being loaded, or null if no
+ *                                         folder is being opened
+ * @param      {?number}  deleting_file    The id of the file that will be deleted,
+ *                                         or null if no file is in the process of
+ *                                         being deleted
+ * @param      {?number}  deleting_folder  The id of the folder that will be
+ *                                         deleted, or null if no folder is in the
+ *                                         process of being deleted. Note that the
+ *                                         root folder, which has id null can not
+ *                                         be deleted!
+ * @param      {boolean}  adding_folder    true if a new folder is in the process
+ *                                         of being created
+ * @param      {boolean}  uploading_files  true if the user is uploading one of
+ *                                         more files
+ * @param      {?number}  scroll_position  The position that the browser list
+ *                                         should be scrolled to, or null if no
+ *                                         scrolling action is required
+ * @param      {Array}    selected         The File objects representing the
+ *                                         currently selected files; in the
+ *                                         filelist of the browser they will show
+ *                                         up with a checked checkbox
+ * @param      {Array}    clipboard        After the user has clicked on 'cut' in
+ *                                         the toolbar, the File objects in the
+ *                                         selected array are moved to the
+ *                                         clipboard array: from here they can be
+ *                                         pasted into another folder
+ */
 export const uiInitialState = {
-  sort: 'create_ts',      // sorting type name, creation date (create_ts) or size
-  ascending: false,       // sorting order
-  expanded: false,        // whether the browser is showing or not, only in filepicker mode
-  preview: null,          // null or the id of the image that will be previewed fullscreen
-  confirm_delete: null,   // null or the id of the file that will be deleted after confirmation
-  hover: -1,              // -1 or the index in the item list of the current folder of the
-                          // file or folder that has currently been selected by the arrow up
-                          // and down keys
-  errors: [],             // array of errors returned by an API call
-  loading_folder: null,   // null or the id of the folder whose contents is currently being
-                          // loaded
-  deleting_file: null,    // null of the id of the file that will be deleted
-  deleting_folder: null,  // null of the id of the folder that will be deleted
-  adding_folder: false,   // false or true if a new folder is in the process of being created
-  uploading_files: false, // false or true if the user is uploading files
-  scroll_position: null,  // null or the position that the browser list should be scrolled to
-  selected: [],           // the currently selected files; in the filelist they show up with a
-                          // checked checkbox
-  clipboard: [],          // the files that are currently in the clipboard, waiting to be
-                          // pasted into another folder
+  sort: 'create_ts',
+  ascending: false,
+  expanded: false,
+  preview: null,
+  confirm_delete: null,
+  hover: -1,
+  errors: [],
+  loading_folder: null,
+  deleting_file: null,
+  deleting_folder: null,
+  adding_folder: false,
+  uploading_files: false,
+  scroll_position: null,
+  selected: [],
+  clipboard: [],
 }
 
 
+/**
+ * { function_description }
+ *
+ * @param      {<type>}  state   The state
+ * @param      {<type>}  action  The action
+ * @return     {Object}  { description_of_the_return_value }
+ */
 export function ui(state = uiInitialState, action){
 
-  // user has added a folder, we can show some progress indicator while we
-  // make an API call to the server
+  /**
+   * User has added a folder, we can show some progress indicator while we make
+   * an API call to the server
+   */
   if(action.type === ActionTypes.ADD_FOLDER){
     return {
       ...state,
       adding_folder: true
     }
 
-  // response from the server; folder has been made, we can remove the
-  // progress indicator (if any)
+  /**
+   * Response from the server; folder has been made, we can remove the progress
+   * indicator (if any). In some cases the server returns errors, if this is the
+   * case they will be displayed. This action is processed by the tree reducer
+   * as well.
+   */
   }else if(action.type === ActionTypes.FOLDER_ADDED){
     return {
       ...state,
@@ -44,8 +104,10 @@ export function ui(state = uiInitialState, action){
       errors: [...state.errors, ...action.payload.errors],
     }
 
-  // something went wrong during connection or at the server, we can remove
-  // the progress indicator and show the errors(s)
+  /**
+   * Something went wrong during connection or at the server, we can remove the
+   * progress indicator and show the errors(s)
+   */
   }else if(action.type === ActionTypes.ERROR_ADDING_FOLDER){
     return {
       ...state,
@@ -53,23 +115,42 @@ export function ui(state = uiInitialState, action){
       errors: [...state.errors, ...action.payload.errors],
     }
 
+  /**
+   * User wants to delete a file, if the id in the payload is a number this
+   * actions triggers a confirmation popup. If the id is null it means that the
+   * confirmation popup was already showing and that hte user has clicked on the
+   * 'cancel' button.
+   */
+  }else if(action.type === ActionTypes.CONFIRM_DELETE){
+    return {
+      ...state,
+      confirm_delete: action.payload.id
+    }
 
-  // user wants to delete a file, show progress indicator during API call
+
+  /**
+   * User really wants to delete the file, show progress indicator during API call
+   */
   }else if(action.type === ActionTypes.DELETE_FILE){
     return {
       ...state,
       deleting_file: action.payload.id
     }
 
-  // response from the server: file has been deleted successfully
+  /**
+   * Response from the server: file has been deleted successfully. This action
+   * is also processed by the tree reducer.
+   */
   }else if(action.type === ActionTypes.FILE_DELETED){
     return {
       ...state,
       deleting_file: null
     }
 
-  // something went wrong, for instance the file has already been deleted by
-  // another user or a network error occured
+  /**
+   * Something went wrong, for instance the file has already been deleted by
+   * another user or a network error occured.
+   */
   }else if(action.type === ActionTypes.ERROR_DELETING_FILE){
     return {
       ...state,
@@ -78,22 +159,30 @@ export function ui(state = uiInitialState, action){
     }
 
 
-  // user wants to delete a folder, show progress indicator during API call
+  /**
+   * User wants to delete an empty folder, show progress indicator during API
+   * call. Note that no confirmation popup will be showed; the folder will be
+   * deleted right away (if it is empty)
+   */
   }else if(action.type === ActionTypes.DELETE_FOLDER){
     return {
       ...state,
       deleting_folder: action.payload.folder_id
     }
 
-  // response from server: folder has been deleted successfully
+  /**
+   * Response from server: folder has been deleted successfully. This action is
+   * also processed by the tree reducer.
+   */
   }else if(action.type === ActionTypes.FOLDER_DELETED){
     return {
       ...state,
       deleting_folder: null
     }
 
-  // something went wrong: network error ot the folder hasn't been emptied,
-  // etc.
+  /**
+   * Something went wrong: network error, etc.
+   */
   }else if(action.type === ActionTypes.ERROR_DELETING_FOLDER){
     return {
       ...state,
@@ -102,24 +191,30 @@ export function ui(state = uiInitialState, action){
     }
 
 
-  // user has clicked on a folder to open it; first we try to load its
-  // contents from the local storage and if not present or outdated we
-  // retrieve it from the server
+  /**
+   * User has clicked on a folder to open it; first we try to load its contents
+   * from the local storage and if not present or outdated we retrieve it from
+   * the server. This action is also processed by the tree reducer.
+   */
   }else if(action.type === ActionTypes.OPEN_FOLDER){
     return {
       ...state,
       loading_folder: action.payload.id
     }
 
-  // folder contents has been successfully retrieved from local storage or
-  // server
+  /**
+   * Folder contents has been successfully retrieved from local storage or
+   * server. We can hide the progress animation (if any)
+   */
   }else if(action.type === ActionTypes.FOLDER_OPENED){
     return {
       ...state,
       loading_folder: null
     }
 
-  // something went wrong opening the folder; show error messages
+  /**
+   * Something went wrong opening the folder; show error messages
+   */
   }else if(action.type === ActionTypes.ERROR_OPENING_FOLDER){
     return {
       ...state,
@@ -128,17 +223,23 @@ export function ui(state = uiInitialState, action){
     }
 
 
-  // user has selected files to upload; show progress indicator while they are
-  // uploaded to the server
+  /**
+   * User has selected files to upload; show progress indicator while they are
+   * uploaded to the server
+   */
   }else if(action.type === ActionTypes.UPLOAD_START){
     return {
       ...state,
       uploading_files: true
     }
 
-  // files have been uploaded successfully, we set sort to ascending and create_ts
-  // and scroll_position to 0 to make the newly uploaded files appear at the
-  // top of the browser list
+  /**
+   * Files have been uploaded successfully, we set sort to ascending and
+   * 'create_ts' and scroll_position to 0 to make the newly uploaded files
+   * appear at the top of the browser list. Sometimes the server returns errors,
+   * for instance if some of the uploaded files are too large or of an
+   * unsupported file type.
+   */
   }else if(action.type === ActionTypes.UPLOAD_DONE){
     return {
       ...state,
@@ -149,6 +250,9 @@ export function ui(state = uiInitialState, action){
       errors: [...state.errors, ...action.payload.errors],
     }
 
+  /**
+   * This happens only in case of a network or server error
+   */
   }else if(action.type === ActionTypes.ERROR_UPLOADING_FILE){
     return {
       ...state,
@@ -157,6 +261,10 @@ export function ui(state = uiInitialState, action){
     }
 
 
+  /**
+   * An error occurred when the selected files were pasted into another folder.
+   * Most likely this is a network or a server error.
+   */
   }else if(action.type === ActionTypes.ERROR_MOVING_FILES){
     return {
       ...state,
@@ -164,9 +272,13 @@ export function ui(state = uiInitialState, action){
     }
 
 
+  /**
+   * User has clicked on one of the columns of the tool bar. If the chosen
+   * column is the same as the sort column in the state we invert the selection.
+   * Otherwise a new sorting column will be set and the current sort order will
+   * be left unaffected.
+   */
   }else if(action.type === ActionTypes.CHANGE_SORTING){
-    // Check if the user has inverted the order of the current column, or has
-    // chosen a different sorting column.
     let ascending = state.ascending
     if(state.sort === action.payload.sort){
       ascending = !ascending
@@ -179,7 +291,11 @@ export function ui(state = uiInitialState, action){
       //errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
     }
 
-
+  /**
+   * User dismisses an error message. Error messages don't disappear
+   * automatically; every new error message is added to the existing error
+   * messages.
+   */
   }else if(action.type === ActionTypes.DISMISS_ERROR){
     let errors = state.errors.filter(error => {
       return error.id !== action.payload.error_id
@@ -190,21 +306,25 @@ export function ui(state = uiInitialState, action){
       errors,
     }
 
-
+  /**
+   * User has clicked on a file to show its full screen preview: currently only
+   * implemented for images.
+   */
   }else if(action.type === ActionTypes.SHOW_PREVIEW){
     return {
       ...state,
       preview: action.payload.image_url
     }
 
-
-  }else if(action.type === ActionTypes.CONFIRM_DELETE){
-    return {
-      ...state,
-      confirm_delete: action.payload.id
-    }
-
-
+  /**
+   * The user can select files by using the up and down arrow keys of her
+   * keyboard. We calculate the new index with 'diff' and 'max':
+   *
+   * @param      {number}  diff    Direction: -1 for arrow down or +1 for arrow
+   *                               up
+   * @param      {number}  max     Number of items (files and folders) in the
+   *                               current folder
+   */
   }else if(action.type === ActionTypes.SET_HOVER){
     let {
       diff,
@@ -223,7 +343,11 @@ export function ui(state = uiInitialState, action){
       hover: action.payload.hover,
     }
 
-
+  /**
+   * Sometimes we need to be able to set the scroll position of the browser list
+   * by code, for instance if new files have been added we want to show them on
+   * top of the list and scroll the list to the top.
+   */
   }else if(action.type === ActionTypes.SET_SCROLL_POSITION){
     return {
       ...state,
@@ -231,13 +355,22 @@ export function ui(state = uiInitialState, action){
     }
 
 
+  /**
+   * In filepicker mode the user can collapse and expand the browser window. In
+   * browser mode the browser is always expanded.
+   */
   }else if(action.type === ActionTypes.EXPAND_BROWSER){
     return {
       ...state,
       expanded: !state.expanded
     }
 
-
+  /**
+   * User has clicked the checkbox of a file: if this file is not already
+   * selected it will be selected, otherwise it will be deselected. In
+   * filepicker mode you can set a boolean property 'multiple'; if this value is
+   * set to false only one file at the time can be selected.
+   */
   }else if(action.type === ActionTypes.SELECT_FILE){
     let {
       id,
@@ -267,8 +400,10 @@ export function ui(state = uiInitialState, action){
       selected,
     }
 
-  // In filepicker mode, selected files can be passed via the HTML element's
-  // dataset, here we store them in the selected array of the ui state
+  /**
+   * In filepicker mode, selected files can be passed via the HTML element's
+   * dataset, here we store them in the selected array of the ui state
+   */
   }else if(action.type === ActionTypes.SELECT_FILES){
     return {
       ...state,
@@ -276,36 +411,46 @@ export function ui(state = uiInitialState, action){
       //selected: [...state.selected, ...action.payload.selected]
     }
 
-
+  /**
+   * The user cuts the selected file into another folder: as you can see the
+   * selected files are moved from the selected array to the clipboard array of
+   * the state.
+   */
   }else if(action.type === ActionTypes.CUT_FILES){
-
     return {
       ...state,
       clipboard: [...state.selected],
       selected: []
     }
 
-
+  /**
+   * The user cancels a cut action. The contents of the clipboard array is moved
+   * back to the selected array.
+   */
   }else if(action.type === ActionTypes.CANCEL_CUT_AND_PASTE_FILES){
-
     return {
       ...state,
       clipboard: [],
-      selected: []
+      selected: [...state.clipboard]
     }
 
-
+  /**
+   * The paste action of the cut files yields an error. In most cases this is a
+   * network or server error. The contents of the clipboard array is moved back
+   * to the selected array of the state.
+   */
   }else if(action.type === ActionTypes.ERROR_MOVING_FILES){
-
     return {
       ...state,
-      //clipboard: [], // -> what shall we do?
-      //selected: []
+      clipboard: [],
+      selected: [...state.clipboard]
     }
 
-
+  /**
+   * Files are successfully moved to another folder. This action is processed by
+   * the tree reducer as well.
+   */
   }else if(action.type === ActionTypes.FILES_MOVED){
-
     return {
       ...state,
       clipboard: [],
