@@ -269,10 +269,20 @@ export default class Browser extends React.Component {
   }
 
   onSelect(id) {
+    /**
+     * User has already clicked on the 'cut' button so she can't select files
+     * anymore until she pastes or cancels.
+     */
     if (this.props.clipboard.length > 0) {
       return;
     }
 
+    /**
+     * In Filepicker mode you can set the multiple option to false which
+     * restrict the user to select only one file at the time.
+     *
+     * @type       {boolean}
+     */
     let multiple = true
     if (this.props.options && this.props.options.multiple) {
       multiple = this.props.options.multiple

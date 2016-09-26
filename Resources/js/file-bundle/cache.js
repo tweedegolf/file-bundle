@@ -19,17 +19,19 @@
  * {@link ./components/error.react.js}.
  *
  * An error object looks like so:
- * @typedef    {Object}    Error
- * @param      {Number}    id        Unique id for every error
- * @param      {String}    type      Type of the error, can be omitted for a
+ */
+
+/**
+ * @typedef    {Object}    Errors
+ * @property   {Number}    id        Unique id for every error
+ * @property   {String}    type      Type of the error, can be omitted for a
  *                                   generic error, else you can use the same
- *                                   constants as used by the Actions {@link
- *                                   ./constants.js}
- * @param      {String}    data      Can be omitted or a string representing
+ *                                   constants as used by the Actions {@link ../constants.js}
+ * @property   {String}    data      Can be omitted or a string representing
  *                                   anything; for instance in case the contents
  *                                   of a folder can not be loaded you can the
  *                                   data key to the name of that folder.
- * @param      {String[]}  messages  The error messages sent by the server
+ * @property   {String[]}  messages  The error messages sent by the server
  */
 
 import api from './api'

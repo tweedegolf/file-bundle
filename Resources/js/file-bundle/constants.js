@@ -137,7 +137,7 @@ export const ERROR_ADDING_FOLDER = 'ERROR_ADDING_FOLDER'
 export const SELECT_FILE = 'SELECT_FILE'
 
 /**
- * Filepicker mode: selected files that are passed via the HTML's datasset
+ * Filepicker mode: selected files that are passed via the HTML's dataset
  * property get stored in the state. Happens only once during initialization.
  * Processed by:
  * - tree reducer

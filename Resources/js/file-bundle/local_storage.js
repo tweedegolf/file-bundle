@@ -1,13 +1,7 @@
-let tree = {}
-let all_files = {}
-let all_folders = {
-  null: {
-    id: null,
-    name: '..',
-  }
-}
-let selected = []
-let current_folder_id = null
+/**
+ * @file       Utility functions that handle saving to and retrieving from local
+ *             storage
+ */
 
 
 // for parsing JSON, not needed for now
@@ -21,13 +15,27 @@ const reviver = function(k, v){
   return v
 }
 
-
+/**
+ * Retrieves the state from the local storage. If nothing has been saved to
+ * local storage yet, default values will be returned.
+ *
+ * @return     {Object}  The current state.
+ */
 export function getLocalState(){
 
-  let tmp = localStorage.getItem('tree')
+  let tree = localStorage.getItem('tree')
+  let all_files = {}
+  let all_folders = {
+    null: {
+      id: null,
+      name: '..',
+    }
+  }
+  let selected = []
+  let current_folder_id = null
 
-  if(tmp !== null){
-    tree = JSON.parse(tmp)
+  if(tree !== null){
+    tree = JSON.parse(tree)
     all_files = JSON.parse(localStorage.getItem('all_files'))
     all_folders = JSON.parse(localStorage.getItem('all_folders'))
     current_folder_id = JSON.parse(localStorage.getItem('current_folder_id'))
@@ -36,6 +44,11 @@ export function getLocalState(){
     if(selected === null){
       selected = []
     }else{
+      /**
+       * Only the ids of the selected files are stored but the state expects
+       * File objects in the selected array; so we replace the ids by their
+       * corresponding File objects
+       */
       selected = selected.map(file_id => {
         return all_files[file_id]
       })
@@ -51,7 +64,12 @@ export function getLocalState(){
   }
 }
 
-
+/**
+ * Stores a value to local storage. If the selected array is passed, only the
+ * ids of the selected files will be stored.
+ *
+ * @param      {Array}  args    The values to be stored
+ */
 export function storeLocal(...args){
   args.forEach(arg => {
 
