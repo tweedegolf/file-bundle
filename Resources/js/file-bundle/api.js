@@ -1,39 +1,42 @@
 /**
+ * @fileOverview server REST API; updates and queries database
+ *
+ *
  * Folder object:
  *
  * @typedef    {Object}    Folder
- * @param      {Number}    create_ts     Creation time stamp in Unix time
- * @param      {String}    created       Creation date in format: 'DD-MM-YYYY
+ * @param      {number}    create_ts     Creation time stamp in Unix time
+ * @param      {string}    created       Creation date in format: 'DD-MM-YYYY
  *                                       HH:mm'
- * @param      {Number}    file_count    Number of files in this folder
- * @param      {Number}    folder_count  Number of sub folders in this folder
- * @param      {Number}    id            Unique id of this folder: there is and
+ * @param      {number}    file_count    Number of files in this folder
+ * @param      {number}    folder_count  Number of sub folders in this folder
+ * @param      {number}    id            Unique id of this folder: there is and
  *                                       will be no other file or folder that
  *                                       uses this id
- * @param      {String}    name          Folder name
- * @param      {Number}    parent        Parent folder id
- * @param      {String}    size          Size in human friendly format, e.g.
+ * @param      {string}    name          Folder name
+ * @param      {number}    parent        Parent folder id
+ * @param      {string}    size          Size in human friendly format, e.g.
  *                                       54.1 kB
- * @param      {Number}    size_bytes    Size in bytes
- * @param      {String}    thumb         Remains a mystery, probably superfluous
- * @param      {String}    type          Always "folder"
+ * @param      {number}    size_bytes    Size in bytes
+ * @param      {string}    thumb         Remains a mystery, probably superfluous
+ * @param      {string}    type          Always "folder"
  *
  *
  * File object:
  *
  * @typedef    {Object}    File
- * @param      {Number}    create_ts     Creation time stamp in Unix time
- * @param      {String}    created       Creation date in format: 'DD-MM-YYYY
- * @param      {Number}    id            Unique id of this folder: there is and
+ * @param      {number}    create_ts     Creation time stamp in Unix time
+ * @param      {string}    created       Creation date in format: 'DD-MM-YYYY
+ * @param      {number}    id            Unique id of this folder: there is and
  *                                       will be no other file or folder that
  *                                       uses this id
- * @param      {String}    name          Name of the file
- * @param      {String}    original      Url of the original file, i.e. not the
+ * @param      {string}    name          Name of the file
+ * @param      {string}    original      Url of the original file, i.e. not the
  *                                       url of the thumbnail in case the file
  *                                       is an image
- * @param      {String}    thumb         Url of the thumbnail, only set if the
+ * @param      {string}    thumb         Url of the thumbnail, only set if the
  *                                       file is an image
- * @param      {String}    type          Type of the file, any of: pdf, doc,
+ * @param      {string}    type          Type of the file, any of: pdf, doc,
  *                                       docx, ppt, pptx, xls, xlsx
  *
  *
@@ -42,14 +45,13 @@
 
 import request from 'superagent'
 
-
 /**
- * { function_description }
+ * Deletes a file
  *
- * @param      {string}    file_id    The file identifier
- * @param      {Function}  onSuccess  The on success
- * @param      {Function}  onError    The on error
- * @return     {<type>}    { description_of_the_return_value }
+ * @param      {string}    file_id    The id of the file that will be deleted
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      Function returns void
  */
 const deleteFile = (file_id, onSuccess, onError) => {
   var req = request.post('/admin/file/delete/' + file_id)
@@ -62,7 +64,16 @@ const deleteFile = (file_id, onSuccess, onError) => {
   })
 }
 
-
+/**
+ * Moves a file to another folder
+ *
+ * @param      {string}    file_ids   The ids of the files that will be moved
+ * @param      {?number}   folder_id  The id of the folder where the files will
+ *                                    be moved to
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      Function returns void
+ */
 const paste = (file_ids, folder_id, onSuccess, onError) => {
   // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
   let url = '/admin/file/move' + (folder_id ? '/' + folder_id : '')
@@ -77,9 +88,17 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
   })
 }
 
-
+/**
+ * Adds a new folder to the current folder
+ *
+ * @param      {string}    name       The name of the new folder
+ * @param      {?number}   folder_id  The id of the current folder, i.e. the
+ *                                    parent folder of the new folder
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      Function returns void
+ */
 const addFolder = (name, folder_id, onSuccess, onError) => {
-  // folder_id is null if a folder is to be added to the root folder
   let url = '/admin/file/create/folder' + (folder_id !== null ? '/' + folder_id : '')
   var req = request.post(url).type('form')
   req.send({name})
@@ -92,7 +111,14 @@ const addFolder = (name, folder_id, onSuccess, onError) => {
   })
 }
 
-
+/**
+ * Delete a folder, folder has to be emptied first
+ *
+ * @param      {?number}   folder_id  The id of the folder that will be deleted
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}    Function return nothing
+ */
 const deleteFolder = (folder_id, onSuccess, onError) => {
   let url = '/admin/file/delete/folder/' + folder_id
   var req = request.post(url).type('form')
@@ -106,7 +132,18 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
   })
 }
 
-
+/**
+ * Upload new files to folder
+ *
+ * @param      {Array}     file_list  The FileList converted to an Array,
+ *                                    contains all files that will be uploaded
+ * @param      {?number}   folder_id  The id of the current folder, i.e. the
+ *                                    folder that will contain the newly
+ *                                    uploaded files
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      No return value
+ */
 const upload = (file_list, folder_id, onSuccess, onError) => {
   let url = '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url)
@@ -123,6 +160,14 @@ const upload = (file_list, folder_id, onSuccess, onError) => {
 }
 
 
+/**
+ * Loads the contents of a folder
+ *
+ * @param      {?number}   folder_id  The id of the folder
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      No return value
+ */
 const openFolder = (folder_id, onSuccess, onError) => {
   let url = '/admin/file/list' + (folder_id ? '/' + folder_id : '')
   var req = request.get(url)
