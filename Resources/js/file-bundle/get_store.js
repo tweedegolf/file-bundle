@@ -6,9 +6,13 @@ import {tree, treeInitialState} from './reducers/tree_reducer'
 
 let store = null
 
-
+/**
+ * Singleton function that returns the global Redux state. Sometime we need to
+ * access the store outside Redux' <tt>connect()</tt> function; in those cases
+ * we can use <tt>getStore()</tt>, it does not create a new global state
+ * instance if it has already been created.
+ */
 export default function getStore() {
-  // singleton
   if(store === null){
     store = createStore(
       combineReducers({

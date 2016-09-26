@@ -1,11 +1,12 @@
 /**
  * Executes an array of promises one after eachother, i.e.: the next promise
  * will be executed as soon as the former has resolved or rejected. Note that
- * this is unlike Promise.all(). Also in contrast with Promise.all, a rejected
+ * this is unlike Promise.all(). Also in contrast with Promise.all(), a rejected
  * promise does not stop the following promises from being executed; all
- * promises will be executed and an array of values and errors is returned.
+ * promises will be executed and an array containing both resolve values and
+ * reject errors will be returned.
  *
- * @param      {Number}    index     The index of the promise that is currently
+ * @param      {number}    index     The index of the promise that is currently
  *                                   being executed
  * @param      {Array}     promises  Array containing all promises
  * @param      {Function}  resolve   The resolve function that will be called
@@ -21,7 +22,6 @@
  * @return     {Promise}   A promise, resolve returns an array of values and
  *                         errors, reject returns an array of errors
  */
-
 export const chainPromises = function(index, promises, resolve, reject, values = [], errors = []){
 
   // the id of the promise so we can keep them apart
@@ -71,7 +71,7 @@ export const chainPromises = function(index, promises, resolve, reject, values =
     error => {
       index++
       errors.push(parseRejectValue(error))
-      // if all promises have rejected, reject the chained promise as a whole
+      // if all promises have rejected, we can reject the chained promise as a whole
       if(index === numPromises){
         if(errors.length === numPromises){
           reject(errors)
@@ -83,7 +83,13 @@ export const chainPromises = function(index, promises, resolve, reject, values =
   )
 }
 
-
+/**
+ * Generic function that sorts items by a key
+ *
+ * @param      {Array}    array      Array containing the items to be sorted
+ * @param      {String}   key        The key whose value will be sorted
+ * @param      {boolean}  ascending  Whether to sort ascending or not
+ */
 export function sortBy(array, key, ascending){
   array.sort((a, b) => {
     if(a[key] < b[key]){
@@ -99,10 +105,18 @@ export function sortBy(array, key, ascending){
 
 
 let uid = 0
+/**
+ * Returns an id that is unique whithin this application
+ *
+ * @return     {number}  The uid.
+ */
 export function getUID(){
   return `${uid++}${new Date()}`
 }
 
+/**
+ * Return a globally unique id
+ */
 export function getUUID(){
   // not needed yet
   // see: http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -110,12 +124,12 @@ export function getUUID(){
 
 
 /**
- * Sorts items (files and/or folder) inside a folder
+ * Sorts items (files and/or folder) inside a folder -> currently not used!
  *
  * @param      {Object}   items      The items to be sorted.
- * @param      {String}   sort       The sorting type (creation time, file size,
+ * @param      {string}   sort       The sorting type (creation time, file size,
  *                                   name, etc.)
- * @param      {Boolean}  ascending  Whether to sort ascending or not
+ * @param      {boolean}  ascending  Whether to sort ascending or not
  *
  *
  * Param items might for instance look like:
