@@ -2,9 +2,11 @@
  * @file       server REST API; updates and queries database
  *
  *
- * Folder object:
- *
- * @typedef    {Object}  Folder
+ */
+
+/**
+ * @name       FolderDescr
+ * @type       {Object}
  * @param      {number}  create_ts     Creation time stamp in Unix time
  * @param      {string}  created       Creation date in format: 'DD-MM-YYYY
  *                                     HH:mm'
@@ -20,25 +22,25 @@
  * @param      {number}  size_bytes    Size in bytes
  * @param      {string}  thumb         Remains a mystery, probably superfluous
  * @param      {string}  type          Always "folder"
- *
- *
- * File object:
- *
- * @typedef    {Object}  File
- * @param      {number}  create_ts     Creation time stamp in Unix time
- * @param      {string}  created       Creation date in format: 'DD-MM-YYYY
- * @param      {number}  id            Unique id of this folder: there is and
- *                                     will be no other file or folder that uses
- *                                     this id
- * @param      {string}  name          Name of the file
- * @param      {string}  original      Url of the original file, i.e. not the
- *                                     url of the thumbnail in case the file is
- *                                     an image
- * @param      {string}  thumb         Url of the thumbnail, only set if the
- *                                     file is an image
- * @param      {string}  type          Type of the file, any of: pdf, doc, docx,
- *                                     ppt, pptx, xls, xlsx
  */
+
+ /**
+  * @name       FileDescr
+  * @type       {Object}
+  * @param      {number}  create_ts  Creation time stamp in Unix time
+  * @param      {string}  created    Creation date in format: 'DD-MM-YYYY
+  * @param      {number}  id         Unique id of this folder: there is and will
+  *                                  be no other file or folder that uses this
+  *                                  id
+  * @param      {string}  name       Name of the file
+  * @param      {string}  original   Url of the original file, i.e. not the url
+  *                                  of the thumbnail in case the file is an
+  *                                  image
+  * @param      {string}  thumb      Url of the thumbnail, only set if the file
+  *                                  is an image
+  * @param      {string}  type       Type of the file, any of: pdf, doc, docx,
+  *                                  ppt, pptx, xls, xlsx
+  */
 
 
 import request from 'superagent'

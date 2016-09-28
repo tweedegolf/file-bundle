@@ -1,4 +1,6 @@
 /**
+ * @name       ActionConstants
+ * @type       {string}
  * @file       constants that describe actions
  */
 

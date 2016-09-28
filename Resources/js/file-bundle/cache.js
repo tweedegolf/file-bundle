@@ -12,7 +12,7 @@
  * The success callback of the api typically returns an array of files and/or
  * folders
  *
- * @see        the description of the file and folder objects here {@link ./api.js}
+ * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder}
  *
  * The error callback returns an Array of error messages. The cache turns these
  * messages into an error object that can be processed by the error component
@@ -22,16 +22,18 @@
  */
 
 /**
- * @typedef    {Object}    Errors
- * @property   {Number}    id        Unique id for every error
- * @property   {String}    type      Type of the error, can be omitted for a
- *                                   generic error, else you can use the same
- *                                   constants as used by the Actions {@link ../constants.js}
- * @property   {String}    data      Can be omitted or a string representing
+ * @name       cacheReject
+ * @type       {Object}
+ * @param      {Number}    id        Unique id for every error
+ * @param      {String}    type      Type of the error, can be omitted for a
+ *                                   generic error, ohterwise you can use the
+ *                                   same constants as used by the Actions, see
+ *                                   ./constants.js
+ * @param      {String}    data      Can be omitted or a string representing
  *                                   anything; for instance in case the contents
- *                                   of a folder can not be loaded you can the
- *                                   data key to the name of that folder.
- * @property   {String[]}  messages  The error messages sent by the server
+ *                                   of a folder can not be loaded the data key
+ *                                   could de the name of that folder.
+ * @param      {String[]}  messages  The error messages sent by the server
  */
 
 import api from './api'
@@ -81,6 +83,10 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
  * The init folder hydrates the initial states of the reducers. If data is
  * stored in the local storage it will be loaded into the states of the relevant
  * reducers. Otherwise the states will be hydrated with default values.
+ *
+ * @return     {?number}  The id of the lastly opened folder, this id is retrieved
+ *                        from local storage. If not set, the id will default to
+ *                        null, which means the top root folder will be opened
  *
  * @see        the code of the reducers in the reducers folder
  */
@@ -239,18 +245,6 @@ const addFiles = function(file_list, folder_id){
 
         storeLocal({tree}, {all_files}, {all_folders})
 
-        /**
-         * @typedef    {Object}    Data returned by resolve function
-         * @param      {Number}    file_count  Updated number of files in this
-         *                                     folder
-         * @param      {Object[]}  files       Array containing file objects
-         *                                     representing the uploaded files
-         * @param      {String[]}  error       Array containing error messages
-         *                                     for the files that could not be
-         *                                     uploaded, for instance because
-         *                                     they were too large or of an
-         *                                     unsupported file format
-         */
         resolve({
           file_count,
           files,
