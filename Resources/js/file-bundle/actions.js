@@ -127,6 +127,7 @@ const openFolder = function(id){
  *                                           deleted.
  * @param      {?number}  current_folder_id  The id of the folder that contains
  *                                           the file that will be deleted.
+ *
  * @return     {Promise<deleteFileResolve | cacheReject>}  Promise
  */
 const deleteFile = function(file_id, current_folder_id){
@@ -195,6 +196,7 @@ const deleteFolder = function(folder_id, current_folder_id){
   )
 }
 
+
 /**
  * Cut files, i.e. move the currently selected files to the clipboard
  */
@@ -203,6 +205,7 @@ const cutFiles = function(){
     type: ActionTypes.CUT_FILES,
   })
 }
+
 
 /**
  * @name       pasteFilesResolve
@@ -244,6 +247,7 @@ const pasteFiles = function(files, current_folder_id){
   )
 }
 
+
 /**
  * Move files in clipboard array back to the selected array
  */
@@ -252,19 +256,8 @@ const cancelCutAndPasteFiles = function(){
     type: ActionTypes.CANCEL_CUT_AND_PASTE_FILES,
   })
 }
-/**
- * @name       uploadResolve
- * @type       {Object}
- * @param      {number}    file_count  Updated number of files in the current
- *                                     folder
- * @param      {Object[]}  files       Array containing {@link FileDescr File}
- *                                     objects representing the newly uploaded
- *                                     files.
- * @param      {string[]}  error       Array containing error messages for the
- *                                     files that could not be uploaded, for
- *                                     instance because they were too large or
- *                                     of an unsupported file format.
- */
+
+
 /**
  * Uploads new files to the server. Triggers an API call.
  *
@@ -274,7 +267,7 @@ const cancelCutAndPasteFiles = function(){
  * @param      {?number}  current_folder  The id of the folders where the files
  *                                        will be added to after they are
  *                                        uploaded
- * @return     {Promise<uploadResolve | cacheReject>} promise
+ * @return     {void}  returns nothing
  */
 const upload = function(file_list, current_folder){
   file_list = Array.from(file_list)
@@ -300,17 +293,7 @@ const upload = function(file_list, current_folder){
   )
 }
 
-/**
- * @name       addFolderResolve
- * @type       {object}
- * @param      {number}    folder_count  The number of folders in the current
- *                                       folder, inclusive the new folder
- * @param      {Array}     folders       Array containing the {@link FolderDescr
- *                                       Folder} objects representing the
- *                                       folders in the current folder
- * @param      {string[]}  error         Array containing error messages, only
- *                                       when the server had yielded errors
- */
+
 /**
  * Adds a new folder to the current folder
  *
@@ -318,7 +301,7 @@ const upload = function(file_list, current_folder){
  * @param      {?number}  current_folder_id  The id of the the current folder,
  *                                           i.e. the folder that will contain
  *                                           the new folder
- * @return     {Promise<addFolderResolve | cacheReject>}  promise
+ * @return     {void}  returns nothing, dispatches Actions on {@link addFolderResolve resolve} and on {@link cacheReject reject}
  */
 const addFolder = function(folder_name, current_folder_id){
   dispatch({
@@ -343,14 +326,26 @@ const addFolder = function(folder_name, current_folder_id){
 }
 
 
-const changeSorting = function(payload){
+/**
+ * Changes the sorting column or sorting order of the items in the browser list
+ *
+ * @param      {string}  sort    The sorting column; if this is the same as
+ *                               current sorting column, the sorting order will
+ *                               be reverserd.
+ */
+const changeSorting = function(sort){
   dispatch({
     type: ActionTypes.CHANGE_SORTING,
-    payload,
+    payload: {sort},
   })
 }
 
 
+/**
+ * Dismiss an error popup.
+ *
+ * @param      {number}  error_id  The unique identifier of the error.
+ */
 const dismissError = function(error_id){
   dispatch({
     type: ActionTypes.DISMISS_ERROR,
@@ -359,12 +354,18 @@ const dismissError = function(error_id){
 }
 
 
+/**
+ * Shows a preview of a file, currently only images are supported.
+ *
+ * @param      {string}  image_url  The url of the full size image.
+ */
 const showPreview = function(image_url){
   dispatch({
     type: ActionTypes.SHOW_PREVIEW,
     payload: {image_url},
   })
 }
+
 
 /**
  * User has clicked on the delete button of a file; this triggers a confirmation
@@ -381,6 +382,22 @@ const confirmDelete = function(id){
 }
 
 
+/**
+ * User selects a file by using the arrow keys of the keyboard.
+ *
+ * @param      {number}   diff       Value is -1 if user has clicked the arrow
+ *                                   down key and +1 if the arrow up key has
+ *                                   been pressed.
+ * @param      {?number}  folder_id  The id of the current folder; we need this
+ *                                   id to get the number of items in this
+ *                                   folder from the cache. The number of items
+ *                                   is used to determine if we need to wrap
+ *                                   around the selection, e.g. if the current
+ *                                   selection is the last item in the list, and
+ *                                   the user has pressed the arrow down button,
+ *                                   the selection will wrap around and the
+ *                                   first item in the list will be selected.
+ */
 const setHover = function(diff, folder_id){
   dispatch({
     type: ActionTypes.SET_HOVER,
@@ -392,6 +409,12 @@ const setHover = function(diff, folder_id){
 }
 
 
+/**
+ * Sets the scroll position of the browser list
+ *
+ * @param      {number}  scroll  The position of the list in pixels measured
+ *                               from the top.
+ */
 const setScrollPosition = function(scroll){
   dispatch({
     type: ActionTypes.SET_SCROLL_POSITION,
@@ -400,6 +423,10 @@ const setScrollPosition = function(scroll){
 }
 
 
+/**
+ * In Filepicker mode the user sees a button to expand and collapse the browser.
+ * In Browser mode the browser is always expanded.
+ */
 const expandBrowser = function(){
   dispatch({
     type: ActionTypes.EXPAND_BROWSER,

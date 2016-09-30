@@ -207,17 +207,32 @@ const loadFolder = function(folder_id){
   })
 }
 
-
+/**
+ * @name       uploadResolve
+ * @type       {Object}
+ * @param      {number}    file_count  Updated number of files in the current
+ *                                     folder
+ * @param      {Object[]}  files       Array containing {@link FileDescr File}
+ *                                     objects representing the newly uploaded
+ *                                     files.
+ * @param      {string[]}  error       Array containing error messages for the
+ *                                     files that could not be uploaded, for
+ *                                     instance because they were too large or
+ *                                     of an unsupported file format.
+ */
 /**
  * Adds files to a folder. The files will be uploaded to the server and an array
  * of file objects representing these files will be returned
  *
- * @param      {Array}    file_list  FileList with all uploads converted to an
- *                                   Array
- * @param      {Number}   folder_id  The id of the folder where the files get
- *                                   stored.
- * @return     {Promise}  A promise that reject with an Array of error messages
- *                        or resolves with data, see below.
+ * @param      {Array}                                 file_list  FileList with
+ *                                                                all uploads
+ *                                                                converted to
+ *                                                                an Array
+ * @param      {Number}                                folder_id  The id of the
+ *                                                                folder where
+ *                                                                the files get
+ *                                                                stored.
+ * @return     {Promise<uploadResolve | cacheReject>}  promise
  */
 const addFiles = function(file_list, folder_id){
 
@@ -349,7 +364,37 @@ const deleteFile = function(file_id, folder_id){
   })
 }
 
-
+/**
+ * @name       addFolderResolve
+ * @type       {object}
+ * @param      {number}    folder_count  The number of folders in the current
+ *                                       folder, inclusive the new folder
+ * @param      {Array}     folders       Array containing the {@link FolderDescr
+ *                                       Folder} objects representing the
+ *                                       folders in the current folder
+ * @param      {string[]}  error         Array containing error messages, only
+ *                                       when the server had yielded errors
+ */
+/**
+ * Creates a new emtpy folder in the current folder
+ *
+ * @param      {string}                                   folder_name       The
+ *                                                                          name
+ *                                                                          of
+ *                                                                          the
+ *                                                                          new
+ *                                                                          folder.
+ * @param      {?number}                                  parent_folder_id  The
+ *                                                                          id
+ *                                                                          of
+ *                                                                          the
+ *                                                                          parent
+ *                                                                          folder
+ *                                                                          (the
+ *                                                                          current
+ *                                                                          folder).
+ * @return     {Promise<addFolderResolve | cacheReject>}  promise
+ */
 const addFolder = function(folder_name, parent_folder_id){
   let tree_folder = tree[parent_folder_id]
 

@@ -192,31 +192,87 @@ const openFolder = (folder_id, onSuccess, onError) => {
 const delay = 500
 
 export default {
+/**
+ * Deletes a file
+ *
+ * @param      {string}    file_id    The id of the file that will be deleted
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      Function returns void
+ */
   deleteFile(...args){
     setTimeout(() => {
       deleteFile(...args)
     }, delay)
   },
+/**
+ * Moves a file to another folder
+ *
+ * @param      {string}    file_ids   The ids of the files that will be moved
+ * @param      {?number}   folder_id  The id of the folder where the files will
+ *                                    be moved to
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      Function returns void
+ */
   paste(...args){
     setTimeout(() => {
       paste(...args)
     }, delay)
   },
+/**
+ * Adds a new folder to the current folder
+ *
+ * @param      {string}    name       The name of the new folder
+ * @param      {?number}   folder_id  The id of the current folder, i.e. the
+ *                                    parent folder of the new folder
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      Function returns void
+ */
   addFolder(...args){
     setTimeout(() => {
       addFolder(...args)
     }, delay)
   },
+/**
+ * Delete a folder, folder has to be emptied first
+ *
+ * @param      {?number}   folder_id  The id of the folder that will be deleted
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}    Function return nothing
+ */
   deleteFolder(...args){
     setTimeout(() => {
       deleteFolder(...args)
     }, delay)
   },
+/**
+ * Upload new files to folder
+ *
+ * @param      {Array}     file_list  The FileList converted to an Array,
+ *                                    contains all files that will be uploaded
+ * @param      {?number}   folder_id  The id of the current folder, i.e. the
+ *                                    folder that will contain the newly
+ *                                    uploaded files
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      No return value
+ */
   upload(...args){
     setTimeout(() => {
       upload(...args)
     }, delay)
   },
+/**
+ * Loads the contents of a folder
+ *
+ * @param      {?number}   folder_id  The id of the folder
+ * @param      {Function}  onSuccess  Success handler
+ * @param      {Function}  onError    Error handler
+ * @return     {void}      No return value
+ */
   openFolder(...args){
     setTimeout(() => {
       openFolder(...args)

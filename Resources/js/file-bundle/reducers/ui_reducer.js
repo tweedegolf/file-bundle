@@ -332,6 +332,7 @@ export function ui(state = uiInitialState, action){
     } = action.payload
 
     let hover = state.hover + diff
+    //console.log(diff, max, hover)
     if(hover > max){
       hover = 0
     }else if(hover < 0){
@@ -340,7 +341,7 @@ export function ui(state = uiInitialState, action){
 
     return {
       ...state,
-      hover: action.payload.hover,
+      hover,
     }
 
   /**

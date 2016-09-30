@@ -113,7 +113,7 @@ export default class Browser extends React.Component {
     }).map(([column, name]) =>
       <SortHeader
         key={column}
-        sortBy={this.sortBy.bind(this)}
+        sortBy={Actions.changeSorting}
         sort={this.props.sort}
         ascending={this.props.ascending}
         column={column}
@@ -292,12 +292,6 @@ export default class Browser extends React.Component {
       id,
       multiple,
       browser: this.props.browser,
-    })
-  }
-
-  sortBy(sort) {
-    Actions.changeSorting({
-      sort,
     })
   }
 
