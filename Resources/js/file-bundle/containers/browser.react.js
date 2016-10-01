@@ -113,7 +113,7 @@ export default class Browser extends React.Component {
     }).map(([column, name]) =>
       <SortHeader
         key={column}
-        sortBy={Actions.changeSorting}
+        sortBy={this.sortBy.bind(this)}
         sort={this.props.sort}
         ascending={this.props.ascending}
         column={column}
@@ -295,6 +295,10 @@ export default class Browser extends React.Component {
     })
   }
 
+  sortBy(column){
+    Actions.changeSorting(column)
+  }
+
   toggleExpand() {
     Actions.expandBrowser()
   }
@@ -308,6 +312,7 @@ export default class Browser extends React.Component {
   }
 
   onOpenFolder(id) {
+    // isn't this a weird place for this if statement?
     if (this.props.uploading_files === true || this.props.loading_folder !== null) {
       return;
     }
@@ -319,6 +324,7 @@ export default class Browser extends React.Component {
   }
 
   doUpload(file_list) {
+    // isn't this a weird place for this if statement?
     if (this.props.uploading_files === true || this.props.loading_folder !== null) {
       return;
     }

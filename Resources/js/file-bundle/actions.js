@@ -301,7 +301,8 @@ const upload = function(file_list, current_folder){
  * @param      {?number}  current_folder_id  The id of the the current folder,
  *                                           i.e. the folder that will contain
  *                                           the new folder
- * @return     {void}  returns nothing, dispatches Actions on {@link addFolderResolve resolve} and on {@link cacheReject reject}
+ * @return     {void}  returns nothing, dispatches Actions
+ * @see {@link addFolderResolve resolve} and on {@link cacheReject reject} {@link FileDescr File}
  */
 const addFolder = function(folder_name, current_folder_id){
   dispatch({
@@ -331,7 +332,7 @@ const addFolder = function(folder_name, current_folder_id){
  *
  * @param      {string}  sort    The sorting column; if this is the same as
  *                               current sorting column, the sorting order will
- *                               be reverserd.
+ *                               be reversed.
  */
 const changeSorting = function(sort){
   dispatch({

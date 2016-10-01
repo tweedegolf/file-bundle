@@ -22,8 +22,7 @@ import cache from '../cache';
  *                                         current folder of the file or folder
  *                                         that has currently been selected by the
  *                                         arrow up and down keys
- * @param      {Array}    errors           Array of Error objects returned by an
- *                                         API call: {@link ../cache.js} for a
+ * @param      {Array}    errors           Array of {@link cacheReject Error objects} returned by an API call.
  *                                         description of the Error object
  * @param      {?number}  loading_folder   The id of the folder whose content is
  *                                         currently being loaded, or null if no
@@ -52,6 +51,19 @@ import cache from '../cache';
  *                                         selected array are moved to the
  *                                         clipboard array: from here they can be
  *                                         pasted into another folder
+ */
+
+
+/**
+ * @typedef kontEnAap
+ * @property {string} descr Hier een dikke beer!
+ */
+
+
+/**
+ * aap {@link kontEnAap}
+ *
+ * @type {kontEnAap}
  */
 export const uiInitialState = {
   sort: 'create_ts',

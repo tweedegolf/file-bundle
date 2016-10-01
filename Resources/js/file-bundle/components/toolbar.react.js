@@ -7,6 +7,14 @@ export default class Toolbar extends React.Component {
     this.state = {
       show_form: false
     }
+    addEventListener('mousedown', e => {
+      console.log(e.target)
+      if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.refs.folder_name){
+        this.setState({
+          show_form: false
+        })
+      }
+    })
   }
 
   render() {
@@ -14,6 +22,8 @@ export default class Toolbar extends React.Component {
     let loader = this.props.uploading ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
     let new_folder_class = 'btn btn-sm btn-default pull-right ' + (this.state.show_form ? 'hide' : '');
     let actions = null;
+
+    console.log(new Date().getTime(), this.state)
 
     if (this.props.browser) {
       actions = <div className="pull-left">
@@ -51,6 +61,7 @@ export default class Toolbar extends React.Component {
         {actions}
         <button
           type="button"
+          ref="button_add_folder"
           className={new_folder_class}
           onClick={this.onShowForm.bind(this)}
           disabled={this.props.adding_folder}>
@@ -67,6 +78,7 @@ export default class Toolbar extends React.Component {
             onKeyPress={this.onKeyPress.bind(this)} />
           <button
             type="button"
+            ref="button_save_folder"
             className="btn btn-sm btn-success pull-right"
             onClick={this.onAddFolder.bind(this)}>
             <span className="fa fa-save" />
@@ -105,6 +117,9 @@ export default class Toolbar extends React.Component {
 
   onAddFolder() {
     this.setState({show_form: false})
-    this.props.onAddFolder(this.refs.folder_name.value, this.props.current_folder.id)
+    let name = this.refs.folder_name.value
+    if(name !== ''){
+      this.props.onAddFolder(name, this.props.current_folder.id)
+    }
   }
 }
