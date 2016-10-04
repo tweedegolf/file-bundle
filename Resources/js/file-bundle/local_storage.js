@@ -53,6 +53,8 @@ export function getLocalState(){
         return all_files[file_id]
       })
     }
+  }else{
+    tree = {}
   }
 
   return {

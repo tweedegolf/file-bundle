@@ -23,8 +23,6 @@ export default class Toolbar extends React.Component {
     let new_folder_class = 'btn btn-sm btn-default pull-right ' + (this.state.show_form ? 'hide' : '');
     let actions = null;
 
-    console.log(new Date().getTime(), this.state)
-
     if (this.props.browser) {
       actions = <div className="pull-left">
         <button
