@@ -5,7 +5,13 @@
   "main": "Resources/js/file-bundle/index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'Resources/js/test' --recursive || echo",
-    "test-api": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'Resources/js/test/api.js' --recursive || echo"
+    "test-api": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'Resources/js/test/api.js' --recursive || echo",
+    "clean:docs": "rm -rf ./docs",
+    "docs": "./node_modules/.bin/jsdoc -c jsdoc_conf.json -d ./docs",
+    "predocs": "npm run clean:docs",
+    "preserve:docs": "npm run docs",
+    "serve:docs": "http-server -o -p 9000 -c-1 ./docs",
+    "serve": "http-server -o -p 9000 -c-1 ./docs"
   },
   "author": "tweede golf",
   "license": "MIT",
@@ -15,6 +21,9 @@
     "babel-preset-stage-0": "6.5.0",
     "babel-register": "^6.14.0",
     "chai": "3.5.0",
+    "http-server": "0.9.0",
+    "jsdoc": "3.4.2",
+    "jsdoc-babel": "0.2.1",
     "mocha": "3.0.2"
   },
   "babel": {
@@ -24,7 +33,8 @@
       "stage-0"
     ],
     "plugins": [
-      "transform-decorators-legacy"
+      "transform-decorators-legacy",
+      "jsdoc-babel"
     ]
   }
 }

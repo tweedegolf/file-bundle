@@ -1,6 +1,11 @@
+/**
+ * @file       errors
+ *
+ *
+ */
+
 import React from 'react';
 import * as ErrorTypes from '../constants'
-
 
 export default class UploadErrors extends React.Component {
 /*

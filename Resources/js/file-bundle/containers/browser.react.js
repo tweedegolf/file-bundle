@@ -1,3 +1,7 @@
+/**
+ * @file Main component, or container
+ */
+
 import React from 'react';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 

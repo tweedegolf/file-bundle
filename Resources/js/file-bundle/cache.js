@@ -5,37 +5,35 @@
  * folder, its contents will be loaded from the cache (unless the contents has
  * been invalidated, which is not yet implemented).
  *
- * If data is needed from the server, the cache calls the server api {@link
- * ./api.js}. The server api is exclusively called from the cache; as such the
- * cache sits between the user actions requesting data and the server.
+ * If data is needed from the server, the cache calls the server api. The server
+ * api is exclusively called from the cache; as such the cache sits between the
+ * user actions requesting data and the server.
  *
  * The success callback of the api typically returns an array of files and/or
  * folders
  *
  * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder}
  *
- * The error callback returns an Array of error messages. The cache turns these
- * messages into an error object that can be processed by the error component
- * {@link ./components/error.react.js}.
+ * The API return errors as an array of error messages, the cache turns
+ * these messages into an error object that can be processed by the error
+ * component.
  *
  * An error object looks like so:
  */
-
 /**
- * @name       cacheReject
+ * @name       APIError
  * @type       {Object}
- * @param      {Number}    id        Unique id for every error
- * @param      {String}    type      Type of the error, can be omitted for a
+ * @property   {Number}    id        Unique id for every error
+ * @property   {String}    type      Type of the error, can be omitted for a
  *                                   generic error, ohterwise you can use the
  *                                   same constants as used by the Actions, see
  *                                   ./constants.js
- * @param      {String}    data      Can be omitted or a string representing
+ * @property   {String}    data      Can be omitted or a string representing
  *                                   anything; for instance in case the contents
  *                                   of a folder can not be loaded the data key
  *                                   could de the name of that folder.
- * @param      {String[]}  messages  The error messages sent by the server
+ * @property   {String[]}  messages  The error messages sent by the server
  */
-
 import api from './api'
 import {getUID} from './util'
 import * as Constants from './constants'
@@ -62,7 +60,6 @@ let current_folder_id
  *                                            skipped since the id of the root
  *                                            folder is null (not: "null"!)
  */
-
 const removeFilesFromFolders = function(file_ids, exclude_folder_id){
   Object.keys(tree).forEach(folder_id => {
     if(folder_id !== exclude_folder_id){
@@ -103,13 +100,39 @@ const init = function(){
 
 
 /**
+ * @name       openFolderResolve
+ * @type       {Object}
+ * @param      {Object}   current_folder  Data object that describes the
+ *                                        currently opened folder such as number
+ *                                        of files and folders, creation date
+ *                                        and so on.
+ * @param      {?number}  parent_folder   Id of the parent folder, will be null
+ *                                        if the parent folder is the top root
+ *                                        folder.
+ * @param      {Array}    files           Array containing File data objects for
+ *                                        each file in the current folder. The
+ *                                        data objects describe the file (name,
+ *                                        creation date, size, etc.)
+ * @param      {Array}    folders         Array containing Folder data objects
+ *                                        for each folder in the current folder.
+ *                                        The data objects describe the folder
+ *                                        (name, number of files and folders,
+ *                                        parent folder, etc.) describe the
+ *                                        folder
+ * @param      {Array}    selected        Array containing data objects for each
+ *                                        file that is selected in the current
+ *                                        folder.
+ *
+ * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder}
+ */
+/**
  * Loads a folder. If the contents of this folder has been cached, the contents
  * will be loaded from cache, otherwise the contents will be loaded from the
  * server.
  *
  * @param      {Number}   folder_id  The id of the folder whose contents needs
- * @return     {Promise}  A promise that rejects with an Array of error objects
- *                        or resolves with the necessary data, see below.
+ * @return     {Promise}  {@link openFolderResolve resolve} {@link APIError
+ *                        reject}
  */
 const loadFolder = function(folder_id){
   return new Promise((resolve, reject) => {
@@ -139,22 +162,6 @@ const loadFolder = function(folder_id){
         return f
       })
 
-      /**
-       * @typedef    {Object}    Argument passed to the resolved function
-       * @param      {Object}    current_folder  Folder object of the current
-       *                                         folder
-       * @param      {?number}   parent_folder   The id of the parent folder,
-       *                                         null if the parent folder is
-       *                                         the root folder
-       * @param      {Object[]}  files           Array containing objects
-       *                                         representing all files in this
-       *                                         folder
-       * @param      {Object[]}  folders         Array containing objects
-       *                                         representing all folders in
-       *                                         this folder
-       *
-       * @see        description of file and folder object: {@link ./api.js}
-       */
       resolve({
         current_folder,
         parent_folder,
@@ -224,15 +231,12 @@ const loadFolder = function(folder_id){
  * Adds files to a folder. The files will be uploaded to the server and an array
  * of file objects representing these files will be returned
  *
- * @param      {Array}                                 file_list  FileList with
- *                                                                all uploads
- *                                                                converted to
- *                                                                an Array
- * @param      {Number}                                folder_id  The id of the
- *                                                                folder where
- *                                                                the files get
- *                                                                stored.
- * @return     {Promise<uploadResolve | cacheReject>}  promise
+ * @param      {Array}    file_list  FileList with all uploads converted to an
+ *                                   Array
+ * @param      {Number}   folder_id  The id of the folder where the files get
+ *                                   stored.
+ * @return     {Promise}  promise {@link uploadResolve resolve} {@link APIError
+ *                        reject}
  */
 const addFiles = function(file_list, folder_id){
 
@@ -284,6 +288,24 @@ const addFiles = function(file_list, folder_id){
 }
 
 
+/**
+ * @name       pasteFilesResolve
+ * @type       {Object}
+ * @param      {Array}   files       Array containing the {@link FileDescr File}
+ *                                   objects representing the files in the
+ *                                   current folder.
+ * @param      {number}  file_count  The number of files in the current folder
+ */
+/**
+ * Move file(s) to another folder
+ *
+ * @param      {Array<number>}  files      Array containing the ids of the files
+ *                                         to be moved
+ * @param      {?number}        folder_id  The id of the folder where the files
+ *                                         will be moved to
+ * @return     {Promise}        {@link pasteFilesResolve resolve} {@link
+ *                              APIError reject}
+ */
 const moveFiles = function(files, folder_id){
   let tree_folder = tree[folder_id]
 
@@ -323,7 +345,21 @@ const moveFiles = function(files, folder_id){
   })
 }
 
-
+/**
+ * @typedef    {Object}  deleteFileResolve
+ *
+ * @property   {number}  file_count  The number of the files in the folder.
+ * @property   {Array}   files       Array containing the {@link FileDescr File}
+ *                                   object of the files in the folder.
+ */
+/**
+ * Deletes a single file
+ *
+ * @param      {number}   file_id    The id of the file to be deleted
+ * @param      {?number}  folder_id  The id of the folder that contains the file
+ * @return     {Promise}  {@link deleteFileResolve resolve} {@link APIError
+ *                        reject}
+ */
 const deleteFile = function(file_id, folder_id){
   let tree_folder = tree[folder_id]
 
@@ -378,22 +414,11 @@ const deleteFile = function(file_id, folder_id){
 /**
  * Creates a new emtpy folder in the current folder
  *
- * @param      {string}                                   folder_name       The
- *                                                                          name
- *                                                                          of
- *                                                                          the
- *                                                                          new
- *                                                                          folder.
- * @param      {?number}                                  parent_folder_id  The
- *                                                                          id
- *                                                                          of
- *                                                                          the
- *                                                                          parent
- *                                                                          folder
- *                                                                          (the
- *                                                                          current
- *                                                                          folder).
- * @return     {Promise<addFolderResolve | cacheReject>}  promise
+ * @param      {string}   folder_name       The name of the new folder.
+ * @param      {?number}  parent_folder_id  The id of the parent folder (the
+ *                                          current folder).
+ * @return     {Promise}  promise {@link addFolderResolve resolve} {@link
+ *                        APIError reject}
  */
 const addFolder = function(folder_name, parent_folder_id){
   let tree_folder = tree[parent_folder_id]
@@ -443,7 +468,22 @@ const addFolder = function(folder_name, parent_folder_id){
   })
 }
 
-
+/**
+ * @name       deleteFolderResolve
+ * @type       {Object}  deleteFolderResolve
+ * @param      {number}  folder_count  The number of folders still left in the
+ *                                     current folder
+ * @param      {Array}   folders       Array containing the {@link FolderDescr
+ *                                     Folder} objects in the current folder
+ */
+/**
+ * Deletes an emptied folder
+ *
+ * @param      {number}   folder_id         The id of the folder to be deleted
+ * @param      {?number}  parent_folder_id  The id of the parent folder
+ * @return     {Promise}  {@link deleteFolderResolve resolve} {@link APIError
+ *                        reject}
+ */
 const deleteFolder = function(folder_id, parent_folder_id){
   let tree_folder = tree[parent_folder_id]
 

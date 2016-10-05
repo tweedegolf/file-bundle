@@ -2,68 +2,60 @@ import * as ActionTypes from '../constants';
 import cache from '../cache';
 
 /**
- * Initial ui state
+ * The initial ui state
  *
  * @type       {Object}
- * @param      {String}   sort             Sort files and folders by column
+ * @name       uiInitialState
+ *
+ * @property   {String}   sort             Sort files and folders by column
  *                                         ('create_ts'|'type'|'name'|'size')
- * @param      {boolean}  ascending        Sorting order
- * @param      {boolean}  expanded         Whether the browser is showing or not:
- *                                         in filepicker mode you may choose to
- *                                         hide the browser
- * @param      {?number}  preview          The id of the file that will be
+ *
+ * @property   {boolean}  ascending        Sorting order
+ * @property   {boolean}  expanded         Whether the browser is showing or
+ *                                         not: in filepicker mode you may
+ *                                         choose to hide the browser
+ * @property   {?number}  preview          The id of the file that will be
  *                                         previewed fullscreen, currently
  *                                         implemented only for images
- * @param      {?number}  confirm_delete   The id of the file that the user wants
- *                                         to delete; a confirmation popup will be
- *                                         showed and the file will only be deleted
- *                                         after confirmation
- * @param      {number}   hover            -1 or the index in the item list of the
- *                                         current folder of the file or folder
- *                                         that has currently been selected by the
- *                                         arrow up and down keys
- * @param      {Array}    errors           Array of {@link cacheReject Error objects} returned by an API call.
+ * @property   {?number}  confirm_delete   The id of the file that the user
+ *                                         wants to delete; a confirmation popup
+ *                                         will be showed and the file will only
+ *                                         be deleted after confirmation
+ * @property   {number}   hover            -1 or the index in the item list of
+ *                                         the current folder of the file or
+ *                                         folder that has currently been
+ *                                         selected by the arrow up and down
+ *                                         keys
+ * @property   {Array}    errors           Array of {@link cacheReject1 Error
+ *                                         objects} returned by an API call.
  *                                         description of the Error object
- * @param      {?number}  loading_folder   The id of the folder whose content is
+ * @property   {?number}  loading_folder   The id of the folder whose content is
  *                                         currently being loaded, or null if no
  *                                         folder is being opened
- * @param      {?number}  deleting_file    The id of the file that will be deleted,
- *                                         or null if no file is in the process of
- *                                         being deleted
- * @param      {?number}  deleting_folder  The id of the folder that will be
- *                                         deleted, or null if no folder is in the
- *                                         process of being deleted. Note that the
- *                                         root folder, which has id null can not
- *                                         be deleted!
- * @param      {boolean}  adding_folder    true if a new folder is in the process
- *                                         of being created
- * @param      {boolean}  uploading_files  true if the user is uploading one of
+ * @property   {?number}  deleting_file    The id of the file that will be
+ *                                         deleted, or null if no file is in the
+ *                                         process of being deleted
+ * @property   {?number}  deleting_folder  The id of the folder that will be
+ *                                         deleted, or null if no folder is in
+ *                                         the process of being deleted. Note
+ *                                         that the root folder, which has id
+ *                                         null can not be deleted!
+ * @property   {boolean}  adding_folder    true if a new folder is in the
+ *                                         process of being created
+ * @property   {boolean}  uploading_files  true if the user is uploading one of
  *                                         more files
- * @param      {?number}  scroll_position  The position that the browser list
+ * @property   {?number}  scroll_position  The position that the browser list
  *                                         should be scrolled to, or null if no
  *                                         scrolling action is required
- * @param      {Array}    selected         The File objects representing the
+ * @property   {Array}    selected         The File objects representing the
  *                                         currently selected files; in the
- *                                         filelist of the browser they will show
- *                                         up with a checked checkbox
- * @param      {Array}    clipboard        After the user has clicked on 'cut' in
- *                                         the toolbar, the File objects in the
- *                                         selected array are moved to the
- *                                         clipboard array: from here they can be
- *                                         pasted into another folder
- */
-
-
-/**
- * @typedef kontEnAap
- * @property {string} descr Hier een dikke beer!
- */
-
-
-/**
- * aap {@link kontEnAap}
- *
- * @type {kontEnAap}
+ *                                         filelist of the browser they will
+ *                                         show up with a checked checkbox
+ * @property   {Array}    clipboard        After the user has clicked on 'cut'
+ *                                         in the toolbar, the File objects in
+ *                                         the selected array are moved to the
+ *                                         clipboard array: from here they can
+ *                                         be pasted into another folder
  */
 export const uiInitialState = {
   sort: 'create_ts',
@@ -85,11 +77,12 @@ export const uiInitialState = {
 
 
 /**
- * { function_description }
+ * Reduce function, listens for certain action types and changes the change,
+ * optionally using the action's payload.
  *
- * @param      {<type>}  state   The state
- * @param      {<type>}  action  The action
- * @return     {Object}  { description_of_the_return_value }
+ * @param      {Object}  state   The current state
+ * @param      {string}  action  The action type
+ * @return     {Object}  The new state
  */
 export function ui(state = uiInitialState, action){
 

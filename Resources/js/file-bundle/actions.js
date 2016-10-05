@@ -55,39 +55,12 @@ const init = function(selected = null){
 
 
 /**
- * @name       openFolderResolve
- * @type       {Object}
- * @param      {Object}   current_folder  Data object that describes the
- *                                        currently opened folder such as number
- *                                        of files and folders, creation date
- *                                        and so on.
- * @param      {?number}  parent_folder   Id of the parent folder, will be null
- *                                        if the parent folder is the top root
- *                                        folder.
- * @param      {Array}    files           Array containing File data objects for
- *                                        each file in the current folder. The
- *                                        data objects describe the file (name,
- *                                        creation date, size, etc.)
- * @param      {Array}    folders         Array containing Folder data objects
- *                                        for each folder in the current folder.
- *                                        The data objects describe the folder
- *                                        (name, number of files and folders,
- *                                        parent folder, etc.) describe the
- *                                        folder
- * @param      {Array}    selected        Array containing data objects for each
- *                                        file that is selected in the current
- *                                        folder.
- *
- * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder}
- */
-/**
  * Try to load the contents of the folder with the specified id. This triggers
  * an API call if data is not already available in local storage.
  *
- * @param      {?number}  id              The id of the folder, the top root
- *                                        folder has id null
- *
- * @return {Promise<openFolderResolve | cacheReject>} promise
+ * @param      {?number}  id      The id of the folder, the top root folder has
+ *                                id null
+ * @return     {void}  dispatches actions
  */
 const openFolder = function(id){
   dispatch({
@@ -114,21 +87,13 @@ const openFolder = function(id){
 
 
 /**
- * @typedef    {Object}  deleteFileResolve
- *
- * @property   {number}  file_count  The number of the files in the folder.
- * @property   {Array}   files       Array containing the {@link FileDescr File}
- *                                   object of the files in the folder.
- */
-/**
  * Deletes a single file from a folder. Triggers an API call.
  *
  * @param      {number}   file_id            The id of the file that will be
  *                                           deleted.
  * @param      {?number}  current_folder_id  The id of the folder that contains
  *                                           the file that will be deleted.
- *
- * @return     {Promise<deleteFileResolve | cacheReject>}  Promise
+ * @return     {void}  dispatches actions
  */
 const deleteFile = function(file_id, current_folder_id){
   dispatch({
@@ -155,14 +120,6 @@ const deleteFile = function(file_id, current_folder_id){
 
 
 /**
- * @name       deleteFolderResolve
- * @type       {Object}  deleteFolderResolve
- * @param      {number}  folder_count  The number of folders still left in the
- *                                     current folder
- * @param      {Array}   folders       Array containing the {@link FolderDescr
- *                                     Folder} objects in the current folder
- */
-/**
  * Deletes an empty folder. Triggers an API call.
  *
  * @param      {number}  folder_id          The id of the folder that will be
@@ -170,7 +127,7 @@ const deleteFile = function(file_id, current_folder_id){
  * @param      {number}  current_folder_id  The id of the current folder, i.e.
  *                                          the parent folder of the folder that
  *                                          will be deleted
- * @return     {Promise<deleteFolderResolve | cacheReject>}  promise
+ * @return     {void}  dispatches actions
  */
 const deleteFolder = function(folder_id, current_folder_id){
   dispatch({
@@ -208,14 +165,6 @@ const cutFiles = function(){
 
 
 /**
- * @name       pasteFilesResolve
- * @type       {Object}
- * @param      {Array}   files       Array containing the {@link FileDescr File}
- *                                   objects representing the files in the
- *                                   current folder.
- * @param      {number}  file_count  The number of files in the current folder
- */
-/**
  * Paste files, i.e. move the files in the clipboard to another folder. This
  * triggers an API call.
  *
@@ -225,7 +174,7 @@ const cutFiles = function(){
  *                                           moved
  * @param      {?number}  current_folder_id  The id of the current folder, i.e.
  *                                           where the files will be moved to.
- * @return     {Promise<pasteFilesResolve | cacheReject>}  promise
+ * @return     {void}  dispatches actions
  */
 const pasteFiles = function(files, current_folder_id){
   // dispatch ui state action here?
@@ -301,8 +250,7 @@ const upload = function(file_list, current_folder){
  * @param      {?number}  current_folder_id  The id of the the current folder,
  *                                           i.e. the folder that will contain
  *                                           the new folder
- * @return     {void}  returns nothing, dispatches Actions
- * @see {@link addFolderResolve resolve} and on {@link cacheReject reject} {@link FileDescr File}
+ * @return     {void}  returns nothing, dispatches actions *
  */
 const addFolder = function(folder_name, current_folder_id){
   dispatch({
