@@ -51,7 +51,7 @@ import request from 'superagent'
  * @param      {string}    file_id    The id of the file that will be deleted
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      Function returns void
+ * @return     {void}      Calls success or error callback
  */
 const deleteFile = (file_id, onSuccess, onError) => {
   var req = request.post('/admin/file/delete/' + file_id)
@@ -72,7 +72,7 @@ const deleteFile = (file_id, onSuccess, onError) => {
  *                                    be moved to
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      Function returns void
+ * @return     {void}      Calls success or error callback
  */
 const paste = (file_ids, folder_id, onSuccess, onError) => {
   // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
@@ -96,7 +96,7 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
  *                                    parent folder of the new folder
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      Function returns void
+ * @return     {void}      Calls success or error callback
  */
 const addFolder = (name, folder_id, onSuccess, onError) => {
   let url = '/admin/file/create/folder' + (folder_id !== null ? '/' + folder_id : '')
@@ -117,7 +117,7 @@ const addFolder = (name, folder_id, onSuccess, onError) => {
  * @param      {?number}   folder_id  The id of the folder that will be deleted
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}    Function return nothing
+ * @return     {void}      Calls success or error callback
  */
 const deleteFolder = (folder_id, onSuccess, onError) => {
   let url = '/admin/file/delete/folder/' + folder_id
@@ -142,7 +142,7 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
  *                                    uploaded files
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      No return value
+ * @return     {void}      Calls success or error callback
  */
 const upload = (file_list, folder_id, onSuccess, onError) => {
   let url = '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
@@ -166,7 +166,7 @@ const upload = (file_list, folder_id, onSuccess, onError) => {
  * @param      {?number}   folder_id  The id of the folder
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      No return value
+ * @return     {void}      Calls success or error callback
  */
 const openFolder = (folder_id, onSuccess, onError) => {
   let url = '/admin/file/list' + (folder_id ? '/' + folder_id : '')
@@ -184,8 +184,8 @@ const openFolder = (folder_id, onSuccess, onError) => {
 /**
  * Every api method is called from a setTimeout function; this way we can
  * simulate network delay to test for instance loading animations. Apart from
- * setting a global value for the delay, you can also set individual values per
- * api method. Delay values are in milliseconds.
+ * setting an overall value for the delay, you can also set individual values
+ * per api method. Delay values are in milliseconds.
  *
  * @type       {number}
  */
@@ -198,7 +198,7 @@ export default {
  * @param      {string}    file_id    The id of the file that will be deleted
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      Function returns void
+ * @return     {void}      Calls success or error callback
  */
   deleteFile(...args){
     setTimeout(() => {
@@ -213,7 +213,7 @@ export default {
  *                                    be moved to
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      Function returns void
+ * @return     {void}      Calls success or error callback
  */
   paste(...args){
     setTimeout(() => {
@@ -228,7 +228,7 @@ export default {
  *                                    parent folder of the new folder
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      Function returns void
+ * @return     {void}      Calls success or error callback
  */
   addFolder(...args){
     setTimeout(() => {
@@ -241,7 +241,7 @@ export default {
  * @param      {?number}   folder_id  The id of the folder that will be deleted
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}    Function return nothing
+ * @return     {void}      Calls success or error callback
  */
   deleteFolder(...args){
     setTimeout(() => {
@@ -258,7 +258,7 @@ export default {
  *                                    uploaded files
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      No return value
+ * @return     {void}      Calls success or error callback
  */
   upload(...args){
     setTimeout(() => {
@@ -271,7 +271,7 @@ export default {
  * @param      {?number}   folder_id  The id of the folder
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
- * @return     {void}      No return value
+ * @return     {void}      Calls success or error callback
  */
   openFolder(...args){
     setTimeout(() => {

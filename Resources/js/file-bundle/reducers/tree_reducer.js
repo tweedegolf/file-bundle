@@ -4,15 +4,15 @@ import * as ActionTypes from '../constants'
  * Initial tree state
  *
  * @type       {Object}
- * @param      {Array}    files           Contains File objects representing all
+ * @param      {Array}    files           Contains file objects representing all
  *                                        files in the current folder
- * @param      {Array}    folders         Contains Folder objects representing all
+ * @param      {Array}    folders         Contains folder objects representing all
  *                                        folders in the current folder
  * @param      {Object}   current_folder  Object representing the currently
  *                                        selected (opened) folder
  * @param      {?number}  parent_folder   The id of the parent folder
  *
- * @see        description of File and Folder objects: {@link ./api.js}
+ * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
 export const treeInitialState = {
   files: [],

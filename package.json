@@ -33,8 +33,7 @@
       "stage-0"
     ],
     "plugins": [
-      "transform-decorators-legacy",
-      "jsdoc-babel"
+      "transform-decorators-legacy"
     ]
   }
 }

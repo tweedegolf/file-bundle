@@ -1,6 +1,5 @@
 /**
- * @file       Utility functions that handle saving to and retrieving from local
- *             storage
+ * Utility functions that handle saving to and retrieving from local storage
  */
 
 
@@ -23,7 +22,7 @@ const reviver = function(k, v){
  */
 export function getLocalState(){
 
-  let tree = localStorage.getItem('tree')
+  // default values
   let all_files = {}
   let all_folders = {
     null: {
@@ -34,6 +33,7 @@ export function getLocalState(){
   let selected = []
   let current_folder_id = null
 
+  let tree = localStorage.getItem('tree')
   if(tree !== null){
     tree = JSON.parse(tree)
     all_files = JSON.parse(localStorage.getItem('all_files'))
@@ -46,8 +46,8 @@ export function getLocalState(){
     }else{
       /**
        * Only the ids of the selected files are stored but the state expects
-       * File objects in the selected array; so we replace the ids by their
-       * corresponding File objects
+       * File description objects in the selected array; so we replace the ids
+       * by their corresponding File objects
        */
       selected = selected.map(file_id => {
         return all_files[file_id]

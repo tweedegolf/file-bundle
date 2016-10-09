@@ -1,7 +1,7 @@
 /**
  * The cache stores data that has been retrieved from the server. For instance
  * if a user opens a folder for the first time, its contents will be loaded from
- * the server and stored in the cache. The next time the user request this
+ * the server and stored in the cache. The next time the user requests this
  * folder, its contents will be loaded from the cache (unless the contents has
  * been invalidated, which is not yet implemented).
  *
@@ -9,14 +9,13 @@
  * api is exclusively called from the cache; as such the cache sits between the
  * user actions requesting data and the server.
  *
- * The success callback of the api typically returns an array of files and/or
- * folders
+ * The success callback of the api typically returns an array of objects
+ * decscribing files and/or folders
  *
- * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder}
+ * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder} in the file ./api.js
  *
- * The API return errors as an array of error messages, the cache turns
- * these messages into an error object that can be processed by the error
- * component.
+ * The API return errors as an array of error messages, the cache turns these
+ * messages into an error object that can be processed by the error component.
  *
  * An error object looks like so:
  */
@@ -25,13 +24,13 @@
  * @type       {Object}
  * @property   {Number}    id        Unique id for every error
  * @property   {String}    type      Type of the error, can be omitted for a
- *                                   generic error, ohterwise you can use the
+ *                                   generic error, otherwise you can use the
  *                                   same constants as used by the Actions, see
  *                                   ./constants.js
  * @property   {String}    data      Can be omitted or a string representing
  *                                   anything; for instance in case the contents
  *                                   of a folder can not be loaded the data key
- *                                   could de the name of that folder.
+ *                                   could hold the name of that folder.
  * @property   {String[]}  messages  The error messages sent by the server
  */
 import api from './api'
@@ -48,9 +47,9 @@ let current_folder_id
 /**
  * Utility function that removes files from all folders that contain these
  * files: if a file exists in multiple folders, it will be removed in all of
- * these folders.
+ * these folders. Used by moveFiles()
  *
- * @param      {String[]}  file_ids           The ids oft the files that need to
+ * @param      {String[]}  file_ids           The ids of the files that need to
  *                                            be removed.
  * @param      {Number}    exclude_folder_id  The id of a folder that should be
  *                                            skipped; files in this folder will
@@ -102,35 +101,36 @@ const init = function(){
 /**
  * @name       openFolderResolve
  * @type       {Object}
- * @param      {Object}   current_folder  Data object that describes the
+ * @property   {Object}   current_folder  Data object that describes the
  *                                        currently opened folder such as number
  *                                        of files and folders, creation date
  *                                        and so on.
- * @param      {?number}  parent_folder   Id of the parent folder, will be null
+ * @property   {?number}  parent_folder   Id of the parent folder, will be null
  *                                        if the parent folder is the top root
  *                                        folder.
- * @param      {Array}    files           Array containing File data objects for
+ * @property   {Array}    files           Array containing File data objects for
  *                                        each file in the current folder. The
  *                                        data objects describe the file (name,
  *                                        creation date, size, etc.)
- * @param      {Array}    folders         Array containing Folder data objects
+ * @property   {Array}    folders         Array containing Folder data objects
  *                                        for each folder in the current folder.
  *                                        The data objects describe the folder
  *                                        (name, number of files and folders,
  *                                        parent folder, etc.) describe the
  *                                        folder
- * @param      {Array}    selected        Array containing data objects for each
+ * @property   {Array}    selected        Array containing data objects for each
  *                                        file that is selected in the current
  *                                        folder.
  *
- * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder}
+ * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder} in the file ./api.js
  */
+
 /**
  * Loads a folder. If the contents of this folder has been cached, the contents
  * will be loaded from cache, otherwise the contents will be loaded from the
  * server.
  *
- * @param      {Number}   folder_id  The id of the folder whose contents needs
+ * @param      {?number}  folder_id  The id of the folder whose contents needs
  * @return     {Promise}  {@link openFolderResolve resolve} {@link APIError
  *                        reject}
  */
@@ -217,16 +217,17 @@ const loadFolder = function(folder_id){
 /**
  * @name       uploadResolve
  * @type       {Object}
- * @param      {number}    file_count  Updated number of files in the current
+ * @property   {number}    file_count  Updated number of files in the current
  *                                     folder
- * @param      {Object[]}  files       Array containing {@link FileDescr File}
+ * @property   {Object[]}  files       Array containing {@link FileDescr File}
  *                                     objects representing the newly uploaded
  *                                     files.
- * @param      {string[]}  error       Array containing error messages for the
+ * @property   {string[]}  errors      Array containing error messages for the
  *                                     files that could not be uploaded, for
  *                                     instance because they were too large or
  *                                     of an unsupported file format.
  */
+
 /**
  * Adds files to a folder. The files will be uploaded to the server and an array
  * of file objects representing these files will be returned
@@ -291,11 +292,12 @@ const addFiles = function(file_list, folder_id){
 /**
  * @name       pasteFilesResolve
  * @type       {Object}
- * @param      {Array}   files       Array containing the {@link FileDescr File}
+ * @property   {Array}   files       Array containing the {@link FileDescr File}
  *                                   objects representing the files in the
  *                                   current folder.
- * @param      {number}  file_count  The number of files in the current folder
+ * @property   {number}  file_count  The number of files in the current folder
  */
+
 /**
  * Move file(s) to another folder
  *
@@ -348,10 +350,11 @@ const moveFiles = function(files, folder_id){
 /**
  * @typedef    {Object}  deleteFileResolve
  *
- * @property   {number}  file_count  The number of the files in the folder.
  * @property   {Array}   files       Array containing the {@link FileDescr File}
  *                                   object of the files in the folder.
+ * @property   {number}  file_count  The number of the files in the folder.
  */
+
 /**
  * Deletes a single file
  *
@@ -403,14 +406,15 @@ const deleteFile = function(file_id, folder_id){
 /**
  * @name       addFolderResolve
  * @type       {object}
- * @param      {number}    folder_count  The number of folders in the current
+ * @property   {number}    folder_count  The number of folders in the current
  *                                       folder, inclusive the new folder
- * @param      {Array}     folders       Array containing the {@link FolderDescr
+ * @property   {Array}     folders       Array containing the {@link FolderDescr
  *                                       Folder} objects representing the
  *                                       folders in the current folder
- * @param      {string[]}  error         Array containing error messages, only
+ * @property   {string[]}  error         Array containing error messages, only
  *                                       when the server had yielded errors
  */
+
 /**
  * Creates a new emtpy folder in the current folder
  *
@@ -471,11 +475,12 @@ const addFolder = function(folder_name, parent_folder_id){
 /**
  * @name       deleteFolderResolve
  * @type       {Object}  deleteFolderResolve
- * @param      {number}  folder_count  The number of folders still left in the
+ * @property   {number}  folder_count  The number of folders still left in the
  *                                     current folder
- * @param      {Array}   folders       Array containing the {@link FolderDescr
+ * @property   {Array}   folders       Array containing the {@link FolderDescr
  *                                     Folder} objects in the current folder
  */
+
 /**
  * Deletes an emptied folder
  *

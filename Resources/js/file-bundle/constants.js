@@ -5,13 +5,11 @@
  */
 
  /**
- * API call: upload files, processed by:
- * - ui reducer
- * { list_item_description }
- * { list_item_description }
-
- @type       {string}
-*/
+  * API call: upload files, processed by:
+  * - ui reducer
+  *
+  * @type       {string}
+  */
 export const UPLOAD_START = 'UPLOAD_START'
 
 /**
@@ -140,8 +138,8 @@ export const SELECT_FILE = 'SELECT_FILE'
 
 /**
  * Filepicker mode: selected files that are passed via the HTML's dataset
- * property get stored in the state. Happens only once during initialization.
- * Processed by:
+ * property get stored in the state; this happens only once during
+ * initialization. Processed by:
  * - tree reducer
  *
  * @type       {string}

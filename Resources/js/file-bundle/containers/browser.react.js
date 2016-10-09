@@ -1,5 +1,5 @@
 /**
- * @file Main component, or container
+ * @file       Main component, or container
  */
 
 import React from 'react';
@@ -34,12 +34,12 @@ const mapStateToProps = (state) => {
     sort,
     ascending,
     preview: state.ui.preview,
-    confirm_delete: state.ui.confirm_delete,
     expanded: state.ui.expanded,
     hover: state.ui.hover,
     selected: state.ui.selected,
     clipboard: state.ui.clipboard,
     loading_folder: state.ui.loading_folder, // null or number
+    confirm_delete: state.ui.confirm_delete, // null or number
     deleting_file: state.ui.deleting, // null or number
     deleting_folder: state.ui.deleting, // null or number
     adding_folder: state.ui.adding_folder, // true or false

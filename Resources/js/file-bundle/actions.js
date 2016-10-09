@@ -13,13 +13,13 @@ const dispatch = store.dispatch
  * @param      {boolean}  multiple  If false, user may only select one file at
  *                                  the time.
  * @param      {number}   id        The id of a file file; if that id is not
- *                                  already stored in the tree state, the file
- *                                  will be selected. If an id is already stored
- *                                  in the tree state, the corresponding file
- *                                  will be deselected.
+ *                                  already stored in the state, the file will
+ *                                  be selected. If an id is already stored in
+ *                                  the state, the corresponding file will be
+ *                                  deselected.
  */
 /**
- * Adds a file id to the selected file ids array in the tree state.
+ * Adds a file id to the selected file ids array in the state.
  *
  * @param {SelectFileArg} data Argument passed.
  */
@@ -32,11 +32,12 @@ const selectFile = function(data){
 
 
 /**
- * Called from the componentDidMount function in the main container:
- * <tt>./containers/browser.react.js</tt>
+ * Initialisation function that hydrates the state from local storage or by
+ * setting default values; called from the componentDidMount function in the
+ * main container: <tt>./containers/browser.react.js</tt>
  *
  * @param      {?Array}  selected  The ids of the files that will be selected.
- *                                 Only used in Filepicker mode: you can add an
+ *                                 Only used in Filepicker mode. You can add an
  *                                 array of file ids to the HTML element's
  *                                 dataset; this array is passed as argument.
  */
@@ -211,8 +212,8 @@ const cancelCutAndPasteFiles = function(){
  * Uploads new files to the server. Triggers an API call.
  *
  * @param      {Array}    file_list       The FileList converted to Array
- *                                        containing all the files that will be
- *                                        uploaded
+ *                                        containing all the files as File
+ *                                        instance that will be uploaded
  * @param      {?number}  current_folder  The id of the folders where the files
  *                                        will be added to after they are
  *                                        uploaded
@@ -250,7 +251,7 @@ const upload = function(file_list, current_folder){
  * @param      {?number}  current_folder_id  The id of the the current folder,
  *                                           i.e. the folder that will contain
  *                                           the new folder
- * @return     {void}  returns nothing, dispatches actions *
+ * @return     {void}  returns nothing, dispatches actions
  */
 const addFolder = function(folder_name, current_folder_id){
   dispatch({
@@ -318,7 +319,7 @@ const showPreview = function(image_url){
 
 /**
  * User has clicked on the delete button of a file; this triggers a confirmation
- * popup. The file will only be deleted after the user's confirmation
+ * popup. The file will only be deleted after the user's confirmation.
  *
  * @param      {number}  id      The id of the file will be deleted after
  *                               confirmation
@@ -344,8 +345,8 @@ const confirmDelete = function(id){
  *                                   around the selection, e.g. if the current
  *                                   selection is the last item in the list, and
  *                                   the user has pressed the arrow down button,
- *                                   the selection will wrap around and the
- *                                   first item in the list will be selected.
+ *                                   the selection will wrap around resulting in
+ *                                   the first item in the list being selected.
  */
 const setHover = function(diff, folder_id){
   dispatch({

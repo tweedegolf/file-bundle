@@ -14,14 +14,18 @@ export default class File extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      confirm_delete: false,
-      preview: false
-    };
-
     this.onDelete = this.onDelete.bind(this);
     this.onCancelDelete = this.onCancelDelete.bind(this);
     this.onConfirmDelete = this.onConfirmDelete.bind(this);
+/*
+    // hide confirmation popup if user clicks somewhere outside the popup
+    addEventListener('mousedown', e => {
+      //console.log(e.target)
+      if(e.target === document.body){
+        this.onCancelDelete(e)
+      }
+    })
+*/
   }
 
   render() {
@@ -52,17 +56,17 @@ export default class File extends React.Component {
 
     if (this.props.confirm_delete === file.id) {
       confirm = <div className="confirm">
-        <button type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
+        <button ref="button_cancel" type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
           <span className="text-label">Annuleren</span>
           <span className="fa fa-times"/>
         </button>
-        <button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete}>
+        <button ref="button_confirm" type="button" className="btn btn-sm btn-danger" onClick={this.onDelete}>
           <span className="text-label">Definitief verwijderen</span>
           <span className="fa fa-trash-o"/>
         </button>
       </div>;
     } else if (this.props.selected.length + this.props.clipboard.length === 0) {
-      delete_btn = <button type="button" className="btn btn-sm btn-danger" onClick={this.onConfirmDelete}>
+      delete_btn = <button ref="button_delete" type="button" className="btn btn-sm btn-danger" onClick={this.onConfirmDelete}>
         <span className="fa fa-trash-o" />
       </button>;
     }

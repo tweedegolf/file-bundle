@@ -17,18 +17,20 @@ import cache from '../cache';
  * @property   {?number}  preview          The id of the file that will be
  *                                         previewed fullscreen, currently
  *                                         implemented only for images
- * @property   {?number}  confirm_delete   The id of the file that the user
- *                                         wants to delete; a confirmation popup
- *                                         will be showed and the file will only
- *                                         be deleted after confirmation
+ * @property   {?number}  confirm_delete   null or the id of the file that the
+ *                                         user wants to delete; a confirmation
+ *                                         popup will be showed and the file
+ *                                         will only be deleted after
+ *                                         confirmation.
  * @property   {number}   hover            -1 or the index in the item list of
  *                                         the current folder of the file or
  *                                         folder that has currently been
  *                                         selected by the arrow up and down
  *                                         keys
- * @property   {Array}    errors           Array of {@link cacheReject1 Error
- *                                         objects} returned by an API call.
- *                                         description of the Error object
+ * @property   {Array}    errors           Array of {@link APIError Error
+ *                                         objects} returned by an API call. See
+ *                                         the description of the error object
+ *                                         in ./cache.js
  * @property   {?number}  loading_folder   The id of the folder whose content is
  *                                         currently being loaded, or null if no
  *                                         folder is being opened
@@ -47,15 +49,17 @@ import cache from '../cache';
  * @property   {?number}  scroll_position  The position that the browser list
  *                                         should be scrolled to, or null if no
  *                                         scrolling action is required
- * @property   {Array}    selected         The File objects representing the
- *                                         currently selected files; in the
- *                                         filelist of the browser they will
- *                                         show up with a checked checkbox
+ * @property   {Array}    selected         Array of file description objects
+ *                                         representing the currently selected
+ *                                         files; in the filelist of the browser
+ *                                         they will show up with a checked
+ *                                         checkbox
  * @property   {Array}    clipboard        After the user has clicked on 'cut'
- *                                         in the toolbar, the File objects in
- *                                         the selected array are moved to the
- *                                         clipboard array: from here they can
- *                                         be pasted into another folder
+ *                                         in the toolbar, the file description
+ *                                         objects in the selected array are
+ *                                         moved to the clipboard array: from
+ *                                         here they can be pasted into another
+ *                                         folder
  */
 export const uiInitialState = {
   sort: 'create_ts',
@@ -87,7 +91,7 @@ export const uiInitialState = {
 export function ui(state = uiInitialState, action){
 
   /**
-   * User has added a folder, we can show some progress indicator while we make
+   * User has added a folder, we can show a progress indicator while we make
    * an API call to the server
    */
   if(action.type === ActionTypes.ADD_FOLDER){
@@ -97,10 +101,10 @@ export function ui(state = uiInitialState, action){
     }
 
   /**
-   * Response from the server; folder has been made, we can remove the progress
-   * indicator (if any). In some cases the server returns errors, if this is the
-   * case they will be displayed. This action is processed by the tree reducer
-   * as well.
+   * Response from the server; folder has been created, we can remove the
+   * progress indicator (if any). In some cases the server returns errors, if
+   * this is the case they will be displayed. This action is processed by the
+   * tree reducer as well.
    */
   }else if(action.type === ActionTypes.FOLDER_ADDED){
     return {
@@ -111,7 +115,7 @@ export function ui(state = uiInitialState, action){
 
   /**
    * Something went wrong during connection or at the server, we can remove the
-   * progress indicator and show the errors(s)
+   * progress indicator and show the error(s)
    */
   }else if(action.type === ActionTypes.ERROR_ADDING_FOLDER){
     return {
@@ -123,8 +127,8 @@ export function ui(state = uiInitialState, action){
   /**
    * User wants to delete a file, if the id in the payload is a number this
    * actions triggers a confirmation popup. If the id is null it means that the
-   * confirmation popup was already showing and that hte user has clicked on the
-   * 'cancel' button.
+   * confirmation popup was already showing and that the user has clicked on the
+   * 'cancel' button, or has clicked anywhere outside the popup.
    */
   }else if(action.type === ActionTypes.CONFIRM_DELETE){
     return {
@@ -204,7 +208,8 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.OPEN_FOLDER){
     return {
       ...state,
-      loading_folder: action.payload.id
+      loading_folder: action.payload.id,
+      confirm_delete: null,
     }
 
   /**
@@ -280,8 +285,8 @@ export function ui(state = uiInitialState, action){
   /**
    * User has clicked on one of the columns of the tool bar. If the chosen
    * column is the same as the sort column in the state we invert the selection.
-   * Otherwise a new sorting column will be set and the current sort order will
-   * be left unaffected.
+   * Otherwise a new sorting column will be set and the current sort order
+   * (ascending or descending) will be left unaffected.
    */
   }else if(action.type === ActionTypes.CHANGE_SORTING){
     let ascending = state.ascending
@@ -376,6 +381,12 @@ export function ui(state = uiInitialState, action){
    * selected it will be selected, otherwise it will be deselected. In
    * filepicker mode you can set a boolean property 'multiple'; if this value is
    * set to false only one file at the time can be selected.
+   *
+   * @param      {number}   id        The id of the file whose select checkbox
+   *                                  has been clicked
+   * @param      {boolean}  browser   False if the tool is in filepicker mode
+   * @param      {boolean}  multiple  Whether it is allowed to have multiple
+   *                                  files selected
    */
   }else if(action.type === ActionTypes.SELECT_FILE){
     let {
@@ -409,6 +420,11 @@ export function ui(state = uiInitialState, action){
   /**
    * In filepicker mode, selected files can be passed via the HTML element's
    * dataset, here we store them in the selected array of the ui state
+   *
+   * @param      {Array<Object>}  selected  Array containing the file
+   *                                        description objects that are set in
+   *                                        the dataset property of the root
+   *                                        HTML element
    */
   }else if(action.type === ActionTypes.SELECT_FILES){
     return {

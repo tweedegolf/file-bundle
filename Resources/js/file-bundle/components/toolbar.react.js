@@ -7,8 +7,9 @@ export default class Toolbar extends React.Component {
     this.state = {
       show_form: false
     }
+
+    // hide create new folder popup if user clicks somewhere outside the popup
     addEventListener('mousedown', e => {
-      console.log(e.target)
       if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.refs.folder_name){
         this.setState({
           show_form: false
