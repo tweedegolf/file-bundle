@@ -4,8 +4,8 @@
   "description": "Add a compact, modern and full-featured file browser to your Symfony 3 projects",
   "main": "Resources/js/file-bundle/index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'Resources/js/test' --recursive || echo",
-    "test-api": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'Resources/js/test/api.js' --recursive || echo",
+    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'Resources/js/file-bundle/test' --recursive || echo",
+    "test-api": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'Resources/js/test/file-bundle/api.js' --recursive || echo",
     "clean:docs": "rm -rf ./docs",
     "docs": "./node_modules/.bin/jsdoc -c jsdoc_conf.json -d ./docs",
     "predocs": "npm run clean:docs",

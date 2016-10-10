@@ -1,6 +1,7 @@
 import {assert, expect} from 'chai'
 import {describe, it} from 'mocha'
-import api from '../file-bundle/api'
+// import assert from 'assert'
+import api from '../api'
 
 describe('api', done => {
   describe('#openFolder', done => {

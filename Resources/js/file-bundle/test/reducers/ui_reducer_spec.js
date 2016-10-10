@@ -1,7 +1,7 @@
 import {assert, expect} from 'chai'
 import {describe, it} from 'mocha'
-import {uiInitialState} from '../../file-bundle/reducers/ui_reducer'
-import {ui} from '../../file-bundle/reducers/ui_reducer'
+import {uiInitialState} from '../../reducers/ui_reducer'
+import {ui} from '../../reducers/ui_reducer'
 
 describe('uiInitialState', () => {
   describe('#selected', () => {
