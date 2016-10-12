@@ -2,7 +2,7 @@ import {assert, expect} from 'chai'
 import {describe, it} from 'mocha'
 import {uiInitialState} from '../../reducers/ui_reducer'
 import {ui} from '../../reducers/ui_reducer'
-import * as actions from '../../actions.js'
+import * as types from '../../constants.js'
 
 describe('uiInitialState', () => {
   describe('#selected', () => {
@@ -15,21 +15,18 @@ describe('uiInitialState', () => {
   })
 })
 
-describe('ui updates', () => {
+describe('ui reducer', () => {
 
-  describe('add folder', () => {
+  describe('open folder', () => {
 
-    it('shows a progress indicator by setting adding_folder', () => {
-
-      console.log(actions)
-      const id = 2
-      const action = actions.openFolder(id)
-      const next_result = ui(uiInitialState, action)
-      console.log("")
-
-      expect(next_result).to.equal({
-        ...state,
-        loading_folder: id,
+    it('should initiate loading a folder', () => {
+      expect(
+        ui([], {
+          type: types.OPEN_FOLDER,
+          payload: 2
+        })
+      ).to.equal({
+        loading_folder: 2,
         confirm_delete: null
       })
     })

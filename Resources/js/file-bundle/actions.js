@@ -384,6 +384,8 @@ const expandBrowser = function(){
 }
 
 
+// TODO: This is currently a named export. If we're going to name it,
+// we might want to give it a more meaningful name than "default"
 export default {
   upload,
   deleteFile,
