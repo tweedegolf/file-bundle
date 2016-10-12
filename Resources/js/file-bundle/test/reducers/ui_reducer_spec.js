@@ -1,7 +1,7 @@
 import {assert, expect} from 'chai'
 import {describe, it} from 'mocha'
 import {uiInitialState} from '../../reducers/ui_reducer'
-import {ui} from '../../reducers/ui_reducer'
+import {ui as reducer} from '../../reducers/ui_reducer'
 import * as types from '../../constants.js'
 
 describe('uiInitialState', () => {
@@ -19,13 +19,14 @@ describe('ui reducer', () => {
 
   describe('open folder', () => {
 
-    it('should initiate loading a folder', () => {
-      expect(
-        ui([], {
-          type: types.OPEN_FOLDER,
-          payload: 2
-        })
-      ).to.equal({
+    it('should indicate a folder is loading', () => {
+      const action = {
+        type: types.OPEN_FOLDER,
+        payload: {
+          id: 2
+        }
+      }
+      expect(reducer([], action)).to.deep.equal({
         loading_folder: 2,
         confirm_delete: null
       })
