@@ -26,7 +26,7 @@ describe('ui reducer', () => {
           id: 2
         }
       }
-      expect(reducer([], action)).to.deep.equal({
+      expect(reducer({}, action)).to.deep.equal({
         loading_folder: 2,
         confirm_delete: null
       })
