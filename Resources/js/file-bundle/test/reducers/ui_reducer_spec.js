@@ -132,6 +132,20 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('delete folder', () => {
+
+    it('should indicate which folder is being deleted', () => {
+      const action = {
+        type: types.DELETE_FOLDER,
+        payload: {
+          folder_id: 2
+        }
+      }
+      const new_state = reducer(undefined, action)
+      expect(new_state['deleting_folder']).to.equal(2)
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate which folder is loading', () => {
