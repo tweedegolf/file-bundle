@@ -106,6 +106,18 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('file deleted', () => {
+
+    it('should remove the progress indicator', () => {
+      const action = {
+        type: types.FILE_DELETED,
+        payload: {}
+      }
+      const new_state = reducer(undefined, action)
+      expect(new_state['deleting_file']).to.equal(null)
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate which folder is loading', () => {
