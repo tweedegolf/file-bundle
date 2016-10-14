@@ -5,28 +5,25 @@ import * as types from '../../constants'
 
 describe('ui reducer', () => {
 
-  describe('defaults', () => {
-
-    it('should set a correct initial state if none is defined', () => {
-      const action = {}
-      const new_state = reducer(undefined, action)
-      expect(new_state).to.deep.equal({
-        sort: 'create_ts',
-        ascending: false,
-        expanded: false,
-        preview: null,
-        confirm_delete: null,
-        hover: -1,
-        errors: [],
-        loading_folder: null,
-        deleting_file: null,
-        deleting_folder: null,
-        adding_folder: false,
-        uploading_files: false,
-        scroll_position: null,
-        selected: [],
-        clipboard: [],
-      })
+  it('should set a correct initial state if none is defined', () => {
+    const action = {}
+    const new_state = reducer(undefined, action)
+    expect(new_state).to.deep.equal({
+      sort: 'create_ts',
+      ascending: false,
+      expanded: false,
+      preview: null,
+      confirm_delete: null,
+      hover: -1,
+      errors: [],
+      loading_folder: null,
+      deleting_file: null,
+      deleting_folder: null,
+      adding_folder: false,
+      uploading_files: false,
+      scroll_position: null,
+      selected: [],
+      clipboard: [],
     })
   })
 
