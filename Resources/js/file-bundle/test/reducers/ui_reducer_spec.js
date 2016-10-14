@@ -58,7 +58,7 @@ describe('ui reducer', () => {
 
   describe('open folder', () => {
 
-    it('should indicate a folder is loading', () => {
+    it('should indicate which folder is loading', () => {
       const action = {
         type: types.OPEN_FOLDER,
         payload: {
