@@ -50,9 +50,8 @@ describe('ui reducer', () => {
           errors: []
         }
       }
-      expect(reducer(undefined, action)).to.have({
-        adding_folder: false
-      })
+      const new_state = reducer(undefined, action)
+      expect(new_state['adding_folder']).to.be.false
     })
   })
 
