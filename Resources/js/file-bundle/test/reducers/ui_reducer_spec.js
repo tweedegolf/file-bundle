@@ -79,6 +79,17 @@ describe('ui reducer', () => {
       const new_state = reducer(undefined, action)
       expect(new_state['confirm_delete']).to.equal(2)
     })
+
+    it('should NOT show a confirmation popup when NOT passed a number', () => {
+      const action = {
+        type: types.CONFIRM_DELETE,
+        payload: {
+          id: null
+        }
+      }
+      const new_state = reducer(undefined, action)
+      expect(new_state['confirm_delete']).to.equal(null)
+    })
   })
 
   describe('open folder', () => {
