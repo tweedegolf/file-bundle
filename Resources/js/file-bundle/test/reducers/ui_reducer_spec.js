@@ -146,6 +146,18 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('folder deleted', () => {
+
+    it('should disable the delete folder indication', () => {
+      const action = {
+        type: types.FOLDER_DELETED,
+        payload: {}
+      }
+      const new_state = reducer(undefined, action)
+      expect(new_state['deleting_folder']).to.equal(null)
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate which folder is loading', () => {
