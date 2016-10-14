@@ -8,7 +8,9 @@ describe('ui reducer', () => {
   describe('defaults', () => {
 
     it('should set a correct initial state if none is defined', () => {
-      expect(reducer(undefined, {})).to.deep.equal({
+      const action = {}
+      const new_state = reducer(undefined, action)
+      expect(new_state).to.deep.equal({
         sort: 'create_ts',
         ascending: false,
         expanded: false,
