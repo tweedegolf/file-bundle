@@ -28,6 +28,19 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('add folder', () => {
+
+    it('should indicate a folder is being added', () => {
+      const action = {
+        type: types.ADD_FOLDER,
+        payload: {}
+      }
+      expect(reducer({}, action)).to.deep.equal({
+        adding_folder: true
+      })
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate a folder is loading', () => {
