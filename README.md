@@ -26,3 +26,9 @@ Tests with Mocha and Chai may be run separately:
 npm install
 npm test
 ```
+
+or enable -watch when working on tests:
+
+```
+npm run-script test-watch
+```
