@@ -43,4 +43,17 @@ describe('ui reducer', () => {
       })
     })
   })
+
+  describe('folder opened', () => {
+
+    it('should disable the loading folder indication', () => {
+      const action = {
+        type: types.FOLDER_OPENED,
+        payload: {}
+      }
+      expect(reducer({}, action)).to.deep.equal({
+        loading_folder: null
+      })
+    })
+  })
 })
