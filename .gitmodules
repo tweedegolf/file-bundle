@@ -1,0 +1,3 @@
+[submodule "Resources/js/file-bundle"]
+	path = Resources/js/file-bundle
+	url = https://github.com/tweedegolf/file-bundle-js
