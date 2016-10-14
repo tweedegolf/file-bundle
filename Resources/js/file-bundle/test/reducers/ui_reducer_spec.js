@@ -41,6 +41,21 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('folder added', () => {
+
+    it('should disable the adding folder indication', () => {
+      const action = {
+        type: types.FOLDER_ADDED,
+        payload: {
+          errors: []
+        }
+      }
+      expect(reducer(undefined, action)).to.have({
+        adding_folder: false
+      })
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate a folder is loading', () => {

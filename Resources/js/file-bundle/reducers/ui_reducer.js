@@ -107,6 +107,11 @@ export function ui(state = uiInitialState, action){
    * tree reducer as well.
    */
   }else if(action.type === ActionTypes.FOLDER_ADDED){
+    console.log('HELLO THIS IS FOLDER_ADDDED')
+    console.log('I GOT THIS STATE:', state)
+    console.log('AND THIS ACTION:', action)
+    console.log('AND THIS ACTION PAYLOAD:', action.payload)
+    console.log('AND THESE ERRORS:', action.payload.errors)
     return {
       ...state,
       adding_folder: false,
