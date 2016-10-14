@@ -67,6 +67,20 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('confirm delete', () => {
+
+    it('should show a confirmation popup if it was passed a number', () => {
+      const action = {
+        type: types.CONFIRM_DELETE,
+        payload: {
+          id: 2
+        }
+      }
+      const new_state = reducer(undefined, action)
+      expect(new_state['confirm_delete']).to.equal(2)
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate which folder is loading', () => {
