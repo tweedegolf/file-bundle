@@ -158,6 +158,20 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('error deleting folder', () => {
+
+    it('should display errors', () => {
+      const action = {
+        type: types.ERROR_DELETING_FOLDER,
+        payload: {
+          errors: ["error text"]
+        }
+      }
+      const new_state = reducer(undefined, action)
+      expect(new_state['errors']).to.have.length.of.at.least(1)
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate which folder is loading', () => {
