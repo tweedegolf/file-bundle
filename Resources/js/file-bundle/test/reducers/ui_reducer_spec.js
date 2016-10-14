@@ -92,6 +92,20 @@ describe('ui reducer', () => {
     })
   })
 
+  describe('delete file', () => {
+
+    it('should show a progress indicator during the API call', () => {
+      const action = {
+        type: types.DELETE_FILE,
+        payload: {
+          id: 2
+        }
+      }
+      const new_state = reducer(undefined, action)
+      expect(new_state['deleting_file']).to.equal(2)
+    })
+  })
+
   describe('open folder', () => {
 
     it('should indicate which folder is loading', () => {
