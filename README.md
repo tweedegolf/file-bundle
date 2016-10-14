@@ -14,21 +14,43 @@ The following nodejs libraries are required.
 The SCSS stylesheet that is provided words as an extension of the Bootstrap 3 framework.
 The Bootstrap javascript components are not required.
 
-## Architecture (WIP)
 
-[Edit in Google Drive](https://docs.google.com/drawings/d/191uT_e2LmWlZeQWWRQsmIzznixTXfE55AfuddNL6jks/edit)
+## Architecture
 
-## Front-end tests
+The gross of the code in this bundle resides in Resources/js/file-bundle ans is written
+in ECMAscript 6 / JSX. The diagram below depicts the architecture of the react components in place.
 
-Tests with Mocha and Chai may be run separately:
+    +------------------------------+   +-----------------+
+    |Browser                       |   |                 |
+    |                              |   | Cache           |
+    | +-------------------------+  +<->+                 |
+    | |Selected files           |  |   |                 |
+    | +-------------------------+  |   |                 |
+    |                              |   +-------+---------+
+    | +--------------------------+ |           ^
+    | |                          | |           |
+    | | +---------------------+  | |           v
+    | | |Toolbar / Errors     |  | |   +-------+---------+
+    | | +---------------------+  | |   |                 |
+    | |                          | |   | Api             |
+    | | +---------------------+  | |   |                 |
+    | | |List                 |  | |   |                 |
+    | | |                     |  | |   +-----------------+
+    | | | +----------------+  |  | |
+    | | | |File / Folder   |  |  | |
+    | | | +----------------+  |  | |
+    | | +---------------------+  | |
+    | |                          | |
+    | +--------------------------+ |
+    |                              |
+    +------------------------------+
 
-```
-npm install
-npm test
-```
+De browser react component contains all state en propagates this state to the subcomponents.
+The file and directory information is stored in the cache module - which will query the php
+backend when new folders are opened.
 
-or enable -watch when working on tests:
+The selected files component is used when this plugin is used iin a form, than the files can
+be selected. When the browser operated as a separate file manager clicking on a file means
+selecting it to, for example, put it on the pasteboard.
 
-```
-npm run-script test-watch
-```
+The table of files can be sorted by clicking on the table headers.
