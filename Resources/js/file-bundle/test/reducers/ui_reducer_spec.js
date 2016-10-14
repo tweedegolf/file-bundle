@@ -1,7 +1,7 @@
 import {expect} from 'chai'
 import {describe, it} from 'mocha'
 import {ui as reducer} from '../../reducers/ui_reducer'
-import * as types from '../../constants.js'
+import * as types from '../../constants'
 
 describe('ui reducer', () => {
 
