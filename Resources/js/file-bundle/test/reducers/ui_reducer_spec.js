@@ -37,9 +37,8 @@ describe('ui reducer', () => {
         type: types.ADD_FOLDER,
         payload: {}
       }
-      expect(reducer({}, action)).to.deep.equal({
-        adding_folder: true
-      })
+      const new_state = reducer(undefined, action)
+      expect(new_state['adding_folder']).to.be.true
     })
   })
 
