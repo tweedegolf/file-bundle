@@ -77,9 +77,8 @@ describe('ui reducer', () => {
         type: types.FOLDER_OPENED,
         payload: {}
       }
-      expect(reducer({}, action)).to.deep.equal({
-        loading_folder: null
-      })
+      const new_state = reducer(undefined, action)
+      expect(new_state['loading_folder']).to.equal(null)
     })
   })
 })
