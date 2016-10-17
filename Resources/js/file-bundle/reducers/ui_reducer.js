@@ -1,5 +1,5 @@
-import * as ActionTypes from '../constants';
-import cache from '../cache';
+import * as ActionTypes from '../util/constants';
+import cache from '../util/cache';
 
 /**
  * The initial ui state

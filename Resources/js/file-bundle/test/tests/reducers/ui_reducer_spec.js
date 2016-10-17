@@ -1,7 +1,7 @@
 import {expect} from 'chai'
 import {describe, it} from 'mocha'
 import {ui as reducer} from '../../../reducers/ui_reducer'
-import * as types from '../../../constants'
+import * as types from '../../../util/constants'
 
 let undef // is undefined
 

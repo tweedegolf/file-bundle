@@ -1,6 +1,6 @@
-import * as ActionTypes from './constants'
-import getStore from './get_store'
-import cache from './cache'
+import * as ActionTypes from '../util/constants'
+import getStore from '../reducers/get_store'
+import cache from '../util/cache'
 
 const store = getStore()
 const dispatch = store.dispatch

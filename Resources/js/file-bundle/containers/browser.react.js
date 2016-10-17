@@ -13,7 +13,7 @@ import Errors from '../components/errors.react.js';
 
 import Actions from '../actions';
 import {connect} from 'react-redux'
-import {sortBy} from '../util'
+import {sortBy} from '../util/util'
 
 
 const mapStateToProps = (state) => {

@@ -42,8 +42,25 @@
   *                                  ppt, pptx, xls, xlsx
   */
 
-
 import request from 'superagent'
+
+
+/**
+ * In case we want to run the test suite using the dummy test server, we need to
+ * change the server url. This is done by setting the node environment variable
+ * PORT to any value other than 80 or 8080 (and above 1024). In the code below
+ * we check whether this variable has been set and if so we adjust the server
+ * url accordingly.
+ *
+ * @type       {string}
+ */
+let server = '' // if no environment variable has been set, we don't need to specify a server url
+let port = process.env.PORT
+//console.log(process.env.PORT)
+if(typeof port !== 'undefined' && port !== 80 && port !== 8080){
+  server = `http://localhost:${port}`
+}
+
 
 /**
  * Deletes a file
@@ -76,7 +93,7 @@ const deleteFile = (file_id, onSuccess, onError) => {
  */
 const paste = (file_ids, folder_id, onSuccess, onError) => {
   // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
-  let url = '/admin/file/move' + (folder_id ? '/' + folder_id : '')
+  let url = server + '/admin/file/move' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url).type('form')
   req.send({'files[]': file_ids})
   req.end((err, res) => {
@@ -99,7 +116,7 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const addFolder = (name, folder_id, onSuccess, onError) => {
-  let url = '/admin/file/create/folder' + (folder_id !== null ? '/' + folder_id : '')
+  let url = server + '/admin/file/create/folder' + (folder_id !== null ? '/' + folder_id : '')
   var req = request.post(url).type('form')
   req.send({name})
   req.end((err, res) => {
@@ -120,7 +137,7 @@ const addFolder = (name, folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const deleteFolder = (folder_id, onSuccess, onError) => {
-  let url = '/admin/file/delete/folder/' + folder_id
+  let url = server + '/admin/file/delete/folder/' + folder_id
   var req = request.post(url).type('form')
   req.end((err, res) => {
     if (err) {
@@ -145,7 +162,7 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const upload = (file_list, folder_id, onSuccess, onError) => {
-  let url = '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
+  let url = server + '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url)
   file_list.forEach(file => {
     req.attach(file.name, file)
@@ -169,11 +186,12 @@ const upload = (file_list, folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const openFolder = (folder_id, onSuccess, onError) => {
-  let url = '/admin/file/list' + (folder_id ? '/' + folder_id : '')
+  let url = server + '/admin/file/list' + (folder_id ? '/' + folder_id : '')
   //let url = '/admin/file/list/999'
   var req = request.get(url)
   req.end((err, res) => {
     if (err) {
+      //console.log(err, res)
       onError([res.text, res.error.message, err.toString()])
     } else {
       onSuccess(res.body.folders, res.body.files)

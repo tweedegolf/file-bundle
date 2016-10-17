@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import * as ErrorTypes from '../constants'
+import * as ErrorTypes from '../util/constants'
 
 export default class UploadErrors extends React.Component {
 /*

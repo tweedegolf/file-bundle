@@ -342,21 +342,25 @@ const moveFiles = function(files, folder_id){
 
         // remove the files from the original folder(s)
         removeFilesFromFolders(file_ids, folder_id)
+/*
+        @todo: implementation is buggy; needs some rethinking
 
         // In case a file has been moved out of the parent folder of the new
         // folder, we need to update the file_count so we can update the number
         // next to the file icon at the top of the browser list (or remove the
         // icon alltogether in case no files are left in the parent folder)
-        let parentId = all_folders[folder_id].parent
         let file_count_parent = 0
-        if(typeof parentId !== 'undefined'){
-          file_count_parent = all_folders[parentId].file_count
+        if(typeof all_folders[folder_id] !== 'undefined'){
+          let parentId = all_folders[folder_id].parent
+          if(typeof parentId !== 'undefined'){
+            file_count_parent = all_folders[parentId].file_count
+          }
         }
         //console.log(parentId, file_count_parent)
-
+*/
         storeLocal({tree}, {all_folders})
         resolve({
-          file_count_parent,
+          //file_count_parent,
           file_count,
           files,
         })

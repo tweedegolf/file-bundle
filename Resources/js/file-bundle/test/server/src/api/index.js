@@ -40,7 +40,7 @@ const deleteFolder = (req, res) => {
   console.log(`[API] deleting folder ${folderId}`)
 
   let data = database.deleteFolder(folderId)
-  if(typeof data.error !== 'undefined'){
+  if(data.error !== false){
     res.setHeader('Content-Type', 'text/plain')
     res.status(500).send(data.error)
   }else{
@@ -55,7 +55,7 @@ const deleteFile = (req, res) => {
   console.log(`[API] deleting file ${fileId}`)
 
   let data = database.deleteFile(fileId)
-  if(typeof data.error !== 'undefined'){
+  if(data.error !== false){
     res.setHeader('Content-Type', 'text/plain')
     res.status(500).send(data.error)
   }else{
@@ -70,7 +70,7 @@ const moveFiles = (req, res) => {
   console.log(`[API] moving files to folder ${parentId}`)
 
   let data = database.moveFiles(req.body['files[]'], parentId)
-  if(typeof data.error !== 'undefined'){
+  if(data.error !== false){
     res.setHeader('Content-Type', 'text/plain')
     res.status(500).send(data.error)
   }else{

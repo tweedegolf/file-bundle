@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants'
+import * as ActionTypes from '../util/constants'
 
 /**
  * Initial tree state
@@ -117,10 +117,11 @@ export function tree(state = treeInitialState, action) {
         ...state.current_folder,
         file_count: action.payload.file_count,
       },
-      parent_folder: {
-        ...state.parent_folder,
-        file_count: action.payload.file_count_parent,
-      },
+      // -> disabled for now: needs rethinking
+      // parent_folder: {
+      //   ...state.parent_folder,
+      //   file_count: action.payload.file_count_parent,
+      // },
       files: [...state.files, ...action.payload.files],
     }
 

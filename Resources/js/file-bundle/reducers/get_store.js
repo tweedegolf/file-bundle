@@ -1,8 +1,8 @@
 import {applyMiddleware, createStore, combineReducers} from 'redux'
 import createLogger from 'redux-logger'
 //import thunkMiddleware from 'redux-thunk'
-import {ui, uiInitialState} from './reducers/ui_reducer'
-import {tree, treeInitialState} from './reducers/tree_reducer'
+import {ui, uiInitialState} from '../reducers/ui_reducer'
+import {tree, treeInitialState} from '../reducers/tree_reducer'
 
 let store = null
 

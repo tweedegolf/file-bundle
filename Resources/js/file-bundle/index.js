@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Browser from './containers/browser.react.js';
 import {Provider} from 'react-redux'
-import getStore from './get_store'
+import getStore from './reducers/get_store'
 
 const store = getStore()
 
