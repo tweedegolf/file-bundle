@@ -21,7 +21,7 @@ console.log('media dir:', mediaDir)
 const sessionUploads = []
 
 // uncomment this if you want to use imageMagick instead of graphicsMagick
-//gm.subClass({imageMagick: true})
+gm.subClass({imageMagick: true})
 
 /**
  * Returns a promise that creates a thumbnail from an uploaded picture
@@ -46,17 +46,23 @@ function createThumbPromise(uniqueName){
         // add the path to the session uploads so we can clean them up when
         // the server stops or crashes
         resolve()
+        sessionUploads.push(thumb)
       }else{
         // Resolve with error messages instead of reject. We add these error
         // messages to the errors array and this array will be sent back to the
-        // client to we can display errors if necessary
+        // client to we can display errors if necessary -> No: errors are
+        // disabled; in case of an error, the original file will double as a
+        // thumbnail
+
         //console.error(err)
-        let origName = path.basename(uniqueName).substring()
-        origName = origName.substring(origName.indexOf('_') + 1)
-        resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])
+        //let origName = path.basename(uniqueName).substring()
+        //origName = origName.substring(origName.indexOf('_') + 1)
+        //resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])
+
+        resolve()
         fs.createReadStream(file).pipe(fs.createWriteStream(thumb));
+        sessionUploads.push(thumb)
       }
-      sessionUploads.push(thumb)
     })
   })
 }
@@ -74,7 +80,7 @@ export function uploadFiles(req, res){
   let paths = []
   let folderId = getIdFromUrl(req.url)
 
-  console.log(`uploading files to folder ${folderId}`)
+  console.log(`[API] uploading files to folder ${folderId}`)
 
   if(req.busboy) {
     req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
