@@ -45,14 +45,18 @@ function createThumbPromise(uniqueName){
       if(typeof err === 'undefined'){
         // add the path to the session uploads so we can clean them up when
         // the server stops or crashes
-        sessionUploads.push(thumb)
         resolve()
       }else{
         // Resolve with error messages instead of reject. We add these error
         // messages to the errors array and this array will be sent back to the
         // client to we can display errors if necessary
-        resolve(err)
+        //console.error(err)
+        let origName = path.basename(uniqueName).substring()
+        origName = origName.substring(origName.indexOf('_') + 1)
+        resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])
+        fs.createReadStream(file).pipe(fs.createWriteStream(thumb));
       }
+      sessionUploads.push(thumb)
     })
   })
 }
@@ -65,7 +69,7 @@ function createThumbPromise(uniqueName){
  * @param      {ServerResponse}  res     The response of the http call
  */
 export function uploadFiles(req, res){
-  let errors = []
+  let errors = {}
   let uploads = []
   let paths = []
   let folderId = getIdFromUrl(req.url)
@@ -116,7 +120,7 @@ export function uploadFiles(req, res){
           // values are error messages that were yielded while creating thumbnails
           values.forEach(value => {
             if(typeof value !== 'undefined'){
-              errors.push(value)
+              errors[value[0]] = [value[1]]
             }
           })
           // store the file description object in the database

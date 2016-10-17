@@ -96,9 +96,11 @@ This project comes with a test suite. If you haven't already done so in the prev
  - `cd Resources/js/file-bundle`
  - `npm install`
 
+In the directory `Resources/js/file-bundle/test` you will find a folder `tests` that contains all tests organized in subfolders, and a folder `server` that contains the test server.
+
 You can run all test scripts from the `Resources/js/file-bundle` folder:
 
  - `npm test` runs unit tests
- - `npm run-script test-watch` watches for changes when working on tests and runs the tests if changes are detected
+ - `npm run test-watch` watches for changes when working on tests and runs the tests if changes are detected
  - `npm run test-suite` starts the test server on port 5050 and tests all api calls, in addition all unit tests are run
  - `npm run test-suite2` same as former but it doesn't start the test server, use this command it you want to test against your own server
