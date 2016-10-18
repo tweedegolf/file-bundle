@@ -8,7 +8,7 @@
     "test-watch": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests/reducers' --recursive --watch || echo",
     "test-suite": "PORT=5050 ./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests' --recursive || echo",
     "test-suite2": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests' --recursive || echo",
-    "test-api": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests/api' --recursive || echo",
+    "test-api": "PORT=5050 ./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests/api/index.js' || echo",
     "start": "babel-node test/server/src/index.js",
     "start-test": "npm start | npm run test-suite",
     "start-test2": "npm start | npm run test-suite2",
