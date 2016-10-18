@@ -225,4 +225,18 @@ describe('ui reducer', () => {
       expect(new_state['uploading_files']).to.be.true
     })
   })
+
+  describe('upload done', () => {
+
+    it('should show newly uploaded files at the top of the list', () => {
+      const action = {
+        type: types.UPLOAD_DONE,
+        payload: {
+          errors: []
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['ascending']).to.be.false
+    })
+  })
 })
