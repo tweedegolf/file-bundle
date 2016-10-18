@@ -282,4 +282,18 @@ describe('ui reducer', () => {
       expect(new_state['errors']).to.have.length.of.at.least(1)
     })
   })
+
+  describe('change sorting', () => {
+
+    it('should sort according to the defined column', () => {
+      const action = {
+        type: types.CHANGE_SORTING,
+        payload: {
+          sort: 'column1337'
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['sort']).to.equal('column1337')
+    })
+  })
 })
