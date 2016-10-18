@@ -295,5 +295,18 @@ describe('ui reducer', () => {
       const new_state = reducer(undef, action)
       expect(new_state['sort']).to.equal('column1337')
     })
+
+    it('should sort ascending or descending depending on current state', () => {
+      const action = {
+        type: types.CHANGE_SORTING,
+        payload: {
+          sort: 'column1337'
+        }
+      }
+      const second_state = reducer(undef, action)
+      expect(second_state['ascending']).to.be.false
+      const third_state = reducer(second_state, action)
+      expect(third_state['ascending']).to.be.true
+    })
   })
 })
