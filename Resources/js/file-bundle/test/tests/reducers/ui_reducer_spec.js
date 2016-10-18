@@ -199,4 +199,18 @@ describe('ui reducer', () => {
       expect(new_state['loading_folder']).to.equal(null)
     })
   })
+
+  describe('error opening folder', () => {
+
+    it('should display errors', () => {
+      const action = {
+        type: types.ERROR_OPENING_FOLDER,
+        payload: {
+          errors: ['error text']
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['errors']).to.have.length.of.at.least(1)
+    })
+  })
 })
