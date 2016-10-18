@@ -213,4 +213,16 @@ describe('ui reducer', () => {
       expect(new_state['errors']).to.have.length.of.at.least(1)
     })
   })
+
+  describe('upload start', () => {
+
+    it('should indicate an upload has started', () => {
+      const action = {
+        type: types.UPLOAD_START,
+        payload: {}
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['uploading_files']).to.be.true
+    })
+  })
 })
