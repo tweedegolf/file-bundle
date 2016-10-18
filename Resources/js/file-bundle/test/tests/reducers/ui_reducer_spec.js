@@ -236,7 +236,11 @@ describe('ui reducer', () => {
         }
       }
       const new_state = reducer(undef, action)
-      expect(new_state['ascending']).to.be.false
+      expect(new_state).to.include({
+        ascending: false,
+        sort: 'create_ts',
+        scroll_position: 0
+      })
     })
   })
 })
