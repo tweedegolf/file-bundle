@@ -242,5 +242,44 @@ describe('ui reducer', () => {
         scroll_position: 0
       })
     })
+
+    it('should display errors when passed', () => {
+      const action = {
+        type: types.UPLOAD_DONE,
+        payload: {
+          errors: ['error text']
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['errors']).to.have.length.of.at.least(1)
+    })
+  })
+
+  describe('error uploading file', () => {
+
+    it('should display errors', () => {
+      const action = {
+        type: types.ERROR_UPLOADING_FILE,
+        payload: {
+          errors: ['error text']
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['errors']).to.have.length.of.at.least(1)
+    })
+  })
+
+  describe('error moving files', () => {
+
+    it('should display errors', () => {
+      const action = {
+        type: types.ERROR_UPLOADING_FILE,
+        payload: {
+          errors: ['error text']
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['errors']).to.have.length.of.at.least(1)
+    })
   })
 })
