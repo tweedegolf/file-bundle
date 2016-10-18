@@ -326,4 +326,18 @@ describe('ui reducer', () => {
       expect(new_state['errors']).to.deep.equal([{id: 1}, {id: 3}])
     })
   })
+
+  describe('show preview', () => {
+
+    it('should show a preview of the selected image', () => {
+      const action = {
+        type: types.SHOW_PREVIEW,
+        payload: {
+          image_url: 'https://placekitten.com/g/200/200'
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['preview']).to.equal('https://placekitten.com/g/200/200')
+    })
+  })
 })
