@@ -309,4 +309,21 @@ describe('ui reducer', () => {
       expect(third_state['ascending']).to.be.true
     })
   })
+
+  describe('dismiss error', () => {
+
+    it('should remove the defined error from the errors list', () => {
+      const action = {
+        type: types.DISMISS_ERROR,
+        payload: {
+          error_id: 2
+        }
+      }
+      const old_state = {
+        errors: [{id: 1}, {id: 2}, {id: 3}]
+      }
+      const new_state = reducer(old_state, action)
+      expect(new_state['errors']).to.deep.equal([{id: 1}, {id: 3}])
+    })
+  })
 })
