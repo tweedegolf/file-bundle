@@ -1,5 +1,7 @@
 /**
- * @file       Main component, or container
+ * @file       Main component, or container. All other React components in this
+ *             application are child of this component, as such, it ties
+ *             together the application.
  */
 
 import React from 'react';
@@ -55,6 +57,7 @@ const mapDispatchToProps = function (dispatch) {
   }
 }
 
+// Use the @connect decorator to make the state available as properties
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Browser extends React.Component {
 
@@ -230,6 +233,7 @@ export default class Browser extends React.Component {
     return browser;
   }
 
+  // select files and folders using the arrow up and -down key of your keyboard
   onKeyDown(event) {
     event.stopPropagation();
     if (event.keyCode === 38) {
@@ -239,39 +243,52 @@ export default class Browser extends React.Component {
     }
   }
 
+  // when the user clicks on the thumb of an image, a fullscreen version will
+  // be shown
   onPreview(image_url, e) {
     e.stopPropagation();
     Actions.showPreview(image_url)
   }
 
+  // user removes error from error list by clicking the cross icon next to the
+  // error message
   onDismiss(error_id) {
     Actions.dismissError(error_id)
   }
 
-  onConfirmDelete(id) {
-    Actions.confirmDelete(id)
-  }
-
+  // user clicks the delete button next to a file in the file list; this will
+  // trigger a confirmation popup
   onDelete(id) {
     Actions.deleteFile(id, this.props.current_folder.id)
+  }
+
+  // user confirms that she wants to delete the file by clicking OK in the
+  // confirmation popup
+  onConfirmDelete(id) {
+    Actions.confirmDelete(id)
   }
 
   onDeleteFolder(id) {
     Actions.deleteFolder(id, this.props.current_folder.id)
   }
 
+  // files that are currently in selected will be moved to the clipboard
   onCut() {
     Actions.cutFiles(this.props.current_folder.id)
   }
 
+  // user cancels cut & paste action
   onCancel() {
     Actions.cancelCutAndPasteFiles()
   }
 
+  // files in the clipboard are moved to the selected folder
   onPaste() {
     Actions.pasteFiles(this.props.clipboard, this.props.current_folder.id)
   }
 
+  // files can be selected by clicking the checkbox in front of the filename
+  // in the filelist
   onSelect(id) {
     /**
      * User has already clicked on the 'cut' button so she can't select files
@@ -299,14 +316,17 @@ export default class Browser extends React.Component {
     })
   }
 
+  // user has selected a different sort column or sort order in the toolbar
   sortBy(column){
     Actions.changeSorting(column)
   }
 
+  // in Filepicker mode the browser can be collapsed and expanded
   toggleExpand() {
     Actions.expandBrowser()
   }
 
+  // user can drag and drop files onto the filebrowser to upload files
   handleDrop(dataTransfer) {
     this.doUpload(dataTransfer.files);
   }
