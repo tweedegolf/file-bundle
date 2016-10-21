@@ -366,5 +366,29 @@ describe('ui reducer', () => {
       const new_state = reducer({hover: 5}, action)
       expect(new_state['hover']).to.equal(4)
     })
+
+    it('should start back at the top when passing the last folder', () => {
+      const action = {
+        type: types.SET_HOVER,
+        payload: {
+          diff: +1,
+          max: 10
+        }
+      }
+      const new_state = reducer({hover: 10}, action)
+      expect(new_state['hover']).to.equal(0)
+    })
+
+    it('should highlight the last folder when going up from the first', () => {
+      const action = {
+        type: types.SET_HOVER,
+        payload: {
+          diff: -1,
+          max: 10
+        }
+      }
+      const new_state = reducer({hover: 0}, action)
+      expect(new_state['hover']).to.equal(10)
+    })
   })
 })
