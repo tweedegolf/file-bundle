@@ -405,4 +405,18 @@ describe('ui reducer', () => {
       expect(new_state['scroll_position']).to.equal(8)
     })
   })
+
+  describe('expand browser', () => {
+
+    it('should toggle the expanded setting for the file browser', () => {
+      const action = {
+        type: types.EXPAND_BROWSER,
+        payload: {}
+      }
+      const second_state = reducer(undef, action)
+      expect(second_state['expanded']).to.be.true;
+      const third_state = reducer(second_state, action)
+      expect(third_state['expanded']).to.be.false;
+    })
+  })
 })
