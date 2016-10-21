@@ -1,3 +1,11 @@
+/**
+ * @file       Component that renders a file in the filelist. It consists of a row
+ *             that shows the name, type, creation date of the file. In case the
+ *             file is an image, a thumb is added, otherwise a filetype icon is
+ *             displayed. A download button and a delete button is shown as
+ *             well. If the user clicks the delete button, the component will
+ *             render a confirmation popup.
+ */
 import React from 'react';
 
 var icons = {

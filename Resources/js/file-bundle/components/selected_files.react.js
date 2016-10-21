@@ -1,3 +1,8 @@
+/**
+ * @file       Component shows the currently selected files. This component only
+ *             renders in Filepicker mode.
+ */
+
 import React from 'react'
 
 export default class SelectedFiles extends React.Component {

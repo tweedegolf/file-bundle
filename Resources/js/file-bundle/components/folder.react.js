@@ -1,3 +1,11 @@
+/**
+ * @file       Component that shows a folder in the filelist. It consist of a
+ *             row containing a folder icon, the name, creation date, number of
+ *             files and folders in the folder. If you click on the row the
+ *             browser will open the folder and a spinner icon is shown. If the
+ *             folder is empty, the row will show a delete button as well.
+ */
+
 import React from 'react'
 
 export default class Folder extends React.Component {

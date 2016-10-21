@@ -1,3 +1,9 @@
+/**
+ * @file       Component renders a toolbar at the top of the filebrowser. This
+ *             toolbar contains buttons for cut & paste, for uploading new files
+ *             and for creating new folders.
+ */
+
 import React from 'react';
 
 export default class Toolbar extends React.Component {

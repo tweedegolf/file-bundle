@@ -3,7 +3,8 @@ import {describe, it} from 'mocha'
 // import assert from 'assert'
 import api from '../../../util/api'
 
-describe('api', done => {
+export default done => {
+
   describe('#openFolder', done => {
     it('should return a folder and a files array', done => {
 
@@ -23,7 +24,6 @@ describe('api', done => {
     })
 
     it('should return an error', done => {
-
       api.openFolder(
         1000,
         (folders, files) => {
@@ -38,4 +38,5 @@ describe('api', done => {
       )
     })
   })
-})
+}
+

@@ -1,7 +1,7 @@
 /**
- * @file       errors
- *
- *
+ * @file       Component that shows error messages. Error messages can be
+ *             removed from the list by clicking the cross icon next to the
+ *             error message.
  */
 
 import React from 'react';

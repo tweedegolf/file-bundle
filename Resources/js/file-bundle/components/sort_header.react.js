@@ -1,3 +1,10 @@
+/**
+ * @file       Component renders a header at the top of the filelist; this
+ *             toolbar displays the column names 'name', 'size' and 'creation
+ *             date'. By clicking on one of these names the filelist will be
+ *             sorted by that column. Clicking again on the currently selected
+ *             column will reverse the order.
+ */
 import React from 'react';
 
 export default class SortHeader extends React.Component {

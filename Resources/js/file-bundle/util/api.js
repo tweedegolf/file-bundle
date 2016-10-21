@@ -165,6 +165,7 @@ const upload = (file_list, folder_id, onSuccess, onError) => {
   let url = server + '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
   var req = request.post(url)
   file_list.forEach(file => {
+    //console.log(file)
     req.attach(file.name, file)
   })
   req.end((err, res) => {
