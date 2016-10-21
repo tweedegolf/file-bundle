@@ -391,4 +391,18 @@ describe('ui reducer', () => {
       expect(new_state['hover']).to.equal(10)
     })
   })
+
+  describe('set scroll position', () => {
+
+    it('should scroll to the correct position', () => {
+      const action = {
+        type: types.SET_SCROLL_POSITION,
+        payload: {
+          scroll: 8
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['scroll_position']).to.equal(8)
+    })
+  })
 })
