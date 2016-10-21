@@ -340,4 +340,31 @@ describe('ui reducer', () => {
       expect(new_state['preview']).to.equal('https://placekitten.com/g/200/200')
     })
   })
+
+  describe('set hover', () => {
+
+    it('should highlight the correct row on arrow up', () => {
+      const action = {
+        type: types.SET_HOVER,
+        payload: {
+          diff: +1,
+          max: 10
+        }
+      }
+      const new_state = reducer(undef, action)
+      expect(new_state['hover']).to.equal(0)
+    })
+
+    it('should highlight the correct row on arrow down', () => {
+      const action = {
+        type: types.SET_HOVER,
+        payload: {
+          diff: -1,
+          max: 10
+        }
+      }
+      const new_state = reducer({hover: 5}, action)
+      expect(new_state['hover']).to.equal(4)
+    })
+  })
 })
