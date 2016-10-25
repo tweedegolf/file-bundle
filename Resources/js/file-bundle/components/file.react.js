@@ -48,7 +48,7 @@ export default class File extends React.Component {
                     <span className="fa fa-trash-o"/>
                 </button>
             </div>;
-        } else if (this.props.selected.length + this.props.clipboard.length === 0) {
+        } else if (this.props.selected.length + this.props.clipboard.length === 0 && this.props.allow_delete === true) {
             delete_btn = <button type="button" className="btn btn-sm btn-danger" onClick={this.onConfirmDelete}>
                 <span className="fa fa-trash-o" />
             </button>;
@@ -95,7 +95,7 @@ export default class File extends React.Component {
                 onClick={this.props.onPreview.bind(this, file.original)}
             />;
         }
-        
+
         return (
             <tr className={class_name} onClick={this.props.onSelect.bind(this, file.id)}>
                 <td className="select">

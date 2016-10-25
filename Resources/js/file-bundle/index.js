@@ -6,8 +6,13 @@ import _ from 'lodash';
 // an element with the id 'tg_file_browser' will be converted to a interactive file browser
 // note that there can only be one of these
 var browser = document.getElementById('tg_file_browser');
+var options = {
+  allow_new_folder: true,
+  allow_upload: true,
+  allow_delete: true,
+}
 if (null !== browser) {
-     ReactDOM.render(<Browser browser={true} />, browser);
+     ReactDOM.render(<Browser browser={true} options={options}/>, browser);
 }
 
 // an element with the class 'tg_file_picker' will be converted to a file selector

@@ -32,6 +32,7 @@ export default class List extends React.Component {
                 confirm_delete={this.props.confirm_delete}
                 onDelete={this.props.onDelete.bind(this)}
                 onConfirmDelete={this.props.onConfirmDelete.bind(this)}
+                allow_delete={this.props.allow_delete}
             />;
         });
 
@@ -50,6 +51,7 @@ export default class List extends React.Component {
                 onOpenFolder={this.props.onOpenFolder.bind(this)}
                 onDelete={this.props.onDeleteFolder.bind(this)}
                 loading={this.props.loading_folder}
+                allow_delete={this.props.allow_delete}
             />;
         });
 

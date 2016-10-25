@@ -88,6 +88,8 @@ export default class Browser extends React.Component {
             onUpload={this.onUpload.bind(this)}
             onAddFolder={this.onAddFolder.bind(this)}
             uploading={this.state.uploading}
+            allow_upload={this.props.options ? this.props.options.allow_upload : true}
+            allow_new_folder={this.props.options ? this.props.options.allow_new_folder : true}
         />;
 
         let selected = null;
@@ -139,6 +141,7 @@ export default class Browser extends React.Component {
                                     confirm_delete={this.state.confirm_delete}
                                     loading_folder={this.state.loading_folder}
                                     images_only={this.props.options ? this.props.options.images_only : false}
+                                    allow_delete={this.props.options ? this.props.options.allow_delete : true}
                                     onDelete={this.onDelete.bind(this)}
                                     onDeleteFolder={this.onDeleteFolder.bind(this)}
                                     onConfirmDelete={this.onConfirmDelete.bind(this)}
@@ -318,7 +321,9 @@ export default class Browser extends React.Component {
     }
 
     handleDrop(dataTransfer) {
-        this.doUpload(dataTransfer.files);
+        if(this.props.options && this.props.options.allow_upload === true){
+            this.doUpload(dataTransfer.files);
+        }
     }
 
     onUpload(event) {

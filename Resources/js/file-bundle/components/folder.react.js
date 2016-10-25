@@ -8,7 +8,7 @@ export default class Folder extends React.Component {
         let icon = <span className="fa fa-folder" />;
         let delete_btn = null;
 
-        if (folder.file_count === 0 && folder.folder_count === 0) {
+        if (folder.file_count === 0 && folder.folder_count === 0 && this.props.allow_delete === true) {
             delete_btn = <button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete.bind(this)}>
                 <span className="fa fa-trash-o" />
             </button>;

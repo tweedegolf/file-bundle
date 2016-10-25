@@ -47,43 +47,64 @@ export default class Toolbar extends React.Component {
             </div>;
         }
 
-        return (
-            <div className="toolbar">
-                {actions}
+        let newFolderButton = (
+            <button
+                type="button"
+                className={new_folder_class}
+                onClick={this.onShowForm.bind(this)}
+                disabled={this.state.folder_loading}>
+                <span className="fa fa-folder-o" />
+                <span className="text-label">Nieuwe map</span>
+                {this.state.folder_loading ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
+            </button>
+        );
+
+        let newFolderForm = (
+            <div className={'form-inline pull-right ' + (this.state.show_form ? '' : 'hide')}>
+                <input
+                    className="form-control input-sm"
+                    ref="folder_name"
+                    type="text"
+                    placeholder="Mapnaam"
+                    onKeyPress={this.onKeyPress.bind(this)} />
                 <button
                     type="button"
-                    className={new_folder_class}
-                    onClick={this.onShowForm.bind(this)}
-                    disabled={this.state.folder_loading}>
-                    <span className="fa fa-folder-o" />
-                    <span className="text-label">Nieuwe map</span>
-                    {this.state.folder_loading ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
+                    className="btn btn-sm btn-success pull-right"
+                    onClick={this.onAddFolder.bind(this)}>
+                    <span className="fa fa-save" />
+                    <span className="text-label">Opslaan</span>
                 </button>
-                <div className={'form-inline pull-right ' + (this.state.show_form ? '' : 'hide')}>
-                    <input
-                        className="form-control input-sm"
-                        ref="folder_name"
-                        type="text"
-                        placeholder="Mapnaam"
-                        onKeyPress={this.onKeyPress.bind(this)} />
-                    <button
-                        type="button"
-                        className="btn btn-sm btn-success pull-right"
-                        onClick={this.onAddFolder.bind(this)}>
-                        <span className="fa fa-save" />
-                        <span className="text-label">Opslaan</span>
-                    </button>
-                </div>
-                <span className="btn btn-sm btn-default btn-file pull-right"
-                      disabled={this.props.uploading}>
-                    <span className="fa fa-arrow-circle-o-up" />
-                    <span className="text-label">Upload</span>
-                    {loader}
-                    <input
-                        type="file"
-                        multiple="multiple"
-                        onChange={this.props.onUpload} />
-                </span>
+            </div>
+        );
+
+        if(this.props.allow_new_folder === false){
+            newFolderButton = null;
+            newFolderForm = null;
+        }
+
+        let uploadButton = (
+            <span className="btn btn-sm btn-default btn-file pull-right"
+                  disabled={this.props.uploading}>
+                <span className="fa fa-arrow-circle-o-up" />
+                <span className="text-label">Upload</span>
+                {loader}
+                <input
+                    type="file"
+                    multiple="multiple"
+                    onChange={this.props.onUpload} />
+            </span>
+        );
+
+        if(this.props.allow_upload === false){
+            uploadButton = null;
+        }
+
+        return (
+            <div className="toolbar">
+                {newFolderButton}
+                {actions}
+                {newFolderForm}
+                {uploadButton}
             </div>
         );
     }
