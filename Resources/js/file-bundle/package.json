@@ -4,7 +4,8 @@
   "description": "Add a compact, modern and full-featured file browser",
   "main": "client/index.js",
   "scripts": {
-    "jasmine": "node_modules/.bin/jasmine",
+    "jasmine": "node_modules/.bin/jasmine || echo ",
+    "test-jasmine": "npm start | npm run jasmine",
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests/reducers' --recursive || echo",
     "test-watch": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests/reducers' --recursive --watch || echo",
     "test-suite": "PORT=5050 ./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests' --recursive || echo",

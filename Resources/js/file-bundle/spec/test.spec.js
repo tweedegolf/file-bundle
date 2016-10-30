@@ -12,12 +12,31 @@ let it = global.it
 
 const exec = child_process.exec
 
-const phantom = (script) => {
+const phantom = (script, ...params) => {
   return new Promise((resolve, reject) => {
-    exec(`phantomjs ${script}`, (err, stdout, stderr) => {
-      // console.log(err, stdout, stderr)
-      if(err !== null || stderr !== ''){
-        reject(`err: ${err.replace('\n', '')} stderr: ${stderr.replace('\n', '')}`)
+    let cmd = `phantomjs ${script}`
+    params.forEach(param => {
+      cmd += ` ${param}`
+    })
+
+    console.log(cmd)
+    exec(cmd, (err, stdout, stderr) => {
+      console.log(err, stdout, stderr)
+      let errorMessage = ''
+
+      if(err !== null){
+        errorMessage += `err: ${err.replace('\n', '')}`
+      }
+      if(stderr !== ''){
+        if(stderr.indexOf('WARNING') === -1){
+          errorMessage += `stderr: ${stderr.replace('\n', '')}`
+        }else{
+          console.warn(`[WARNING] ${stderr}`)
+        }
+      }
+
+      if(errorMessage !== ''){
+        reject(errorMessage)
       }else{
         resolve(stdout.replace('\n', ''))
       }
@@ -45,12 +64,11 @@ describe('Phantom', function() {
   let result
 
   beforeEach(async function() {
-    result = await phantom(path.join(__dirname, 'phantom1.js'))
+    result = await phantom(path.join(__dirname, 'phantom1.js'), 'http://localhost:5050')
   });
 
   it('supports async-await test cases', async function() {
-    console.log('opening nu.nl:', result, 'en aap')
+    console.log('opening:', result)
     expect(result).toMatch('success')
   });
-
 })
