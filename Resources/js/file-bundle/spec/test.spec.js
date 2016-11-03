@@ -21,7 +21,7 @@ const phantom = (script, ...params) => {
 
     console.log(cmd)
     exec(cmd, (err, stdout, stderr) => {
-      console.log(err, stdout, stderr)
+      //console.log(err, stdout, stderr)
       let errorMessage = ''
 
       if(err !== null){
@@ -64,11 +64,14 @@ describe('Phantom', function() {
   let result
 
   beforeEach(async function() {
-    result = await phantom(path.join(__dirname, 'phantom1.js'), 'http://localhost:5050')
+    result = await phantom(path.join(__dirname, 'phantom3.js'), 'http://localhost:5050')
   });
 
-  it('supports async-await test cases', async function() {
-    console.log('opening:', result)
-    expect(result).toMatch('success')
+  it('Should open the \'colors\' folder containing 0 files and 1 folders', async function() {
+    console.log(result)
+    result = JSON.parse(result)
+    expect(result.name).toMatch('colors')
+    expect(result.numFiles).toEqual(0)
+    expect(result.numFolders).toEqual(1)
   });
 })
