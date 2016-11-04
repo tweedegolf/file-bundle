@@ -5,30 +5,69 @@
 
 // get arguments from command line
 var args = require('system').args
-// simple function that repeatedly tests for a condition, then returns a value or times out
+// simple function that repeatedly tests for a condition until it return true or times out
 var waitFor = require('./util.js').waitFor
 // create the Phantomjs webpage
 var page = require('webpage').create();
+var fs = require('fs')
+// put eslint at ease
+var phantom = global.phantom
+// since this is the first phantomjs test in the jasmine suite we remove all
+// screenshots made by previous test runs
+fs.removeTree('./spec/screenshots')
+fs.makeDirectory('./spec/screenshots')
 
-// set viewport, only needed for screen shots
+// set viewport, only needed if you want to take screen shots
 page.viewportSize = {width: 1024, height: 768};
 page.clipRect = {top: 0, left: 0, width: 1024, height: 768};
 
-var runTask
-var taskIndex = -1
-var phantom = global.phantom
 
-// the url of the page is provided as the first command line argument
-var url = args[1]
-if(typeof url === 'undefined'){
-  url = 'http://localhost:5050'
+/**
+ * This test consists of 3 tasks that need to run consecutively; every task is
+ * defined in a function and the runTask function runs them one after each
+ * other.
+ */
+// the currently running task
+var taskIndex = -1;
+/*
+ * Array containing references to the task functions, will be populated at the
+ * bottom of this file, after the task function are declared
+ *
+ * @type       {Array}
+ */
+var tasks = [];
+/**
+ * The task runner
+ *
+ * @param      {Object}  data    Optional data that is passed over from one task
+ *                               to another
+ */
+function runTask(data){
+  taskIndex++;
+  //console.log(taskIndex, tasks.length)
+  if(taskIndex < tasks.length){
+    tasks[taskIndex](data);
+  }else{
+    //console.log('done')
+    phantom.exit(0);
+  }
+};
+
+
+// default values for command line arguments
+var url = 'http://localhost:5050'
+// overrule the default values if set
+for(var i = args.length - 1; i > 0; i--){
+  var arg = args[i]
+  if(arg.indexOf('url') === 0){
+    url = arg.substring(arg.indexOf('url') + 4)
+  }
 }
 
 
 function openPage(){
   // try to open the url
   page.open(url, function(status){
-
     if(status !== 'success'){
       console.log(false)
       phantom.exit(1)
@@ -43,22 +82,35 @@ function openPage(){
  * for a <tr> with css class folder.
  */
 function openFolder(){
-  var name = ''
+  var data
   waitFor({
     onTest: function(){
-      name = page.evaluate(function(){
+      data = page.evaluate(function(){
         var b = document.querySelectorAll('tr.folder')[0]
+        var n = '', r
         if(b){
-          name = b.querySelector('td.name').innerHTML
-          b.click()
+          n = b.querySelector('td.name').innerHTML
+          r = b.getBoundingClientRect()
+          //b.click() // => we can't use this here, see comment below
         }
-        return name
+        return {
+          name: n,
+          rect: r
+        }
       })
-      return name !== ''
+      return data.name !== ''
     },
     onReady: function(){
-      page.render('shot-page-opened.png')
-      runTask(name)
+      page.render('./spec/screenshots/shot-page-opened.png')
+      // We want to make a screenshot of the opened root folder which means that
+      // we can not use the HTMLElement.click() function inside the
+      // page.evaluate handler because if we do we are making a screenshot after
+      // we have clicked on the 'colors' folder. What we will actually see in
+      // the screenshot then depends on the response time of the server.
+      // Therefor we use the page.sendEvent() function to send a click event to
+      // the center of the folder row *after* we have taken the screenshot.
+      page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
+      runTask(data.name)
     }
   })
 }
@@ -95,7 +147,7 @@ function readFolder(folderName){
       return data.name !== folderName
     },
     onReady: function(){
-      page.render('shot-folder-' + folderName + '-opened.jpg')
+      page.render('./spec/screenshots/shot-folder-' + folderName + '-opened.png')
       data.name = folderName
       console.log(JSON.stringify(data))
       runTask()
@@ -103,22 +155,10 @@ function readFolder(folderName){
   })
 }
 
-
-var tasks = [
+tasks = [
   openPage,
   openFolder,
   readFolder
-]
-
-
-runTask = function(data){
-  taskIndex++
-  //console.log(taskIndex, tasks.length)
-  if(taskIndex < tasks.length){
-    tasks[taskIndex](data)
-  }else{
-    phantom.exit(0)
-  }
-}
-
+];
+// start the task runner
 runTask()

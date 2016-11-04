@@ -105,7 +105,7 @@ export function uploadFiles(req, res){
         if(mimetype.indexOf('image') === 0){
           paths.push(uniqueName)
         }
-        console.log(mimetype)
+        console.log(filename, mimetype)
 
         // create a file description object and add it to the uploads array;
         // this array will be sent back to the client

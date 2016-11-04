@@ -35,12 +35,18 @@ const phantom = (script, ...params) => {
       cmd += ` ${param}`
     })
 
-    //console.log(cmd)
+    //console.log('[CMD]', cmd)
     exec(cmd, (err, stdout, stderr) => {
+      if(err !== null){
+        console.log('err:', err)
+      }
+      //console.log('stderr:', stderr)
+
       let errorMessage = ''
 
       if(err !== null){
-        errorMessage += `err: ${err.replace('\n', '')}`
+        //errorMessage += `err: ${err.Error.replace(/\n/g, ' ')}`
+        errorMessage += `err: ${err.toString()}`
       }
       if(stderr !== ''){
         if(stderr.indexOf('WARNING') === -1){
@@ -67,7 +73,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
 describe('Open Folder', function() {
   let result
   beforeAll(async function() {
-    result = await phantom(path.join(__dirname, 'open_folder.js'), 'http://localhost:5050')
+    result = await phantom(path.join(__dirname, 'open_folder.js'), 'url=http://localhost:5050')
   });
 
   it('Open the \'colors\' folder; it should contain 0 files and 1 folders', async function() {
@@ -80,10 +86,10 @@ describe('Open Folder', function() {
 })
 
 
-describe('Upload File', function() {
+describe('Upload one file', function() {
   let result
   beforeAll(async function() {
-    result = await phantom(path.join(__dirname, 'upload_file.js'), 'http://localhost:5050')
+    result = await phantom(path.join(__dirname, 'upload_file.js'), 'url=http://localhost:5050', 'multiple=0')
   });
 
   it('Upload a file to the root folder', async function() {
@@ -92,7 +98,21 @@ describe('Upload File', function() {
     expect(result.numFiles).toEqual(2)
     expect(result.uploaded).toEqual(true)
   });
+})
 
+
+describe('Upload two more files', function() {
+  let result
+  beforeAll(async function() {
+    result = await phantom(path.join(__dirname, 'upload_file.js'), 'url=http://localhost:5050', 'multiple=1')
+  });
+
+  it('Upload 2 more files to the root folder', async function() {
+    console.log(result)
+    result = JSON.parse(result)
+    expect(result.numFiles).toEqual(4)
+    expect(result.uploaded).toEqual(true)
+  });
 })
 
 
