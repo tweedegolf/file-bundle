@@ -6,7 +6,10 @@ import install from 'jasmine-es6'
 install()
 
 // add global functions to local variables to put eslint at ease
+let beforeAll = global.beforeAll
 let beforeEach = global.beforeEach
+let afterEach = global.afterEach
+let afterAll = global.afterAll
 let describe = global.describe
 let expect = global.expect
 let it = global.it
@@ -32,9 +35,8 @@ const phantom = (script, ...params) => {
       cmd += ` ${param}`
     })
 
-    console.log(cmd)
+    //console.log(cmd)
     exec(cmd, (err, stdout, stderr) => {
-      //console.log(err, stdout, stderr)
       let errorMessage = ''
 
       if(err !== null){
@@ -57,31 +59,15 @@ const phantom = (script, ...params) => {
   })
 }
 
-// override the default timeout of jasmine
+// override the default timeout of 5 seconds
 jasmine.getEnv().defaultTimeoutInterval = 30000
-//console.log(jasmine)
-//console.log(jasmine.getEnv().defaultTimeoutInterval)
-
-describe('Phantom', function() {
-  // let a, b
-
-  // it('and so is a spec', function() {
-  //   a = true
-
-  //   expect(a).toBe(true)
-  // })
-
-  // it('and so is a spec', function() {
-  //   b = 44
-
-  //   expect(b).not.toEqual(a)
-  // })
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
 
 
+describe('Open Folder', function() {
   let result
-
-  beforeEach(async function() {
-    result = await phantom(path.join(__dirname, 'phantom3.js'), 'http://localhost:5050')
+  beforeAll(async function() {
+    result = await phantom(path.join(__dirname, 'open_folder.js'), 'http://localhost:5050')
   });
 
   it('Open the \'colors\' folder; it should contain 0 files and 1 folders', async function() {
@@ -92,3 +78,77 @@ describe('Phantom', function() {
     expect(result.numFolders).toEqual(1)
   });
 })
+
+
+describe('Upload File', function() {
+  let result
+  beforeAll(async function() {
+    result = await phantom(path.join(__dirname, 'upload_file.js'), 'http://localhost:5050')
+  });
+
+  it('Upload a file to the root folder', async function() {
+    console.log(result)
+    result = JSON.parse(result)
+    expect(result.numFiles).toEqual(2)
+    expect(result.uploaded).toEqual(true)
+  });
+
+})
+
+
+/*
+describe('Phantom', function() {
+  let a, b
+
+  it('and so is a spec', function() {
+    a = true
+
+    expect(a).toBe(true)
+  })
+
+  it('and so is a spec', function() {
+    b = 44
+
+    expect(b).not.toEqual(a)
+  })
+
+
+  let result
+  beforeAll(async function() {
+    result = await phantom(path.join(__dirname, 'open_folder.js'), 'http://localhost:5050')
+  });
+
+  it('Open the \'colors\' folder; it should contain 0 files and 1 folders', async function() {
+    //console.log(result)
+    result = JSON.parse(result)
+    expect(result.name).toMatch('colors')
+    expect(result.numFiles).toEqual(0)
+    expect(result.numFolders).toEqual(1)
+  });
+
+
+  afterAll(function(done){
+    setTimeout(function(){
+      done()
+    }, 1000)
+  })
+
+
+  beforeAll(async function() {
+    result = await phantom(path.join(__dirname, 'upload_file.js'), 'http://localhost:5050')
+  });
+
+  it('Upload a file to the root folder', async function() {
+    console.log(result)
+    result = JSON.parse(result)
+    expect(result.numFiles).toEqual(2)
+    expect(result.uploaded).toEqual(true)
+  });
+
+  afterAll(function(done){
+    setTimeout(function(){
+      done()
+    }, 100)
+  })
+})
+*/

@@ -57,7 +57,7 @@ function openFolder(){
       return name !== ''
     },
     onReady: function(){
-      page.render('shot-page-opened.jpg')
+      page.render('shot-page-opened.png')
       runTask(name)
     }
   })
@@ -79,6 +79,7 @@ function readFolder(folderName){
   waitFor({
     onTest: function(){
       data = page.evaluate(function(){
+        //@TODO: check for spinner instead of foldername to determine whether the contents has been loaded or not!
         var e = document.querySelector('tr.folder > td.name')
         if(e === null){
           return {
@@ -116,7 +117,7 @@ runTask = function(data){
   if(taskIndex < tasks.length){
     tasks[taskIndex](data)
   }else{
-    phantom.exit()
+    phantom.exit(0)
   }
 }
 

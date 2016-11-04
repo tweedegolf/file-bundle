@@ -98,9 +98,10 @@ export default class Toolbar extends React.Component {
           <span className="text-label">Upload</span>
           {loader}
           <input
-            id="upload_files"
+            //id="upload_files"
+            //name="upload_files"
             type="file"
-            //multiple="multiple"
+            multiple="multiple"
             onChange={this.props.onUpload} />
         </span>
       </div>
