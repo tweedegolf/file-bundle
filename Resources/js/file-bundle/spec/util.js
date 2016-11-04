@@ -1,10 +1,26 @@
 
 module.exports = {
+  /**
+   * Function that repeatedly runs a test function until it returns true or
+   * times out
+   *
+   * @param      {Object}  conf    Configuration object
+   * @param      {function}  conf.onTest   The test function (mandatory)
+   * @param      {function}  conf.onCheck  Callback function that is called every
+   *                                       time the test function runs
+   * @param      {function}  conf.onReady  Function called as soon as the test
+   *                                       function returns true
+   * @param      {function}  conf.onError  Called when the waitFor function times out
+   * @param      {number}    conf.timeout  Milliseconds before a timeout occurs
+   * @param      {number}    conf.delay    Amount of milliseconds between 2
+   *                                       consecutive test function calls (higher
+   *                                       numbers result in less overhead time)
+   */
 
-  waitFor: function(onTest, onCheck, onReady, timeOutMillis, delay) {
-    //console.log(onTest, onCheck, onReady, timeOutMillis, delay)
-    timeOutMillis = timeOutMillis ? timeOutMillis : 10000
-    delay = delay ? delay : 50
+  waitFor: function(conf) {
+
+    var timeout = conf.timeout ? conf.timeout : 10000
+    var delay = conf.delay ? conf.delay : 50
 
     var start = new Date().getTime()
     var condition = false
@@ -12,17 +28,24 @@ module.exports = {
     var interval = setInterval(function() {
       var elapsed = new Date().getTime() - start
       //console.log(elapsed)
-      if(elapsed < timeOutMillis && condition === false){
-        onCheck()
-        condition = onTest()
+      if(elapsed < timeout && condition === false){
+        if(typeof conf.onCheck === 'function'){
+          conf.onCheck()
+        }
+        condition = conf.onTest()
       }else if(condition === false){
-        console.log(false);
-        phantom.exit(1);
+        if(typeof conf.onError === 'function'){
+          conf.onError()
+        }else {
+          console.log(false)
+          phantom.exit(1)
+        }
       }else{
-        //console.log('waitFor() finished in ' + (new Date().getTime() - start) + 'ms.');
-        onReady()
-        clearInterval(interval); //< Stop this interval
+        if(typeof conf.onReady === 'function'){
+          conf.onReady()
+        }
+        clearInterval(interval)
       }
-    }, delay);
+    }, delay)
   }
 }
