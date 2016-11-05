@@ -73,7 +73,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
 describe('Open Folder', function() {
   let result
   beforeAll(async function() {
-    result = await phantom(path.join(__dirname, 'open_folder.js'), 'url=http://localhost:5050')
+    result = await phantom(path.join(__dirname, './es5/open_folder.js'), 'url=http://localhost:5050')
   });
 
   it('Open the \'colors\' folder; it should contain 0 files and 1 folders', async function() {
@@ -89,7 +89,7 @@ describe('Open Folder', function() {
 describe('Upload one file', function() {
   let result
   beforeAll(async function() {
-    result = await phantom(path.join(__dirname, 'upload_file.js'), 'url=http://localhost:5050', 'multiple=0')
+    result = await phantom(path.join(__dirname, './es5/upload_file.js'), 'url=http://localhost:5050', 'multiple=0')
   });
 
   it('Upload a file to the root folder', async function() {
@@ -104,7 +104,7 @@ describe('Upload one file', function() {
 describe('Upload two more files', function() {
   let result
   beforeAll(async function() {
-    result = await phantom(path.join(__dirname, 'upload_file.js'), 'url=http://localhost:5050', 'multiple=1')
+    result = await phantom(path.join(__dirname, './es5/upload_file.js'), 'url=http://localhost:5050', 'multiple=1')
   });
 
   it('Upload 2 more files to the root folder', async function() {
