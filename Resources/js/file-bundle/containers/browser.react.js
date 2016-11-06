@@ -337,7 +337,7 @@ export default class Browser extends React.Component {
 
   onOpenFolder(id) {
     // isn't this a weird place for this if statement?
-    if (this.props.uploading_files === true || this.props.loading_folder !== null) {
+    if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
       return;
     }
     Actions.openFolder(id)

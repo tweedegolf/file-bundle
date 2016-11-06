@@ -60,11 +60,12 @@ let tasks = [
     id: 'open_folder',
     func: openFolder,
     args: {
+      index: 0, // open the first folder
       page,
       onError,
       onReady(data){
         testResult.push(data)
-        taskRunner.runTask({folderName: data.name})
+        taskRunner.runTask({name: data.name})
       }
     }
   }, {
@@ -113,45 +114,5 @@ let tasks = [
     }
   }]
 
-taskRunner.configure(tasks, printResults, [0])
+taskRunner.configure(tasks, printResults, [0, 1, 2, 3])
 taskRunner.runTask()
-
-
-/*
-Promise.all(promises)
-.then(
-  values => {
-    console.log(values.length)
-    phantom.exit(1)
-  },
-  errors => {
-  })
-*/
-
-
-/*
-chainPromises({
-  index: 0,
-  promises: [{
-    id: 'openPage',
-    func: openPage,
-    parseResolveValue: (p, id) => {
-      page = p
-      return {page, id}
-    }
-  }],
-  resolve: (values, error) => {
-    values.forEach(value => {
-      console.log('resolvedata:', value.id)
-    })
-    page.render('./spec/screenshots/shot-es6.png')
-    console.log(true)
-    phantom.exit(0)
-  },
-  reject: error => {
-    console.log('reject', error)
-    console.log(false)
-    phantom.exit(1)
-  }
-})
-*/

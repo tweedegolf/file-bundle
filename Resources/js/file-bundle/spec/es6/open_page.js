@@ -7,6 +7,8 @@ import {waitFor} from './util'
  * command line or defaults to localhost port 5050
  *
  * @param      {Object}    conf     The configuration object
+ * @property   {string}    id       The id of the task that executes this
+ *                                  function
  * @property   {Object}    page     The phantomjs WebPage object
  * @property   {functon}   onReady  The function called after the folder's
  *                                  contents has been loaded

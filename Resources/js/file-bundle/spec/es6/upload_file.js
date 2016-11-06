@@ -19,20 +19,25 @@ export function uploadFile(conf){
   waitFor({
     onTest(){
       let loaded = page.evaluate(function(){
-        return document.querySelectorAll('input[type=file]')[0]
+        let u = document.querySelectorAll('input[type=file]')
+        if(typeof u === 'undefined' || u.length === 0){
+          return false
+        }
+        return true
       })
-      return loaded !== null
+      return loaded
     },
     onReady(){
-      if(multiple === true){
-        page.uploadFile('input[type=file]', files)
-      }else{
-        page.uploadFile('input[type=file]', files[0])
-      }
-      var result = page.evaluate(function(){
-        return document.querySelectorAll('input[type=file]')[0]
+      // if(multiple === true){
+      //   page.uploadFile('input[type=file]', files)
+      // }else{
+      //   page.uploadFile('input[type=file]', files[0])
+      // }
+      page.uploadFile('input[type=file]', './spec/media/400x220.png')
+      let result = page.evaluate(function(){
+        return document.querySelectorAll('input[type=file]').length
       })
-      console.log(multiple, files)
+      //console.log(multiple, files)
       onReady({id})
     },
     onError(error){
