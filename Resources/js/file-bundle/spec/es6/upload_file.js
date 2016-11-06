@@ -1,58 +1,12 @@
 import {waitFor} from './util'
 
 
-export function uploadFile(conf){
-  let {
-    id,
-    page,
-    files,
-    onReady,
-    onError,
-  } = conf
-
-  let multiple = files.length > 1
-
-  /**
-   * We can't start uploading file until the page has fully loaded. Therefor we
-   * test if we can find an input[type=file] in the page.
-   */
-  waitFor({
-    onTest(){
-      let loaded = page.evaluate(function(){
-        let u = document.querySelectorAll('input[type=file]')
-        if(typeof u === 'undefined' || u.length === 0){
-          return false
-        }
-        return true
-      })
-      return loaded
-    },
-    onReady(){
-      // if(multiple === true){
-      //   page.uploadFile('input[type=file]', files)
-      // }else{
-      //   page.uploadFile('input[type=file]', files[0])
-      // }
-      page.uploadFile('input[type=file]', './spec/media/400x220.png')
-      let result = page.evaluate(function(){
-        return document.querySelectorAll('input[type=file]').length
-      })
-      //console.log(multiple, files)
-      onReady({id})
-    },
-    onError(error){
-      onError({id, error})
-    }
-  })
-}
-
-
 /**
  * Newly uploaded file appear at the top of the browser list so by testing if
  * the name of the first file in the list is equal to one of the files we have
  * just uploaded we know that the upload has successfully finished.
  */
-export function checkIfUploaded(conf){
+function checkIfUploaded(conf){
   let {
     id,
     page,
@@ -78,11 +32,16 @@ export function checkIfUploaded(conf){
         }
       })
       //console.log(multiple, data.name)
+      if(data.name === ''){
+        return false
+      }
       if(multiple === true){
-        files.some(file => {
+        return files.some(file => {
+          //console.log(file, data.name, file.indexOf(data.name))
           return file.indexOf(data.name) !== -1
         })
       }
+      //console.log(files[0], files[0].indexOf(data.name))
       return files[0].indexOf(data.name) !== -1
     },
     onReady(){
@@ -99,3 +58,42 @@ export function checkIfUploaded(conf){
   })
 }
 
+
+export default function uploadFile(conf){
+  let {
+    id,
+    page,
+    files,
+    onError,
+  } = conf
+
+  let multiple = files.length > 1
+
+  /**
+   * We can't start uploading file until the page has fully loaded. Therefor we
+   * test if we can find an input[type=file] in the page.
+   */
+  waitFor({
+    onTest(){
+      let loaded = page.evaluate(function(){
+        let u = document.querySelectorAll('input[type=file]')
+        if(typeof u === 'undefined' || u.length === 0){
+          return false
+        }
+        return true
+      })
+      return loaded
+    },
+    onReady(){
+      if(multiple === true){
+        page.uploadFile('input[type=file]', files)
+      }else{
+        page.uploadFile('input[type=file]', files[0])
+      }
+      checkIfUploaded(conf)
+    },
+    onError(error){
+      onError({id, error})
+    }
+  })
+}

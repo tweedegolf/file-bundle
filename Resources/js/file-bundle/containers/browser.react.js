@@ -349,7 +349,8 @@ export default class Browser extends React.Component {
 
   doUpload(file_list) {
     // isn't this a weird place for this if statement?
-    if (this.props.uploading_files === true || this.props.loading_folder !== null) {
+    //console.log(this.props.uploading_files, this.props.loading_folder)
+    if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
       return;
     }
     Actions.upload(file_list, this.props.current_folder.id)

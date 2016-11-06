@@ -70,105 +70,44 @@ jasmine.getEnv().defaultTimeoutInterval = 30000
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
 
 
-describe('Open Folder', function() {
-  let result
-  beforeAll(async function() {
-    result = await phantom(path.join(__dirname, './es5/open_folder.js'), 'url=http://localhost:5050')
-  });
-
-  it('Open the \'colors\' folder; it should contain 0 files and 1 folders', async function() {
-    console.log(result)
-    result = JSON.parse(result)
-    expect(result.name).toMatch('colors')
-    expect(result.numFiles).toEqual(0)
-    expect(result.numFolders).toEqual(1)
-  });
-})
-
-
-describe('Upload one file', function() {
-  let result
-  beforeAll(async function() {
-    result = await phantom(path.join(__dirname, './es5/upload_file.js'), 'url=http://localhost:5050', 'multiple=0')
-  });
-
-  it('Upload a file to the root folder', async function() {
-    console.log(result)
-    result = JSON.parse(result)
-    expect(result.numFiles).toEqual(2)
-    expect(result.uploaded).toEqual(true)
-  });
-})
-
-
-describe('Upload two more files', function() {
-  let result
-  beforeAll(async function() {
-    result = await phantom(path.join(__dirname, './es5/upload_file.js'), 'url=http://localhost:5050', 'multiple=1')
-  });
-
-  it('Upload 2 more files to the root folder', async function() {
-    console.log(result)
-    result = JSON.parse(result)
-    expect(result.numFiles).toEqual(4)
-    expect(result.uploaded).toEqual(true)
-  });
-})
-
-
-/*
 describe('Phantom', function() {
-  let a, b
-
-  it('and so is a spec', function() {
-    a = true
-
-    expect(a).toBe(true)
-  })
-
-  it('and so is a spec', function() {
-    b = 44
-
-    expect(b).not.toEqual(a)
-  })
-
-
   let result
-  beforeAll(async function() {
-    result = await phantom(path.join(__dirname, 'open_folder.js'), 'http://localhost:5050')
-  });
+  let subResult
 
-  it('Open the \'colors\' folder; it should contain 0 files and 1 folders', async function() {
-    //console.log(result)
+  beforeAll(async function() {
+    result = await phantom(path.join(__dirname, './phantom_tests.js'), 'url=http://localhost:5050')
     result = JSON.parse(result)
-    expect(result.name).toMatch('colors')
-    expect(result.numFiles).toEqual(0)
-    expect(result.numFolders).toEqual(1)
-  });
-
-
-  afterAll(function(done){
-    setTimeout(function(){
-      done()
-    }, 1000)
-  })
-
-
-  beforeAll(async function() {
-    result = await phantom(path.join(__dirname, 'upload_file.js'), 'http://localhost:5050')
-  });
-
-  it('Upload a file to the root folder', async function() {
     console.log(result)
-    result = JSON.parse(result)
-    expect(result.numFiles).toEqual(2)
-    expect(result.uploaded).toEqual(true)
-  });
-
-  afterAll(function(done){
-    setTimeout(function(){
-      done()
-    }, 100)
   })
+
+  it('Open the page', function() {
+    subResult = result.open_page
+    expect(subResult.error).not.toBeDefined()
+    expect(subResult.title).toEqual('The Art of State')
+  })
+
+  it('Open folder "colors"', function() {
+    subResult = result.open_folder
+    expect(subResult.error).not.toBeDefined()
+    expect(subResult.name).toEqual('colors')
+    expect(subResult.numFiles).toBe(0)
+    expect(subResult.numFolders).toBe(1)
+  })
+
+  it('Upload single file', function() {
+    subResult = result.upload_single_file
+    expect(subResult.error).not.toBeDefined()
+    expect(subResult.uploaded).toBeTruthy()
+    expect(subResult.numFiles).toBe(1)
+  })
+
+  it('Upload multiple files', function() {
+    subResult = result.upload_multiple_files
+    expect(subResult.error).not.toBeDefined()
+    expect(subResult.uploaded).toBeTruthy()
+    expect(subResult.numFiles).toBe(3)
+  })
+
 })
-*/
+
+

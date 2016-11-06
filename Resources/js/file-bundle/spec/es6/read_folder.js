@@ -1,7 +1,9 @@
 import {waitFor} from './util'
 
+// WIP!
+
 /**
- * By cliking on the folder the application will request the folder contents
+ * By clicking on the folder the application will request the folder contents
  * from the server. This may take a while. In the waitFor function we test
  * whether the contents of the new folder has been loaded or not. We do this by
  * testing if the name of the opened folder is still listed in the browser list;

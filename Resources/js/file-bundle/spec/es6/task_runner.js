@@ -11,21 +11,29 @@ export default class TaskRunner{
   /**
    * Configure the task runner before you can start it
    *
-   * @param      {array}     tasks        Array of task objects, a task object
-   *                                      has 2 mandatory properties 'id' and
-   *                                      'func' and one optional property
-   *                                      'args'
-   * @param      {function}  onReady      Called after the task is done
-   * @param      {number}    taskIndexes  The indexes of the tasks in the tasks
-   *                                      array that will actually run; this
-   *                                      allows you to run a subset of the
-   *                                      tasks.
+   * @param      {Object}    conf        The configuration
+   * @property   {array}     tasks       Array of task objects, a task object
+   *                                     has 2 mandatory properties 'id' and
+   *                                     'func' and one optional property 'args'
+   * @property   {function}  onReady     Called after the task is done
+   * @property   {number}    startIndex  The index of the task to start with;
+   *                                     startIndex and endIndex allow you so
+   *                                     run a subset of tasks
+   * @property   {number}    maxIndex    The index of the last task
+   * @property   {boolean}   debug       If true, information about the current
+   *                                     task is printed to the console (don't
+   *                                     use this i.c.w. jasmine testing)
    */
-  configure(tasks, onReady, taskIndexes){
-    this.tasks = tasks
-    this.onReady = onReady
-    this.taskIndexes = taskIndexes
-    this.maxIndex = taskIndexes.length
+  configure(conf){
+    let {
+      tasks,
+      onReady,
+      startIndex = 0,
+      maxIndex = tasks.length,
+      debug = false
+    } = conf
+    Object.assign(this, {tasks, onReady, startIndex, maxIndex, debug})
+    return this
   }
 
   /**
@@ -37,9 +45,10 @@ export default class TaskRunner{
   runTask(extraArgs){
     this.taskIndex++
     if(this.taskIndex < this.maxIndex){
-      let index = this.taskIndexes[this.taskIndex]
-      let task = this.tasks[index]
-      console.log(`running task ${task.id} (${this.taskIndex} of ${this.maxIndex})`)
+      let task = this.tasks[this.taskIndex]
+      if(this.debug === true){
+        console.log(`running task ${task.id} (${this.taskIndex} of ${this.maxIndex})`)
+      }
       task.func({id: task.id, ...task.args, ...extraArgs})
     }else{
       this.onReady()

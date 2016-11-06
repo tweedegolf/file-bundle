@@ -15,7 +15,7 @@ import {waitFor} from './util'
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.
  */
-export function openPage(conf){
+export default function openPage(conf){
   let {
     id,
     page,
@@ -45,16 +45,22 @@ export function openPage(conf){
           // wait until browser list has loaded
           let t = document.querySelector('tbody')
           if(t){
-            return t.className
+            return {
+              class: t.className,
+              title: document.title,
+            }
           }
-          return ''
+          return {
+            class: '',
+            title: ''
+          }
         })
         //console.log(data)
-        return data === 'loaded'
+        return data.class === 'loaded'
       },
       onReady(){
         page.render('./spec/screenshots/page-opened.png')
-        onReady({id})
+        onReady({id, title: data.title})
       },
       onError(error){
         onError({id, error})
