@@ -2,6 +2,17 @@
  * This initial set of data that gets read into the database everytime the
  * server starts.
  */
+
+/*
+export default {
+  tree: {
+    null: {
+      files: [],
+      folders: []
+    }
+  }
+}
+*/
 export default {
   files: {
     1: {

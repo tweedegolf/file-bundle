@@ -42,7 +42,14 @@ export function waitFor(conf) {
       condition = onTest(onTestArgs)
     }else if(condition === false){
       if(typeof onError === 'function'){
-        onError()
+        onError('test returned false')
+      }else {
+        console.log(false)
+        phantom.exit(1)
+      }
+    }else if(elapsed > timeout){
+      if(typeof onError === 'function'){
+        onError(`test timeout (${elapsed})`)
       }else {
         console.log(false)
         phantom.exit(1)

@@ -5,19 +5,27 @@ export default class TaskRunner{
    * Constructs the taskRunner
    */
   constructor(){
-    // the currently running task
     this.taskIndex = -1
   }
 
-  configure(tasks, onReady){
-    /*
-     * Array containing references to the task functions, will be populated at the
-     * bottom of this file, after the task function are declared
-     *
-     * @type       {Array}
-     */
+  /**
+   * Configure the task runner before you can start it
+   *
+   * @param      {array}     tasks        Array of task objects, a task object
+   *                                      has 2 mandatory properties 'id' and
+   *                                      'func' and one optional property
+   *                                      'args'
+   * @param      {function}  onReady      Called after the task is done
+   * @param      {number}    taskIndexes  The indexes of the tasks in the tasks
+   *                                      array that will actually run; this
+   *                                      allows you to run a subset of the
+   *                                      tasks.
+   */
+  configure(tasks, onReady, taskIndexes){
     this.tasks = tasks
     this.onReady = onReady
+    this.taskIndexes = taskIndexes
+    this.maxIndex = taskIndexes.length
   }
 
   /**
@@ -28,10 +36,11 @@ export default class TaskRunner{
    */
   runTask(extraArgs){
     this.taskIndex++
-    console.log(this.taskIndex, this.tasks.length)
-    if(this.taskIndex < this.tasks.length){
-      let task = this.tasks[this.taskIndex]
-      task.func({...task.args, ...extraArgs})
+    if(this.taskIndex < this.maxIndex){
+      let index = this.taskIndexes[this.taskIndex]
+      let task = this.tasks[index]
+      console.log(`running task ${task.id} (${this.taskIndex} of ${this.maxIndex})`)
+      task.func({id: task.id, ...task.args, ...extraArgs})
     }else{
       this.onReady()
     }

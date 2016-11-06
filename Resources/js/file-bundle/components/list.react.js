@@ -82,11 +82,17 @@ export default class List extends React.Component {
 
     // console.log('this props loading', this.props.loading)
 
-    let loading_list = this.props.loading
+    let loading_list = this.props.loading === -1
       ? 'loaded'
       : 'loading'
 
+    let loadingMessage = null
+    if(loading_list === 'loading'){
+      loadingMessage = <tr><td>{'loading...'}</td></tr>
+    }
+
     return <tbody className={loading_list}>
+      {loadingMessage}
       {parent}
       {folders}
       {files}

@@ -32,8 +32,9 @@ import cache from '../util/cache';
  *                                         the description of the error object
  *                                         in ./cache.js
  * @property   {?number}  loading_folder   The id of the folder whose content is
- *                                         currently being loaded, or null if no
- *                                         folder is being opened
+ *                                         currently being loaded, or -1 if no
+ *                                         folder is being opened. Note that the
+ *                                         id of the root folder is null!
  * @property   {?number}  deleting_file    The id of the file that will be
  *                                         deleted, or null if no file is in the
  *                                         process of being deleted
@@ -69,7 +70,7 @@ export const uiInitialState = {
   confirm_delete: null,
   hover: -1,
   errors: [],
-  loading_folder: null,
+  loading_folder: -1,
   deleting_file: null,
   deleting_folder: null,
   adding_folder: false,
@@ -219,7 +220,7 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.FOLDER_OPENED){
     return {
       ...state,
-      loading_folder: null
+      loading_folder: -1
     }
 
   /**
@@ -228,7 +229,7 @@ export function ui(state = uiInitialState, action){
   }else if(action.type === ActionTypes.ERROR_OPENING_FOLDER){
     return {
       ...state,
-      loading_folder: null,
+      loading_folder: -1,
       errors: [...state.errors, ...action.payload.errors],
     }
 

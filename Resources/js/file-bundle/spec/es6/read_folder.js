@@ -8,10 +8,18 @@ import {waitFor} from './util'
  * list: as long as these names are the same, the new folder contents has not
  * been loaded yet.
  *
- * @param      {string}  folderName  The folder name
+ * @param      {Object}    conf        Configuration object
+ * @property   {Object}    page        The phantomjs WebPage object
+ * @property   {string}    folderName  The folder name
+ * @property   {functon}   onReady     The function called after the folder's
+ *                                     contents has been loaded
+ * @property   {function}  onError     The function called if the onTest()
+ *                                     function returns false or reaches the
+ *                                     timeout.
  */
 export function readFolder(conf){
   let {
+    id,
     page,
     folderName,
     onReady,
@@ -39,11 +47,10 @@ export function readFolder(conf){
     },
     onReady(){
       page.render('./spec/screenshots/folder-' + folderName + '-opened.png')
-      data.name = folderName
-      onReady(JSON.stringify(data))
+      onReady({...data, id, name: folderName})
     },
-    onError(){
-      onError('readFolder')
+    onError(error){
+      onError({id, error})
     }
   })
 }
