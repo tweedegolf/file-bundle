@@ -25,35 +25,34 @@ import createFolder from './create_folder'
 // put eslint at ease
 const phantom = global.phantom
 // the return values of all tasks will be stored in the testResults array
-let testResults = {}
+let testResults = []
 let taskRunner = new TaskRunner()
 let debug = false
 
 function printResults(){
-  if(debug === true){
-    console.log('\n==== :RESULTS: =====')
-    Object.keys(testResults).forEach((key, i) => {
-      let result = testResults[key]
-      console.log(`${i}] ${key}: ${result.error}`)
-    })
-  }else{
-    console.log(JSON.stringify(testResults))
-  }
+  let json = {}
+  testResults.forEach(result => {
+    json[result.id] = result
+  })
+  console.log(JSON.stringify(json))
   phantom.exit(0)
 }
 
-function addTestResult(result){
-  testResults[result.id] = result
-}
-
 function onError(error){
-  addTestResult(error)
-  printResults()
+  testResults.push(error)
+  if(debug === true){
+    console.log(JSON.stringify(error))
+  }else{
+    printResults()
+  }
   phantom.exit(1)
 }
 
 function onReady(data){
-  addTestResult(data)
+  testResults.push(data)
+  if(debug === true){
+    console.log(JSON.stringify(data))
+  }
   taskRunner.runTask()
 }
 
@@ -107,5 +106,5 @@ let tasks = [
 taskRunner.configure({
   debug,
   tasks,
-  onReady: printResults,
+  onReady: printResults
 }).runTask()

@@ -50,7 +50,7 @@ function checkIfUploaded(conf){
       }else{
         page.render('./spec/screenshots/single-file-uploaded.png')
       }
-      onReady({uploaded: true, ...data, id, multiple})
+      onReady({id, uploaded: true, multiple, ...data})
     },
     onError(error){
       onError({id, error})

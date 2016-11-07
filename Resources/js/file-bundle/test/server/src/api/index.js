@@ -22,7 +22,7 @@ const getFolder = (req, res) => {
 
 const addFolder = (req, res) => {
   let parentId = getIdFromUrl(req.url)
-  console.log(`[API] adding new folder "${req.body.name}"" in folder ${parentId}`)
+  console.log(`[API] adding new folder "${req.body.name}" in folder ${parentId}`)
 
   let data = database.addFolder(req.body.name, parentId)
   if(typeof data.error !== 'undefined'){
