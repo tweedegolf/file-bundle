@@ -1,10 +1,10 @@
 {
-  "spec_dir": "spec",
+  "spec_dir": "./spec",
   "spec_files": [
-    "../spec/phantom.spec.js"
+    "phantom.spec.js"
   ],
   "helpers": [
-    "../node_modules/jasmine-es6/lib/install.js",
+    "./node_modules/jasmine-es6/lib/install.js",
     "helpers/**/*.js"
   ],
   "stopSpecOnExpectationFailure": false,

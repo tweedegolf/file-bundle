@@ -1,4 +1,5 @@
 import {waitFor} from './util'
+import config from './config'
 
 
 function check(conf){
@@ -31,7 +32,7 @@ function check(conf){
       return data.ready
     },
     onReady(){
-      page.render('./spec/phantom/screenshots/new-folder-check.png')
+      page.render(`${config.SCREENSHOTS_PATH}/new-folder-check.png`)
       onReady({
         id,
         numFolders: data.numFolders
@@ -76,7 +77,7 @@ function submit(conf){
       return data.ready
     },
     onReady(){
-      page.render('./spec/phantom/screenshots/new-folder-submit.png')
+      page.render(`${config.SCREENSHOTS_PATH}/new-folder-submit.png`)
       check(conf)
     },
     onError(error){
@@ -116,7 +117,7 @@ function typeName(conf){
       return data.ready
     },
     onReady(){
-      page.render('./spec/phantom/screenshots/new-folder-input-name.png')
+      page.render(`${config.SCREENSHOTS_PATH}/new-folder-input-name.png`)
       //onReady(conf)
       submit(conf)
     },
@@ -164,7 +165,7 @@ export default function createFolder(conf){
       return data.ready
     },
     onReady(){
-      page.render('./spec/phantom/screenshots/new-folder-open-dialog.png')
+      page.render(`${config.SCREENSHOTS_PATH}/new-folder-open-dialog.png`)
       typeName(conf)
     },
     onError(error){

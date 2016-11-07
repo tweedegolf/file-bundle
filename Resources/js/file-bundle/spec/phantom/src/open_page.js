@@ -1,6 +1,7 @@
 // get arguments from command line
 import {args} from 'system'
 import {waitFor} from './util'
+import config from './config'
 
 /**
  * Opens a webpage in a phantomjs WebPage object. The url is read from the
@@ -58,7 +59,7 @@ export default function openPage(conf){
         return data.class === 'loaded'
       },
       onReady(){
-        page.render('./spec/phantom/screenshots/page-opened.png')
+        page.render(`${config.SCREENSHOTS_PATH}/page-opened.png`)
         onReady({id, title: data.title})
       },
       onError(error){

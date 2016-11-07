@@ -1,4 +1,5 @@
 import {waitFor} from './util'
+import config from './config'
 
 /**
  * By clicking on the folder the application will request the folder contents
@@ -55,7 +56,7 @@ export function checkIfLoaded(conf){
       return data.loaded
     },
     onReady(){
-      page.render('./spec/phantom/screenshots/folder-' + name + '-opened.png')
+      page.render(`${config.SCREENSHOTS_PATH}/folder-${name}-opened.png`)
       onReady({id, name, ...data})
     },
     onError(error){
