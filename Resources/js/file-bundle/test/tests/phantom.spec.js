@@ -1,19 +1,16 @@
 import child_process from 'child_process'
 import fs from 'fs'
 import path from 'path'
+//import jasmine, {beforeAll, describe, it} from 'jasmine'
 import install from 'jasmine-es6'
 // make es6 available in jasmine
 install()
 
 // add global functions to local variables to put eslint at ease
 let beforeAll = global.beforeAll
-let beforeEach = global.beforeEach
-let afterEach = global.afterEach
-let afterAll = global.afterAll
 let describe = global.describe
-let expect = global.expect
-let it = global.it
 let jasmine = global.jasmine
+let it = global.it
 
 const exec = child_process.exec
 

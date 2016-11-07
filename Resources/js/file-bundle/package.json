@@ -4,7 +4,7 @@
   "description": "Add a compact, modern and full-featured file browser",
   "main": "client/index.js",
   "scripts": {
-    "jasmine": "node_modules/.bin/jasmine || echo ",
+    "jasmine": "node_modules/.bin/jasmine JASMINE_CONFIG_PATH=./jasmine.json || echo ",
     "test-jasmine": "npm start | npm run jasmine",
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests/reducers' --recursive || echo",
     "test-watch": "./node_modules/mocha/bin/mocha --compilers js:babel-register 'test/tests/reducers' --recursive --watch || echo",
@@ -21,7 +21,7 @@
     "build-js": "browserify index.js -t [ babelify ] -o test/server/assets/js/app.js",
     "build": "npm run build-css | npm run build-js",
     "build-min": "NODE_ENV=production browserify index.js -t [ babelify ] --debug | exorcist test/server/assets/js/app.min.js.map | uglifyjs -c > test/server/assets/js/app.min.js",
-    "watch-phantom": "watchify --exclude webpage --exclude system --exclude fs ./spec/phantom/src/index.js -t [ babelify ] -o ./spec/phantom/tests.compiled.es5 --debug --verbose"
+    "watch-phantom": "watchify --exclude webpage --exclude system --exclude fs ./test/tests/phantom/src/index.js -t [ babelify ] -o ./test/tests/phantom/tests.compiled.es5 --debug --verbose"
   },
   "author": "tweede golf",
   "license": "MIT",
@@ -39,7 +39,7 @@
     "eslint-plugin-babel": "3.3.0",
     "eslint-plugin-react": "6.4.0",
     "exorcist": "0.4.0",
-    "jasmine-es6": "^0.4.0",
+    "jasmine-es6": "0.4.0",
     "less": "2.7.1",
     "mocha": "3.0.2",
     "node-sass": "3.10.1",
