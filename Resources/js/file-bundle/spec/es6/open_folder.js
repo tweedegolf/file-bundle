@@ -93,13 +93,13 @@ export default function openFolder(conf){
     onError,
   } = conf
 
-  var data
+  let data
   waitFor({
     onTest(){
       data = page.evaluate(function(i){
         // get the table row representing the folder
-        var b = document.querySelectorAll('tr.folder')[i]
-        var n = '', r
+        let b = document.querySelectorAll('tr.folder')[i]
+        let n = '', r
         if(b){
           n = b.querySelector('td.name').innerHTML
           r = b.getBoundingClientRect()

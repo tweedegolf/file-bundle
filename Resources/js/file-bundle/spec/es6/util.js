@@ -40,7 +40,7 @@ export function waitFor(conf) {
     if(elapsed < timeout && condition === false){
       onCheck()
       condition = onTest(onTestArgs)
-    }else if(condition === false){
+    }else if(condition === false && elapsed < timeout){
       if(typeof onError === 'function'){
         onError('test returned false')
       }else {

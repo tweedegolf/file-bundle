@@ -26,12 +26,11 @@ export default function openPage(conf){
   // default values for command line arguments
   let url = 'http://localhost:5050'
   // overrule the default values if set
-  for(var i = args.length - 1; i > 0; i--){
-    var arg = args[i]
+  args.forEach(arg => {
     if(arg.indexOf('url') === 0){
       url = arg.substring(arg.indexOf('url') + 4)
     }
-  }
+  })
 
   page.open(url, function(status){
     if(status !== 'success'){

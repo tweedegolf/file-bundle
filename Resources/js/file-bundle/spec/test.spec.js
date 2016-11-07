@@ -108,6 +108,12 @@ describe('Phantom', function() {
     expect(subResult.numFiles).toBe(3)
   })
 
+  it('Add new folder', function() {
+    subResult = result.create_folder
+    expect(subResult.error).not.toBeDefined()
+    expect(subResult.numFolders).toBe(2)
+  })
+
 })
 
 

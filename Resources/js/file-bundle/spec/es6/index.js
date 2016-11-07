@@ -19,6 +19,7 @@ import TaskRunner from './task_runner'
 import openPage from './open_page'
 import openFolder from './open_folder'
 import uploadFile from './upload_file'
+import createFolder from './create_folder'
 
 
 // put eslint at ease
@@ -31,8 +32,9 @@ let debug = false
 function printResults(){
   if(debug === true){
     console.log('\n==== :RESULTS: =====')
-    testResults.forEach((result, i) => {
-      console.log(`${i}] ${result.id}: ${result.error}`)
+    Object.keys(testResults).forEach((key, i) => {
+      let result = testResults[key]
+      console.log(`${i}] ${key}: ${result.error}`)
     })
   }else{
     console.log(JSON.stringify(testResults))
@@ -45,7 +47,7 @@ function addTestResult(result){
 }
 
 function onError(error){
-  testResults.push(error)
+  addTestResult(error)
   printResults()
   phantom.exit(1)
 }
@@ -88,6 +90,15 @@ let tasks = [
     args: {
       page,
       files: ['./spec/media/1200x280.png', './spec/media/240x760.png'],
+      onError,
+      onReady
+    }
+  }, {
+    id: 'create_folder',
+    func: createFolder,
+    args: {
+      page,
+      name: 'phantom_folder',
       onError,
       onReady
     }

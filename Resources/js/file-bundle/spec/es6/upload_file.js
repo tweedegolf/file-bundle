@@ -17,12 +17,12 @@ function checkIfUploaded(conf){
 
   let multiple = files.length > 1
 
-  var data = ''
+  let data = ''
   waitFor({
     onTest(){
       data = page.evaluate(function(){
-        var f = document.querySelectorAll('tr.cutable')[0]
-        var name = ''
+        let f = document.querySelectorAll('tr.cutable')[0]
+        let name = ''
         if(f){
           name = f.querySelector('td.name').innerHTML
         }
