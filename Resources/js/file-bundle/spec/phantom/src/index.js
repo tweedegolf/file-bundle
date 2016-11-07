@@ -3,8 +3,8 @@ import 'babel-polyfill'
 // every time we run the jasmine suite we remove all screenshots made by
 // previous test runs
 import fs from 'fs'
-fs.removeTree('./spec/screenshots')
-fs.makeDirectory('./spec/screenshots')
+fs.removeTree('./spec/phantom/screenshots')
+fs.makeDirectory('./spec/phantom/screenshots')
 
 // create the Phantomjs webpage and set viewport (only needed if you want to
 // take screen shots)
@@ -79,7 +79,7 @@ let tasks = [
     func: uploadFile,
     args: {
       page,
-      files: ['./spec/media/400x220.png'],
+      files: ['./spec/phantom/media/400x220.png'],
       onError,
       onReady
     }
@@ -88,7 +88,7 @@ let tasks = [
     func: uploadFile,
     args: {
       page,
-      files: ['./spec/media/1200x280.png', './spec/media/240x760.png'],
+      files: ['./spec/phantom/media/1200x280.png', './spec/phantom/media/240x760.png'],
       onError,
       onReady
     }

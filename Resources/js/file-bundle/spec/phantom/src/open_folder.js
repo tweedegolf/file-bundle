@@ -55,7 +55,7 @@ export function checkIfLoaded(conf){
       return data.loaded
     },
     onReady(){
-      page.render('./spec/screenshots/folder-' + name + '-opened.png')
+      page.render('./spec/phantom/screenshots/folder-' + name + '-opened.png')
       onReady({id, name, ...data})
     },
     onError(error){

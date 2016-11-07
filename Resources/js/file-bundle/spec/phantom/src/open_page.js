@@ -58,7 +58,7 @@ export default function openPage(conf){
         return data.class === 'loaded'
       },
       onReady(){
-        page.render('./spec/screenshots/page-opened.png')
+        page.render('./spec/phantom/screenshots/page-opened.png')
         onReady({id, title: data.title})
       },
       onError(error){

@@ -70,12 +70,12 @@ jasmine.getEnv().defaultTimeoutInterval = 30000
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
 
 
-describe('Phantom', function() {
+describe('User interaction tests with phantomjs', function() {
   let result
   let subResult
 
   beforeAll(async function() {
-    result = await phantom(path.join(__dirname, './phantom_tests.js'), 'url=http://localhost:5050')
+    result = await phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
     result = JSON.parse(result)
     console.log(result)
   })

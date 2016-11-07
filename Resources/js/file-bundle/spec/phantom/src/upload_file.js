@@ -46,9 +46,9 @@ function checkIfUploaded(conf){
     },
     onReady(){
       if(multiple === true){
-        page.render('./spec/screenshots/multiple-files-uploaded.png')
+        page.render('./spec/phantom/screenshots/multiple-files-uploaded.png')
       }else{
-        page.render('./spec/screenshots/single-file-uploaded.png')
+        page.render('./spec/phantom/screenshots/single-file-uploaded.png')
       }
       onReady({id, uploaded: true, multiple, ...data})
     },
