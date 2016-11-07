@@ -1,5 +1,4 @@
 import child_process from 'child_process'
-import fs from 'fs'
 import path from 'path'
 //import jasmine, {beforeAll, describe, it} from 'jasmine'
 import install from 'jasmine-es6'
