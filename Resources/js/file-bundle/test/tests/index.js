@@ -7,23 +7,17 @@
 import 'babel-polyfill'
 import Jasmine from 'jasmine'
 
-let instance = null
-function getJasmine(){
-  if(instance === null){
-    instance = new Jasmine()
-    //console.log(instance)
+let instance = new Jasmine()
+// override the default timeout of 5 seconds
+instance.jasmine.getEnv().defaultTimeoutInterval = 30000
+instance.jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
+instance.loadConfigFile('jasmine.json')
+// instance.completionReporter.jasmineDone = () => {
+//   console.log('exit')
+//   process.exit()
+// }
 
-    // override the default timeout of 5 seconds
-    instance.jasmine.getEnv().defaultTimeoutInterval = 30000
-    instance.jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
-
-    instance.loadConfigFile('./test/tests/jasmine.json')
-  }
-  return instance
-}
-
-export default getJasmine()
-
+export default instance
 
 // start the suite
-getJasmine().execute()
+instance.execute()

@@ -1,7 +1,18 @@
 // get arguments from command line
-import {args} from 'system'
 import {waitFor} from './util'
 import config from './config'
+
+// get arguments from command line
+import {args} from 'system'
+// default values for command line arguments
+let url = 'http://localhost:5050'
+// overrule the default values if set
+args.forEach(arg => {
+  if(arg.indexOf('url') === 0){
+    url = arg.substring(arg.indexOf('url') + 4)
+  }
+})
+
 
 /**
  * Opens a webpage in a phantomjs WebPage object. The url is read from the
@@ -16,22 +27,13 @@ import config from './config'
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.
  */
-export default function openPage(conf){
+export function openPage(conf){
   let {
     id,
     page,
     onReady,
     onError,
   } = conf
-
-  // default values for command line arguments
-  let url = 'http://localhost:5050'
-  // overrule the default values if set
-  args.forEach(arg => {
-    if(arg.indexOf('url') === 0){
-      url = arg.substring(arg.indexOf('url') + 4)
-    }
-  })
 
   page.open(url, function(status){
     if(status !== 'success'){
@@ -66,5 +68,18 @@ export default function openPage(conf){
         onError({id, error})
       }
     })
+  })
+}
+
+
+export function closeServer(conf){
+  let {
+    id,
+    page,
+    onReady,
+  } = conf
+
+  page.open(url + '/close', function(){
+    onReady({id, running: false})
   })
 }

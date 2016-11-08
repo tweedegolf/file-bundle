@@ -17,7 +17,7 @@ page.clipRect = {top: 0, left: 0, width: 1024, height: 768};
 // taskrunner is a simple class that executes functions (tasks) consecutively
 import TaskRunner from './task_runner'
 // import all necessary tasks
-import openPage from './open_page'
+import {openPage, closeServer} from './open_page'
 import openFolder from './open_folder'
 import uploadFile from './upload_file'
 import createFolder from './create_folder'
@@ -99,6 +99,14 @@ let tasks = [
     args: {
       page,
       name: 'phantom_folder',
+      onError,
+      onReady
+    }
+  }, {
+    id: 'close_server',
+    func: closeServer,
+    args: {
+      page,
       onError,
       onReady
     }

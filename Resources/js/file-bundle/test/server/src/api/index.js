@@ -80,6 +80,14 @@ const moveFiles = (req, res) => {
 }
 
 
+const closeServer = (req, res) => {
+  console.log('[API] closing server')
+  res.setHeader('Content-Type', 'text/plain')
+  res.send('server closed')
+  process.exit()
+}
+
+
 export default{
   getFolder,
   addFolder,
@@ -87,4 +95,5 @@ export default{
   uploadFiles,
   moveFiles,
   deleteFile,
+  closeServer,
 }
