@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tweedegolf/file-bundle.svg?branch=redux)](https://travis-ci.org/tweedegolf/file-bundle)
+
 # TweedeGolf File Bundle
 
 Add a compact, modern and full-featured file browser to your Symfony 3 projects
