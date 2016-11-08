@@ -1,11 +1,16 @@
 import * as types from '../../util/constants'
 import {ui as reducer} from '../../reducers/ui_reducer'
+import jasmine from './index'
 
-// add global functions to local variables to put eslint at ease
-let jasmine = global.jasmine
-let describe = global.describe
-let expect = global.expect
-let it = global.it
+const {
+  describe,
+  it,
+  expect
+} = jasmine.env
+
+const {
+  objectContaining
+} = jasmine.jasmine
 
 let undef // is undefined
 
@@ -255,7 +260,7 @@ describe('ui reducer', () => {
         }
       }
       const new_state = reducer(undef, action)
-      expect(new_state).toEqual(jasmine.objectContaining({
+      expect(new_state).toEqual(objectContaining({
         ascending: false,
         sort: 'create_ts',
         scroll_position: 0

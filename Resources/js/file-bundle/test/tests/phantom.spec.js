@@ -1,15 +1,13 @@
 import child_process from 'child_process'
 import path from 'path'
-//import jasmine, {beforeAll, describe, it} from 'jasmine'
-import install from 'jasmine-es6'
-// make es6 available in jasmine
-install()
+import jasmine from './index'
 
-// add global functions to local variables to put eslint at ease
-let beforeAll = global.beforeAll
-let describe = global.describe
-let jasmine = global.jasmine
-let it = global.it
+const {
+  beforeAll,
+  describe,
+  it,
+  expect
+} = jasmine.env
 
 const exec = child_process.exec
 
@@ -26,7 +24,7 @@ const exec = child_process.exec
  */
 const phantom = (script, ...params) => {
   return new Promise((resolve, reject) => {
-    let cmd = `phantomjs ${script}`
+    let cmd = `./node_modules/.bin/phantomjs ${script}`
     params.forEach(param => {
       cmd += ` ${param}`
     })
@@ -61,19 +59,24 @@ const phantom = (script, ...params) => {
   })
 }
 
-// override the default timeout of 5 seconds
-jasmine.getEnv().defaultTimeoutInterval = 30000
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
-
 
 describe('User interaction tests with phantomjs', function() {
   let result
   let subResult
 
-  beforeAll(async function() {
-    result = await phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
-    result = JSON.parse(result)
-    console.log(result)
+  // beforeAll(async function() {
+  //   result = await phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
+  //   result = JSON.parse(result)
+  //   console.log(result)
+  // })
+
+  beforeAll(done => {
+    phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
+    .then(data => {
+      result = JSON.parse(data)
+      console.log(result)
+      done()
+    })
   })
 
   it('Open the page', function() {
