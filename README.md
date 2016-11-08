@@ -96,11 +96,16 @@ This project comes with a test suite. If you haven't already done so in the prev
  - `cd Resources/js/file-bundle`
  - `npm install`
 
-In the directory `Resources/js/file-bundle/test` you will find a folder `tests` that contains all tests organized in subfolders, and a folder `server` that contains the test server.
+In the directory `Resources/js/file-bundle/test` you will find a folder `tests` that contains all tests and a folder `server` that contains the test server. In the `tests` folder all test files have a .spec.js extension.
 
 You can run all test scripts from the `Resources/js/file-bundle` folder:
 
- - `npm test` runs unit tests
- - `npm run test-watch` watches for changes when working on tests and runs the tests if changes are detected
- - `npm run test-suite` starts the test server on port 5050 and tests all api calls, in addition all unit tests are run
- - `npm run test-suite2` same as former but it doesn't start the test server, use this command it you want to test against your own server
+ - `npm test`
+
+
+User interaction tests are run by Phantomjs. The source of the tests are located in the folder `tests/phantom/src`. These tests are written in es6 and because Phantomjs only supports es5 scripts, they are compiled to the file `tests/phantom/tests.compiled.es5`
+
+Should you wich to change anything in the Phantomjs tests you need to recompile them using one of these commands:
+
+ - `npm run build-phantom`
+ - `npm run watch-phantom` for compiling while you are editing the code

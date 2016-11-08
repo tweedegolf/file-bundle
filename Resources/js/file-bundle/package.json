@@ -14,6 +14,7 @@
     "build-js": "browserify index.js -t [ babelify ] -o test/server/assets/js/app.js",
     "build": "npm run build-css | npm run build-js",
     "build-min": "NODE_ENV=production browserify index.js -t [ babelify ] --debug | exorcist test/server/assets/js/app.min.js.map | uglifyjs -c > test/server/assets/js/app.min.js",
+    "build-phantom": "browserify --exclude webpage --exclude system --exclude fs ./test/tests/phantom/src/index.js -t [ babelify ] -o ./test/tests/phantom/tests.compiled.es5",
     "watch-phantom": "watchify --exclude webpage --exclude system --exclude fs ./test/tests/phantom/src/index.js -t [ babelify ] -o ./test/tests/phantom/tests.compiled.es5 --debug --verbose"
   },
   "author": "tweede golf",

@@ -24,7 +24,7 @@ const exec = child_process.exec
  */
 const phantom = (script, ...params) => {
   return new Promise((resolve, reject) => {
-    let cmd = `./node_modules/.bin/phantomjs ${script}`
+    let cmd = `./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs ${script}`
     params.forEach(param => {
       cmd += ` ${param}`
     })
