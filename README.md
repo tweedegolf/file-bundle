@@ -83,6 +83,7 @@ If you chose to make changes in the javascript and/or scss files, you can use th
  - `npm run build` builds both the javascript and the css
  - `npm run build-js` builds the javascript
  - `npm run build-css` builds the css
+ - `npm run build-min` builds a minified version of the javascript
  - `npm run watch` starts watching for changes in both the javascript and the scss files and builds the code as soon as you've changed anything in the code
  - `npm run watch-js` starts watching for changes in the javascript and builds upon any change
  - `npm run watch-css` starts watching for changes in the scss files and builds upon any change

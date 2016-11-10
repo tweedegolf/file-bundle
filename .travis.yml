@@ -6,3 +6,5 @@ branches:
   only:
   - redux
 script: npm test
+notifications:
+  email: false

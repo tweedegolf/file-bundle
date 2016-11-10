@@ -71,6 +71,7 @@ let tasks = [
     func: openFolder,
     args: {
       index: 0, // open the first folder
+      //name: 'colors', // open a folder by name
       page,
       onError,
       onReady
@@ -103,6 +104,15 @@ let tasks = [
       onReady
     }
   }, {
+    id: 'open_folder_phantom',
+    func: openFolder,
+    args: {
+      name: 'phantom_folder',
+      page,
+      onError,
+      onReady
+    }
+  }, {
     id: 'close_server',
     func: closeServer,
     args: {
@@ -115,5 +125,6 @@ let tasks = [
 taskRunner.configure({
   debug,
   tasks,
-  onReady: printResults
+  onReady: printResults,
+//  maxIndex: 2,
 }).runTask()

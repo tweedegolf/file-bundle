@@ -4,6 +4,7 @@
   "description": "Add a compact, modern and full-featured file browser",
   "main": "client/index.js",
   "scripts": {
+    "phantom": "./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs ./Resources/js/file-bundle/test/tests/phantom/tests.compiled.es5",
     "jasmine": "babel-node ./Resources/js/file-bundle/test/tests/index.js",
     "test": "npm start | npm run jasmine",
     "start": "babel-node ./Resources/js/file-bundle/test/server/src/index.js",
