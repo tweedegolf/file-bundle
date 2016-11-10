@@ -19,7 +19,7 @@ import TaskRunner from './task_runner'
 // import all necessary tasks
 import {openPage, closeServer} from './open_page'
 import openFolder from './open_folder'
-import uploadFile from './upload_file'
+import uploadFiles from './upload_files'
 import createFolder from './create_folder'
 
 
@@ -78,7 +78,7 @@ let tasks = [
     }
   }, {
     id: 'upload_single_file',
-    func: uploadFile,
+    func: uploadFiles,
     args: {
       page,
       files: [`${config.MEDIA_PATH}/400x220.png`],
@@ -87,7 +87,7 @@ let tasks = [
     }
   }, {
     id: 'upload_multiple_files',
-    func: uploadFile,
+    func: uploadFiles,
     args: {
       page,
       files: [`${config.MEDIA_PATH}/1200x280.png`, `${config.MEDIA_PATH}/240x760.png`],

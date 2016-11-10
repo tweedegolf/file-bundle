@@ -116,7 +116,9 @@ describe('User interaction tests with phantomjs', function() {
   it('Open folder "phantom_folder"', function() {
     subResult = result.open_folder_phantom
     expect(subResult.error).not.toBeDefined()
-    expect(subResult.index).toBe(1)
+    expect(subResult.name).toEqual('phantom_folder')
+    expect(subResult.numFiles).toBe(0)
+    expect(subResult.numFolders).toBe(1)
   })
 
   it('Close server', function() {

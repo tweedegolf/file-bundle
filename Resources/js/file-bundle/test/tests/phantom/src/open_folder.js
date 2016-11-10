@@ -59,7 +59,6 @@ openFolder = (conf) => {
           folder.click()
         }
         return {
-          index: i,
           name: n,
           rect: r
         }
@@ -93,7 +92,6 @@ check = (conf) => {
   let {
     id,
     page,
-    index,
     name,
     onReady,
     onError
@@ -126,7 +124,7 @@ check = (conf) => {
     },
     onReady(){
       page.render(`${config.SCREENSHOTS_PATH}/folder-${name}-opened.png`)
-      onReady({id, name, index, ...data})
+      onReady({id, name, ...data})
     },
     onError(error){
       onError({id, error})
