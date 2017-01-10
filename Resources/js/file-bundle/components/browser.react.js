@@ -288,6 +288,7 @@ export default class Browser extends React.Component {
                 this.state.selected = [];
             } else {
                 this.state.selected = [id];
+                this.state.expanded = false;
             }
         } else if (index > -1) {
             this.state.selected.splice(index, 1);
@@ -296,7 +297,8 @@ export default class Browser extends React.Component {
         }
 
         this.setState({
-            selected: this.state.selected
+            selected: this.state.selected,
+            expanded: this.state.expanded
         });
     }
 
