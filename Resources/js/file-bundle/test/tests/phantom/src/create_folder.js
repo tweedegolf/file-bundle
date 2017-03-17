@@ -1,11 +1,11 @@
-import {waitFor} from './util'
-import config from './config'
+import { waitFor } from './util';
+import config from './config';
 
 // declare functions
-let createFolder // main function
-let typeName // type the name of the folder in the input field
-let submit // press the "create folder" button
-let check // check if the the new folder has been created succesfully
+let createFolder; // main function
+let typeName; // type the name of the folder in the input field
+let submit; // press the "create folder" button
+let check; // check if the the new folder has been created succesfully
 
 
 /**
@@ -21,54 +21,54 @@ let check // check if the the new folder has been created succesfully
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.
  */
-createFolder = function(conf){
-  let {
+createFolder = function (conf) {
+    const {
     id,
     page,
     onError,
-  } = conf
+  } = conf;
 
-  waitFor({
-    onTest(){
-      let data = page.evaluate(function(){
+    waitFor({
+        onTest() {
+            const data = page.evaluate(() => {
         // get the "create folder" button
-        let s = document.querySelectorAll('button[type=button] > span.text-label')
-        let buttons = []
-        let clicked = false
+                const s = document.querySelectorAll('button[type=button] > span.text-label');
+                const buttons = [];
+                let clicked = false;
         // find the "create folder" button by reading the labels on the buttons,
         // when found click on it
-        if(s){
-          Array.from(s).forEach(span => {
-            buttons.push(span.innerHTML)
-            if(span.innerHTML === 'Nieuwe map'){
-              span.parentNode.click()
-              clicked = true
-            }
-          })
-          return {
-            ready: clicked,
-            buttons,
-          }
-        }
-        return {
-          ready: false,
-          buttons: [],
-        }
-      })
+                if (s) {
+                    Array.from(s).forEach((span) => {
+                        buttons.push(span.innerHTML);
+                        if (span.innerHTML === 'Nieuwe map') {
+                            span.parentNode.click();
+                            clicked = true;
+                        }
+                    });
+                    return {
+                        ready: clicked,
+                        buttons,
+                    };
+                }
+                return {
+                    ready: false,
+                    buttons: [],
+                };
+            });
       // data.buttons.forEach(button => {
       //   console.log(button)
       // })
-      return data.ready
-    },
-    onReady(){
-      page.render(`${config.SCREENSHOTS_PATH}/new-folder-open-dialog.png`)
-      typeName(conf)
-    },
-    onError(error){
-      onError({id, error})
-    }
-  })
-}
+            return data.ready;
+        },
+        onReady() {
+            page.render(`${config.SCREENSHOTS_PATH}/new-folder-open-dialog.png`);
+            typeName(conf);
+        },
+        onError(error) {
+            onError({ id, error });
+        },
+    });
+};
 
 
 /**
@@ -78,39 +78,39 @@ createFolder = function(conf){
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-typeName = function(conf){
-  let {
+typeName = function (conf) {
+    const {
     id,
     page,
     name,
     onError,
-  } = conf
+  } = conf;
 
-  waitFor({
-    onTest(){
-      let data = page.evaluate(function(n){
-        let input = document.querySelector('input[placeholder=Mapnaam]')
-        if(input !== null){
-          input.value = n
-          return {
-            ready: true,
-          }
-        }
-        return {
-          ready: false
-        }
-      }, name)
-      return data.ready
-    },
-    onReady(){
-      page.render(`${config.SCREENSHOTS_PATH}/new-folder-input-name.png`)
-      submit(conf)
-    },
-    onError(error){
-      onError({id, error})
-    }
-  })
-}
+    waitFor({
+        onTest() {
+            const data = page.evaluate((n) => {
+                const input = document.querySelector('input[placeholder=Mapnaam]');
+                if (input !== null) {
+                    input.value = n;
+                    return {
+                        ready: true,
+                    };
+                }
+                return {
+                    ready: false,
+                };
+            }, name);
+            return data.ready;
+        },
+        onReady() {
+            page.render(`${config.SCREENSHOTS_PATH}/new-folder-input-name.png`);
+            submit(conf);
+        },
+        onError(error) {
+            onError({ id, error });
+        },
+    });
+};
 
 
 /**
@@ -120,44 +120,44 @@ typeName = function(conf){
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-submit = function(conf){
-  let {
+submit = function (conf) {
+    const {
     id,
     page,
     onError,
-  } = conf
+  } = conf;
 
-  waitFor({
-    onTest(){
-      let data = page.evaluate(function(){
-        let s = document.querySelectorAll('button[type=button] > span.text-label')
-        let clicked = false
-        if(s){
-          Array.from(s).forEach(span => {
-            if(span.innerHTML === 'Opslaan'){
-              span.parentNode.click()
-              clicked = true
-            }
-          })
-          return {
-            ready: clicked
-          }
-        }
-        return {
-          ready: false
-        }
-      })
-      return data.ready
-    },
-    onReady(){
-      page.render(`${config.SCREENSHOTS_PATH}/new-folder-submit.png`)
-      check(conf)
-    },
-    onError(error){
-      onError({id, error})
-    }
-  })
-}
+    waitFor({
+        onTest() {
+            const data = page.evaluate(() => {
+                const s = document.querySelectorAll('button[type=button] > span.text-label');
+                let clicked = false;
+                if (s) {
+                    Array.from(s).forEach((span) => {
+                        if (span.innerHTML === 'Opslaan') {
+                            span.parentNode.click();
+                            clicked = true;
+                        }
+                    });
+                    return {
+                        ready: clicked,
+                    };
+                }
+                return {
+                    ready: false,
+                };
+            });
+            return data.ready;
+        },
+        onReady() {
+            page.render(`${config.SCREENSHOTS_PATH}/new-folder-submit.png`);
+            check(conf);
+        },
+        onError(error) {
+            onError({ id, error });
+        },
+    });
+};
 
 /**
  * Check if the both the form and the spinner animation are hidden and then get
@@ -168,46 +168,46 @@ submit = function(conf){
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-check = function(conf){
-  let {
+check = function (conf) {
+    const {
     id,
     page,
     onError,
     onReady,
-  } = conf
+  } = conf;
 
-  let data
-  waitFor({
-    onTest(){
-      data = page.evaluate(function(){
-        let form = document.querySelector('div.form-inline.pull-right')
-        let s = document.querySelector('button[type=button] > span.fa.fa-circle-o-notch.fa-spin')
-        if(form !== null && s === null){
-          return {
-            class: form.className,
-            ready: form.className.indexOf('hide') !== -1,
-            numFolders: document.querySelectorAll('tr.folder').length
-          }
-        }
-        return {
-          class: '',
-          ready: false
-        }
-      })
-      return data.ready
-    },
-    onReady(){
-      page.render(`${config.SCREENSHOTS_PATH}/new-folder-check.png`)
-      onReady({
-        id,
-        numFolders: data.numFolders
-      })
-    },
-    onError(error){
-      onError({id, error})
-    }
-  })
-}
+    let data;
+    waitFor({
+        onTest() {
+            data = page.evaluate(() => {
+                const form = document.querySelector('div.form-inline.pull-right');
+                const s = document.querySelector('button[type=button] > span.fa.fa-circle-o-notch.fa-spin');
+                if (form !== null && s === null) {
+                    return {
+                        class: form.className,
+                        ready: form.className.indexOf('hide') !== -1,
+                        numFolders: document.querySelectorAll('tr.folder').length,
+                    };
+                }
+                return {
+                    class: '',
+                    ready: false,
+                };
+            });
+            return data.ready;
+        },
+        onReady() {
+            page.render(`${config.SCREENSHOTS_PATH}/new-folder-check.png`);
+            onReady({
+                id,
+                numFolders: data.numFolders,
+            });
+        },
+        onError(error) {
+            onError({ id, error });
+        },
+    });
+};
 
 
-export default createFolder
+export default createFolder;

@@ -10,7 +10,7 @@
   *
   * @type       {string}
   */
-export const UPLOAD_START = 'UPLOAD_START'
+export const UPLOAD_START = 'UPLOAD_START';
 
 /**
  * Server response: files have been uploaded successfully, processed by:
@@ -19,7 +19,7 @@ export const UPLOAD_START = 'UPLOAD_START'
  *
  * @type       {string}
  */
-export const UPLOAD_DONE = 'UPLOAD_DONE'
+export const UPLOAD_DONE = 'UPLOAD_DONE';
 
 /**
  * Server error, processed by:
@@ -27,7 +27,7 @@ export const UPLOAD_DONE = 'UPLOAD_DONE'
  *
  * @type       {string}
  */
-export const ERROR_UPLOADING_FILE = 'ERROR_UPLOADING_FILE'
+export const ERROR_UPLOADING_FILE = 'ERROR_UPLOADING_FILE';
 
 /**
  * API call: load contents of folder, processed by:
@@ -35,7 +35,7 @@ export const ERROR_UPLOADING_FILE = 'ERROR_UPLOADING_FILE'
  *
  * @type       {string}
  */
-export const OPEN_FOLDER = 'OPEN_FOLDER'
+export const OPEN_FOLDER = 'OPEN_FOLDER';
 
 /**
  * Server response: older contents has been loaded, processed by:
@@ -44,7 +44,7 @@ export const OPEN_FOLDER = 'OPEN_FOLDER'
  *
  * @type       {string}
  */
-export const FOLDER_OPENED = 'FOLDER_OPENED'
+export const FOLDER_OPENED = 'FOLDER_OPENED';
 
 /**
  * Server error, processed by:
@@ -52,7 +52,7 @@ export const FOLDER_OPENED = 'FOLDER_OPENED'
  *
  * @type       {string}
  */
-export const ERROR_OPENING_FOLDER = 'ERROR_OPENING_FOLDER'
+export const ERROR_OPENING_FOLDER = 'ERROR_OPENING_FOLDER';
 
 /**
  * API call: delete file, processed by:
@@ -60,7 +60,7 @@ export const ERROR_OPENING_FOLDER = 'ERROR_OPENING_FOLDER'
  *
  * @type       {string}
  */
-export const DELETE_FILE = 'DELETE_FILE'
+export const DELETE_FILE = 'DELETE_FILE';
 
 /**
  * Server response: file has been deleted, processed by:
@@ -69,7 +69,7 @@ export const DELETE_FILE = 'DELETE_FILE'
  *
  * @type       {string}
  */
-export const FILE_DELETED = 'FILE_DELETED'
+export const FILE_DELETED = 'FILE_DELETED';
 
 /**
  * Server error, processed by:
@@ -77,7 +77,7 @@ export const FILE_DELETED = 'FILE_DELETED'
  *
  * @type       {string}
  */
-export const ERROR_DELETING_FILE = 'ERROR_DELETING_FILE'
+export const ERROR_DELETING_FILE = 'ERROR_DELETING_FILE';
 
 /**
  * API call: delete folder, processed by:
@@ -85,7 +85,7 @@ export const ERROR_DELETING_FILE = 'ERROR_DELETING_FILE'
  *
  * @type       {string}
  */
-export const DELETE_FOLDER = 'DELETE_FOLDER'
+export const DELETE_FOLDER = 'DELETE_FOLDER';
 
 /**
  * Server response: folder has been deleted, processed by:
@@ -93,7 +93,7 @@ export const DELETE_FOLDER = 'DELETE_FOLDER'
  *
  * @type       {string}
  */
-export const FOLDER_DELETED = 'FOLDER_DELETED'
+export const FOLDER_DELETED = 'FOLDER_DELETED';
 
 /**
  * Server error, processed by:
@@ -101,7 +101,7 @@ export const FOLDER_DELETED = 'FOLDER_DELETED'
  *
  * @type       {string}
  */
-export const ERROR_DELETING_FOLDER = 'ERROR_DELETING_FOLDER'
+export const ERROR_DELETING_FOLDER = 'ERROR_DELETING_FOLDER';
 
 /**
  * API call: add a new folder, processed by:
@@ -109,7 +109,7 @@ export const ERROR_DELETING_FOLDER = 'ERROR_DELETING_FOLDER'
  *
  * @type       {string}
  */
-export const ADD_FOLDER = 'ADD_FOLDER'
+export const ADD_FOLDER = 'ADD_FOLDER';
 
 /**
  * Server response: folder has been added, processed by:
@@ -118,7 +118,7 @@ export const ADD_FOLDER = 'ADD_FOLDER'
  *
  * @type       {string}
  */
-export const FOLDER_ADDED = 'FOLDER_ADDED'
+export const FOLDER_ADDED = 'FOLDER_ADDED';
 
 /**
  * Server error, handled by:
@@ -126,7 +126,7 @@ export const FOLDER_ADDED = 'FOLDER_ADDED'
  *
  * @type       {string}
  */
-export const ERROR_ADDING_FOLDER = 'ERROR_ADDING_FOLDER'
+export const ERROR_ADDING_FOLDER = 'ERROR_ADDING_FOLDER';
 
 /**
  * User selects file, processed by:
@@ -134,7 +134,7 @@ export const ERROR_ADDING_FOLDER = 'ERROR_ADDING_FOLDER'
  *
  * @type       {string}
  */
-export const SELECT_FILE = 'SELECT_FILE'
+export const SELECT_FILE = 'SELECT_FILE';
 
 /**
  * Filepicker mode: selected files that are passed via the HTML's dataset
@@ -144,7 +144,7 @@ export const SELECT_FILE = 'SELECT_FILE'
  *
  * @type       {string}
  */
-export const SELECT_FILES = 'SELECT_FILES'
+export const SELECT_FILES = 'SELECT_FILES';
 
 /**
  * Selected files are being cut, processed by:
@@ -152,7 +152,7 @@ export const SELECT_FILES = 'SELECT_FILES'
  *
  * @type       {string}
  */
-export const CUT_FILES = 'CUT_FILES'
+export const CUT_FILES = 'CUT_FILES';
 
 /**
  * Cut and paste action is being cancelled, processed by:
@@ -160,7 +160,7 @@ export const CUT_FILES = 'CUT_FILES'
  *
  * @type       {string}
  */
-export const CANCEL_CUT_AND_PASTE_FILES = 'CANCEL_CUT_AND_PASTE_FILES'
+export const CANCEL_CUT_AND_PASTE_FILES = 'CANCEL_CUT_AND_PASTE_FILES';
 
 /**
  * API call: files are being moved from one folder to another using
@@ -170,7 +170,7 @@ export const CANCEL_CUT_AND_PASTE_FILES = 'CANCEL_CUT_AND_PASTE_FILES'
  *
  * @type       {string}
  */
-export const FILES_MOVED = 'FILES_MOVED'
+export const FILES_MOVED = 'FILES_MOVED';
 
 /**
  * Server error, processed by:
@@ -178,7 +178,7 @@ export const FILES_MOVED = 'FILES_MOVED'
  *
  * @type       {string}
  */
-export const ERROR_MOVING_FILES = 'ERROR_MOVING_FILES'
+export const ERROR_MOVING_FILES = 'ERROR_MOVING_FILES';
 
 /**
  * Changes sorting of files and folders in the browser's file list, processed
@@ -187,7 +187,7 @@ export const ERROR_MOVING_FILES = 'ERROR_MOVING_FILES'
  *
  * @type       {string}
  */
-export const CHANGE_SORTING = 'CHANGE_SORTING'
+export const CHANGE_SORTING = 'CHANGE_SORTING';
 
 /**
  * Remove an error message, processed by:
@@ -195,7 +195,7 @@ export const CHANGE_SORTING = 'CHANGE_SORTING'
  *
  * @type       {string}
  */
-export const DISMISS_ERROR = 'DISMISS_ERROR'
+export const DISMISS_ERROR = 'DISMISS_ERROR';
 
 /**
  * Show a full screen preview of a file, currently only images are supported,
@@ -204,7 +204,7 @@ export const DISMISS_ERROR = 'DISMISS_ERROR'
  *
  * @type       {string}
  */
-export const SHOW_PREVIEW = 'SHOW_PREVIEW'
+export const SHOW_PREVIEW = 'SHOW_PREVIEW';
 
 /**
  * Toggles the confirmation dialog after the user has clicked the delete
@@ -213,7 +213,7 @@ export const SHOW_PREVIEW = 'SHOW_PREVIEW'
  *
  * @type       {string}
  */
-export const CONFIRM_DELETE = 'CONFIRM_DELETE'
+export const CONFIRM_DELETE = 'CONFIRM_DELETE';
 
 /**
  * Expand the browser, processed by:
@@ -221,7 +221,7 @@ export const CONFIRM_DELETE = 'CONFIRM_DELETE'
  *
  * @type       {string}
  */
-export const EXPAND_BROWSER = 'EXPAND_BROWSER'
+export const EXPAND_BROWSER = 'EXPAND_BROWSER';
 
 /**
  * Set hover when using arrow keys to select a file or a folder, processed by:
@@ -229,7 +229,7 @@ export const EXPAND_BROWSER = 'EXPAND_BROWSER'
  *
  * @type       {string}
  */
-export const SET_HOVER = 'SET_HOVER'
+export const SET_HOVER = 'SET_HOVER';
 
 /**
  * Set the scroll position of the browser list, processed by:
@@ -237,4 +237,4 @@ export const SET_HOVER = 'SET_HOVER'
  *
  * @type       {string}
  */
-export const SET_SCROLL_POSITION = 'SET_SCROLL_POSITION'
+export const SET_SCROLL_POSITION = 'SET_SCROLL_POSITION';

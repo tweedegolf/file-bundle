@@ -3,8 +3,9 @@
  * server runs the same set of initial data is imported from ./data.js. This
  * data gets altered by the functions below, but all changes are volatile.
  */
-import data from './data'
-import {createFolderDescription} from '../util'
+import R from 'ramda';
+import data from './data';
+import { createFolderDescription } from '../util';
 
 
 /**
@@ -17,28 +18,28 @@ import {createFolderDescription} from '../util'
  */
 const getFolder = (folderId) => {
   // fake and real errors
-  //console.log(folderId)
-  let folderData = data.tree[folderId]
-  if(typeof folderData === 'undefined' || folderId === 1000){
+  // console.log(folderId)
+    const folderData = data.tree[folderId];
+    if (typeof folderData === 'undefined' || folderId === 1000) {
     // folder id 1000 is a test id -> this alway generates an error
-    if(folderId !== 1000){
-      console.error('this should not happen!')
+        if (folderId !== 1000) {
+            console.error('this should not happen!');
+        }
+        return {
+            error: 'Could not open folder: folder not found',
+        };
     }
-    return {
-      error: 'Could not open folder: folder not found'
-    }
-  }
 
   // map file and folder ids to their corresponding description objects
-  let {files, folders} = folderData
-  files = files.map(id => data.files[id])
-  folders = folders.map(id => data.folders[id])
+    let { files, folders } = folderData;
+    files = files.map(id => data.files[id]);
+    folders = folders.map(id => data.folders[id]);
 
-  return {
-    files,
-    folders,
-  }
-}
+    return {
+        files,
+        folders,
+    };
+};
 
 
 /**
@@ -55,35 +56,35 @@ const getFolder = (folderId) => {
  */
 const addFolder = (name, parentId) => {
   // fake error
-  if(name === 'errorfolder'){
-    return {
-      error: 'Could not create folder "errorfolder"',
+    if (name === 'errorfolder') {
+        return {
+            error: 'Could not create folder "errorfolder"',
+        };
     }
-  }
 
-  let folder = createFolderDescription({
-    name,
-    parent: parentId,
-    file_count: 0,
-    folder_count: 0,
-  })
+    const folder = createFolderDescription({
+        name,
+        parent: parentId,
+        file_count: 0,
+        folder_count: 0,
+    });
 
   // store the new folder in the database
-  data.folders[folder.id] = folder
-  data.tree[folder.id] = {
-    files: [],
-    folders: [],
-  }
+    data.folders[folder.id] = folder;
+    data.tree[folder.id] = {
+        files: [],
+        folders: [],
+    };
 
   // update the parent folder of the new folder
-  data.tree[parentId].folders.push(folder.id)
-  data.folders[parentId].folder_count = data.tree[parentId].folders.length
+    data.tree[parentId].folders.push(folder.id);
+    data.folders[parentId].folder_count = data.tree[parentId].folders.length;
 
-  return {
-    new_folders: [folder],
-    errors: []
-  }
-}
+    return {
+        new_folders: [folder],
+        errors: [],
+    };
+};
 
 
 /**
@@ -94,30 +95,30 @@ const addFolder = (name, parentId) => {
  */
 const deleteFolder = (folderId) => {
   // test error
-  if(folderId === 1000){
-    return {
-      error: 'Folder could not be deleted'
+    if (folderId === 1000) {
+        return {
+            error: 'Folder could not be deleted',
+        };
     }
-  }
 
-  let folder = data.folders[folderId]
-  let parentId = folder.parent
-  // the array of folders inside the parent folder
-  let folders = data.tree[parentId].folders
-  // find the index of the folder that will be deleted
-  let index = folders.indexOf(folderId)
-  // remove the folder id of the folder that will be deleted
-  if(index !== -1){
-    data.tree[parentId].folders.splice(index, 1)
-  }
-  // update parent folder
-  data.folders[parentId].folder_count--
-  // perform the actual delete
-  delete data.folders[folderId]
-  return {
-    error: false
-  }
-}
+    const folder = data.folders[folderId];
+    const parentId = folder.parent;
+    // the array of folders inside the parent folder
+    const folders = data.tree[parentId].folders;
+    // find the index of the folder that will be deleted
+    const index = folders.indexOf(folderId);
+    // remove the folder id of the folder that will be deleted
+    if (index !== -1) {
+        data.tree[parentId].folders.splice(index, 1);
+    }
+    // update parent folder
+    data.folders[parentId].folder_count--;
+    // perform the actual delete
+    delete data.folders[folderId];
+    return {
+        error: false,
+    };
+};
 
 
 /**
@@ -130,14 +131,14 @@ const deleteFolder = (folderId) => {
  *                                        will be added to
  * @return     {void}           returns void
  */
-const addFiles = (files, folderId) =>{
-  //console.log(files, folderId)
-  files.forEach(file => {
-    data.files[file.id] = file
-    data.tree[folderId].files.push(file.id)
-  })
-  data.folders[folderId].file_count = data.tree[folderId].files.length
-}
+const addFiles = (files, folderId) => {
+    // console.log(files, folderId)
+    files.forEach((file) => {
+        data.files[file.id] = file;
+        data.tree[folderId].files.push(file.id);
+    });
+    data.folders[folderId].file_count = data.tree[folderId].files.length;
+};
 
 
 /**
@@ -150,27 +151,27 @@ const addFiles = (files, folderId) =>{
  *                                                 contents will not be
  *                                                 affected.
  */
-const removeFilesFromFolders = function(file_ids, exclude_folder_id){
-  Object.keys(data.folders).forEach(folder_id => {
-    if(folder_id !== exclude_folder_id){
-      //console.log(`checking folder ${folder_id}`)
-      let folder = data.folders[folder_id]
+const removeFilesFromFolders = function (file_ids, exclude_folder_id) {
+    Object.keys(data.folders).forEach((folder_id) => {
+        if (folder_id !== exclude_folder_id) {
+      // console.log(`checking folder ${folder_id}`)
+            const folder = data.folders[folder_id];
       // array containing ids of all the files in this folder
-      let ids = data.tree[folder_id].files
-      //console.log(` - files in this folder ${ids}`)
+            const ids = data.tree[folder_id].files;
+      // console.log(` - files in this folder ${ids}`)
       // filter files
-      file_ids.forEach(id => {
-        let index = ids.indexOf(id)
-        //console.log(` - filtering ${id} found at index ${index}`)
-        if(index !== -1){
-          //console.log(`removing file '${id}'' from folder '${folder_id}'`)
-          data.tree[folder_id].files.splice(index, 1)
-          folder.file_count--
+            file_ids.forEach((id) => {
+                const index = ids.indexOf(id);
+        // console.log(` - filtering ${id} found at index ${index}`)
+                if (index !== -1) {
+          // console.log(`removing file '${id}'' from folder '${folder_id}'`)
+                    data.tree[folder_id].files.splice(index, 1);
+                    folder.file_count--;
+                }
+            });
         }
-      })
-    }
-  })
-}
+    });
+};
 
 
 /**
@@ -186,27 +187,27 @@ const removeFilesFromFolders = function(file_ids, exclude_folder_id){
  */
 const moveFiles = (fileIds, folderId) => {
   // test error
-  if(folderId === 1000){
-    return {
-      error: 'Could not move files to folder with id "1000"'
+    if (folderId === 1000) {
+        return {
+            error: 'Could not move files to folder with id "1000"',
+        };
     }
-  }
 
   // remove files from their original location
-  if(fileIds instanceof Array === false){
-    fileIds = [fileIds]
-  }
-  fileIds = fileIds.map(id => parseInt(id, 10))
-  removeFilesFromFolders(fileIds, folderId)
+    if (fileIds instanceof Array === false) {
+        fileIds = [fileIds];
+    }
+    fileIds = fileIds.map(id => parseInt(id, 10));
+    removeFilesFromFolders(fileIds, folderId);
   // add files to the files array of the new folder
-  data.tree[folderId].files.push(...fileIds)
+    data.tree[folderId].files.push(...fileIds);
   // update file count
-  data.folders[folderId].file_count += fileIds.length
-  //console.log('data %j', data)
-  return {
-    error: false
-  }
-}
+    data.folders[folderId].file_count += fileIds.length;
+  // console.log('data %j', data)
+    return {
+        error: false,
+    };
+};
 
 
 /**
@@ -217,27 +218,33 @@ const moveFiles = (fileIds, folderId) => {
  */
 const deleteFile = (fileId) => {
   // for testings error messages
-  if(fileId === 1000){
-    // fileId 1000 does probably not really exist so no need to remove it
-    return {
-      error: 'File could not be deleted!'
+    if (fileId === 1000) {
+        // fileId 1000 does probably not really exist so no need to remove it
+        return {
+            error: 'File could not be deleted!',
+        };
     }
-  }
-  // perform delete
-  delete data.files[fileId]
-  // remove from parent folder
-  removeFilesFromFolders([fileId])
-  return {
-    error: false
-  }
-}
+    // perform delete
+    const file = R.clone(data.files[fileId]);
+    file.isTrashed = true;
+    data.files[fileId] = file;
+    return {
+        error: false,
+    };
+};
+
+
+const emptyRecycleBin = () => {
+    // find all files with the isTrashed flag set to 'true' and delete them
+    // use: removeFilesFromFolders
+};
 
 
 export default{
-  getFolder,
-  addFolder,
-  deleteFolder,
-  addFiles,
-  moveFiles,
-  deleteFile,
-}
+    getFolder,
+    addFolder,
+    deleteFolder,
+    addFiles,
+    moveFiles,
+    deleteFile,
+};

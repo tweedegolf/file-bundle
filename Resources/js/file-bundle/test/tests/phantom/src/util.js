@@ -1,4 +1,4 @@
-const phantom = global.phantom
+const phantom = global.phantom;
 
 /**
  * Function that repeatedly runs a test function until it returns true or
@@ -20,8 +20,7 @@ const phantom = global.phantom
  *                                          numbers result in less overhead time)
  */
 export function waitFor(conf) {
-
-  let {
+    const {
     timeout = 10000,
     delay = 50,
     onTest,
@@ -29,36 +28,36 @@ export function waitFor(conf) {
     onCheck = () => {},
     onReady = () => {},
     onError = null,
-  } = conf
+  } = conf;
 
-  let start = new Date().getTime()
-  let condition = false
+    const start = new Date().getTime();
+    let condition = false;
 
-  let interval = setInterval(function() {
-    let elapsed = new Date().getTime() - start
-    //console.log(elapsed)
-    if(elapsed < timeout && condition === false){
-      onCheck()
-      condition = onTest(onTestArgs)
-    }else if(condition === false && elapsed < timeout){
-      if(typeof onError === 'function'){
-        onError('test returned false')
-      }else {
-        console.log(false)
-        phantom.exit(1)
-      }
-    }else if(elapsed > timeout){
-      if(typeof onError === 'function'){
-        onError(`test timeout (${elapsed})`)
-      }else {
-        console.log(false)
-        phantom.exit(1)
-      }
-    }else{
-      onReady()
-      clearInterval(interval)
-    }
-  }, delay)
+    const interval = setInterval(() => {
+        const elapsed = new Date().getTime() - start;
+    // console.log(elapsed)
+        if (elapsed < timeout && condition === false) {
+            onCheck();
+            condition = onTest(onTestArgs);
+        } else if (condition === false && elapsed < timeout) {
+            if (typeof onError === 'function') {
+                onError('test returned false');
+            } else {
+                console.log(false);
+                phantom.exit(1);
+            }
+        } else if (elapsed > timeout) {
+            if (typeof onError === 'function') {
+                onError(`test timeout (${elapsed})`);
+            } else {
+                console.log(false);
+                phantom.exit(1);
+            }
+        } else {
+            onReady();
+            clearInterval(interval);
+        }
+    }, delay);
 }
 
 
@@ -87,72 +86,68 @@ export function waitFor(conf) {
  * @return     {Promise}  A promise, resolve returns an array of values and
  *                        errors, reject returns an array of errors
  */
-export const chainPromises = function(conf){
-  let {
+export const chainPromises = function (conf) {
+    let {
     index = 0,
     promises = [],
     resolve = () => {},
     reject = () => {},
     values = [],
     errors = [],
-  } = conf
+  } = conf;
 
-  let {
+    let {
     id, // the id of the promise so we can keep them apart
     func, // the executor of the promise
     args = [], // optional arguments for the executor
     parseRejectValue, // optional function that parses the value that is passed by the reject function
     parseResolveValue, // optional function that parses the value that is passed by the resolve function
-  } = promises[index]
+  } = promises[index];
 
-  //console.log(id, func)
+  // console.log(id, func)
 
-  if(typeof parseResolveValue === 'undefined'){
-    parseResolveValue = value => {
-      return {value, id}
+    if (typeof parseResolveValue === 'undefined') {
+        parseResolveValue = value => ({ value, id });
     }
-  }
 
-  if(typeof parseRejectValue === 'undefined'){
-    parseRejectValue = error => {
-      return {error, id}
+    if (typeof parseRejectValue === 'undefined') {
+        parseRejectValue = error => ({ error, id });
     }
-  }
 
-  let numPromises = promises.length
+    const numPromises = promises.length;
 
-  if(typeof func !== 'function'){
-    errors.push({
-      type: 'general',
-      messages: ['not a function']
-    })
-    index++
-    chainPromises({index, promises, resolve, reject, values, errors})
-  }
+    if (typeof func !== 'function') {
+        errors.push({
+            type: 'general',
+            messages: ['not a function'],
+        });
+        index++;
+        chainPromises({ index, promises, resolve, reject, values, errors });
+    }
 
-  func(...args).then(
-    value => {
-      index++
-      //console.log('resolve:', numPromises, index)
-      values.push(parseResolveValue(value, id))
-      if(index === numPromises){
-        resolve(values, errors)
-      }else{
-        chainPromises({index, promises, resolve, reject, values, errors})
-      }
-    },
-    error => {
-      index++
-      //console.log('reject:', numPromises, index)
-      errors.push(parseRejectValue(error, id))
-      // if all promises have rejected, we can reject the chained promise as a whole
-      if(index === numPromises){
-        if(errors.length === numPromises){
-          reject(errors)
+    func(...args).then(
+    (value) => {
+        index++;
+      // console.log('resolve:', numPromises, index)
+        values.push(parseResolveValue(value, id));
+        if (index === numPromises) {
+            resolve(values, errors);
+        } else {
+            chainPromises({ index, promises, resolve, reject, values, errors });
         }
-      }else{
-        chainPromises({index, promises, resolve, reject, values, errors})
-      }
-    }
-  )
-}
+    },
+    (error) => {
+        index++;
+      // console.log('reject:', numPromises, index)
+        errors.push(parseRejectValue(error, id));
+      // if all promises have rejected, we can reject the chained promise as a whole
+        if (index === numPromises) {
+            if (errors.length === numPromises) {
+                reject(errors);
+            }
+        } else {
+            chainPromises({ index, promises, resolve, reject, values, errors });
+        }
+    },
+  );
+};

@@ -22,66 +22,61 @@
  * @return     {Promise}   A promise, resolve returns an array of values and
  *                         errors, reject returns an array of errors
  */
-export const chainPromises = function(index, promises, resolve, reject, values = [], errors = []){
-
+export const chainPromises = function (index, promises, resolve, reject, values = [], errors = []) {
   // the id of the promise so we can keep them apart
-  let id = promises[index].id
+    const id = promises[index].id;
   // the executor of the promise
-  let func = promises[index].func
+    const func = promises[index].func;
   // arguments for the executor
-  let args = promises[index].args
+    const args = promises[index].args;
   // optional function that parses the value that is passed by the resolve function
-  let parseResolveValue = promises[index].parseResolveValue
+    let parseResolveValue = promises[index].parseResolveValue;
   // optional function that parses the value that is passed by the reject function
-  let parseRejectValue = promises[index].parseRejectValue
+    let parseRejectValue = promises[index].parseRejectValue;
 
-  if(typeof parseResolveValue === 'undefined'){
-    parseResolveValue = value => {
-      return {...value, id}
+    if (typeof parseResolveValue === 'undefined') {
+        parseResolveValue = value => ({ ...value, id });
     }
-  }
 
-  if(typeof parseRejectValue === 'undefined'){
-    parseRejectValue = error => {
-      return {...error, id}
+    if (typeof parseRejectValue === 'undefined') {
+        parseRejectValue = error => ({ ...error, id });
     }
-  }
 
-  let numPromises = promises.length
+    const numPromises = promises.length;
 
-  if(typeof func !== 'function'){
-    errors.push({
-      type: 'general',
-      messages: ['not a function']
-    })
-    index++
-    chainPromises(index, promises, resolve, reject, values, errors)
-  }
+    if (typeof func !== 'function') {
+        errors.push({
+            type: 'general',
+            messages: ['not a function'],
+        });
+        index++;
+        chainPromises(index, promises, resolve, reject, values, errors);
+    }
 
-  func(...args).then(
-    value => {
-      index++
-      values.push(parseResolveValue(value))
-      if(index === numPromises){
-        resolve(values, errors)
-      }else{
-        chainPromises(index, promises, resolve, reject, values, errors)
-      }
-    },
-    error => {
-      index++
-      errors.push(parseRejectValue(error))
-      // if all promises have rejected, we can reject the chained promise as a whole
-      if(index === numPromises){
-        if(errors.length === numPromises){
-          reject(errors)
+    func(...args).then(
+    (value) => {
+        index++;
+        values.push(parseResolveValue(value));
+        if (index === numPromises) {
+            resolve(values, errors);
+        } else {
+            chainPromises(index, promises, resolve, reject, values, errors);
         }
-      }else{
-        chainPromises(index, promises, resolve, reject, values, errors)
-      }
-    }
-  )
-}
+    },
+    (error) => {
+        index++;
+        errors.push(parseRejectValue(error));
+      // if all promises have rejected, we can reject the chained promise as a whole
+        if (index === numPromises) {
+            if (errors.length === numPromises) {
+                reject(errors);
+            }
+        } else {
+            chainPromises(index, promises, resolve, reject, values, errors);
+        }
+    },
+  );
+};
 
 /**
  * Generic function that sorts items by a key
@@ -90,34 +85,34 @@ export const chainPromises = function(index, promises, resolve, reject, values =
  * @param      {String}   key        The key whose value will be sorted
  * @param      {boolean}  ascending  Whether to sort ascending or not
  */
-export function sortBy(array, key, ascending){
-  array.sort((a, b) => {
-    if(a[key] < b[key]){
-      return ascending ? 1 : -1
-    }
-    if(a[key] > b[key]){
-      return ascending ? -1 : 1
-    }
-    return 0
-  })
-  return array
+export function sortBy(array, key, ascending) {
+    array.sort((a, b) => {
+        if (a[key] < b[key]) {
+            return ascending ? 1 : -1;
+        }
+        if (a[key] > b[key]) {
+            return ascending ? -1 : 1;
+        }
+        return 0;
+    });
+    return array;
 }
 
 
-let uid = 0
+let uid = 0;
 /**
  * Returns an id that is unique whithin this application
  *
  * @return     {number}  The uid.
  */
-export function getUID(){
-  return `${uid++}${new Date()}`
+export function getUID() {
+    return `${uid++}${new Date()}`;
 }
 
 /**
  * Return a globally unique id
  */
-export function getUUID(){
+export function getUUID() {
   // not needed yet
   // see: http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 }
@@ -140,17 +135,17 @@ export function getUUID(){
  *  }
  * </code>
  */
-export const sortItems = function(payload){
-  let {
+export const sortItems = function (payload) {
+    const {
     items,
     sort,
-    ascending
-  } = payload
+    ascending,
+  } = payload;
 
-  Object.entries(items).forEach(([key, value]) => {
-    items[key] = sortBy(value, sort, ascending)
-  })
+    Object.entries(items).forEach(([key, value]) => {
+        items[key] = sortBy(value, sort, ascending);
+    });
 
-  return items
-}
+    return items;
+};
 

@@ -1,17 +1,17 @@
 // get arguments from command line
-import {waitFor} from './util'
-import config from './config'
+import { waitFor } from './util';
+import config from './config';
 
 // get arguments from command line
-import {args} from 'system'
+import { args } from 'system';
 // default values for command line arguments
-let url = 'http://localhost:5050'
+let url = 'http://localhost:5050';
 // overrule the default values if set
-args.forEach(arg => {
-  if(arg.indexOf('url') === 0){
-    url = arg.substring(arg.indexOf('url') + 4)
-  }
-})
+args.forEach((arg) => {
+    if (arg.indexOf('url') === 0) {
+        url = arg.substring(arg.indexOf('url') + 4);
+    }
+});
 
 
 /**
@@ -27,48 +27,48 @@ args.forEach(arg => {
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.
  */
-export function openPage(conf){
-  let {
+export function openPage(conf) {
+    const {
     id,
     page,
     onReady,
     onError,
-  } = conf
+  } = conf;
 
-  page.open(url, function(status){
-    if(status !== 'success'){
-      onError({id, error: `cannot open page ${url}`})
-      return
-    }
-    let data
-    waitFor({
-      onTest(){
-        data = page.evaluate(function(){
+    page.open(url, (status) => {
+        if (status !== 'success') {
+            onError({ id, error: `cannot open page ${url}` });
+            return;
+        }
+        let data;
+        waitFor({
+            onTest() {
+                data = page.evaluate(() => {
           // wait until browser list has loaded
-          let t = document.querySelector('tbody')
-          if(t){
-            return {
-              class: t.className,
-              title: document.title,
-            }
-          }
-          return {
-            class: '',
-            title: ''
-          }
-        })
-        //console.log(data)
-        return data.class === 'loaded'
-      },
-      onReady(){
-        page.render(`${config.SCREENSHOTS_PATH}/page-opened.png`)
-        onReady({id, title: data.title})
-      },
-      onError(error){
-        onError({id, error})
-      }
-    })
-  })
+                    const t = document.querySelector('tbody');
+                    if (t) {
+                        return {
+                            class: t.className,
+                            title: document.title,
+                        };
+                    }
+                    return {
+                        class: '',
+                        title: '',
+                    };
+                });
+        // console.log(data)
+                return data.class === 'loaded';
+            },
+            onReady() {
+                page.render(`${config.SCREENSHOTS_PATH}/page-opened.png`);
+                onReady({ id, title: data.title });
+            },
+            onError(error) {
+                onError({ id, error });
+            },
+        });
+    });
 }
 
 /**
@@ -81,14 +81,14 @@ export function openPage(conf){
  * @property   {functon}  onReady  The function called after the server has been
  *                                 shut down
  */
-export function closeServer(conf){
-  let {
+export function closeServer(conf) {
+    const {
     id,
     page,
     onReady,
-  } = conf
+  } = conf;
 
-  page.open(url + '/close', function(){
-    onReady({id, running: false})
-  })
+    page.open(`${url}/close`, () => {
+        onReady({ id, running: false });
+    });
 }

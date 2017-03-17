@@ -1,12 +1,12 @@
 
-export default class TaskRunner{
+export default class TaskRunner {
 
   /**
    * Constructs the taskRunner
    */
-  constructor(){
-    this.taskIndex = -1
-  }
+    constructor() {
+        this.taskIndex = -1;
+    }
 
   /**
    * Configure the task runner before you can start it
@@ -24,17 +24,17 @@ export default class TaskRunner{
    *                                     task is printed to the console (don't
    *                                     use this i.c.w. jasmine testing)
    */
-  configure(conf){
-    let {
+    configure(conf) {
+        const {
       tasks,
       onReady,
       startIndex = 0,
       maxIndex = tasks.length,
-      debug = false
-    } = conf
-    Object.assign(this, {tasks, onReady, startIndex, maxIndex, debug})
-    return this
-  }
+      debug = false,
+    } = conf;
+        Object.assign(this, { tasks, onReady, startIndex, maxIndex, debug });
+        return this;
+    }
 
   /**
    * Runs all tasks
@@ -42,16 +42,16 @@ export default class TaskRunner{
    * @param      {Object}  extraArgs  Optional data that is passed over from one
    *                                  task to another
    */
-  runTask(extraArgs){
-    this.taskIndex++
-    if(this.taskIndex < this.maxIndex){
-      let task = this.tasks[this.taskIndex]
-      if(this.debug === true){
-        console.log(`running task ${task.id} (${this.taskIndex} of ${this.maxIndex})`)
-      }
-      task.func({id: task.id, ...task.args, ...extraArgs})
-    }else{
-      this.onReady()
+    runTask(extraArgs) {
+        this.taskIndex++;
+        if (this.taskIndex < this.maxIndex) {
+            const task = this.tasks[this.taskIndex];
+            if (this.debug === true) {
+                console.log(`running task ${task.id} (${this.taskIndex} of ${this.maxIndex})`);
+            }
+            task.func({ id: task.id, ...task.args, ...extraArgs });
+        } else {
+            this.onReady();
+        }
     }
-  }
 }

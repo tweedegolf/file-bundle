@@ -1,52 +1,52 @@
-import filesize from 'filesize'
+import filesize from 'filesize';
 
 const months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sept',
-  'Oct',
-  'Nov',
-  'Dec',
-]
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sept',
+    'Oct',
+    'Nov',
+    'Dec',
+];
 
-export const addLeadingZeros = function(value){
-  if(value < 10){
-    return `0${value}`
-  }
-  return `${value}`
-}
+export const addLeadingZeros = function (value) {
+    if (value < 10) {
+        return `0${value}`;
+    }
+    return `${value}`;
+};
 
-export const formatDate = function(millis, format = 'dMy'){
-  let d = new Date(millis)
-  let year = d.getFullYear()
-  let month = d.getMonth()
-  let date = d.getDate()
-  let hours = d.getHours()
-  let minutes = d.getMinutes()
+export const formatDate = function (millis, format = 'dMy') {
+    const d = new Date(millis);
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const date = d.getDate();
+    const hours = d.getHours();
+    const minutes = d.getMinutes();
 
-  switch(format){
+    switch (format) {
     case 'dMy':
-      return `${date} ${months[month]} ${year}`
+        return `${date} ${months[month]} ${year}`;
 
     case 'd-m-y':
-      return `${date}-${month + 1}-${year}`
+        return `${date}-${month + 1}-${year}`;
 
     case 'y-mm-dd':
-      return `${year}-${addLeadingZeros(month + 1)}-${addLeadingZeros(date)}`
+        return `${year}-${addLeadingZeros(month + 1)}-${addLeadingZeros(date)}`;
 
     case 'dd-mm-yyyy hh:mm':
-      return `${addLeadingZeros(date)}-${addLeadingZeros(month + 1)}-${year} ${addLeadingZeros(hours)}:${addLeadingZeros(minutes)}`
+        return `${addLeadingZeros(date)}-${addLeadingZeros(month + 1)}-${year} ${addLeadingZeros(hours)}:${addLeadingZeros(minutes)}`;
 
     default:
-      return `${date} ${months[month]} ${year}`
-  }
-}
+        return `${date} ${months[month]} ${year}`;
+    }
+};
 
 
 /**
@@ -60,30 +60,29 @@ export const formatDate = function(millis, format = 'dMy'){
  *                                   cleans up
  */
 export function cleanup(callback) {
-
   // attach user callback to the process event emitter
   // if no callback, it will still exit gracefully on Ctrl-C
-  callback = callback || (() => {});
-  process.on('cleanup', callback);
+    callback = callback || (() => {});
+    process.on('cleanup', callback);
 
   // do app specific cleaning before exiting
-  process.on('exit', function () {
-    process.emit('cleanup');
-  });
+    process.on('exit', () => {
+        process.emit('cleanup');
+    });
 
   // catch ctrl+c event and exit normally
-  process.on('SIGINT', function () {
-    console.log('Ctrl-C...');
-    process.exit(2);
-  });
+    process.on('SIGINT', () => {
+        console.log('Ctrl-C...');
+        process.exit(2);
+    });
 
-  //catch uncaught exceptions, trace, then exit normally
-  process.on('uncaughtException', function(e) {
-    console.log('Uncaught Exception...');
-    console.log(e.stack);
-    process.exit(99);
-  });
-};
+  // catch uncaught exceptions, trace, then exit normally
+    process.on('uncaughtException', (e) => {
+        console.log('Uncaught Exception...');
+        console.log(e.stack);
+        process.exit(99);
+    });
+}
 
 
 /**
@@ -92,19 +91,19 @@ export function cleanup(callback) {
  *
  * @param      {string}  url     The url to be parsed
  */
-export function getIdFromUrl(url){
-  let id = url.substring(url.lastIndexOf('/') + 1)
+export function getIdFromUrl(url) {
+    let id = url.substring(url.lastIndexOf('/') + 1);
 
-  if(isNaN(id) || id === ''){
-    id = null
-  }else{
-    id = parseInt(id, 10)
-  }
-  return id
+    if (isNaN(id) || id === '') {
+        id = null;
+    } else {
+        id = parseInt(id, 10);
+    }
+    return id;
 }
 
 
-let fileId = 100
+let fileId = 100;
 /**
  * Creates a file description object
  *
@@ -112,33 +111,33 @@ let fileId = 100
  *
  * @return     {Object}  The file description object
  */
-export function createFileDescription(data){
-  let {
+export function createFileDescription(data) {
+    const {
     name,
     size_bytes,
     mimetype,
     uniqueName,
-  } = data
+  } = data;
 
-  let create_ts = new Date().getTime()
+    const create_ts = new Date().getTime();
 
-  let file = {
-    create_ts,
-    created: formatDate(create_ts, 'dd-mm-yyyy hh:mm'),
-    id: fileId++,
-    name,
-    original: `/media/${uniqueName}`,
-    thumb: `/media/thumb/${uniqueName}`,
-    type: mimetype.replace('image/', ''),
-    size: filesize(size_bytes, {base: 10}),
-    size_bytes,
-  }
+    const file = {
+        create_ts,
+        created: formatDate(create_ts, 'dd-mm-yyyy hh:mm'),
+        id: fileId++,
+        name,
+        original: `/media/${uniqueName}`,
+        thumb: `/media/thumb/${uniqueName}`,
+        type: mimetype.replace('image/', ''),
+        size: filesize(size_bytes, { base: 10 }),
+        size_bytes,
+    };
 
-  return file
+    return file;
 }
 
 
-let folderId = 100
+let folderId = 100;
 /**
  * Creates a folder description object
  *
@@ -146,30 +145,30 @@ let folderId = 100
  *
  * @return     {Object}  The folder description object
  */
-export function createFolderDescription(data){
-  let {
+export function createFolderDescription(data) {
+    const {
     name,
     parent,
     file_count,
     folder_count,
-  } = data
+  } = data;
 
-  let create_ts = new Date().getTime()
+    const create_ts = new Date().getTime();
 
-  let file = {
-    create_ts,
-    created: formatDate(create_ts, 'dd-mm-yyyy hh:mm'),
-    id: folderId++,
-    name,
-    file_count,
-    folder_count,
-    parent,
-    thumb: null,
-    size: '',
-    size_bytes: 0,
-    type: 'folder',
-  }
+    const file = {
+        create_ts,
+        created: formatDate(create_ts, 'dd-mm-yyyy hh:mm'),
+        id: folderId++,
+        name,
+        file_count,
+        folder_count,
+        parent,
+        thumb: null,
+        size: '',
+        size_bytes: 0,
+        type: 'folder',
+    };
 
-  return file
+    return file;
 }
 

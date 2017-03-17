@@ -1,9 +1,9 @@
-import {waitFor} from './util'
-import config from './config'
+import { waitFor } from './util';
+import config from './config';
 
 // declare functions
-let openFolder // main function
-let check // check if the folder has been opened
+let openFolder; // main function
+let check; // check if the folder has been opened
 
 
 /**
@@ -26,54 +26,55 @@ let check // check if the folder has been opened
  * @return     {void}      no return value
  */
 openFolder = (conf) => {
-  let {
+    const {
     id,
     page,
     index = null,
     name = null,
     onError,
-  } = conf
+  } = conf;
 
-  let data
-  waitFor({
-    onTest(){
-      data = page.evaluate(function(i, n){
+    let data;
+    waitFor({
+        onTest() {
+            data = page.evaluate((i, n) => {
         // get the table row representing the folder by index or by folder name
-        let folders = document.querySelectorAll('tr.folder')
-        let r, folder
-        if(folders){
+                const folders = document.querySelectorAll('tr.folder');
+                let r,
+                    folder;
+                if (folders) {
           // no index passed, so we search by folder name
-          if(i === null){
-            i = 0
-            for(let f of Array.from(folders)){
-              if(f.querySelector('td.name').innerHTML === n){
-                folder = f
-                break
-              }
-              i++
-            }
-          }
-          folder = folders[i]
-          n = folder.querySelector('td.name').innerHTML
-          r = folder.getBoundingClientRect()
-          folder.click()
-        }
-        return {
-          name: n,
-          rect: r
-        }
-      }, index, name)
-      return data.name !== ''
-    },
-    onReady(){
-      //page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
-      check({...conf, ...data})
-    },
-    onError(error){
-      onError({id, error})
-    }
-  })
-}
+                    if (i === null) {
+                        i = 0;
+                        for (const f of Array.from(folders)) {
+                            if (f.querySelector('td.name').innerHTML === n) {
+                                folder = f;
+                                break;
+                            }
+                            i++;
+                        }
+                    }
+                    folder = folders[i];
+                    n = folder.querySelector('td.name').innerHTML;
+                    r = folder.getBoundingClientRect();
+                    folder.click();
+                }
+                return {
+                    name: n,
+                    rect: r,
+                };
+            }, index, name);
+            return data.name !== '';
+        },
+        onReady() {
+      // page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
+            check({ ...conf, ...data });
+        },
+        onError(error) {
+            onError({ id, error });
+        },
+    });
+};
 
 
 /**
@@ -89,48 +90,48 @@ openFolder = (conf) => {
  * @return     {void}    no return value
  */
 check = (conf) => {
-  let {
+    const {
     id,
     page,
     name,
     onReady,
-    onError
-  } = conf
+    onError,
+  } = conf;
 
-  let data
-  waitFor({
-    onTest(){
-      data = page.evaluate(function(folderName){
-        let folderNames = document.querySelectorAll('tr.folder > td.name')
-        if(typeof folderNames === 'undefined'){
-          return {loaded: false}
-        }
-        let loaded = true
-        //let names = []
-        Array.from(folderNames).forEach(n => {
-          //names.push(n.innerHTML)
-          if(n.innerHTML === folderName){
-            loaded = false
-          }
-        })
-        return {
-          loaded,
-          //folderNames: names,
-          numFiles: document.querySelectorAll('tr.cutable').length,
-          numFolders: document.querySelectorAll('tr.folder').length
-        }
-      }, name)
-      return data.loaded
-    },
-    onReady(){
-      page.render(`${config.SCREENSHOTS_PATH}/folder-${name}-opened.png`)
-      onReady({id, name, ...data})
-    },
-    onError(error){
-      onError({id, error})
-    }
-  })
-}
+    let data;
+    waitFor({
+        onTest() {
+            data = page.evaluate((folderName) => {
+                const folderNames = document.querySelectorAll('tr.folder > td.name');
+                if (typeof folderNames === 'undefined') {
+                    return { loaded: false };
+                }
+                let loaded = true;
+        // let names = []
+                Array.from(folderNames).forEach((n) => {
+          // names.push(n.innerHTML)
+                    if (n.innerHTML === folderName) {
+                        loaded = false;
+                    }
+                });
+                return {
+                    loaded,
+          // folderNames: names,
+                    numFiles: document.querySelectorAll('tr.cutable').length,
+                    numFolders: document.querySelectorAll('tr.folder').length,
+                };
+            }, name);
+            return data.loaded;
+        },
+        onReady() {
+            page.render(`${config.SCREENSHOTS_PATH}/folder-${name}-opened.png`);
+            onReady({ id, name, ...data });
+        },
+        onError(error) {
+            onError({ id, error });
+        },
+    });
+};
 
 
-export default openFolder
+export default openFolder;

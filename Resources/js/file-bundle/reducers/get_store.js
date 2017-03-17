@@ -1,10 +1,10 @@
-import {applyMiddleware, createStore, combineReducers} from 'redux'
-import createLogger from 'redux-logger'
-//import thunkMiddleware from 'redux-thunk'
-import {ui, uiInitialState} from '../reducers/ui_reducer'
-import {tree, treeInitialState} from '../reducers/tree_reducer'
+import { applyMiddleware, createStore, combineReducers } from 'redux';
+import createLogger from 'redux-logger';
+// import thunkMiddleware from 'redux-thunk'
+import { ui, uiInitialState } from '../reducers/ui_reducer';
+import { tree, treeInitialState } from '../reducers/tree_reducer';
 
-let store = null
+let store = null;
 
 /**
  * Singleton function that returns the global Redux state. Sometimes we need to
@@ -13,20 +13,20 @@ let store = null
  * instance if it has already been created.
  */
 export default function getStore() {
-  if(store === null){
-    store = createStore(
+    if (store === null) {
+        store = createStore(
       combineReducers({
-        ui,
-        tree,
+          ui,
+          tree,
       }), {
-        ui: uiInitialState,
-        tree: treeInitialState,
+          ui: uiInitialState,
+          tree: treeInitialState,
       },
       applyMiddleware(
-        //thunkMiddleware,
+        // thunkMiddleware,
         createLogger(),
-      )
-    )
-  }
-  return store
+      ),
+    );
+    }
+    return store;
 }

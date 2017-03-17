@@ -1,22 +1,20 @@
 {
-  "extends": "airbnb",
-  "rules": {
-    "arrow-body-style": [1],
-    "indent": [2,4],
-    "max-len": 1,
-    "camelcase": 1,
-    "class-methods-use-this": 1,
-    "no-param-reassign": 1,
-    "no-unused-vars": ["warn", { "vars": "all", "args": "after-used" }],
-    "react/jsx-boolean-value": 0,
-    "react/jsx-indent": [2,4],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "react/no-unused-prop-types": [0]
-  },
-  "settings": {
-    "import/resolver": {
-      "babel-module": {}
+    "extends": "airbnb",
+    "rules": {
+        "arrow-body-style": [1],
+        "indent": [2,4],
+        "max-len": 1,
+        "camelcase": 1,
+        "class-methods-use-this": 1,
+        "no-param-reassign": 1,
+        "no-unused-vars": ["warn", { "vars": "all", "args": "after-used" }],
+        "react/jsx-boolean-value": 0,
+        "react/jsx-indent": [2,4],
+        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+        "react/no-unused-prop-types": [0]
     },
-    "classes": true
-  }
+    "settings": {
+        "classes": true
+    },
+    "parser": "babel-eslint"
 }

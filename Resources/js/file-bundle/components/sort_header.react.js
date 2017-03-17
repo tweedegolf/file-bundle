@@ -13,7 +13,7 @@ export default class SortHeader extends React.Component {
         this.class_names = {
             name: 'name',
             size_bytes: 'size',
-            create_ts: 'date'
+            create_ts: 'date',
         };
     }
 
@@ -24,7 +24,7 @@ export default class SortHeader extends React.Component {
             sort_class = this.props.ascending ? 'fa fa-sort-down' : 'fa fa-sort-up';
         }
 
-        let className = 'sort ' + this.class_names[this.props.column];
+        const className = `sort ${this.class_names[this.props.column]}`;
 
         return (
             <th onClick={this.props.sortBy.bind(this, this.props.column)} className={className}>

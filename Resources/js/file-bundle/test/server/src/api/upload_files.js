@@ -6,22 +6,22 @@
  * Note: unlike the real server, currently there are no restraints implemented
  * concerning file type of file size.
  */
-import fs from 'fs'
-import path from 'path'
-import gm from 'gm'
-import database from '../database'
-import {cleanup, getIdFromUrl, createFileDescription} from '../util'
+import fs from 'fs';
+import path from 'path';
+import gm from 'gm';
+import database from '../database';
+import { cleanup, getIdFromUrl, createFileDescription } from '../util';
 
 // compile the path to the directory where files will be saved
-const mediaDir = process.argv[1].replace('src/index.js', 'media')
-console.log('media dir:', mediaDir)
+const mediaDir = process.argv[1].replace('src/index.js', 'media');
+console.log('media dir:', mediaDir);
 // this array stores all the files that are uploaded during a session; by
 // keeping track of the uploads we can easily remove them from disk after the
 // node process stops, see cleanup function at the very bottom of this file.
-const sessionUploads = []
+const sessionUploads = [];
 
 // uncomment this if you want to use imageMagick instead of graphicsMagick
-gm.subClass({imageMagick: true})
+gm.subClass({ imageMagick: true });
 
 /**
  * Returns a promise that creates a thumbnail from an uploaded picture
@@ -32,39 +32,39 @@ gm.subClass({imageMagick: true})
  *                        Note: reject is never called because the promise will
  *                        be stored in an array and called by Promise.all()
  */
-function createThumbPromise(uniqueName){
+function createThumbPromise(uniqueName) {
   // create a path for thumbs, after all uploaded files have been saved we
   // create thumbnails for images
-  let file = path.join(mediaDir, uniqueName)
-  let thumb = path.join(mediaDir, 'thumb', uniqueName)
+    const file = path.join(mediaDir, uniqueName);
+    const thumb = path.join(mediaDir, 'thumb', uniqueName);
 
-  return new Promise(resolve => {
-    gm(file)
+    return new Promise((resolve) => {
+        gm(file)
     .resize(24)
-    .write(thumb, err => {
-      if(typeof err === 'undefined'){
+    .write(thumb, (err) => {
+        if (typeof err === 'undefined') {
         // add the path to the session uploads so we can clean them up when
         // the server stops or crashes
-        resolve()
-        sessionUploads.push(thumb)
-      }else{
+            resolve();
+            sessionUploads.push(thumb);
+        } else {
         // Resolve with error messages instead of reject. We add these error
         // messages to the errors array and this array will be sent back to the
         // client to we can display errors if necessary -> No: errors are
         // disabled; in case of an error, the original file will double as a
         // thumbnail
 
-        //console.error(err)
-        //let origName = path.basename(uniqueName).substring()
-        //origName = origName.substring(origName.indexOf('_') + 1)
-        //resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])
+        // console.error(err)
+        // let origName = path.basename(uniqueName).substring()
+        // origName = origName.substring(origName.indexOf('_') + 1)
+        // resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])
 
-        resolve()
-        fs.createReadStream(file).pipe(fs.createWriteStream(thumb));
-        sessionUploads.push(thumb)
-      }
-    })
-  })
+            resolve();
+            fs.createReadStream(file).pipe(fs.createWriteStream(thumb));
+            sessionUploads.push(thumb);
+        }
+    });
+    });
 }
 
 
@@ -74,73 +74,73 @@ function createThumbPromise(uniqueName){
  * @param      {ServerRequest}   req     The request of the http call
  * @param      {ServerResponse}  res     The response of the http call
  */
-export function uploadFiles(req, res){
-  let errors = {}
-  let uploads = []
-  let paths = []
-  let folderId = getIdFromUrl(req.url)
+export function uploadFiles(req, res) {
+    const errors = {};
+    const uploads = [];
+    const paths = [];
+    const folderId = getIdFromUrl(req.url);
 
-  console.log(`[API] uploading files to folder ${folderId}`)
+    console.log(`[API] uploading files to folder ${folderId}`);
 
-  if(req.busboy) {
-    req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    if (req.busboy) {
+        req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
       // create a unique name, this allows users to upload the same file, or files with the same name more than once
-      let uniqueName = `${new Date().getTime().toString(16)}_${filename}`
+            const uniqueName = `${new Date().getTime().toString(16)}_${filename}`;
       // create the path to the save location
-      let saveTo = path.join(mediaDir, uniqueName)
-      let writer = fs.createWriteStream(saveTo)
+            const saveTo = path.join(mediaDir, uniqueName);
+            const writer = fs.createWriteStream(saveTo);
 
-      //get the file's size in bytes
-      let sizeBytes = 0
-      file.on('data', data => {
-        sizeBytes += data.length
-      })
+      // get the file's size in bytes
+            let sizeBytes = 0;
+            file.on('data', (data) => {
+                sizeBytes += data.length;
+            });
 
-      file.on('end', () => {
+            file.on('end', () => {
         // add the path to the session uploads so we can clean them up when the
         // server stops or crashes
-        sessionUploads.push(saveTo)
+                sessionUploads.push(saveTo);
         // add the unique filename to the paths array; this will be used to create
         // thumbnails of images after all files have been uploaded
-        if(mimetype.indexOf('image') === 0){
-          paths.push(uniqueName)
-        }
-        console.log(filename, mimetype)
+                if (mimetype.indexOf('image') === 0) {
+                    paths.push(uniqueName);
+                }
+                console.log(filename, mimetype);
 
         // create a file description object and add it to the uploads array;
         // this array will be sent back to the client
-        let fileDescr = createFileDescription({
-          name: filename,
-          size_bytes: sizeBytes,
-          uniqueName,
-          mimetype,
-        })
-        uploads.push(fileDescr)
-      })
+                const fileDescr = createFileDescription({
+                    name: filename,
+                    size_bytes: sizeBytes,
+                    uniqueName,
+                    mimetype,
+                });
+                uploads.push(fileDescr);
+            });
 
-      file.pipe(writer)
-    })
+            file.pipe(writer);
+        });
 
-    req.busboy.on('finish', () => {
-      let promises = paths.map(filePath => createThumbPromise(filePath))
-      Promise.all(promises).then(
-        values => {
+        req.busboy.on('finish', () => {
+            const promises = paths.map(filePath => createThumbPromise(filePath));
+            Promise.all(promises).then(
+        (values) => {
           // values are error messages that were yielded while creating thumbnails
-          values.forEach(value => {
-            if(typeof value !== 'undefined'){
-              errors[value[0]] = [value[1]]
-            }
-          })
+            values.forEach((value) => {
+                if (typeof value !== 'undefined') {
+                    errors[value[0]] = [value[1]];
+                }
+            });
           // store the file description object in the database
-          database.addFiles(uploads, folderId)
-          res.setHeader('Content-Type', 'application/json')
-          res.send(JSON.stringify({uploads, errors}))
-        }
-      )
-    })
+            database.addFiles(uploads, folderId);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify({ uploads, errors }));
+        },
+      );
+        });
 
-    req.pipe(req.busboy)
-  }
+        req.pipe(req.busboy);
+    }
 }
 
 
@@ -149,7 +149,7 @@ export function uploadFiles(req, res){
 // state. The cleanup function simply unlinks all uploaded files and thumbs
 // created during this session.
 cleanup(() => {
-  sessionUploads.forEach(file => {
-    fs.unlink(file)
-  })
-})
+    sessionUploads.forEach((file) => {
+        fs.unlink(file);
+    });
+});

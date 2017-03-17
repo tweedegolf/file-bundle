@@ -42,7 +42,7 @@
   *                                  ppt, pptx, xls, xlsx
   */
 
-import request from 'superagent'
+import request from 'superagent';
 
 
 /**
@@ -54,11 +54,11 @@ import request from 'superagent'
  *
  * @type       {string}
  */
-let server = '' // if no environment variable has been set, we don't need to specify a server url
-let port = process.env.PORT
-//console.log(process.env.PORT)
-if(typeof port !== 'undefined' && port !== 80 && port !== 8080){
-  server = `http://localhost:${port}`
+let server = ''; // if no environment variable has been set, we don't need to specify a server url
+const port = process.env.PORT;
+// console.log(process.env.PORT)
+if (typeof port !== 'undefined' && port !== 80 && port !== 8080) {
+    server = `http://localhost:${port}`;
 }
 
 
@@ -71,15 +71,15 @@ if(typeof port !== 'undefined' && port !== 80 && port !== 8080){
  * @return     {void}      Calls success or error callback
  */
 const deleteFile = (file_id, onSuccess, onError) => {
-  var req = request.post('/admin/file/delete/' + file_id)
-  req.end((err, res) => {
-    if (err) {
-      onError([res.text, res.error.message, err.toString()])
-    } else {
-      onSuccess()
-    }
-  })
-}
+    const req = request.post(`/admin/file/delete/${file_id}`);
+    req.end((err, res) => {
+        if (err) {
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess();
+        }
+    });
+};
 
 /**
  * Moves a file to another folder
@@ -93,17 +93,17 @@ const deleteFile = (file_id, onSuccess, onError) => {
  */
 const paste = (file_ids, folder_id, onSuccess, onError) => {
   // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
-  let url = server + '/admin/file/move' + (folder_id ? '/' + folder_id : '')
-  var req = request.post(url).type('form')
-  req.send({'files[]': file_ids})
-  req.end((err, res) => {
-    if (err) {
-      onError([res.text, res.error.message, err.toString()])
-    } else {
-      onSuccess()
-    }
-  })
-}
+    const url = `${server}/admin/file/move${folder_id ? `/${folder_id}` : ''}`;
+    const req = request.post(url).type('form');
+    req.send({ 'files[]': file_ids });
+    req.end((err, res) => {
+        if (err) {
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess();
+        }
+    });
+};
 
 /**
  * Adds a new folder to the current folder
@@ -116,17 +116,17 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const addFolder = (name, folder_id, onSuccess, onError) => {
-  let url = server + '/admin/file/create/folder' + (folder_id !== null ? '/' + folder_id : '')
-  var req = request.post(url).type('form')
-  req.send({name})
-  req.end((err, res) => {
-    if (err) {
-      onError([res.text, res.error.message, err.toString()])
-    } else {
-      onSuccess(res.body.new_folders, res.body.errors)
-    }
-  })
-}
+    const url = `${server}/admin/file/create/folder${folder_id !== null ? `/${folder_id}` : ''}`;
+    const req = request.post(url).type('form');
+    req.send({ name });
+    req.end((err, res) => {
+        if (err) {
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess(res.body.new_folders, res.body.errors);
+        }
+    });
+};
 
 /**
  * Delete a folder, folder has to be emptied first
@@ -137,17 +137,17 @@ const addFolder = (name, folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const deleteFolder = (folder_id, onSuccess, onError) => {
-  let url = server + '/admin/file/delete/folder/' + folder_id
-  var req = request.post(url).type('form')
-  req.end((err, res) => {
-    if (err) {
-      //console.log(err)
-      onError([res.text, res.error.message, err.toString()])
-    } else {
-      onSuccess()
-    }
-  })
-}
+    const url = `${server}/admin/file/delete/folder/${folder_id}`;
+    const req = request.post(url).type('form');
+    req.end((err, res) => {
+        if (err) {
+      // console.log(err)
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess();
+        }
+    });
+};
 
 /**
  * Upload new files to folder
@@ -162,20 +162,20 @@ const deleteFolder = (folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const upload = (file_list, folder_id, onSuccess, onError) => {
-  let url = server + '/admin/file/upload' + (folder_id ? '/' + folder_id : '')
-  var req = request.post(url)
-  file_list.forEach(file => {
-    //console.log(file)
-    req.attach(file.name, file)
-  })
-  req.end((err, res) => {
-    if (err) {
-      onError([res.text, res.error.message, err.toString()])
-    } else {
-      onSuccess(res.body.errors, res.body.uploads)
-    }
-  })
-}
+    const url = `${server}/admin/file/upload${folder_id ? `/${folder_id}` : ''}`;
+    const req = request.post(url);
+    file_list.forEach((file) => {
+    // console.log(file)
+        req.attach(file.name, file);
+    });
+    req.end((err, res) => {
+        if (err) {
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess(res.body.errors, res.body.uploads);
+        }
+    });
+};
 
 
 /**
@@ -187,18 +187,18 @@ const upload = (file_list, folder_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const openFolder = (folder_id, onSuccess, onError) => {
-  let url = server + '/admin/file/list' + (folder_id ? '/' + folder_id : '')
-  //let url = '/admin/file/list/999'
-  var req = request.get(url)
-  req.end((err, res) => {
-    if (err) {
-      //console.log(err, res)
-      onError([res.text, res.error.message, err.toString()])
-    } else {
-      onSuccess(res.body.folders, res.body.files)
-    }
-  })
-}
+    const url = `${server}/admin/file/list${folder_id ? `/${folder_id}` : ''}`;
+  // let url = '/admin/file/list/999'
+    const req = request.get(url);
+    req.end((err, res) => {
+        if (err) {
+      // console.log(err, res)
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess(res.body.folders, res.body.files);
+        }
+    });
+};
 
 
 /**
@@ -209,7 +209,7 @@ const openFolder = (folder_id, onSuccess, onError) => {
  *
  * @type       {number}
  */
-const delay = 1000
+const delay = 1000;
 
 export default {
 /**
@@ -220,11 +220,11 @@ export default {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-  deleteFile(...args){
-    setTimeout(() => {
-      deleteFile(...args)
-    }, delay)
-  },
+    deleteFile(...args) {
+        setTimeout(() => {
+            deleteFile(...args);
+        }, delay);
+    },
 /**
  * Moves a file to another folder
  *
@@ -235,11 +235,11 @@ export default {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-  paste(...args){
-    setTimeout(() => {
-      paste(...args)
-    }, delay)
-  },
+    paste(...args) {
+        setTimeout(() => {
+            paste(...args);
+        }, delay);
+    },
 /**
  * Adds a new folder to the current folder
  *
@@ -250,11 +250,11 @@ export default {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-  addFolder(...args){
-    setTimeout(() => {
-      addFolder(...args)
-    }, delay)
-  },
+    addFolder(...args) {
+        setTimeout(() => {
+            addFolder(...args);
+        }, delay);
+    },
 /**
  * Delete a folder, folder has to be emptied first
  *
@@ -263,11 +263,11 @@ export default {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-  deleteFolder(...args){
-    setTimeout(() => {
-      deleteFolder(...args)
-    }, delay)
-  },
+    deleteFolder(...args) {
+        setTimeout(() => {
+            deleteFolder(...args);
+        }, delay);
+    },
 /**
  * Upload new files to folder
  *
@@ -280,11 +280,11 @@ export default {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-  upload(...args){
-    setTimeout(() => {
-      upload(...args)
-    }, delay)
-  },
+    upload(...args) {
+        setTimeout(() => {
+            upload(...args);
+        }, delay);
+    },
 /**
  * Loads the contents of a folder
  *
@@ -293,9 +293,9 @@ export default {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-  openFolder(...args){
-    setTimeout(() => {
-      openFolder(...args)
-    }, delay)
-  },
-}
+    openFolder(...args) {
+        setTimeout(() => {
+            openFolder(...args);
+        }, delay);
+    },
+};
