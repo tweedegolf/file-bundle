@@ -1,8 +1,11 @@
 {
     "extends": "airbnb",
+    "env": {
+        "browser": true
+    },
     "rules": {
         "arrow-body-style": [1],
-        "indent": [2,4],
+        "indent": [2, 4],
         "max-len": 1,
         "camelcase": 1,
         "class-methods-use-this": 1,

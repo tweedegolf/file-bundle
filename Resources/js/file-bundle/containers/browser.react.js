@@ -3,17 +3,19 @@
  *             application are child of this component, as such, it ties
  *             together the application.
  */
-
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
+import R from 'ramda';
 import List from '../components/list.react';
 import SortHeader from '../components/sort_header.react';
 import Toolbar from '../components/toolbar.react';
 import SelectedFiles from '../components/selected_files.react';
-import Errors from '../components/errors.react';
+import Errors, { errorShape } from '../components/errors.react';
 import Actions from '../actions';
 import { sortBy } from '../util/util';
+import { fileShape } from '../components/file.react';
+import { folderShape } from '../components/folder.react';
 
 const mapStateToProps = (state) => {
     const {
@@ -47,24 +49,44 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = function (dispatch) {
-    return {
-        dispatch,
-    };
-};
+const mapDispatchToProps = dispatch => ({ dispatch });
 
 // Use the @connect decorator to make the state available as properties
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Browser extends React.Component {
 
-    constructor(props) {
-        super(props);
+    static propTypes = {
+        browser: PropTypes.bool.isRequired,
+        options: PropTypes.shape({
+            selected: PropTypes.number,
+        }),
+        scroll_position: PropTypes.number.isRequired,
+        sort: PropTypes.string.isRequired,
+        ascending: PropTypes.bool.isRequired,
+        expanded: PropTypes.bool.isRequired,
+        clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
+        selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
+        files: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
+        folders: PropTypes.arrayOf(PropTypes.shape(folderShape)).isRequired,
+        current_folder: PropTypes.string.isRequired,
+        adding_folder: PropTypes.bool.isRequired,
+        uploading_files: PropTypes.bool.isRequired,
+        multiple: PropTypes.bool.isRequired,
+        preview: PropTypes.string,
+        loading_folder: PropTypes.string,
+        errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
     }
 
+    static defaultProps = {
+        options: null,
+        preview: null,
+        scroll_position: null,
+        loading_folder: null,
+    }
 
     componentDidMount() {
-    // Filepicker mode: the selected files can be set in the dataset of the HTML
-    // element.
+        // Filepicker mode: the selected files can be set in the dataset of the HTML
+        // element.
         if (this.props.browser === false) {
             let selected = null;
             if (this.props.options !== null) {
@@ -73,39 +95,36 @@ export default class Browser extends React.Component {
             Actions.init(selected);
         }
 
-    // Browser mode: by default, the browser is not expanded, therefor we have
-    // to call the expandBrowser action to expand the browser
+        // Browser mode: by default, the browser is not expanded, therefor we have
+        // to call the expandBrowser action to expand the browser
         if (this.props.browser === true) {
-      // The keydown listener listens for arrow up and down keys allowing the
-      // user to select files and folders with her keyboard.
+            // The keydown listener listens for arrow up and down keys allowing the
+            // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown.bind(this), false);
             Actions.expandBrowser();
             Actions.init();
         }
     }
 
+    componentDidUpdate() {
+        // After the component has been updated, we might need to scroll the file
+        // list. For instance after new files have been uploaded, the file list
+        // needs to be scrolled to the top (scroll position 0) to make sure that the
+        // newly uploaded files are in the visible area of the scroll list. Another
+        // use case might be when the user has searched for a certain file; if
+        // found, the scroll list can highlight the file an scroll it into the
+        // visible area if needed.
+        if (this.props.scroll_position !== null) {
+            this.containerRef.scrollTop = this.props.scroll_position;
+            Actions.setScrollPosition(null);
+        }
+    }
 
     componentWillUnmount() {
         if (this.props.browser) {
             document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
         }
     }
-
-
-    componentDidUpdate() {
-    // After the component has been updated, we might need to scroll the file
-    // list. For instance after new files have been uploaded, the file list
-    // needs to be scrolled to the top (scroll position 0) to make sure that the
-    // newly uploaded files are in the visible area of the scroll list. Another
-    // use case might be when the user has searched for a certain file; if
-    // found, the scroll list can highlight the file an scroll it into the
-    // visible area if needed.
-        if (this.props.scroll_position !== null) {
-            this.refs.container.scrollTop = this.props.scroll_position;
-            Actions.setScrollPosition(null);
-        }
-    }
-
 
     render() {
         const headers = Object.entries({
@@ -150,7 +169,7 @@ export default class Browser extends React.Component {
         const browser_class = `file-browser text-left${this.props.browser ? ' fullpage' : ''}`;
 
         let preview = null;
-        if (this.props.preview !== null) {
+        if (R.isNil(this.props.preview) === false) {
             preview = (<div
               className="preview-image"
               onClick={this.onPreview.bind(this, null)}
@@ -168,7 +187,7 @@ export default class Browser extends React.Component {
                         <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
                             {toolbar}
                             <Errors errors={this.props.errors} onDismiss={this.onDismiss.bind(this)} />
-                            <div ref="container" className="table-container">
+                            <div ref={(div) => { this.containerRef = div; }} className="table-container">
                                 <table className="table table-condensed">
                                     <thead>
                                         <tr>

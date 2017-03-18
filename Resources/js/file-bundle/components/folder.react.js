@@ -8,6 +8,19 @@
 
 import React, { PropTypes } from 'react';
 
+export const folderShape = {
+    create_ts: PropTypes.number.isRequired,
+    created: PropTypes.string.isRequired,
+    file_count: PropTypes.number.isRequired,
+    folder_count: PropTypes.number.isRequired,
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    parent: PropTypes.string,
+    type: PropTypes.string.isRequired,
+    size: PropTypes.string.isRequired,
+    size_bytes: PropTypes.number.isRequired,
+};
+
 const Folder = (props) => {
     const folder = props.folder;
     const className = `folder${folder.new ? ' success' : ''}${props.hovering ? ' selected' : ''}`;
@@ -75,18 +88,7 @@ const Folder = (props) => {
 };
 
 Folder.propTypes = {
-    folder: PropTypes.shape({
-        create_ts: PropTypes.number.isRequired,
-        created: PropTypes.string.isRequired,
-        file_count: PropTypes.number.isRequired,
-        folder_count: PropTypes.number.isRequired,
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-        parent: PropTypes.string,
-        type: PropTypes.string.isRequired,
-        size: PropTypes.string.isRequired,
-        size_bytes: PropTypes.number.isRequired,
-    }).isRequired,
+    folder: PropTypes.shape(folderShape).isRequired,
     hovering: PropTypes.bool.isRequired,
     onDelete: PropTypes.func.isRequired,
     onOpenFolder: PropTypes.func.isRequired,

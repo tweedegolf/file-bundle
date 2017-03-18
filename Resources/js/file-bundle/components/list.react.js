@@ -4,7 +4,7 @@
  *             folder.react.js
  */
 import React, { PropTypes } from 'react';
-import File from './file.react';
+import File, { filePropTypes} from './file.react';
 import Folder from './folder.react';
 
 export default class List extends React.Component {

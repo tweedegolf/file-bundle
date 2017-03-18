@@ -18,7 +18,7 @@ const icons = {
     xlsx: 'file-excel-o',
 };
 
-const filePropTypeShape = {
+export const fileShape = {
     create_ts: PropTypes.number.isRequired,
     created: PropTypes.string.isRequired,
     id: PropTypes.number.isRequired,
@@ -33,13 +33,13 @@ const filePropTypeShape = {
 export default class File extends React.Component {
 
     static propTypes = {
-        file: PropTypes.shape(filePropTypeShape).isRequired,
+        file: PropTypes.shape(fileShape).isRequired,
         onConfirmDelete: PropTypes.func.isRequired,
         onPreview: PropTypes.func.isRequired,
         onSelect: PropTypes.func.isRequired,
         onDelete: PropTypes.func.isRequired,
-        clipboard: PropTypes.arrayOf(PropTypes.shape(filePropTypeShape)).isRequired,
-        selected: PropTypes.arrayOf(PropTypes.shape(filePropTypeShape)).isRequired,
+        clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
+        selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         hovering: PropTypes.bool.isRequired,
         browser: PropTypes.bool.isRequired,
         confirm_delete: PropTypes.number,
