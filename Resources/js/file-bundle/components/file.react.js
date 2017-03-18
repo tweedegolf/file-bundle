@@ -154,7 +154,8 @@ export default class File extends React.Component {
         if (file.thumb) {
             const p = {
                 src: file.thumb,
-                onClick: () => {
+                onClick: (e) => {
+                    e.stopPropagation();
                     this.props.onPreview(file.original);
                 },
             };

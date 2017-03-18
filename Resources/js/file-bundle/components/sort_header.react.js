@@ -5,32 +5,40 @@
  *             sorted by that column. Clicking again on the currently selected
  *             column will reverse the order.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
-export default class SortHeader extends React.Component {
-    constructor(props) {
-        super(props);
-        this.class_names = {
-            name: 'name',
-            size_bytes: 'size',
-            create_ts: 'date',
-        };
+const columns = {
+    name: 'name',
+    size_bytes: 'size',
+    create_ts: 'date',
+};
+
+const SortHeader = (props) => {
+    let sortClass = null;
+
+    if (props.sort === props.column) {
+        sortClass = props.ascending ? 'fa fa-sort-down' : 'fa fa-sort-up';
     }
 
-    render() {
-        let sort_class = null;
+    const p = {
+        onClick: () => {
+            props.sortBy(props.column);
+        },
+        className: `sort ${columns[props.column]}`,
+    };
 
-        if (this.props.sort === this.props.column) {
-            sort_class = this.props.ascending ? 'fa fa-sort-down' : 'fa fa-sort-up';
-        }
+    return (<th {...p}>
+        {props.name}
+        <span className={sortClass} />
+    </th>);
+};
 
-        const className = `sort ${this.class_names[this.props.column]}`;
+SortHeader.propTypes = {
+    column: PropTypes.string.isRequired,
+    sort: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    ascending: PropTypes.bool.isRequired,
+    sortBy: PropTypes.func.isRequired,
+};
 
-        return (
-            <th onClick={this.props.sortBy.bind(this, this.props.column)} className={className}>
-                {this.props.name}
-                <span className={sort_class} />
-            </th>
-        );
-    }
-}
+export default SortHeader;

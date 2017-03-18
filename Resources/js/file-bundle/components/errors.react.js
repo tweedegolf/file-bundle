@@ -74,7 +74,7 @@ const createErrors = ({ errors, onDismiss }) => mapIndexed((error, index) => {
 const Errors = props => <div>{createErrors(props)}</div>;
 
 Errors.propTypes = {
-    errors: PropTypes.arrayOf(errorShape).isRequired,
+    errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
     onDismiss: PropTypes.func.isRequired,
 };
 

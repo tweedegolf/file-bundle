@@ -4,7 +4,7 @@
  *             folder.react.js
  */
 import React, { PropTypes } from 'react';
-import File, { filePropTypes} from './file.react';
+import File, { fileShape } from './file.react';
 import Folder from './folder.react';
 
 export default class List extends React.Component {
@@ -14,9 +14,22 @@ export default class List extends React.Component {
         folders: PropTypes.arrayOf(Folder.propTypes.folder).isRequired,
         browser: PropTypes.bool.isRequired,
         images_only: PropTypes.bool.isRequired,
+        onSelect: PropTypes.func.isRequired,
+        onPreview: PropTypes.func.isRequired,
+        onDeleteFile: PropTypes.func.isRequired,
+        onDeleteFolder: PropTypes.func.isRequired,
+        onConfirmDelete: PropTypes.func.isRequired,
+        onOpenFolder: PropTypes.func.isRequired,
+        ascending: PropTypes.bool.isRequired,
+        loading: PropTypes.number,
+    }
+
+    static defaultProps = {
+        loading: null,
     }
 
     render() {
+        // console.log(this.props);
         let i = this.props.folders.length + this.props.files.length;
 
         // sorted file listing
@@ -35,12 +48,12 @@ export default class List extends React.Component {
               file={file}
               hovering={this.props.hover === --i}
               onSelect={this.props.onSelect.bind(this)}
-              onPreview={this.props.onPreview.bind(this)}
+              onPreview={this.props.onPreview}
               selected={this.props.selected}
               clipboard={this.props.clipboard}
               browser={this.props.browser}
               confirm_delete={this.props.confirm_delete}
-              onDelete={this.props.onDelete.bind(this)}
+              onDelete={this.props.onDeleteFile}
               onConfirmDelete={this.props.onConfirmDelete.bind(this)}
             />);
         });
@@ -57,8 +70,8 @@ export default class List extends React.Component {
               key={`folder-${folder.id}`}
               parent={false}
               folder={folder}
-              onOpenFolder={this.props.onOpenFolder.bind(this)}
-              onDelete={this.props.onDeleteFolder.bind(this)}
+              onOpenFolder={this.props.onOpenFolder}
+              onDelete={this.props.onDeleteFolder}
               loading={this.props.loading}
             />);
 

@@ -9,16 +9,16 @@
 import React, { PropTypes } from 'react';
 
 export const folderShape = {
-    create_ts: PropTypes.number.isRequired,
-    created: PropTypes.string.isRequired,
+    create_ts: PropTypes.number,
+    created: PropTypes.string,
     file_count: PropTypes.number.isRequired,
     folder_count: PropTypes.number.isRequired,
-    id: PropTypes.number.isRequired,
+    id: PropTypes.number, // the id of the root folder is 'null'
     name: PropTypes.string.isRequired,
     parent: PropTypes.string,
-    type: PropTypes.string.isRequired,
-    size: PropTypes.string.isRequired,
-    size_bytes: PropTypes.number.isRequired,
+    type: PropTypes.string,
+    size: PropTypes.string,
+    size_bytes: PropTypes.number,
 };
 
 const Folder = (props) => {
@@ -89,11 +89,17 @@ const Folder = (props) => {
 
 Folder.propTypes = {
     folder: PropTypes.shape(folderShape).isRequired,
-    hovering: PropTypes.bool.isRequired,
-    onDelete: PropTypes.func.isRequired,
+    hovering: PropTypes.bool,
+    onDelete: PropTypes.func,
     onOpenFolder: PropTypes.func.isRequired,
-    loading: PropTypes.number.isRequired,
+    loading: PropTypes.number,
     parent: PropTypes.bool.isRequired,
+};
+
+Folder.defaultProps = {
+    hovering: null,
+    loading: null, // when loading is 'null' it actually means that the root folder is loading
+    onDelete: null, // parent folder on top of list cannot be deleted
 };
 
 export default Folder;

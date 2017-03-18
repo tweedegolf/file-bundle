@@ -59,29 +59,38 @@ export default class Browser extends React.Component {
         browser: PropTypes.bool.isRequired,
         options: PropTypes.shape({
             selected: PropTypes.number,
+            multiple: PropTypes.bool,
+            images_only: PropTypes.bool,
         }),
-        scroll_position: PropTypes.number.isRequired,
-        sort: PropTypes.string.isRequired,
+        scroll_position: PropTypes.number,
+        sort: PropTypes.string,
         ascending: PropTypes.bool.isRequired,
         expanded: PropTypes.bool.isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         files: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         folders: PropTypes.arrayOf(PropTypes.shape(folderShape)).isRequired,
-        current_folder: PropTypes.string.isRequired,
+        current_folder: PropTypes.shape(folderShape),
         adding_folder: PropTypes.bool.isRequired,
         uploading_files: PropTypes.bool.isRequired,
-        multiple: PropTypes.bool.isRequired,
         preview: PropTypes.string,
-        loading_folder: PropTypes.string,
+        loading_folder: PropTypes.number,
         errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
     }
 
     static defaultProps = {
         options: null,
         preview: null,
+        sort: null,
         scroll_position: null,
         loading_folder: null,
+        current_folder: null,
+    }
+
+    constructor() {
+        super();
+        this.onSelect = this.onSelect.bind(this);
+        this.onOpenFolder = this.onOpenFolder.bind(this);
     }
 
     componentDidMount() {
@@ -134,13 +143,13 @@ export default class Browser extends React.Component {
         }).map(([column, name]) =>
             <SortHeader
               key={column}
-              sortBy={this.sortBy.bind(this)}
+              sortBy={Actions.changeSorting}
               sort={this.props.sort}
               ascending={this.props.ascending}
               column={column}
               name={name}
             />,
-    );
+        );
 
         const toolbar = (<Toolbar
           selected={this.props.selected}
@@ -148,7 +157,7 @@ export default class Browser extends React.Component {
           current_folder={this.props.current_folder}
           adding_folder={this.props.adding_folder}
           browser={this.props.browser}
-          onCut={this.onCut.bind(this)}
+          onCut={Actions.cutFiles}
           onPaste={this.onPaste.bind(this)}
           onCancel={this.onCancel.bind(this)}
           onUpload={this.onUpload.bind(this)}
@@ -161,7 +170,7 @@ export default class Browser extends React.Component {
             selected = (<SelectedFiles
               selected={this.props.selected}
               onSelect={this.onSelect.bind(this)}
-              onPreview={this.onPreview.bind(this)}
+              onPreview={Actions.onPreview}
             />);
         }
 
@@ -170,10 +179,14 @@ export default class Browser extends React.Component {
 
         let preview = null;
         if (R.isNil(this.props.preview) === false) {
-            preview = (<div
-              className="preview-image"
-              onClick={this.onPreview.bind(this, null)}
-            >
+            const p = {
+                className: 'preview-image',
+                onClick: (e) => {
+                    e.stopPropagation();
+                    Actions.showPreview(null);
+                },
+            };
+            preview = (<div {...p}>
                 <div style={{ backgroundImage: `url(${this.props.preview})` }} />
             </div>);
         }
@@ -186,7 +199,10 @@ export default class Browser extends React.Component {
                     <div className={browser_class}>
                         <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
                             {toolbar}
-                            <Errors errors={this.props.errors} onDismiss={this.onDismiss.bind(this)} />
+                            <Errors
+                              errors={this.props.errors}
+                              onDismiss={Actions.dismissError}
+                            />
                             <div ref={(div) => { this.containerRef = div; }} className="table-container">
                                 <table className="table table-condensed">
                                     <thead>
@@ -202,19 +218,20 @@ export default class Browser extends React.Component {
                                       folders={this.props.folders}
                                       current_folder={this.props.current_folder}
                                       parent_folder={this.props.parent_folder}
-                                      onSelect={this.onSelect.bind(this)}
-                                      onPreview={this.onPreview.bind(this)}
+                                      onSelect={this.onSelect}
+                                      onPreview={Actions.showPreview}
                                       hover={this.props.hover}
                                       selected={this.props.selected}
                                       clipboard={this.props.clipboard}
                                       browser={this.props.browser}
                                       confirm_delete={this.props.confirm_delete}
                                       loading={this.props.loading_folder}
+                                      ascending={this.props.ascending}
                                       images_only={this.props.options ? this.props.options.images_only : false}
-                                      onDelete={this.onDelete.bind(this)}
-                                      onDeleteFolder={this.onDeleteFolder.bind(this)}
-                                      onConfirmDelete={this.onConfirmDelete.bind(this)}
-                                      onOpenFolder={this.onOpenFolder.bind(this)}
+                                      onDeleteFile={Actions.deleteFile}
+                                      onDeleteFolder={Actions.deleteFolder}
+                                      onConfirmDelete={this.onConfirmDelete}
+                                      onOpenFolder={this.onOpenFolder}
                                     />
                                 </table>
                             </div>
@@ -224,7 +241,7 @@ export default class Browser extends React.Component {
             ? <button
               type="button"
               className="btn btn-default btn-xs collapse-button"
-              onClick={this.toggleExpand.bind(this)}
+              onClick={Actions.expandBrowser}
             >
                 <span className="fa fa-chevron-up" />
             </button>
@@ -239,7 +256,7 @@ export default class Browser extends React.Component {
                 <button
                   type="button"
                   className="btn btn-default expand-button"
-                  onClick={this.toggleExpand.bind(this)}
+                  onClick={Actions.expandBrowser}
                 >
           Bladeren
           <span className="fa fa-folder-open-o" />
@@ -260,38 +277,20 @@ export default class Browser extends React.Component {
         }
     }
 
-  // when the user clicks on the thumb of an image, a fullscreen version will
-  // be shown
-    onPreview(image_url, e) {
-        e.stopPropagation();
-        Actions.showPreview(image_url);
-    }
-
-  // user removes error from error list by clicking the cross icon next to the
-  // error message
-    onDismiss(error_id) {
-        Actions.dismissError(error_id);
-    }
-
-  // user clicks the delete button next to a file in the file list; this will
-  // trigger a confirmation popup
+      // user clicks the delete button next to a file in the file list; this will
+    // trigger a confirmation popup
     onDelete(id) {
         Actions.deleteFile(id, this.props.current_folder.id);
     }
 
-  // user confirms that she wants to delete the file by clicking OK in the
-  // confirmation popup
+    // user confirms that she wants to delete the file by clicking OK in the
+    // confirmation popup
     onConfirmDelete(id) {
         Actions.confirmDelete(id);
     }
 
     onDeleteFolder(id) {
         Actions.deleteFolder(id, this.props.current_folder.id);
-    }
-
-  // files that are currently in selected will be moved to the clipboard
-    onCut() {
-        Actions.cutFiles(this.props.current_folder.id);
     }
 
   // user cancels cut & paste action
@@ -307,20 +306,20 @@ export default class Browser extends React.Component {
   // files can be selected by clicking the checkbox in front of the filename
   // in the filelist
     onSelect(id) {
-    /**
-     * User has already clicked on the 'cut' button so she can't select files
-     * anymore until she pastes or cancels.
-     */
+        /**
+         * User has already clicked on the 'cut' button so she can't select files
+         * anymore until she pastes or cancels.
+         */
         if (this.props.clipboard.length > 0) {
             return;
         }
 
-    /**
-     * In Filepicker mode you can set the multiple option to false which
-     * restrict the user to select only one file at the time.
-     *
-     * @type       {boolean}
-     */
+        /**
+         * In Filepicker mode you can set the multiple option to false which
+         * restrict the user to select only one file at the time.
+         *
+         * @type       {boolean}
+         */
         let multiple = true;
         if (this.props.options && this.props.options.multiple) {
             multiple = this.props.options.multiple;
@@ -331,16 +330,6 @@ export default class Browser extends React.Component {
             multiple,
             browser: this.props.browser,
         });
-    }
-
-    // user has selected a different sort column or sort order in the toolbar
-    sortBy(column) {
-        Actions.changeSorting(column);
-    }
-
-    // in Filepicker mode the browser can be collapsed and expanded
-    toggleExpand() {
-        Actions.expandBrowser();
     }
 
     // user can drag and drop files onto the filebrowser to upload files

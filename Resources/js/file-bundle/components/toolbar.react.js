@@ -4,9 +4,28 @@
  *             and for creating new folders.
  */
 
-import React from 'react';
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+import { fileShape } from './file.react';
+import { folderShape } from './folder.react';
 
 export default class Toolbar extends React.Component {
+
+    static propTypes = {
+        onAddFolder: PropTypes.func.isRequired,
+        onCancel: PropTypes.func.isRequired,
+        onPaste: PropTypes.func.isRequired,
+        onCut: PropTypes.func.isRequired,
+        current_folder: PropTypes.shape(folderShape),
+        uploading: PropTypes.bool.isRequired,
+        browser: PropTypes.bool.isRequired,
+        selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
+        clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
+    }
+
+    static defaultProps = {
+        current_folder: null,
+    }
 
     constructor(props) {
         super(props);
@@ -17,7 +36,7 @@ export default class Toolbar extends React.Component {
     // hide create new folder popup if user clicks somewhere outside the popup
 /*
     addEventListener('mousedown', e => {
-      if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.refs.folder_name){
+      if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.folderName){
         this.setState({
           show_form: false
         })
@@ -26,9 +45,33 @@ export default class Toolbar extends React.Component {
 */
     }
 
+    onAddFolder() {
+        this.setState({ show_form: false });
+        const name = this.folderName.value;
+        if (name !== '') {
+            this.props.onAddFolder(name, this.props.current_folder.id);
+        }
+    }
+
+    onKeyPress(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            this.onAddFolder();
+        }
+    }
+
+    onShowForm() {
+        this.setState({
+            show_form: true,
+        }, () => {
+            this.folderName.value = '';
+            this.folderName.focus();
+        });
+    }
+
     render() {
         const loader = this.props.uploading ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
-        const new_folder_class = `btn btn-sm btn-default pull-right ${this.state.show_form ? 'hide' : ''}`;
+        const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.show_form });
         let actions = null;
 
         if (this.props.browser) {
@@ -37,7 +80,10 @@ export default class Toolbar extends React.Component {
                   type="button"
                   className="btn btn-sm btn-default"
                   disabled={this.props.selected.length === 0}
-                  onClick={this.props.onCut.bind(this)}
+                  onClick={() => {
+                      // files that are currently in selected will be moved to the clipboard
+                      this.props.onCut(this.props.current_folder.id);
+                  }}
                 >
                     <span className="fa fa-cut" />
                     <span className="text-label">Knippen</span>
@@ -71,7 +117,7 @@ export default class Toolbar extends React.Component {
                 <button
                   type="button"
                   ref="button_add_folder"
-                  className={new_folder_class}
+                  className={newFolderClass}
                   onClick={this.onShowForm.bind(this)}
                   disabled={this.props.adding_folder}
                 >
@@ -82,7 +128,7 @@ export default class Toolbar extends React.Component {
                 <div className={`form-inline pull-right ${this.state.show_form ? '' : 'hide'}`}>
                     <input
                       className="form-control input-sm"
-                      ref="folder_name"
+                      ref={(input) => { this.folderName = input; }}
                       type="text"
                       placeholder="Mapnaam"
                       onKeyPress={this.onKeyPress.bind(this)}
@@ -114,29 +160,5 @@ export default class Toolbar extends React.Component {
                 </span>
             </div>
         );
-    }
-
-    onKeyPress(e) {
-        if (e.which === 13) {
-            e.preventDefault();
-            this.onAddFolder();
-        }
-    }
-
-    onShowForm() {
-        this.setState({
-            show_form: true,
-        }, () => {
-            this.refs.folder_name.value = '';
-            this.refs.folder_name.focus();
-        });
-    }
-
-    onAddFolder() {
-        this.setState({ show_form: false });
-        const name = this.refs.folder_name.value;
-        if (name !== '') {
-            this.props.onAddFolder(name, this.props.current_folder.id);
-        }
     }
 }

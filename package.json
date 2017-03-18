@@ -50,6 +50,7 @@
     "babel-polyfill": "^6.23.0",
     "body-parser": "1.15.2",
     "bootstrap-sass": "3.3.7",
+    "classnames": "2.2.5",
     "connect-busboy": "0.0.2",
     "eslint": "3.17.1",
     "eslint-config-airbnb": "14.1.0",
