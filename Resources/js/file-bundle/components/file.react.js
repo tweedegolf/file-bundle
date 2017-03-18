@@ -6,7 +6,7 @@
  *             well. If the user clicks the delete button, the component will
  *             render a confirmation popup.
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 const icons = {
     pdf: 'file-pdf-o',
@@ -18,7 +18,36 @@ const icons = {
     xlsx: 'file-excel-o',
 };
 
+const filePropTypeShape = {
+    create_ts: PropTypes.number.isRequired,
+    created: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    original: PropTypes.string.isRequired,
+    thumb: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    size: PropTypes.string.isRequired,
+    size_bytes: PropTypes.number.isRequired,
+};
+
 export default class File extends React.Component {
+
+    static propTypes = {
+        file: PropTypes.shape(filePropTypeShape).isRequired,
+        onConfirmDelete: PropTypes.func.isRequired,
+        onPreview: PropTypes.func.isRequired,
+        onSelect: PropTypes.func.isRequired,
+        onDelete: PropTypes.func.isRequired,
+        clipboard: PropTypes.arrayOf(PropTypes.shape(filePropTypeShape)).isRequired,
+        selected: PropTypes.arrayOf(PropTypes.shape(filePropTypeShape)).isRequired,
+        hovering: PropTypes.bool.isRequired,
+        browser: PropTypes.bool.isRequired,
+        confirm_delete: PropTypes.number,
+    }
+
+    static defaultProps = {
+        confirm_delete: null,
+    }
 
     constructor(props) {
         super(props);
@@ -26,14 +55,29 @@ export default class File extends React.Component {
         this.onCancelDelete = this.onCancelDelete.bind(this);
         this.onConfirmDelete = this.onConfirmDelete.bind(this);
 /*
-    // hide confirmation popup if user clicks somewhere outside the popup
-    addEventListener('mousedown', e => {
-      //console.log(e.target)
-      if(e.target === document.body){
-        this.onCancelDelete(e)
-      }
-    })
+        // hide confirmation popup if user clicks somewhere outside the popup
+        addEventListener('mousedown', e => {
+            //console.log(e.target)
+            if(e.target === document.body){
+                this.onCancelDelete(e)
+            }
+        })
 */
+    }
+
+    onCancelDelete(e) {
+        e.stopPropagation();
+        this.props.onConfirmDelete(null);
+    }
+
+    onConfirmDelete(e) {
+        e.stopPropagation();
+        this.props.onConfirmDelete(this.props.file.id);
+    }
+
+    onDelete(e) {
+        e.stopPropagation();
+        this.props.onDelete(this.props.file.id);
     }
 
     render() {
@@ -48,36 +92,36 @@ export default class File extends React.Component {
             const index = typeof this.props.selected.find(f => f.id === file.id);
             selected = index !== 'undefined';
         }
-    // console.log(file.name, selected)
-        let class_name = `cutable${this.props.hovering ? ' selected' : ''}`;
+        // console.log(file.name, selected)
+        let className = `cutable${this.props.hovering ? ' selected' : ''}`;
         let preview = <span className={`fa fa-${icons[file.type] ? icons[file.type] : 'file'}`} />;
 
         let checkbox = null;
         let actions = null;
         let confirm = null;
-        let delete_btn = null;
-        let download_btn = null;
+        let btnDelete = null;
+        let btnDownload = null;
 
         if (this.props.confirm_delete === file.id) {
             confirm = (<div className="confirm">
-                <button ref="button_cancel" type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
+                <button type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
                     <span className="text-label">Annuleren</span>
                     <span className="fa fa-times" />
                 </button>
-                <button ref="button_confirm" type="button" className="btn btn-sm btn-danger" onClick={this.onDelete}>
+                <button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete}>
                     <span className="text-label">Definitief verwijderen</span>
                     <span className="fa fa-trash-o" />
                 </button>
             </div>);
         } else if (this.props.selected.length + this.props.clipboard.length === 0) {
-            delete_btn = (<button ref="button_delete" type="button" className="btn btn-sm btn-danger" onClick={this.onConfirmDelete}>
+            btnDelete = (<button type="button" className="btn btn-sm btn-danger" onClick={this.onConfirmDelete}>
                 <span className="fa fa-trash-o" />
             </button>);
         }
 
         if (this.props.browser) {
             if (this.props.confirm_delete !== file.id) {
-                download_btn =
+                btnDownload =
                     (<a className="btn btn-sm btn-primary" title="Download" download={file.name} href={file.original} onClick={e => e.stopPropagation()}>
                         <span className="fa fa-download" />
                     </a>);
@@ -85,38 +129,46 @@ export default class File extends React.Component {
 
             checkbox = <input type="checkbox" checked={selected} readOnly />;
             actions = (<div className="actions">
-                {delete_btn}
-                {download_btn}
+                {btnDelete}
+                {btnDownload}
                 {confirm}
             </div>);
         } else {
             checkbox = <span className={selected ? 'fa fa-check-square-o' : 'fa fa-square-o'} />;
-            class_name = selected ? 'selected' : 'selectable';
+            className = selected ? 'selected' : 'selectable';
         }
 
         if (this.props.clipboard.length > 0) {
             checkbox = <span className={checked ? 'fa fa-thumb-tack' : ''} />;
-            class_name = checked ? 'cut' : '';
+            className = checked ? 'cut' : '';
         }
 
         if (this.props.confirm_delete === file.id) {
-            class_name += ' danger';
+            className += ' danger';
         }
 
         if (file.new) {
-            class_name += ' success';
+            className += ' success';
         }
 
         if (file.thumb) {
-            preview = (<img
-              src={file.thumb}
-              alt={file.name}
-              onClick={this.props.onPreview.bind(this, file.original)}
-            />);
+            const p = {
+                src: file.thumb,
+                onClick: () => {
+                    this.props.onPreview(file.original);
+                },
+            };
+            preview = <img alt={file.name} {...p} />;
         }
 
+        const p = {
+            className,
+            onClick: () => {
+                this.props.onSelect(file.id);
+            },
+        };
         return (
-            <tr className={class_name} onClick={this.props.onSelect.bind(this, file.id)}>
+            <tr {...p}>
                 <td className="select">
                     {checkbox}
                 </td>
@@ -137,20 +189,5 @@ export default class File extends React.Component {
                 </td>
             </tr>
         );
-    }
-
-    onDelete(e) {
-        e.stopPropagation();
-        this.props.onDelete(this.props.file.id);
-    }
-
-    onCancelDelete(e) {
-        e.stopPropagation();
-        this.props.onConfirmDelete(null);
-    }
-
-    onConfirmDelete(e) {
-        e.stopPropagation();
-        this.props.onConfirmDelete(this.props.file.id);
     }
 }

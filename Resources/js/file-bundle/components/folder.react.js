@@ -8,71 +8,90 @@
 
 import React, { PropTypes } from 'react';
 
-export default class Folder extends React.Component {
+const Folder = (props) => {
+    const folder = props.folder;
+    const className = `folder${folder.new ? ' success' : ''}${props.hovering ? ' selected' : ''}`;
 
-    static propTypes = {
-        folder: PropTypes.string.isRequired,
-        hovering: PropTypes.bool.isRequired,
-        onDelete: PropTypes.func.isRequired,
-        openFolder: PropTypes.func.isRequired,
-        loading: PropTypes.bool.isRequired,
-        parent: PropTypes.bool.isRequired,
+    let btnDelete = null;
+    if (folder.file_count === 0 && folder.folder_count === 0 && props.parent === false) {
+        const p = {
+            onClick: (e) => {
+                e.stopPropagation();
+                props.onDelete(folder.id);
+            },
+            type: 'button',
+            className: 'btn btn-sm btn-danger',
+        };
+        btnDelete = (<button {...p}>
+            <span className="fa fa-trash-o" />
+        </button>);
     }
 
-    onDelete(e) {
-        e.stopPropagation();
-        this.props.onDelete(this.props.folder.id);
+    let icon = <span className="fa fa-folder" />;
+    if (props.loading && props.loading === folder.id) {
+        icon = <span className="fa fa-circle-o-notch fa-spin" />;
     }
 
-    render() {
-        const folder = this.props.folder;
-        const class_name = `folder${folder.new ? ' success' : ''}${this.props.hovering ? ' selected' : ''}`;
-        let icon = <span className="fa fa-folder" />;
-        let delete_btn = null;
-
-        if (folder.file_count === 0 && folder.folder_count === 0 && this.props.parent === false) {
-            delete_btn = (<button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete.bind(this)}>
-                <span className="fa fa-trash-o" />
-            </button>);
-        }
-
-        if (this.props.loading && this.props.loading === folder.id) {
-            icon = <span className="fa fa-circle-o-notch fa-spin" />;
-        }
-
-        if (this.props.parent === true) {
-            icon = <span className="fa fa-chevron-up" />;
-      // class_name = 'folder muted'
-        }
-
-        let file_count = null;
-        if (folder.file_count > 0) {
-            file_count = (<span>
-                {folder.file_count}
-                <span className="fa fa-file-o" />
-            </span>);
-        }
-
-        let folder_count = null;
-        if (folder.folder_count > 0) {
-            folder_count = (<span>
-                {folder.folder_count}
-                <span className="fa fa-folder-o" />
-            </span>);
-        }
-
-        return (
-            <tr className={class_name} onClick={this.props.onOpenFolder.bind(this, folder.id)}>
-                <td className="select" />
-                <td className="preview">{icon}</td>
-                <td className="name">{folder.name}</td>
-                <td className="size">
-                    {folder_count}
-                    {file_count}
-                </td>
-                <td className="date">{folder.created}</td>
-                <td className="buttons">{delete_btn}</td>
-            </tr>
-        );
+    if (props.parent === true) {
+        icon = <span className="fa fa-chevron-up" />;
+        // className = 'folder muted'
     }
-}
+
+    let fileCount = null;
+    if (folder.file_count > 0) {
+        fileCount = (<span>
+            {folder.file_count}
+            <span className="fa fa-file-o" />
+        </span>);
+    }
+
+    let folderCount = null;
+    if (folder.folder_count > 0) {
+        folderCount = (<span>
+            {folder.folder_count}
+            <span className="fa fa-folder-o" />
+        </span>);
+    }
+
+    const p = {
+        onClick: () => {
+            props.onOpenFolder(folder.id);
+        },
+        className,
+    };
+    return (
+        <tr {...p}>
+            <td className="select" />
+            <td className="preview">{icon}</td>
+            <td className="name">{folder.name}</td>
+            <td className="size">
+                {folderCount}
+                {fileCount}
+            </td>
+            <td className="date">{folder.created}</td>
+            <td className="buttons">{btnDelete}</td>
+        </tr>
+    );
+};
+
+Folder.propTypes = {
+    folder: PropTypes.shape({
+        create_ts: PropTypes.number.isRequired,
+        created: PropTypes.string.isRequired,
+        file_count: PropTypes.number.isRequired,
+        folder_count: PropTypes.number.isRequired,
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        parent: PropTypes.string,
+        type: PropTypes.string.isRequired,
+        size: PropTypes.string.isRequired,
+        size_bytes: PropTypes.number.isRequired,
+    }).isRequired,
+    hovering: PropTypes.bool.isRequired,
+    onDelete: PropTypes.func.isRequired,
+    onOpenFolder: PropTypes.func.isRequired,
+    loading: PropTypes.number.isRequired,
+    parent: PropTypes.bool.isRequired,
+};
+
+export default Folder;

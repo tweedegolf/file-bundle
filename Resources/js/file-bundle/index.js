@@ -15,7 +15,8 @@ if (browser !== null) {
     ReactDOM.render(<Provider store={store} >
         <Browser
           browser={true}
-        /> </Provider >,
+        />
+        </Provider>,
         browser,
     );
 }
@@ -36,7 +37,8 @@ if (pickers.length > 0) {
             <Browser
               browser={false}
               options={options}
-            /> </Provider >,
+            />
+            </Provider>,
             element,
         );
     });

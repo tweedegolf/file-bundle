@@ -44,7 +44,7 @@ export default {
             parent: null,
             size: '',
             size_bytes: 0,
-            thumb: null,
+            // thumb: null,
             type: 'folder',
         },
     },

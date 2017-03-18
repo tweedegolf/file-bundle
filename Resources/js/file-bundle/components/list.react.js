@@ -3,27 +3,32 @@
  *             items are shown as a row. See the files file.react.js and
  *             folder.react.js
  */
-
-import React from 'react';
-
-import File from './file.react.js';
-import Folder from './folder.react.js';
+import React, { PropTypes } from 'react';
+import File from './file.react';
+import Folder from './folder.react';
 
 export default class List extends React.Component {
+
+    static propTypes = {
+        files: PropTypes.arrayOf(File.propTypes.file).isRequired,
+        folders: PropTypes.arrayOf(Folder.propTypes.folder).isRequired,
+        browser: PropTypes.bool.isRequired,
+        images_only: PropTypes.bool.isRequired,
+    }
 
     render() {
         let i = this.props.folders.length + this.props.files.length;
 
-    // sorted file listing
+        // sorted file listing
         let files = Object.entries(this.props.files).map(([index, file]) => {
-      // hide non-images when the images only option is passed to the form
+        // hide non-images when the images only option is passed to the form
             if (!this.props.browser && this.props.images_only && !file.thumb) {
                 return null;
             }
 
-      // index = this.props.ascending
-      //   ? this.props.folders.length + index
-      //   : this.props.folders.length + this.props.files.length - index - 1;
+            // index = this.props.ascending
+            //   ? this.props.folders.length + index
+            //   : this.props.folders.length + this.props.files.length - index - 1;
 
             return (<File
               key={`file-${file.id}`}
@@ -40,7 +45,7 @@ export default class List extends React.Component {
             />);
         });
 
-    // sorted folder listing
+        // sorted folder listing
         let folders = Object.entries(this.props.folders).map(([index, folder]) =>
 
       // index = this.props.ascending

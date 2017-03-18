@@ -314,17 +314,17 @@ export default class Browser extends React.Component {
         });
     }
 
-  // user has selected a different sort column or sort order in the toolbar
+    // user has selected a different sort column or sort order in the toolbar
     sortBy(column) {
         Actions.changeSorting(column);
     }
 
-  // in Filepicker mode the browser can be collapsed and expanded
+    // in Filepicker mode the browser can be collapsed and expanded
     toggleExpand() {
         Actions.expandBrowser();
     }
 
-  // user can drag and drop files onto the filebrowser to upload files
+    // user can drag and drop files onto the filebrowser to upload files
     handleDrop(dataTransfer) {
         this.doUpload(dataTransfer.files);
     }
@@ -334,7 +334,7 @@ export default class Browser extends React.Component {
     }
 
     onOpenFolder(id) {
-    // isn't this a weird place for this if statement?
+        // isn't this a weird place for this if statement?
         if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
             return;
         }
@@ -346,8 +346,8 @@ export default class Browser extends React.Component {
     }
 
     doUpload(file_list) {
-    // isn't this a weird place for this if statement?
-    // console.log(this.props.uploading_files, this.props.loading_folder)
+        // isn't this a weird place for this if statement?
+        // console.log(this.props.uploading_files, this.props.loading_folder)
         if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
             return;
         }
