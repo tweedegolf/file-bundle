@@ -42,11 +42,11 @@ export default class File extends React.Component {
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         hovering: PropTypes.bool.isRequired,
         browser: PropTypes.bool.isRequired,
-        confirm_delete: PropTypes.number,
+        deleteFileWithId: PropTypes.number,
     }
 
     static defaultProps = {
-        confirm_delete: null,
+        deleteFileWithId: null,
     }
 
     constructor(props) {
@@ -102,7 +102,7 @@ export default class File extends React.Component {
         let btnDelete = null;
         let btnDownload = null;
 
-        if (this.props.confirm_delete === file.id) {
+        if (this.props.deleteFileWithId === file.id) {
             confirm = (<div className="confirm">
                 <button type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
                     <span className="text-label">Annuleren</span>
@@ -120,7 +120,7 @@ export default class File extends React.Component {
         }
 
         if (this.props.browser) {
-            if (this.props.confirm_delete !== file.id) {
+            if (this.props.deleteFileWithId !== file.id) {
                 btnDownload =
                     (<a className="btn btn-sm btn-primary" title="Download" download={file.name} href={file.original} onClick={e => e.stopPropagation()}>
                         <span className="fa fa-download" />
@@ -143,7 +143,7 @@ export default class File extends React.Component {
             className = checked ? 'cut' : '';
         }
 
-        if (this.props.confirm_delete === file.id) {
+        if (this.props.deleteFileWithId === file.id) {
             className += ' danger';
         }
 

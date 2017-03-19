@@ -7,7 +7,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import R from 'ramda';
-import List from '../components/list.react';
+import List from '../containers/list.react';
 import SortHeader from '../components/sort_header.react';
 import Toolbar from '../components/toolbar.react';
 import SelectedFiles from '../components/selected_files.react';
@@ -215,25 +215,8 @@ export default class Browser extends React.Component {
                                         </tr>
                                     </thead>
                                     <List
-                                      files={this.props.files}
-                                      folders={this.props.folders}
-                                      current_folder={this.props.current_folder}
-                                      parent_folder={this.props.parent_folder}
-                                      onSelect={this.onSelect}
-                                      onPreview={Actions.showPreview}
-                                      hover={this.props.hover}
-                                      selected={this.props.selected}
-                                      clipboard={this.props.clipboard}
-                                      browser={this.props.browser}
-                                      confirm_delete={this.props.confirm_delete}
-                                      loading_folder={this.props.loading_folder}
-                                      uploading_files={this.props.uploading_files}
-                                      ascending={this.props.ascending}
-                                      images_only={this.props.options ? this.props.options.images_only : false}
-                                      onDeleteFile={Actions.deleteFile}
-                                      onDeleteFolder={Actions.deleteFolder}
-                                      onConfirmDelete={this.onConfirmDelete}
-                                      onOpenFolder={Actions.openFolder}
+                                      browser={this.props.browser} 
+                                      imagesOnly={this.props.options ? this.props.options.images_only : false} 
                                     />
                                 </table>
                             </div>
