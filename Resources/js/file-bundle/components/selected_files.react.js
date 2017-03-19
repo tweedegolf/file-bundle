@@ -16,29 +16,6 @@ export default class SelectedFiles extends React.Component {
         showPreview: PropTypes.func.isRequired,
     }
 
-    constructor() {
-        super();
-        this.selectFile = this.selectFile.bind();
-    }
-
-    // files can be selected by clicking the checkbox in front of the filename
-    // in the filelist
-    selectFile(id) {
-        /**
-         * User has already clicked on the 'cut' button so she can't select files
-         * anymore until she pastes or cancels.
-         */
-        if (this.props.clipboard.length > 0) {
-            return;
-        }
-
-        this.props.selectFile({
-            id,
-            multiple: this.props.multiple,
-            browser: this.props.browser,
-        });
-    }
-
     render() {
         if (this.props.browser === true || this.props.selected.length === 0) {
             return false;

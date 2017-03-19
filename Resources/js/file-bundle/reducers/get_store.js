@@ -15,18 +15,18 @@ let store = null;
 export default function getStore() {
     if (store === null) {
         store = createStore(
-      combineReducers({
-          ui,
-          tree,
-      }), {
-          ui: uiInitialState,
-          tree: treeInitialState,
-      },
-      applyMiddleware(
-        // thunkMiddleware,
-        createLogger(),
-      ),
-    );
+            combineReducers({
+                ui,
+                tree,
+            }), {
+                ui: uiInitialState,
+                tree: treeInitialState,
+            },
+            applyMiddleware(
+                // thunkMiddleware,
+                createLogger(),
+            ),
+        );
     }
     return store;
 }

@@ -56,6 +56,7 @@ export default class List extends React.Component {
         isUploadingFiles: PropTypes.bool.isRequired,
         hover: PropTypes.number.isRequired,
         parentFolder: PropTypes.shape(folderShape),
+        selectFile: PropTypes.func.isRequired,
     }
 
     static defaultProps = {
@@ -90,10 +91,10 @@ export default class List extends React.Component {
               key={`file-${file.id}`}
               file={file}
               hovering={this.props.hover === --i}
-              onSelect={Actions.selectFile}
-              onDelete={Actions.deleteFile}
-              onPreview={Actions.showPreview}
-              onConfirmDelete={Actions.confirmDelete}
+              selectFile={this.props.selectFile}
+              deleteFile={Actions.deleteFile}
+              showPreview={Actions.showPreview}
+              confirmDelete={Actions.confirmDelete}
               selected={this.props.selected}
               clipboard={this.props.clipboard}
               browser={this.props.browser}

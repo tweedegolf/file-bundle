@@ -87,6 +87,10 @@ export default class Browser extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.canSelectMultipleFiles = R.isNil(props.options) === false &&
+            R.isNil(props.options.multiple) === false;
+
         // select files and folders using the arrow up and -down key of your keyboard
         this.onKeyDown = (event) => {
             event.stopPropagation();
@@ -109,8 +113,23 @@ export default class Browser extends React.Component {
             }
         };
 
-        this.canSelectMultipleFiles = R.isNil(props.options) === false &&
-            R.isNil(props.options.multiple) === false;
+        // files can be selected by clicking the checkbox in front of the filename
+        // in the filelist
+        this.selectFile = (id) => {
+            /**
+             * User has already clicked on the 'cut' button so she can't select files
+             * anymore until she pastes or cancels.
+             */
+            if (this.props.clipboard.length > 0) {
+                return;
+            }
+
+            Actions.selectFile({
+                id,
+                multiple: this.canSelectMultipleFiles,
+                browser: this.props.browser,
+            });
+        }
     }
 
     componentDidMount() {
@@ -186,7 +205,7 @@ export default class Browser extends React.Component {
           multiple={this.canSelectMultipleFiles}
           selected={this.props.selected}
           clipboard={this.props.clipboard}
-          selectFile={Actions.selectFile}
+          selectFile={this.selectFile}
           showPreview={Actions.showPreview}
         />);
 
@@ -245,7 +264,8 @@ export default class Browser extends React.Component {
                                     </tr>
                                 </thead>
                                 <List
-                                  browser={this.props.browser} 
+                                  selectFile={this.selectFile}
+                                  browser={this.props.browser}
                                   imagesOnly={this.props.options ? this.props.options.images_only : false} 
                                 />
                             </table>

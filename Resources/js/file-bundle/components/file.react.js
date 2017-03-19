@@ -34,10 +34,10 @@ export default class File extends React.Component {
 
     static propTypes = {
         file: PropTypes.shape(fileShape).isRequired,
-        onConfirmDelete: PropTypes.func.isRequired,
-        onPreview: PropTypes.func.isRequired,
-        onSelect: PropTypes.func.isRequired,
-        onDelete: PropTypes.func.isRequired,
+        confirmDelete: PropTypes.func.isRequired,
+        showPreview: PropTypes.func.isRequired,
+        selectFile: PropTypes.func.isRequired,
+        deleteFile: PropTypes.func.isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         hovering: PropTypes.bool.isRequired,
@@ -49,13 +49,9 @@ export default class File extends React.Component {
         deleteFileWithId: null,
     }
 
+/*
     constructor(props) {
         super(props);
-        console.log(props);
-        this.onDelete = this.onDelete.bind(this);
-        this.onCancelDelete = this.onCancelDelete.bind(this);
-        this.onConfirmDelete = this.onConfirmDelete.bind(this);
-/*
         // hide confirmation popup if user clicks somewhere outside the popup
         addEventListener('mousedown', e => {
             //console.log(e.target)
@@ -63,23 +59,8 @@ export default class File extends React.Component {
                 this.onCancelDelete(e)
             }
         })
+    }
 */
-    }
-
-    onCancelDelete(e) {
-        e.stopPropagation();
-        this.props.onConfirmDelete(null);
-    }
-
-    onConfirmDelete(e) {
-        e.stopPropagation();
-        this.props.onConfirmDelete(this.props.file.id);
-    }
-
-    onDelete(e) {
-        e.stopPropagation();
-        this.props.onDelete(this.props.file.id);
-    }
 
     render() {
         const file = this.props.file;
@@ -105,17 +86,39 @@ export default class File extends React.Component {
 
         if (this.props.deleteFileWithId === file.id) {
             confirm = (<div className="confirm">
-                <button type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  onClick={(e) => {
+                      e.stopPropagation();
+                      this.props.confirmDelete(null);
+                  }}
+                >
                     <span className="text-label">Annuleren</span>
                     <span className="fa fa-times" />
                 </button>
-                <button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete}>
+                
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger"
+                  onClick={(e) => {
+                      e.stopPropagation();
+                      this.props.deleteFile(file.id);
+                  }}
+                >
                     <span className="text-label">Definitief verwijderen</span>
                     <span className="fa fa-trash-o" />
                 </button>
             </div>);
         } else if (this.props.selected.length + this.props.clipboard.length === 0) {
-            btnDelete = (<button type="button" className="btn btn-sm btn-danger" onClick={this.onConfirmDelete}>
+            btnDelete = (<button
+              type="button"
+              className="btn btn-sm btn-danger"
+              onClick={(e) => {
+                  e.stopPropagation();
+                  this.props.confirmDelete(file.id);
+              }}
+            >
                 <span className="fa fa-trash-o" />
             </button>);
         }
@@ -157,7 +160,7 @@ export default class File extends React.Component {
                 src: file.thumb,
                 onClick: (e) => {
                     e.stopPropagation();
-                    this.props.onPreview(file.original);
+                    this.props.showPreview(file.original);
                 },
             };
             preview = <img alt={file.name} {...p} />;
@@ -166,7 +169,7 @@ export default class File extends React.Component {
         const p = {
             className,
             onClick: () => {
-                this.props.onSelect(file.id);
+                this.props.selectFile(file.id);
             },
         };
         return (
