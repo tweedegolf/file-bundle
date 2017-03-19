@@ -51,6 +51,7 @@ export default class File extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log(props);
         this.onDelete = this.onDelete.bind(this);
         this.onCancelDelete = this.onCancelDelete.bind(this);
         this.onConfirmDelete = this.onConfirmDelete.bind(this);

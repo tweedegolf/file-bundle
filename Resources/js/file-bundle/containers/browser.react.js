@@ -7,13 +7,14 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import R from 'ramda';
+import classNames from 'classnames';
 import List from '../containers/list.react';
+import SelectedFiles from '../components/selected_files.react';
 import SortHeader from '../components/sort_header.react';
 import Toolbar from '../components/toolbar.react';
-import SelectedFiles from '../components/selected_files.react';
+import Preview from '../components/preview.react';
 import Errors, { errorShape } from '../components/errors.react';
 import * as Actions from '../actions';
-import { sortBy } from '../util/util';
 import { fileShape } from '../components/file.react';
 import { folderShape } from '../components/folder.react';
 
@@ -25,32 +26,25 @@ const columnHeaders = {
 
 const mapStateToProps = (state) => {
     const {
-    sort,
-    ascending,
-  } = state.ui;
+        sort,
+        ascending,
+    } = state.ui;
 
     return {
         // tree props
-        folders: sortBy(state.tree.folders, sort, ascending),
-        files: sortBy(state.tree.files, sort, ascending),
-        current_folder: state.tree.current_folder,
-        parent_folder: state.tree.parent_folder,
+        currentFolder: state.tree.current_folder,
 
         // ui props
         sort,
         ascending,
         preview: state.ui.preview,
         expanded: state.ui.expanded,
-        hover: state.ui.hover,
         selected: state.ui.selected,
         clipboard: state.ui.clipboard,
-        loading_folder: state.ui.loading_folder, // null or number
-        confirm_delete: state.ui.confirm_delete, // null or number
-        deleting_file: state.ui.deleting, // null or number
-        deleting_folder: state.ui.deleting, // null or number
-        adding_folder: state.ui.adding_folder, // true or false
-        uploading_files: state.ui.uploading_files, // true or false
-        scroll_position: state.ui.scroll_position, // null or numeric value
+        loadingFolderWithId: state.ui.loading_folder, // null or number
+        isAddingFolder: state.ui.adding_folder, // true or false
+        isUploadingFiles: state.ui.uploading_files, // true or false
+        scrollPosition: state.ui.scroll_position, // null or numeric value
         errors: state.ui.errors,
     };
 };
@@ -68,34 +62,55 @@ export default class Browser extends React.Component {
             multiple: PropTypes.bool,
             images_only: PropTypes.bool,
         }),
-        scroll_position: PropTypes.number,
+        scrollPosition: PropTypes.number,
         sort: PropTypes.string,
+        preview: PropTypes.string,
         ascending: PropTypes.bool.isRequired,
         expanded: PropTypes.bool.isRequired,
+        currentFolder: PropTypes.shape(folderShape),
+        isAddingFolder: PropTypes.bool.isRequired,
+        isUploadingFiles: PropTypes.bool.isRequired,
+        loadingFolderWithId: PropTypes.number,
+        errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        files: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        folders: PropTypes.arrayOf(PropTypes.shape(folderShape)).isRequired,
-        current_folder: PropTypes.shape(folderShape),
-        adding_folder: PropTypes.bool.isRequired,
-        uploading_files: PropTypes.bool.isRequired,
-        preview: PropTypes.string,
-        loading_folder: PropTypes.number,
-        errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
-    }
+   }
 
     static defaultProps = {
         options: null,
         preview: null,
         sort: null,
-        scroll_position: null,
-        loading_folder: null,
-        current_folder: null,
+        scrollPosition: null,
+        loadingFolderWithId: null,
+        currentFolder: null,
     }
 
-    constructor() {
-        super();
-        this.onSelect = this.onSelect.bind(this);
+    constructor(props) {
+        super(props);
+        // select files and folders using the arrow up and -down key of your keyboard
+        this.onKeyDown = (event) => {
+            event.stopPropagation();
+            if (event.keyCode === 38) {
+                Actions.setHover(-1, this.props.currentFolder.id);
+            } else if (event.keyCode === 40) {
+                Actions.setHover(+1, this.props.currentFolder.id);
+            }
+        };
+
+        // upload files by drag and drop or file dialog
+        this.uploadFiles = (event) => {
+            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
+                return;
+            }
+            if (R.isNil(event.files) === false) {
+                Actions.upload(event.files, this.props.currentFolder.id);
+            } else {
+                Actions.upload(Array.from(event.target.files), this.props.currentFolder.id);
+            }
+        };
+
+        this.canSelectMultipleFiles = R.isNil(props.options) === false &&
+            R.isNil(props.options.multiple) === false;
     }
 
     componentDidMount() {
@@ -114,7 +129,7 @@ export default class Browser extends React.Component {
         if (this.props.browser === true) {
             // The keydown listener listens for arrow up and down keys allowing the
             // user to select files and folders with her keyboard.
-            document.addEventListener('keydown', this.onKeyDown.bind(this), false);
+            document.addEventListener('keydown', this.onKeyDown, false);
             Actions.expandBrowser();
             Actions.init();
         }
@@ -128,15 +143,15 @@ export default class Browser extends React.Component {
         // use case might be when the user has searched for a certain file; if
         // found, the scroll list can highlight the file an scroll it into the
         // visible area if needed.
-        if (this.props.scroll_position !== null) {
-            this.containerRef.scrollTop = this.props.scroll_position;
+        if (this.props.scrollPosition !== null) {
+            this.containerRef.scrollTop = this.props.scrollPosition;
             Actions.setScrollPosition(null);
         }
     }
 
     componentWillUnmount() {
         if (this.props.browser) {
-            document.removeEventListener('keydown', this.onKeyDown.bind(this), false);
+            document.removeEventListener('keydown', this.onKeyDown, false);
         }
     }
 
@@ -154,88 +169,31 @@ export default class Browser extends React.Component {
         const toolbar = (<Toolbar
           selected={this.props.selected}
           clipboard={this.props.clipboard}
-          current_folder={this.props.current_folder}
-          adding_folder={this.props.adding_folder}
+          current_folder={this.props.currentFolder}
+          adding_folder={this.props.isAddingFolder}
           browser={this.props.browser}
           onCut={Actions.cutFiles}
           onPaste={Actions.pasteFiles}
           onCancel={Actions.cancelCutAndPasteFiles}
-          onUpload={Actions.upload}
+          uploadFiles={this.uploadFiles}
           onAddFolder={Actions.addFolder}
-          uploading_files={this.props.uploading_files}
-          loading_folder={this.props.loading_folder}
+          isUploadingFiles={this.props.isUploadingFiles}
+          loading_folder={this.props.loadingFolderWithId}
         />);
 
-        let selected = null;
-        if (!this.props.browser && this.props.selected.length > 0) {
-            selected = (<SelectedFiles
-              selected={this.props.selected}
-              onSelect={this.onSelect.bind(this)}
-              onPreview={Actions.onPreview}
-            />);
-        }
+        const selected = (<SelectedFiles
+          browser={this.props.browser}
+          multiple={this.canSelectMultipleFiles}
+          selected={this.props.selected}
+          clipboard={this.props.clipboard}
+          selectFile={Actions.selectFile}
+          showPreview={Actions.showPreview}
+        />);
 
-        let browser = null;
-        const browser_class = `file-browser text-left${this.props.browser ? ' fullpage' : ''}`;
+        const preview = <Preview file={this.props.preview} />;
 
-        let preview = null;
-        if (R.isNil(this.props.preview) === false) {
-            const p = {
-                className: 'preview-image',
-                onClick: (e) => {
-                    e.stopPropagation();
-                    Actions.showPreview(null);
-                },
-            };
-            preview = (<div {...p}>
-                <div style={{ backgroundImage: `url(${this.props.preview})` }} />
-            </div>);
-        }
-
-        if (this.props.expanded) {
-            browser = (
-                <div className="text-center">
-                    {selected}
-                    {preview}
-                    <div className={browser_class}>
-                        <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
-                            {toolbar}
-                            <Errors
-                              errors={this.props.errors}
-                              onDismiss={Actions.dismissError}
-                            />
-                            <div ref={(div) => { this.containerRef = div; }} className="table-container">
-                                <table className="table table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th className="select" />
-                                            <th className="preview" />
-                                            {headers}
-                                            <th className="buttons" />
-                                        </tr>
-                                    </thead>
-                                    <List
-                                      browser={this.props.browser} 
-                                      imagesOnly={this.props.options ? this.props.options.images_only : false} 
-                                    />
-                                </table>
-                            </div>
-                        </FileDragAndDrop>
-                    </div>
-                    {this.props.browser === false
-            ? <button
-              type="button"
-              className="btn btn-default btn-xs collapse-button"
-              onClick={Actions.expandBrowser}
-            >
-                <span className="fa fa-chevron-up" />
-            </button>
-            : null
-          }
-                </div>
-      );
-        } else {
-            browser = (<div>
+        if (this.props.expanded === false) {
+            return (<div>
                 {selected}
                 {preview}
                 <button
@@ -243,83 +201,59 @@ export default class Browser extends React.Component {
                   className="btn btn-default expand-button"
                   onClick={Actions.expandBrowser}
                 >
-          Bladeren
-          <span className="fa fa-folder-open-o" />
+                  Bladeren
+                  <span className="fa fa-folder-open-o" />
                 </button>
             </div>);
         }
 
-        return browser;
-    }
-
-  // select files and folders using the arrow up and -down key of your keyboard
-    onKeyDown(event) {
-        event.stopPropagation();
-        if (event.keyCode === 38) {
-            Actions.setHover(-1, this.props.current_folder.id);
-        } else if (event.keyCode === 40) {
-            Actions.setHover(+1, this.props.current_folder.id);
-        }
-    }
-
-      // user clicks the delete button next to a file in the file list; this will
-    // trigger a confirmation popup
-    onDelete(id) {
-        Actions.deleteFile(id, this.props.current_folder.id);
-    }
-
-    // user confirms that she wants to delete the file by clicking OK in the
-    // confirmation popup
-    onConfirmDelete(id) {
-        Actions.confirmDelete(id);
-    }
-
-    onDeleteFolder(id) {
-        Actions.deleteFolder(id, this.props.current_folder.id);
-    }
-
-  // user cancels cut & paste action
-    onCancel() {
-        Actions.cancelCutAndPasteFiles();
-    }
-
-  // files in the clipboard are moved to the selected folder
-    onPaste() {
-        Actions.pasteFiles(this.props.clipboard, this.props.current_folder.id);
-    }
-
-  // files can be selected by clicking the checkbox in front of the filename
-  // in the filelist
-    onSelect(id) {
-        /**
-         * User has already clicked on the 'cut' button so she can't select files
-         * anymore until she pastes or cancels.
-         */
-        if (this.props.clipboard.length > 0) {
-            return;
+        let buttonExpand = null;
+        if (this.props.browser === false) {
+            buttonExpand = (<button
+              type="button"
+              className="btn btn-default btn-xs collapse-button"
+              onClick={Actions.expandBrowser}
+            >
+                <span className="fa fa-chevron-up" />
+            </button>);
         }
 
-        /**
-         * In Filepicker mode you can set the multiple option to false which
-         * restrict the user to select only one file at the time.
-         *
-         * @type       {boolean}
-         */
-        let multiple = true;
-        if (this.props.options && this.props.options.multiple) {
-            multiple = this.props.options.multiple;
-        }
-
-        Actions.selectFile({
-            id,
-            multiple,
-            browser: this.props.browser,
+        const browserClassName = classNames('file-browser', {
+            'text-left': this.props.browser === false,
+            'text-left-fullpage': this.props.browser === true,
         });
-    }
 
-    // user can drag and drop files onto the filebrowser to upload files
-    handleDrop(dataTransfer) {
-        this.doUpload(dataTransfer.files);
+        return (
+            <div className="text-center">
+                {selected}
+                {preview}
+                <div className={browserClassName}>
+                    <FileDragAndDrop onDrop={this.uploadFiles}>
+                        {toolbar}
+                        <Errors
+                          errors={this.props.errors}
+                          onDismiss={Actions.dismissError}
+                        />
+                        <div ref={(div) => { this.containerRef = div; }} className="table-container">
+                            <table className="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th className="select" />
+                                        <th className="preview" />
+                                        {headers}
+                                        <th className="buttons" />
+                                    </tr>
+                                </thead>
+                                <List
+                                  browser={this.props.browser} 
+                                  imagesOnly={this.props.options ? this.props.options.images_only : false} 
+                                />
+                            </table>
+                        </div>
+                    </FileDragAndDrop>
+                </div>
+                {buttonExpand}
+            </div>
+        );
     }
-
 }

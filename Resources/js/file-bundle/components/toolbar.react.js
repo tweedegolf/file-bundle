@@ -13,12 +13,12 @@ export default class Toolbar extends React.Component {
 
     static propTypes = {
         onAddFolder: PropTypes.func.isRequired,
-        onUpload: PropTypes.func.isRequired,
+        uploadFiles: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired,
         onPaste: PropTypes.func.isRequired,
         onCut: PropTypes.func.isRequired,
         current_folder: PropTypes.shape(folderShape),
-        uploading_files: PropTypes.bool.isRequired,
+        isUploadingFiles: PropTypes.bool.isRequired,
         loading_folder: PropTypes.number,
         adding_folder: PropTypes.bool.isRequired,
         browser: PropTypes.bool.isRequired,
@@ -74,7 +74,7 @@ export default class Toolbar extends React.Component {
     }
 
     render() {
-        const loader = this.props.uploading_files ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
+        const loader = this.props.isUploadingFiles ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
         const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.show_form });
         let actions = null;
 
@@ -153,7 +153,7 @@ export default class Toolbar extends React.Component {
                 </div>
                 <span
                   className="btn btn-sm btn-default btn-file pull-right"
-                  disabled={this.props.uploading_files}
+                  disabled={this.props.isUploadingFiles}
                 >
                     <span className="fa fa-arrow-circle-o-up" />
                     <span className="text-label">Upload</span>
@@ -163,12 +163,7 @@ export default class Toolbar extends React.Component {
                       // name="upload_files"
                       type="file"
                       multiple="multiple"
-                      onChange={(e) => {
-                          if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
-                              return;
-                          }
-                          this.props.onUpload(Array.from(e.target.files), this.props.current_folder.id);
-                      }}
+                      onChange={this.props.uploadFiles}
                     />
                 </span>
             </div>

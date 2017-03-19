@@ -67,11 +67,11 @@ export default class List extends React.Component {
 
     constructor() {
         super();
-        this.openFolder = () => {
+        this.openFolder = (folderId) => {
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
                 return;
             }
-            Actions.openFolder(this.props.parentFolder.id);
+            Actions.openFolder(folderId);
         };
     }
 
