@@ -298,7 +298,7 @@ export function ui(state = uiInitialState, action) {
             ...state,
             ascending,
             sort: action.payload.sort,
-      //errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
+            // errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
         };
 
   /**

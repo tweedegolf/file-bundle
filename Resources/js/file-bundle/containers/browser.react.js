@@ -17,6 +17,11 @@ import { sortBy } from '../util/util';
 import { fileShape } from '../components/file.react';
 import { folderShape } from '../components/folder.react';
 
+const columnHeaders = {
+    name: 'Naam',
+    size_bytes: 'Grootte',
+    create_ts: 'Aangemaakt',
+};
 
 const mapStateToProps = (state) => {
     const {
@@ -136,11 +141,7 @@ export default class Browser extends React.Component {
     }
 
     render() {
-        const headers = Object.entries({
-            name: 'Naam',
-            size_bytes: 'Grootte',
-            create_ts: 'Aangemaakt',
-        }).map(([column, name]) =>
+        const headers = R.map(([column, name]) =>
             <SortHeader
               key={column}
               sortBy={Actions.changeSorting}
@@ -148,8 +149,7 @@ export default class Browser extends React.Component {
               ascending={this.props.ascending}
               column={column}
               name={name}
-            />,
-        );
+            />, R.toPairs(columnHeaders));
 
         const toolbar = (<Toolbar
           selected={this.props.selected}
@@ -160,9 +160,10 @@ export default class Browser extends React.Component {
           onCut={Actions.cutFiles}
           onPaste={Actions.pasteFiles}
           onCancel={Actions.cancelCutAndPasteFiles}
-          onUpload={this.onUpload.bind(this)}
-          onAddFolder={this.onAddFolder.bind(this)}
-          uploading={this.props.uploading_files}
+          onUpload={Actions.upload}
+          onAddFolder={Actions.addFolder}
+          uploading_files={this.props.uploading_files}
+          loading_folder={this.props.loading_folder}
         />);
 
         let selected = null;
@@ -338,20 +339,4 @@ export default class Browser extends React.Component {
         this.doUpload(dataTransfer.files);
     }
 
-    onUpload(event) {
-        this.doUpload(event.target.files);
-    }
-
-    onAddFolder(new_folder_name, current_folder_id) {
-        Actions.addFolder(new_folder_name, current_folder_id);
-    }
-
-    doUpload(file_list) {
-        // isn't this a weird place for this if statement?
-        // console.log(this.props.uploading_files, this.props.loading_folder)
-        if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
-            return;
-        }
-        Actions.upload(file_list, this.props.current_folder.id);
-    }
 }

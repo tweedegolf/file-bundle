@@ -13,11 +13,14 @@ export default class Toolbar extends React.Component {
 
     static propTypes = {
         onAddFolder: PropTypes.func.isRequired,
+        onUpload: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired,
         onPaste: PropTypes.func.isRequired,
         onCut: PropTypes.func.isRequired,
         current_folder: PropTypes.shape(folderShape),
-        uploading: PropTypes.bool.isRequired,
+        uploading_files: PropTypes.bool.isRequired,
+        loading_folder: PropTypes.number,
+        adding_folder: PropTypes.bool.isRequired,
         browser: PropTypes.bool.isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
@@ -25,6 +28,7 @@ export default class Toolbar extends React.Component {
 
     static defaultProps = {
         current_folder: null,
+        loading_folder: null,
     }
 
     constructor(props) {
@@ -36,12 +40,12 @@ export default class Toolbar extends React.Component {
     // hide create new folder popup if user clicks somewhere outside the popup
 /*
     addEventListener('mousedown', e => {
-      if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.folderName){
-        this.setState({
-          show_form: false
+        if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.folderName){
+            this.setState({
+            show_form: false
+            })
+        }
         })
-      }
-    })
 */
     }
 
@@ -70,7 +74,7 @@ export default class Toolbar extends React.Component {
     }
 
     render() {
-        const loader = this.props.uploading ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
+        const loader = this.props.uploading_files ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
         const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.show_form });
         let actions = null;
 
@@ -93,7 +97,9 @@ export default class Toolbar extends React.Component {
                   type="button"
                   className="btn btn-sm btn-default"
                   disabled={this.props.clipboard.length === 0}
-                  onClick={this.props.onPaste.bind(this)}
+                  onClick={() => {
+                      this.props.onPaste();
+                  }}
                 >
                     <span className="fa fa-paste" />
                     <span className="text-label">Plakken</span>
@@ -103,7 +109,9 @@ export default class Toolbar extends React.Component {
                   type="button"
                   className="btn btn-sm btn-default"
                   disabled={this.props.clipboard.length + this.props.selected.length === 0}
-                  onClick={this.props.onCancel.bind(this)}
+                  onClick={() => {
+                      this.props.onCancel();
+                  }}
                 >
                     <span className="fa fa-times-circle-o" />
                     <span className="text-label">Annuleren</span>
@@ -116,9 +124,9 @@ export default class Toolbar extends React.Component {
                 {actions}
                 <button
                   type="button"
-                  ref="button_add_folder"
+                  ref={(btn) => { this.buttonAdd = btn; }}
                   className={newFolderClass}
-                  onClick={this.onShowForm.bind(this)}
+                  onClick={() => { this.onShowForm(); }}
                   disabled={this.props.adding_folder}
                 >
                     <span className="fa fa-folder-o" />
@@ -131,13 +139,13 @@ export default class Toolbar extends React.Component {
                       ref={(input) => { this.folderName = input; }}
                       type="text"
                       placeholder="Mapnaam"
-                      onKeyPress={this.onKeyPress.bind(this)}
+                      onKeyPress={() => { this.onKeyPress(); }}
                     />
                     <button
                       type="button"
-                      ref="button_save_folder"
+                      ref={(btn) => { this.buttonSave = btn; }}
                       className="btn btn-sm btn-success pull-right"
-                      onClick={this.onAddFolder.bind(this)}
+                      onClick={() => { this.onAddFolder(); }}
                     >
                         <span className="fa fa-save" />
                         <span className="text-label">Opslaan</span>
@@ -145,17 +153,22 @@ export default class Toolbar extends React.Component {
                 </div>
                 <span
                   className="btn btn-sm btn-default btn-file pull-right"
-                  disabled={this.props.uploading}
+                  disabled={this.props.uploading_files}
                 >
                     <span className="fa fa-arrow-circle-o-up" />
                     <span className="text-label">Upload</span>
                     {loader}
                     <input
-            // id="upload_files"
-            // name="upload_files"
+                      // id="upload_files"
+                      // name="upload_files"
                       type="file"
                       multiple="multiple"
-                      onChange={this.props.onUpload}
+                      onChange={(e) => {
+                          if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
+                              return;
+                          }
+                          this.props.onUpload(Array.from(e.target.files), this.props.current_folder.id);
+                      }}
                     />
                 </span>
             </div>
