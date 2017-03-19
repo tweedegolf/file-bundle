@@ -74,7 +74,7 @@ export default class Browser extends React.Component {
         errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-   }
+    }
 
     static defaultProps = {
         options: null,
@@ -90,6 +90,9 @@ export default class Browser extends React.Component {
 
         this.canSelectMultipleFiles = R.isNil(props.options) === false &&
             R.isNil(props.options.multiple) === false;
+
+        this.imagesOnly = this.props.options ?
+            this.props.options.images_only : false;
 
         // select files and folders using the arrow up and -down key of your keyboard
         this.onKeyDown = (event) => {
@@ -129,7 +132,7 @@ export default class Browser extends React.Component {
                 multiple: this.canSelectMultipleFiles,
                 browser: this.props.browser,
             });
-        }
+        };
     }
 
     componentDidMount() {
@@ -266,7 +269,7 @@ export default class Browser extends React.Component {
                                 <List
                                   selectFile={this.selectFile}
                                   browser={this.props.browser}
-                                  imagesOnly={this.props.options ? this.props.options.images_only : false} 
+                                  imagesOnly={this.imagesOnly}
                                 />
                             </table>
                         </div>

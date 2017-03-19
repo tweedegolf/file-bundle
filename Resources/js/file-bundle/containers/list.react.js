@@ -90,7 +90,7 @@ export default class List extends React.Component {
             return (<File
               key={`file-${file.id}`}
               file={file}
-              hovering={this.props.hover === --i}
+              hovering={this.props.hover === (i -= 1)}
               selectFile={this.props.selectFile}
               deleteFile={Actions.deleteFile}
               showPreview={Actions.showPreview}
@@ -104,7 +104,7 @@ export default class List extends React.Component {
 
         // sorted folder listing
         let folders = R.map(folder => (<Folder
-          hovering={this.props.hover === --i}
+          hovering={this.props.hover === (i -= 1)}
           key={`folder-${folder.id}`}
           parent={false}
           folder={folder}
