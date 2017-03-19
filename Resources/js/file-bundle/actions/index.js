@@ -23,7 +23,7 @@ const dispatch = store.dispatch;
  *
  * @param {SelectFileArg} data Argument passed.
  */
-const selectFile = (data) => {
+export const selectFile = (data) => {
     dispatch({
         type: ActionTypes.SELECT_FILE,
         payload: { ...data },
@@ -41,7 +41,7 @@ const selectFile = (data) => {
  *                                 array of file ids to the HTML element's
  *                                 dataset; this array is passed as argument.
  */
-const init = (selected = null) => {
+export const init = (selected = null) => {
     if (selected !== null) {
         dispatch({
             type: ActionTypes.SELECT_FILES,
@@ -63,7 +63,7 @@ const init = (selected = null) => {
  *                                id null
  * @return     {void}  dispatches actions
  */
-const openFolder = (id) => {
+export const openFolder = (id) => {
     dispatch({
         type: ActionTypes.OPEN_FOLDER,
         payload: { id },
@@ -96,7 +96,7 @@ const openFolder = (id) => {
  *                                           the file that will be deleted.
  * @return     {void}  dispatches actions
  */
-const deleteFile = (file_id, current_folder_id) => {
+export const deleteFile = (file_id, current_folder_id) => {
     dispatch({
         type: ActionTypes.DELETE_FILE,
         payload: { file_id },
@@ -130,7 +130,7 @@ const deleteFile = (file_id, current_folder_id) => {
  *                                          will be deleted
  * @return     {void}  dispatches actions
  */
-const deleteFolder = (folder_id, current_folder_id) => {
+export const deleteFolder = (folder_id, current_folder_id) => {
     dispatch({
         type: ActionTypes.DELETE_FOLDER,
         payload: { folder_id },
@@ -158,7 +158,7 @@ const deleteFolder = (folder_id, current_folder_id) => {
 /**
  * Cut files, i.e. move the currently selected files to the clipboard
  */
-const cutFiles = function () {
+export const cutFiles = function () {
     dispatch({
         type: ActionTypes.CUT_FILES,
     });
@@ -177,7 +177,7 @@ const cutFiles = function () {
  *                                           where the files will be moved to.
  * @return     {void}  dispatches actions
  */
-const pasteFiles = function (files, current_folder_id) {
+export const pasteFiles = function (files, current_folder_id) {
     // dispatch ui state action here?
 
     cache.moveFiles(files, current_folder_id)
@@ -201,7 +201,7 @@ const pasteFiles = function (files, current_folder_id) {
 /**
  * Move files in clipboard array back to the selected array
  */
-const cancelCutAndPasteFiles = function () {
+export const cancelCutAndPasteFiles = function () {
     dispatch({
         type: ActionTypes.CANCEL_CUT_AND_PASTE_FILES,
     });
@@ -219,14 +219,14 @@ const cancelCutAndPasteFiles = function () {
  *                                        uploaded
  * @return     {void}  returns nothing
  */
-const upload = function (file_list, current_folder) {
-    file_list = Array.from(file_list);
+export const upload = (fileList, currentFolder) => {
+    const files = Array.from(fileList);
     dispatch({
         type: ActionTypes.UPLOAD_START,
-        payload: { file_list },
+        payload: { files },
     });
 
-    cache.addFiles(file_list, current_folder)
+    cache.addFiles(files, currentFolder)
         .then(
             (payload) => {
                 dispatch({
@@ -253,7 +253,7 @@ const upload = function (file_list, current_folder) {
  *                                           the new folder
  * @return     {void}  returns nothing, dispatches actions
  */
-const addFolder = function (folder_name, current_folder_id) {
+export const addFolder = function (folder_name, current_folder_id) {
     dispatch({
         type: ActionTypes.ADD_FOLDER,
     });
@@ -283,7 +283,7 @@ const addFolder = function (folder_name, current_folder_id) {
  *                               current sorting column, the sorting order will
  *                               be reversed.
  */
-const changeSorting = function (sort) {
+export const changeSorting = function (sort) {
     dispatch({
         type: ActionTypes.CHANGE_SORTING,
         payload: { sort },
@@ -296,7 +296,7 @@ const changeSorting = function (sort) {
  *
  * @param      {number}  error_id  The unique identifier of the error.
  */
-const dismissError = function (error_id) {
+export const dismissError = function (error_id) {
     dispatch({
         type: ActionTypes.DISMISS_ERROR,
         payload: { error_id },
@@ -309,7 +309,7 @@ const dismissError = function (error_id) {
  *
  * @param      {string}  image_url  The url of the full size image.
  */
-const showPreview = function (image_url) {
+export const showPreview = function (image_url) {
     dispatch({
         type: ActionTypes.SHOW_PREVIEW,
         payload: { image_url },
@@ -324,7 +324,7 @@ const showPreview = function (image_url) {
  * @param      {number}  id      The id of the file will be deleted after
  *                               confirmation
  */
-const confirmDelete = function (id) {
+export const confirmDelete = function (id) {
     dispatch({
         type: ActionTypes.CONFIRM_DELETE,
         payload: { id },
@@ -348,7 +348,7 @@ const confirmDelete = function (id) {
  *                                   the selection will wrap around resulting in
  *                                   the first item in the list being selected.
  */
-const setHover = function (diff, folder_id) {
+export const setHover = function (diff, folder_id) {
     dispatch({
         type: ActionTypes.SET_HOVER,
         payload: {
@@ -365,7 +365,7 @@ const setHover = function (diff, folder_id) {
  * @param      {number}  scroll  The position of the list in pixels measured
  *                               from the top.
  */
-const setScrollPosition = function (scroll) {
+export const setScrollPosition = function (scroll) {
     dispatch({
         type: ActionTypes.SET_SCROLL_POSITION,
         payload: { scroll },
@@ -377,33 +377,8 @@ const setScrollPosition = function (scroll) {
  * In Filepicker mode the user sees a button to expand and collapse the browser.
  * In Browser mode the browser is always expanded.
  */
-const expandBrowser = function () {
+export const expandBrowser = function () {
     dispatch({
         type: ActionTypes.EXPAND_BROWSER,
     });
-};
-
-
-/**
- * @Daniella: this is not a named export: it is a default export, you can give it any name
- * you want when you import it.
- */
-export default {
-    upload,
-    deleteFile,
-    openFolder,
-    addFolder,
-    deleteFolder,
-    selectFile,
-    cutFiles,
-    pasteFiles,
-    cancelCutAndPasteFiles,
-    init,
-    changeSorting,
-    dismissError,
-    showPreview,
-    confirmDelete,
-    expandBrowser,
-    setHover,
-    setScrollPosition,
 };

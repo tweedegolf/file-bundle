@@ -12,10 +12,11 @@ import SortHeader from '../components/sort_header.react';
 import Toolbar from '../components/toolbar.react';
 import SelectedFiles from '../components/selected_files.react';
 import Errors, { errorShape } from '../components/errors.react';
-import Actions from '../actions';
+import * as Actions from '../actions';
 import { sortBy } from '../util/util';
 import { fileShape } from '../components/file.react';
 import { folderShape } from '../components/folder.react';
+
 
 const mapStateToProps = (state) => {
     const {
@@ -90,7 +91,6 @@ export default class Browser extends React.Component {
     constructor() {
         super();
         this.onSelect = this.onSelect.bind(this);
-        this.onOpenFolder = this.onOpenFolder.bind(this);
     }
 
     componentDidMount() {
@@ -158,8 +158,8 @@ export default class Browser extends React.Component {
           adding_folder={this.props.adding_folder}
           browser={this.props.browser}
           onCut={Actions.cutFiles}
-          onPaste={this.onPaste.bind(this)}
-          onCancel={this.onCancel.bind(this)}
+          onPaste={Actions.pasteFiles}
+          onCancel={Actions.cancelCutAndPasteFiles}
           onUpload={this.onUpload.bind(this)}
           onAddFolder={this.onAddFolder.bind(this)}
           uploading={this.props.uploading_files}
@@ -225,13 +225,14 @@ export default class Browser extends React.Component {
                                       clipboard={this.props.clipboard}
                                       browser={this.props.browser}
                                       confirm_delete={this.props.confirm_delete}
-                                      loading={this.props.loading_folder}
+                                      loading_folder={this.props.loading_folder}
+                                      uploading_files={this.props.uploading_files}
                                       ascending={this.props.ascending}
                                       images_only={this.props.options ? this.props.options.images_only : false}
                                       onDeleteFile={Actions.deleteFile}
                                       onDeleteFolder={Actions.deleteFolder}
                                       onConfirmDelete={this.onConfirmDelete}
-                                      onOpenFolder={this.onOpenFolder}
+                                      onOpenFolder={Actions.openFolder}
                                     />
                                 </table>
                             </div>
@@ -339,14 +340,6 @@ export default class Browser extends React.Component {
 
     onUpload(event) {
         this.doUpload(event.target.files);
-    }
-
-    onOpenFolder(id) {
-        // isn't this a weird place for this if statement?
-        if (this.props.uploading_files === true || this.props.loading_folder !== -1) {
-            return;
-        }
-        Actions.openFolder(id);
     }
 
     onAddFolder(new_folder_name, current_folder_id) {
