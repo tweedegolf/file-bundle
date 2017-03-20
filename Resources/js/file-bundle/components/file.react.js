@@ -97,7 +97,7 @@ export default class File extends React.Component {
                     <span className="text-label">Annuleren</span>
                     <span className="fa fa-times" />
                 </button>
-                
+
                 <button
                   type="button"
                   className="btn btn-sm btn-danger"

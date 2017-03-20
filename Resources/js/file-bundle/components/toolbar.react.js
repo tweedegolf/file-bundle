@@ -17,24 +17,24 @@ export default class Toolbar extends React.Component {
         onCancel: PropTypes.func.isRequired,
         onPaste: PropTypes.func.isRequired,
         onCut: PropTypes.func.isRequired,
-        current_folder: PropTypes.shape(folderShape),
+        currentFolder: PropTypes.shape(folderShape),
         isUploadingFiles: PropTypes.bool.isRequired,
-        loading_folder: PropTypes.number,
-        adding_folder: PropTypes.bool.isRequired,
+        loadingFolderWithId: PropTypes.number,
+        isAddingFolder: PropTypes.bool.isRequired,
         browser: PropTypes.bool.isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
     }
 
     static defaultProps = {
-        current_folder: null,
-        loading_folder: null,
+        currentFolder: null,
+        loadingFolderWithId: null,
     }
 
     constructor(props) {
         super(props);
         this.state = {
-            show_form: false,
+            showForm: false,
         };
 
     // hide create new folder popup if user clicks somewhere outside the popup
@@ -42,7 +42,7 @@ export default class Toolbar extends React.Component {
     addEventListener('mousedown', e => {
         if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.folderName){
             this.setState({
-            show_form: false
+            showForm: false
             })
         }
         })
@@ -50,10 +50,10 @@ export default class Toolbar extends React.Component {
     }
 
     onAddFolder() {
-        this.setState({ show_form: false });
+        this.setState({ showForm: false });
         const name = this.folderName.value;
         if (name !== '') {
-            this.props.onAddFolder(name, this.props.current_folder.id);
+            this.props.onAddFolder(name, this.props.currentFolder.id);
         }
     }
 
@@ -66,7 +66,7 @@ export default class Toolbar extends React.Component {
 
     onShowForm() {
         this.setState({
-            show_form: true,
+            showForm: true,
         }, () => {
             this.folderName.value = '';
             this.folderName.focus();
@@ -75,7 +75,7 @@ export default class Toolbar extends React.Component {
 
     render() {
         const loader = this.props.isUploadingFiles ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
-        const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.show_form });
+        const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.showForm });
         let actions = null;
 
         if (this.props.browser) {
@@ -86,7 +86,7 @@ export default class Toolbar extends React.Component {
                   disabled={this.props.selected.length === 0}
                   onClick={() => {
                       // files that are currently in selected will be moved to the clipboard
-                      this.props.onCut(this.props.current_folder.id);
+                      this.props.onCut(this.props.currentFolder.id);
                   }}
                 >
                     <span className="fa fa-cut" />
@@ -127,13 +127,13 @@ export default class Toolbar extends React.Component {
                   ref={(btn) => { this.buttonAdd = btn; }}
                   className={newFolderClass}
                   onClick={() => { this.onShowForm(); }}
-                  disabled={this.props.adding_folder}
+                  disabled={this.props.isAddingFolder}
                 >
                     <span className="fa fa-folder-o" />
                     <span className="text-label">Nieuwe map</span>
-                    {this.props.adding_folder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
+                    {this.props.isAddingFolder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
                 </button>
-                <div className={`form-inline pull-right ${this.state.show_form ? '' : 'hide'}`}>
+                <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
                     <input
                       className="form-control input-sm"
                       ref={(input) => { this.folderName = input; }}

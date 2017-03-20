@@ -32,7 +32,7 @@ const mapStateToProps = (state) => {
 
     return {
         // tree props
-        currentFolder: state.tree.current_folder,
+        currentFolder: state.tree.currentFolder,
 
         // ui props
         sort,
@@ -41,10 +41,10 @@ const mapStateToProps = (state) => {
         expanded: state.ui.expanded,
         selected: state.ui.selected,
         clipboard: state.ui.clipboard,
-        loadingFolderWithId: state.ui.loading_folder, // null or number
-        isAddingFolder: state.ui.adding_folder, // true or false
-        isUploadingFiles: state.ui.uploading_files, // true or false
-        scrollPosition: state.ui.scroll_position, // null or numeric value
+        loadingFolderWithId: state.ui.loadingFolderWithId, // null or number
+        isAddingFolder: state.ui.isAddingFolder, // true or false
+        isUploadingFiles: state.ui.isUploadingFiles, // true or false
+        scrollPosition: state.ui.scrollPosition, // null or numeric value
         errors: state.ui.errors,
     };
 };
@@ -191,8 +191,8 @@ export default class Browser extends React.Component {
         const toolbar = (<Toolbar
           selected={this.props.selected}
           clipboard={this.props.clipboard}
-          current_folder={this.props.currentFolder}
-          adding_folder={this.props.isAddingFolder}
+          currentFolder={this.props.currentFolder}
+          isAddingFolder={this.props.isAddingFolder}
           browser={this.props.browser}
           onCut={Actions.cutFiles}
           onPaste={Actions.pasteFiles}
@@ -200,7 +200,7 @@ export default class Browser extends React.Component {
           uploadFiles={this.uploadFiles}
           onAddFolder={Actions.addFolder}
           isUploadingFiles={this.props.isUploadingFiles}
-          loading_folder={this.props.loadingFolderWithId}
+          loadingFolderWithId={this.props.loadingFolderWithId}
         />);
 
         const selected = (<SelectedFiles

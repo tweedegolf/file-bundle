@@ -21,7 +21,7 @@ const mapStateToProps = (state) => {
         // tree props
         folders: sortBy(state.tree.folders, sort, ascending),
         files: sortBy(state.tree.files, sort, ascending),
-        parentFolder: state.tree.parent_folder,
+        parentFolder: state.tree.parentFolder,
 
         // ui props
         sort,
@@ -31,12 +31,12 @@ const mapStateToProps = (state) => {
         hover: state.ui.hover,
         selected: state.ui.selected,
         clipboard: state.ui.clipboard,
-        loadingFolderWithId: state.ui.loading_folder, // null or number
-        deleteFileWithId: state.ui.confirm_delete, // null or number
-        deletingFileWithId: state.ui.deleting, // null or number
-        deletingFolderWithId: state.ui.deleting, // null or number
-        isAddingFolder: state.ui.adding_folder, // true or false
-        isUploadingFiles: state.ui.uploading_files, // true or false
+        loadingFolderWithId: state.ui.loadingFolderWithId, // null or number
+        deleteFileWithId: state.ui.deleteFileWithId, // null or number
+        deletingFileWithId: state.ui.deletingFileWithId, // null or number
+        deletingFolderWithId: state.ui.deletingFolderWithId, // null or number
+        isAddingFolder: state.ui.isAddingFolder, // true or false
+        isUploadingFiles: state.ui.isUploadingFiles, // true or false
     };
 };
 
