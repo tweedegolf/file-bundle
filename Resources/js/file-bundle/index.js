@@ -1,8 +1,8 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Browser from './containers/browser.react.js';
 import { Provider } from 'react-redux';
+import Browser from './containers/browser.react';
 import getStore from './reducers/get_store';
 
 const store = getStore();
@@ -16,9 +16,7 @@ if (browser !== null) {
         <Browser
           browser={true}
         />
-        </Provider>,
-        browser,
-    );
+    </Provider>, browser);
 }
 
 
@@ -38,8 +36,6 @@ if (pickers.length > 0) {
               browser={false}
               options={options}
             />
-            </Provider>,
-            element,
-        );
+        </Provider>, element);
     });
 }

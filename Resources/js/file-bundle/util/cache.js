@@ -33,15 +33,16 @@
  *                                   could hold the name of that folder.
  * @property   {String[]}  messages  The error messages sent by the server
  */
+import R from 'ramda';
 import api from './api';
 import { getUID } from './util';
 import * as Constants from './constants';
 import { getLocalState, storeLocal } from './local_storage';
 
 let tree;
-let all_files;
-let all_folders;
-let current_folder_id;
+let allFiles;
+let allFolders;
+let currentFolderId;
 
 
 /**
@@ -49,29 +50,29 @@ let current_folder_id;
  * files: if a file exists in multiple folders, it will be removed in all of
  * these folders. Used by moveFiles()
  *
- * @param      {String[]}  file_ids           The ids of the files that need to
- *                                            be removed.
- * @param      {Number}    exclude_folder_id  The id of a folder that should be
- *                                            skipped; files in this folder will
- *                                            not be removed. May be left
- *                                            undefined. Note that if you set it
- *                                            to null, the root folder will be
- *                                            skipped since the id of the root
- *                                            folder is null (not: "null"!)
+ * @param      {String[]}  fileIds           The ids of the files that need to
+ *                                           be removed.
+ * @param      {Number}    excludeFolderId   The id of a folder that should be
+ *                                           skipped; files in this folder will
+ *                                           not be removed. May be left
+ *                                           undefined. Note that if you set it
+ *                                           to null, the root folder will be
+ *                                           skipped since the id of the root
+ *                                           folder is null (not: "null"!)
  */
-const removeFilesFromFolders = function (file_ids, exclude_folder_id) {
-  // Object keys are strings! We can't convert them to int because the folder id
-  // could be 'null' as well (i.e. in case the folder is the root folder).
-  // Therefor we convert exclude_folder_id to string.
-    exclude_folder_id = `${exclude_folder_id}`;
-    Object.keys(tree).forEach((folder_id) => {
-        if (folder_id !== exclude_folder_id) {
-            const filesInFolder = tree[folder_id].file_ids;
-            file_ids.forEach((id) => {
+const removeFilesFromFolders = (fileIds, excludeFolderId) => {
+    // Object keys are strings! We can't convert them to int because the folder id
+    // could be 'null' as well (i.e. in case the folder is the root folder).
+    // Therefor we convert excludeFolderId to string.
+    const excludeFolderIdString = `${excludeFolderId}`;
+    Object.keys(tree).forEach((folderId) => {
+        if (folderId !== excludeFolderIdString) {
+            const filesInFolder = tree[folderId].fileIds;
+            fileIds.forEach((id) => {
                 const index = filesInFolder.indexOf(id);
                 if (index !== -1) {
-                    tree[folder_id].file_ids.splice(index, 1);
-                    all_folders[folder_id].file_count--;
+                    tree[folderId].fileIds.splice(index, 1);
+                    allFolders[folderId].file_count -= 1;
                 }
             });
         }
@@ -90,25 +91,25 @@ const removeFilesFromFolders = function (file_ids, exclude_folder_id) {
  *
  * @see        the code of the reducers in the reducers folder
  */
-const init = function () {
+const init = () => {
     ({
-    tree,
-    all_files,
-    all_folders,
-    current_folder_id,
-  } = getLocalState());
-    return current_folder_id;
+        tree,
+        allFiles,
+        allFolders,
+        currentFolderId,
+    } = getLocalState());
+    return currentFolderId;
 };
 
 
 /**
  * @name       openFolderResolve
  * @type       {Object}
- * @property   {Object}   current_folder  Data object that describes the
+ * @property   {Object}   currentFolder  Data object that describes the
  *                                        currently opened folder such as number
  *                                        of files and folders, creation date
  *                                        and so on.
- * @property   {?number}  parent_folder   Id of the parent folder, will be null
+ * @property   {?number}  parentFolder   Id of the parent folder, will be null
  *                                        if the parent folder is the top root
  *                                        folder.
  * @property   {Array}    files           Array containing File data objects for
@@ -133,91 +134,91 @@ const init = function () {
  * will be loaded from cache, otherwise the contents will be loaded from the
  * server.
  *
- * @param      {?number}  folder_id  The id of the folder whose contents needs
+ * @param      {?number}  folderId  The id of the folder whose contents needs
  * @return     {Promise}  {@link openFolderResolve resolve} {@link APIError
  *                        reject}
  */
-const loadFolder = function (folder_id) {
+const loadFolder = (folderId) => {
     return new Promise((resolve, reject) => {
-        let current_folder;
-        current_folder_id = folder_id;
-        storeLocal({ current_folder_id });
+        let currentFolder;
+        currentFolderId = folderId;
+        storeLocal({ currentFolderId });
 
-        let tree_folder = tree[folder_id];
-        let parent_folder = null;
+        let treeFolder = tree[folderId];
+        let parentFolder = null;
 
-        if (folder_id !== null) {
-            parent_folder = { ...all_folders[all_folders[folder_id].parent] };
+        if (folderId !== null) {
+            parentFolder = { ...allFolders[allFolders[folderId].parent] };
         }
 
-        if (typeof tree_folder !== 'undefined' && tree_folder.needsUpdate === false) {
-            const files = tree_folder.file_ids.map((id) => {
-                const f = all_files[id];
+        if (typeof treeFolder !== 'undefined' && treeFolder.needsUpdate === false) {
+            const files = treeFolder.fileIds.map((id) => {
+                const f = allFiles[id];
                 f.new = false;
                 return f;
             });
-            const folders = tree_folder.folder_ids.map((id) => {
-                const f = all_folders[id];
+            const folders = treeFolder.folderIds.map((id) => {
+                const f = allFolders[id];
                 f.new = false;
                 return f;
             });
 
-            if (folder_id === null) {
-                all_folders[folder_id].file_count = files.length;
-                all_folders[folder_id].folder_count = folders.length;
+            if (folderId === null) {
+                allFolders[folderId].file_count = files.length;
+                allFolders[folderId].folder_count = folders.length;
             }
 
             resolve({
-                current_folder: { ...all_folders[folder_id] },
-                parent_folder,
+                currentFolder: { ...allFolders[folderId] },
+                parentFolder,
                 files,
                 folders,
             });
         } else {
-            current_folder = { ...all_folders[folder_id] };
+            currentFolder = { ...allFolders[folderId] };
             api.openFolder(
-        folder_id,
-        (folders, files) => {
-            tree_folder = {};
-            tree_folder.needsUpdate = false;
-            tree_folder.folder_ids = [];
-            tree_folder.file_ids = [];
+                folderId,
+                (folders, files) => {
+                    treeFolder = {};
+                    treeFolder.needsUpdate = false;
+                    treeFolder.folderIds = [];
+                    treeFolder.fileIds = [];
 
-            folders.forEach((f) => {
-                all_folders[f.id] = f;
-                tree_folder.folder_ids.push(f.id);
-            });
+                    folders.forEach((f) => {
+                        allFolders[f.id] = f;
+                        treeFolder.folderIds.push(f.id);
+                    });
 
-            files.forEach((f) => {
-                all_files[f.id] = f;
-                tree_folder.file_ids.push(f.id);
-            });
+                    files.forEach((f) => {
+                        allFiles[f.id] = f;
+                        treeFolder.fileIds.push(f.id);
+                    });
 
-            tree[folder_id] = tree_folder;
-            storeLocal({ tree }, { all_files }, { all_folders });
+                    tree[folderId] = treeFolder;
+                    storeLocal({ tree }, { allFiles }, { allFolders });
 
-            if (folder_id === null) {
-                all_folders[folder_id].file_count = files.length;
-                all_folders[folder_id].folder_count = folders.length;
-            }
+                    if (folderId === null) {
+                        allFolders[folderId].file_count = files.length;
+                        allFolders[folderId].folder_count = folders.length;
+                    }
 
-            resolve({
-                current_folder,
-                parent_folder,
-                files,
-                folders,
-            });
-        },
-        (messages) => {
-            const errors = [{
-                id: getUID(),
-                data: current_folder.name,
-                type: Constants.ERROR_OPENING_FOLDER,
-                messages,
-            }];
-            reject({ errors });
-        },
-      );
+                    resolve({
+                        currentFolder,
+                        parentFolder,
+                        files,
+                        folders,
+                    });
+                },
+                (messages) => {
+                    const errors = [{
+                        id: getUID(),
+                        data: currentFolder.name,
+                        type: Constants.ERROR_OPENING_FOLDER,
+                        messages,
+                    }];
+                    reject({ errors });
+                },
+            );
         }
     });
 };
@@ -242,55 +243,55 @@ const loadFolder = function (folder_id) {
  *
  * @param      {Array}    file_list  FileList with all uploads converted to an
  *                                   Array
- * @param      {Number}   folder_id  The id of the folder where the files get
+ * @param      {Number}   folderId  The id of the folder where the files get
  *                                   stored.
  * @return     {Promise}  promise {@link uploadResolve resolve} {@link APIError
  *                        reject}
  */
-const addFiles = function (file_list, folder_id) {
-    const tree_folder = tree[folder_id];
+const addFiles = (fileList, folderId) => {
+    const treeFolder = tree[folderId];
 
     return new Promise((resolve, reject) => {
-        api.upload(file_list, folder_id,
-      (rejected, files) => {
-          files.forEach((f) => {
-              all_files[f.id] = f;
-              tree_folder.file_ids.push(f.id);
-              f.new = true;
-          });
+        api.upload(fileList, folderId,
+            (rejected, files) => {
+                files.forEach((f) => {
+                    allFiles[f.id] = f;
+                    treeFolder.fileIds.push(f.id);
+                    f.new = true;
+                });
 
-          const errors = Object.keys(rejected).map(key => ({
-              id: getUID(),
-              type: Constants.ERROR_UPLOADING_FILE,
-              data: key,
-              messages: rejected[key],
-          }));
+                const errors = Object.keys(rejected).map(key => ({
+                    id: getUID(),
+                    type: Constants.ERROR_UPLOADING_FILE,
+                    data: key,
+                    messages: rejected[key],
+                }));
 
-          const file_count = tree_folder.file_ids.length;
-          all_folders[folder_id].file_count = file_count;
+                const fileCount = treeFolder.fileIds.length;
+                allFolders[folderId].file_count = fileCount;
 
-          storeLocal({ tree }, { all_files }, { all_folders });
+                storeLocal({ tree }, { allFiles }, { allFolders });
 
-          resolve({
-              file_count,
-              files,
-              errors,
-          });
-      },
-      (error) => {
-        // console.log(error)
-          const errors = [];
-          Array.from(file_list).forEach((f) => {
-              errors.push({
-                  id: getUID(),
-                  type: Constants.ERROR_UPLOADING_FILE,
-                  data: f.name,
-                  messages: error,
-              });
-          });
-          reject({ errors });
-      },
-    );
+                resolve({
+                    fileCount,
+                    files,
+                    errors,
+                });
+            },
+            (error) => {
+                // console.log(error)
+                const errors = [];
+                Array.from(fileList).forEach((f) => {
+                    errors.push({
+                        id: getUID(),
+                        type: Constants.ERROR_UPLOADING_FILE,
+                        data: f.name,
+                        messages: error,
+                    });
+                });
+                reject({ errors });
+            },
+        );
     });
 };
 
@@ -309,61 +310,61 @@ const addFiles = function (file_list, folder_id) {
  *
  * @param      {Array<number>}  files      Array containing the ids of the files
  *                                         to be moved
- * @param      {?number}        folder_id  The id of the folder where the files
+ * @param      {?number}        folderId  The id of the folder where the files
  *                                         will be moved to
  * @return     {Promise}        {@link pasteFilesResolve resolve} {@link
  *                              APIError reject}
  */
-const moveFiles = function (files, folder_id) {
+const moveFiles = (files, folderId) => {
     return new Promise((resolve, reject) => {
-        const file_ids = files.map(file => file.id);
+        const fileIds = files.map(file => file.id);
 
-        api.paste(file_ids, folder_id,
-      () => {
-        // move files to the new folder
-          files.forEach((f) => {
-              f.new = true;
-              tree[folder_id].file_ids.push(f.id);
-          });
-        // get the new file count of the new folder
-          const file_count = tree[folder_id].file_ids.length;
-          all_folders[folder_id].file_count = file_count;
+        api.paste(fileIds, folderId,
+            () => {
+                // move files to the new folder
+                files.forEach((f) => {
+                    f.new = true;
+                    tree[folderId].fileIds.push(f.id);
+                });
+                // get the new file count of the new folder
+                const file_count = tree[folderId].fileIds.length;
+                allFolders[folderId].file_count = file_count;
 
-        // remove the files from the original folder(s)
-          removeFilesFromFolders(file_ids, folder_id);
-/*
-        @todo: implementation is buggy; needs some rethinking
+                // remove the files from the original folder(s)
+                removeFilesFromFolders(fileIds, folderId);
+                /*
+                        @todo: implementation is buggy; needs some rethinking
 
-        // In case a file has been moved out of the parent folder of the new
-        // folder, we need to update the file_count so we can update the number
-        // next to the file icon at the top of the browser list (or remove the
-        // icon alltogether in case no files are left in the parent folder)
-        let file_count_parent = 0
-        if(typeof all_folders[folder_id] !== 'undefined'){
-          let parentId = all_folders[folder_id].parent
-          if(typeof parentId !== 'undefined'){
-            file_count_parent = all_folders[parentId].file_count
-          }
-        }
-        //console.log(parentId, file_count_parent)
-*/
-          storeLocal({ tree }, { all_folders });
-          resolve({
-          // file_count_parent,
-              file_count,
-              files,
-          });
-      },
-      (messages) => {
-          const errors = files.map(file => ({
-              id: getUID(),
-              data: file.name,
-              type: Constants.ERROR_MOVING_FILES,
-              messages,
-          }));
-          reject({ errors });
-      },
-    );
+                        // In case a file has been moved out of the parent folder of the new
+                        // folder, we need to update the file_count so we can update the number
+                        // next to the file icon at the top of the browser list (or remove the
+                        // icon alltogether in case no files are left in the parent folder)
+                        let file_count_parent = 0
+                        if(typeof allFolders[folderId] !== 'undefined'){
+                          let parentId = allFolders[folderId].parent
+                          if(typeof parentId !== 'undefined'){
+                            file_count_parent = allFolders[parentId].file_count
+                          }
+                        }
+                        //console.log(parentId, file_count_parent)
+                */
+                storeLocal({ tree }, { allFolders });
+                resolve({
+                    // file_count_parent,
+                    file_count,
+                    files,
+                });
+            },
+            (messages) => {
+                const errors = files.map(file => ({
+                    id: getUID(),
+                    data: file.name,
+                    type: Constants.ERROR_MOVING_FILES,
+                    messages,
+                }));
+                reject({ errors });
+            },
+        );
     });
 };
 
@@ -379,46 +380,46 @@ const moveFiles = function (files, folder_id) {
  * Deletes a single file
  *
  * @param      {number}   file_id    The id of the file to be deleted
- * @param      {?number}  folder_id  The id of the folder that contains the file
+ * @param      {?number}  folderId  The id of the folder that contains the file
  * @return     {Promise}  {@link deleteFileResolve resolve} {@link APIError
  *                        reject}
  */
-const deleteFile = function (file_id, folder_id) {
-    const tree_folder = tree[folder_id];
+const deleteFile = (fileId, folderId) => {
+    const treeFolder = tree[folderId];
 
     return new Promise((resolve, reject) => {
-        api.deleteFile(file_id,
-      () => {
-          const files = [];
-          const file_ids = [];
-          tree_folder.file_ids.forEach((id) => {
-              if (id !== file_id) {
-                  files.push(all_files[id]);
-                  file_ids.push(id);
-              }
-          });
-          const file_count = file_ids.length;
-          tree_folder.file_ids = file_ids;
-          all_folders[folder_id].file_count = file_count;
+        api.deleteFile(fileId,
+            () => {
+                const files = [];
+                const fileIds = [];
+                treeFolder.fileIds.forEach((id) => {
+                    if (id !== fileId) {
+                        files.push(allFiles[id]);
+                        fileIds.push(id);
+                    }
+                });
+                const fileCount = fileIds.length;
+                treeFolder.fileIds = fileIds;
+                allFolders[folderId].file_count = fileCount;
 
-          delete all_files[file_id];
-          storeLocal({ tree }, { all_files }, { all_folders });
-          resolve({
-              file_count,
-              files,
-          });
-      },
-      (messages) => {
-          const file = all_files[file_id];
-          const errors = [{
-              id: getUID(),
-              data: file.name,
-              type: Constants.ERROR_DELETING_FILE,
-              messages,
-          }];
-          reject({ errors });
-      },
-    );
+                delete allFiles[fileId];
+                storeLocal({ tree }, { allFiles }, { allFolders });
+                resolve({
+                    fileCount,
+                    files,
+                });
+            },
+            (messages) => {
+                const file = allFiles[fileId];
+                const errors = [{
+                    id: getUID(),
+                    data: file.name,
+                    type: Constants.ERROR_DELETING_FILE,
+                    messages,
+                }];
+                reject({ errors });
+            },
+        );
     });
 };
 
@@ -438,55 +439,55 @@ const deleteFile = function (file_id, folder_id) {
  * Creates a new emtpy folder in the current folder
  *
  * @param      {string}   folder_name       The name of the new folder.
- * @param      {?number}  parent_folder_id  The id of the parent folder (the
+ * @param      {?number}  parentFolderId  The id of the parent folder (the
  *                                          current folder).
  * @return     {Promise}  promise {@link addFolderResolve resolve} {@link
  *                        APIError reject}
  */
-const addFolder = function (folder_name, parent_folder_id) {
-    const tree_folder = tree[parent_folder_id];
+const addFolder = (folderName, parentFolderId) => {
+    const treeFolder = tree[parentFolderId];
 
     return new Promise((resolve, reject) => {
-        api.addFolder(folder_name, parent_folder_id,
-      (folders, error_messages) => {
-          folders.forEach((f) => {
-              all_folders[f.id] = f;
-              tree_folder.folder_ids.push(f.id);
-              f.new = true;
-          });
+        api.addFolder(folderName, parentFolderId,
+            (folders, errorMessages) => {
+                folders.forEach((f) => {
+                    allFolders[f.id] = f;
+                    treeFolder.folderIds.push(f.id);
+                    f.new = true;
+                });
 
-          const folder_count = tree_folder.folder_ids.length;
-          tree_folder.folder_count = folder_count;
-          all_folders[parent_folder_id].folder_count = folder_count;
-          storeLocal({ tree }, { all_folders });
+                const folderCount = treeFolder.folderIds.length;
+                treeFolder.folderCount = folderCount;
+                allFolders[parentFolderId].folder_count = folderCount;
+                storeLocal({ tree }, { allFolders });
 
-          let errors = [];
-          if (error_messages.length > 0) {
-              errors = [{
-                  id: getUID(),
-                  data: folder_name,
-                  type: Constants.ERROR_ADDING_FOLDER,
-                  messages: error_messages,
-              }];
-          }
+                let errors = [];
+                if (errorMessages.length > 0) {
+                    errors = [{
+                        id: getUID(),
+                        data: folderName,
+                        type: Constants.ERROR_ADDING_FOLDER,
+                        messages: errorMessages,
+                    }];
+                }
 
-          resolve({
-              folder_count,
-              folders,
-              errors,
-          //errors: [{id: 7777, type: 'generic', messages: ['oh my, this is an error!']}]
-          });
-      },
-      (messages) => {
-          const errors = [{
-              id: getUID(),
-              data: folder_name,
-              type: Constants.ERROR_ADDING_FOLDER,
-              messages,
-          }];
-          reject({ errors });
-      },
-    );
+                resolve({
+                    folderCount,
+                    folders,
+                    errors,
+                    //errors: [{id: 7777, type: 'generic', messages: ['oh my, this is an error!']}]
+                });
+            },
+            (messages) => {
+                const errors = [{
+                    id: getUID(),
+                    data: folderName,
+                    type: Constants.ERROR_ADDING_FOLDER,
+                    messages,
+                }];
+                reject({ errors });
+            },
+        );
     });
 };
 
@@ -502,76 +503,76 @@ const addFolder = function (folder_name, parent_folder_id) {
 /**
  * Deletes an emptied folder
  *
- * @param      {number}   folder_id         The id of the folder to be deleted
- * @param      {?number}  parent_folder_id  The id of the parent folder
+ * @param      {number}   folderId         The id of the folder to be deleted
+ * @param      {?number}  parentFolderId  The id of the parent folder
  * @return     {Promise}  {@link deleteFolderResolve resolve} {@link APIError
  *                        reject}
  */
-const deleteFolder = function (folder_id, parent_folder_id) {
-    const tree_folder = tree[parent_folder_id];
+const deleteFolder = (folderId, parentFolderId) => {
+    const treeFolder = tree[parentFolderId];
 
     return new Promise((resolve, reject) => {
-        api.deleteFolder(folder_id,
-      () => {
-          const folders = [];
-          const folder_ids = [];
-          tree_folder.folder_ids.forEach((id) => {
-              if (id !== folder_id) {
-                  folders.push(all_folders[id]);
-                  folder_ids.push(id);
-              }
-          });
-          const folder_count = folder_ids.length;
-          tree_folder.folder_ids = folder_ids;
-          all_folders[parent_folder_id].folder_count = folder_count;
+        api.deleteFolder(folderId,
+            () => {
+                const folders = [];
+                const folderIds = [];
+                treeFolder.folderIds.forEach((id) => {
+                    if (id !== folderId) {
+                        folders.push(allFolders[id]);
+                        folderIds.push(id);
+                    }
+                });
+                const folderCount = folderIds.length;
+                treeFolder.folderIds = folderIds;
+                allFolders[parentFolderId].folder_count = folderCount;
 
-          delete all_folders[folder_id];
-          storeLocal({ tree }, { all_folders });
+                delete allFolders[folderId];
+                storeLocal({ tree }, { allFolders });
 
-          resolve({
-              folder_count,
-              folders,
-          });
-      },
-      (message) => {
-          let folder = 'no name';
-          if (folder_id) {
-              folder = all_folders[folder_id];
-              if (typeof folder !== 'undefined') {
-                  folder = folder.name;
-              }
-          }
-          const errors = [{
-              id: getUID(),
-              type: Constants.ERROR_DELETING_FOLDER,
-              data: folder,
-              messages: [message],
-          }];
-          reject({ errors });
-      },
-    );
+                resolve({
+                    folderCount,
+                    folders,
+                });
+            },
+            (message) => {
+                let folder = 'no name';
+                if (folderId) {
+                    folder = allFolders[folderId];
+                    if (typeof folder !== 'undefined') {
+                        folder = folder.name;
+                    }
+                }
+                const errors = [{
+                    id: getUID(),
+                    type: Constants.ERROR_DELETING_FOLDER,
+                    data: folder,
+                    messages: [message],
+                }];
+                reject({ errors });
+            },
+        );
     });
 };
 
 
-const getItemCount = function (folder_id) {
-    const folder = tree[folder_id];
-    return folder.file_ids.length + folder.folder_ids.length;
+const getItemCount = (folderId) => {
+    const folder = tree[folderId];
+    return folder.fileIds.length + folder.folderIds.length;
 };
 
 
-const getFileById = function (id) {
-    for (let file_id of Object.keys(all_files)) {
-        file_id = parseInt(file_id, 10);
-        if (file_id === id) {
-            return all_files[file_id];
+const getFileById = (id) => {
+    for (let fileId of Object.keys(allFiles)) {
+        fileId = parseInt(fileId, 10);
+        if (fileId === id) {
+            return allFiles[fileId];
         }
     }
     return null;
 };
 
 
-const getFilesByIds = function (ids) {
+const getFilesByIds = (ids) => {
     const result = [];
     ids.forEach((id) => {
         const file = getFileById(id);
