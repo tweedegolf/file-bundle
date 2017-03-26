@@ -10,7 +10,7 @@
  * user actions requesting data and the server.
  *
  * The success callback of the api typically returns an array of objects
- * decscribing files and/or folders
+ * describing files and/or folders
  *
  * @see        the description of the {@link FileDescr File} and {@link FolderDescr Folder} in the file ./api.js
  *

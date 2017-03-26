@@ -22,8 +22,8 @@ const reviver = function (k, v) {
  */
 export function getLocalState() {
   // default values
-    let all_files = {};
-    let all_folders = {
+    let allFiles = {};
+    let allFolders = {
         null: {
             id: null,
             name: '..',
@@ -32,14 +32,14 @@ export function getLocalState() {
         },
     };
     let selected = [];
-    let current_folder_id = null;
+    let currentFolderId = null;
 
     let tree = localStorage.getItem('tree');
     if (tree !== null) {
         tree = JSON.parse(tree);
-        all_files = JSON.parse(localStorage.getItem('all_files'));
-        all_folders = JSON.parse(localStorage.getItem('all_folders'));
-        current_folder_id = JSON.parse(localStorage.getItem('current_folder_id'));
+        allFiles = JSON.parse(localStorage.getItem('all_files'));
+        allFolders = JSON.parse(localStorage.getItem('all_folders'));
+        currentFolderId = JSON.parse(localStorage.getItem('current_folder_id'));
         selected = JSON.parse(localStorage.getItem('selected'));
 
         if (selected === null) {
@@ -50,18 +50,18 @@ export function getLocalState() {
        * File description objects in the selected array; so we replace the ids
        * by their corresponding File objects
        */
-            selected = selected.map(file_id => all_files[file_id]);
+            selected = selected.map(fileId => allFiles[fileId]);
         }
     } else {
         tree = {};
     }
 
     return {
-        current_folder_id,
+        currentFolderId,
         selected,
         tree,
-        all_files,
-        all_folders,
+        allFiles,
+        allFolders,
     };
 }
 

@@ -1,6 +1,6 @@
 /**
  * Function that handles the uploading of files. The files are stored in the
- * ./media folder and qif the file is a picture, a thumbnail will be created and
+ * ./media folder and if the file is a picture, a thumbnail will be created and
  * stored in the ./media/thumb folder.
  *
  * Note: unlike the real server, currently there are no restraints implemented

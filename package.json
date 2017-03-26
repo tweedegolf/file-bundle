@@ -9,6 +9,7 @@
     "jasmine": "babel-node ./Resources/js/file-bundle/test/tests/index.js",
     "test": "npm start | npm run jasmine",
     "start": "babel-node ./Resources/js/file-bundle/test/server/src/index.js",
+    "watch-server": "nodemon --exec babel-node ./Resources/js/file-bundle/test/server/src/index.js",
     "watch-css": "./node_modules/.bin/node-sass -w ./Resources/scss -o ./Resources/js/file-bundle/test/server/assets/css --include-path ./node_modules",
     "watch-js": "watchify ./Resources/js/file-bundle/index.js -t [ babelify ] -o ./Resources/js/file-bundle/test/server/assets/js/app.js --debug --verbose",
     "watch": "npm run watch-css | npm run watch-js",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "babel-eslint": "7.1.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-flow-strip-types": "6.22.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "6.11.1",
     "babel-preset-stage-0": "6.5.0",
@@ -37,6 +39,7 @@
     "eslint-plugin-jsx-a11y": "4.0.0",
     "eslint-plugin-react": "6.10.0",
     "exorcist": "0.4.0",
+    "flow-bin": "0.42.0",
     "jasmine": "2.5.2",
     "less": "2.7.1",
     "node-sass": "3.10.1",

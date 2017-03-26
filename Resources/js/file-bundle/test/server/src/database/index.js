@@ -17,8 +17,8 @@ import { createFolderDescription } from '../util';
  *                       error is simulated; this returns a fake error message.
  */
 const getFolder = (folderId) => {
-  // fake and real errors
-  // console.log(folderId)
+    // fake and real errors
+    // console.log(folderId);
     const folderData = data.tree[folderId];
     if (typeof folderData === 'undefined' || folderId === 1000) {
     // folder id 1000 is a test id -> this alway generates an error

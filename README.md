@@ -88,8 +88,10 @@ If you chose to make changes in the javascript and/or scss files, you can use th
  - `npm run watch-js` starts watching for changes in the javascript and builds upon any change
  - `npm run watch-css` starts watching for changes in the scss files and builds upon any change
 
+If you want to make changes to the express test server note that you have to restart the server to effectuate the changes. You can circumvent this by installing [nodemon](https://nodemon.io) and running the server watch command:
 
-
+ - `npm install -g nodemon`
+ - `npm run watch-server'
 
 
 ## Testing
