@@ -1,7 +1,7 @@
 /**
  * Utility functions that handle saving to and retrieving from local storage
  */
-
+import R from 'ramda';
 
 // for parsing JSON, not needed for now
 const reviver = function (k, v) {
@@ -33,23 +33,23 @@ export function getLocalState() {
     };
     let selected = [];
     let currentFolderId = null;
-
     let tree = localStorage.getItem('tree');
     if (tree !== null) {
         tree = JSON.parse(tree);
-        allFiles = JSON.parse(localStorage.getItem('all_files'));
-        allFolders = JSON.parse(localStorage.getItem('all_folders'));
-        currentFolderId = JSON.parse(localStorage.getItem('current_folder_id'));
+        // console.log('stored tree', R.clone(tree));
+        allFiles = JSON.parse(localStorage.getItem('allFiles'));
+        allFolders = JSON.parse(localStorage.getItem('allFolders'));
+        currentFolderId = JSON.parse(localStorage.getItem('currentFolderId'));
         selected = JSON.parse(localStorage.getItem('selected'));
 
         if (selected === null) {
             selected = [];
         } else {
-           /**
-           * Only the ids of the selected files are stored but the state expects
-           * File description objects in the selected array; so we replace the ids
-           * by their corresponding File objects
-           */
+            /**
+             * Only the ids of the selected files are stored but the state expects
+             * File description objects in the selected array; so we replace the ids
+             * by their corresponding File objects
+             */
             selected = selected.map(fileId => allFiles[fileId]);
         }
     } else {
@@ -72,22 +72,16 @@ export function getLocalState() {
  * @param      {Array}  args    The values to be stored
  */
 export function storeLocal(...args) {
-  // bypass for now
-    return;
-
-    args.forEach((arg) => {
-        const key = Object.keys(arg)[0];
-        let value = arg[key];
-
-        switch (key) {
-        case 'selected':
-            value = value.map(f => f.id);
-            break;
-
-        default:
-        // imagine the sound of one hand clapping
+    R.forEach((arg) => {
+        const key = R.keys(arg)[0];
+        const value = R.values(arg)[0];
+        if (key === 'selected') {
+            const ids = value.map(f => f.id);
+            // console.log('storeLocal', key, ids);
+            localStorage.setItem(key, JSON.stringify(ids));
+        } else {
+            // console.log('storeLocal', key, value);
+            localStorage.setItem(key, JSON.stringify(value));
         }
-
-        localStorage.setItem(key, JSON.stringify(value));
-    });
+    }, args);
 }

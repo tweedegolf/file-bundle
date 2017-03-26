@@ -151,7 +151,7 @@ const loadFolder = (folderId) => {
             parentFolder = { ...allFolders[allFolders[folderId].parent] };
         }
 
-        if (typeof treeFolder !== 'undefined' && treeFolder.needsUpdate === false) {
+        if (typeof treeFolder !== 'undefined') {
             const files = treeFolder.fileIds.map((id) => {
                 const f = allFiles[id];
                 f.new = false;
@@ -167,7 +167,6 @@ const loadFolder = (folderId) => {
                 allFolders[folderId].file_count = files.length;
                 allFolders[folderId].folder_count = folders.length;
             }
-
             resolve({
                 currentFolder: { ...allFolders[folderId] },
                 parentFolder,
@@ -180,7 +179,6 @@ const loadFolder = (folderId) => {
                 folderId,
                 (folders, files) => {
                     treeFolder = {};
-                    treeFolder.needsUpdate = false;
                     treeFolder.folderIds = [];
                     treeFolder.fileIds = [];
 
