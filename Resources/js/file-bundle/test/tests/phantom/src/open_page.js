@@ -29,11 +29,11 @@ args.forEach((arg) => {
  */
 export function openPage(conf) {
     const {
-    id,
-    page,
-    onReady,
-    onError,
-  } = conf;
+        id,
+        page,
+        onReady,
+        onError,
+    } = conf;
 
     page.open(url, (status) => {
         if (status !== 'success') {
@@ -44,7 +44,7 @@ export function openPage(conf) {
         waitFor({
             onTest() {
                 data = page.evaluate(() => {
-          // wait until browser list has loaded
+                    // wait until browser list has loaded
                     const t = document.querySelector('tbody');
                     if (t) {
                         return {
@@ -57,7 +57,7 @@ export function openPage(conf) {
                         title: '',
                     };
                 });
-        // console.log(data)
+                // console.log(data)
                 return data.class === 'loaded';
             },
             onReady() {
@@ -83,10 +83,10 @@ export function openPage(conf) {
  */
 export function closeServer(conf) {
     const {
-    id,
-    page,
-    onReady,
-  } = conf;
+        id,
+        page,
+        onReady,
+    } = conf;
 
     page.open(`${url}/close`, () => {
         onReady({ id, running: false });

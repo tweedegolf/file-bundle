@@ -45,11 +45,11 @@ export function getLocalState() {
         if (selected === null) {
             selected = [];
         } else {
-      /**
-       * Only the ids of the selected files are stored but the state expects
-       * File description objects in the selected array; so we replace the ids
-       * by their corresponding File objects
-       */
+           /**
+           * Only the ids of the selected files are stored but the state expects
+           * File description objects in the selected array; so we replace the ids
+           * by their corresponding File objects
+           */
             selected = selected.map(fileId => allFiles[fileId]);
         }
     } else {

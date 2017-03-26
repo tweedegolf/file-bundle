@@ -3,7 +3,6 @@
  *
  * some credits: https://gist.github.com/mauvm/172878a9646095d03fd7
  */
-
 import 'babel-polyfill';
 import Jasmine from 'jasmine';
 

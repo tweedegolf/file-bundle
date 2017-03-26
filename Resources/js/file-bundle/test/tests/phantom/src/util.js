@@ -21,21 +21,21 @@ const phantom = global.phantom;
  */
 export function waitFor(conf) {
     const {
-    timeout = 10000,
-    delay = 50,
-    onTest,
-    onTestArgs = {},
-    onCheck = () => {},
-    onReady = () => {},
-    onError = null,
-  } = conf;
+        timeout = 10000,
+        delay = 50,
+        onTest,
+        onTestArgs = {},
+        onCheck = () => {},
+        onReady = () => {},
+        onError = null,
+    } = conf;
 
     const start = new Date().getTime();
     let condition = false;
 
     const interval = setInterval(() => {
         const elapsed = new Date().getTime() - start;
-    // console.log(elapsed)
+        // console.log(elapsed)
         if (elapsed < timeout && condition === false) {
             onCheck();
             condition = onTest(onTestArgs);
@@ -86,33 +86,25 @@ export function waitFor(conf) {
  * @return     {Promise}  A promise, resolve returns an array of values and
  *                        errors, reject returns an array of errors
  */
-export const chainPromises = function (conf) {
-    let {
-    index = 0,
-    promises = [],
-    resolve = () => {},
-    reject = () => {},
-    values = [],
-    errors = [],
-  } = conf;
+export const chainPromises = (conf) => {
+    const {
+        index = 0,
+        promises = [],
+        resolve = () => {},
+        reject = () => {},
+        values = [],
+        errors = [],
+    } = conf;
 
-    let {
-    id, // the id of the promise so we can keep them apart
-    func, // the executor of the promise
-    args = [], // optional arguments for the executor
-    parseRejectValue, // optional function that parses the value that is passed by the reject function
-    parseResolveValue, // optional function that parses the value that is passed by the resolve function
-  } = promises[index];
+    let currentIndex = index;
 
-  // console.log(id, func)
-
-    if (typeof parseResolveValue === 'undefined') {
-        parseResolveValue = value => ({ value, id });
-    }
-
-    if (typeof parseRejectValue === 'undefined') {
-        parseRejectValue = error => ({ error, id });
-    }
+    const {
+        id, // the id of the promise so we can keep them apart
+        func, // the executor of the promise
+        args = [], // optional arguments for the executor
+        parseRejectValue = value => ({ value, id }), // optional function that parses the value that is passed by the reject function
+        parseResolveValue = error => ({ error, id }), // optional function that parses the value that is passed by the resolve function
+    } = promises[currentIndex];
 
     const numPromises = promises.length;
 
@@ -121,33 +113,33 @@ export const chainPromises = function (conf) {
             type: 'general',
             messages: ['not a function'],
         });
-        index++;
-        chainPromises({ index, promises, resolve, reject, values, errors });
+        currentIndex += 1;
+        chainPromises({ currentIndex, promises, resolve, reject, values, errors });
     }
 
     func(...args).then(
-    (value) => {
-        index++;
-      // console.log('resolve:', numPromises, index)
-        values.push(parseResolveValue(value, id));
-        if (index === numPromises) {
-            resolve(values, errors);
-        } else {
-            chainPromises({ index, promises, resolve, reject, values, errors });
-        }
-    },
-    (error) => {
-        index++;
-      // console.log('reject:', numPromises, index)
-        errors.push(parseRejectValue(error, id));
-      // if all promises have rejected, we can reject the chained promise as a whole
-        if (index === numPromises) {
-            if (errors.length === numPromises) {
-                reject(errors);
+        (value) => {
+            currentIndex += 1;
+            // console.log('resolve:', numPromises, currentIndex)
+            values.push(parseResolveValue(value, id));
+            if (currentIndex === numPromises) {
+                resolve(values, errors);
+            } else {
+                chainPromises({ currentIndex, promises, resolve, reject, values, errors });
             }
-        } else {
-            chainPromises({ index, promises, resolve, reject, values, errors });
-        }
-    },
-  );
+        },
+        (error) => {
+            currentIndex += 1;
+            // console.log('reject:', numPromises, currentIndex)
+            errors.push(parseRejectValue(error, id));
+            // if all promises have rejected, we can reject the chained promise as a whole
+            if (currentIndex === numPromises) {
+                if (errors.length === numPromises) {
+                    reject(errors);
+                }
+            } else {
+                chainPromises({ currentIndex, promises, resolve, reject, values, errors });
+            }
+        },
+    );
 };

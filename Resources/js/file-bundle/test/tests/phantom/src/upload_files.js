@@ -2,7 +2,6 @@ import { waitFor } from './util';
 import config from './config';
 
 // declare functions
-let uploadFiles; // main function
 let check; // checks if the file(s) have successfully been uploaded
 
 
@@ -21,19 +20,19 @@ let check; // checks if the file(s) have successfully been uploaded
  *                                  returns false or reaches the timeout.
  * @return     {Void}      No return value
  */
-uploadFiles = (conf) => {
+const uploadFiles = (conf) => {
     const {
-    id,
-    page,
-    files,
-    onError,
-  } = conf;
+        id,
+        page,
+        files,
+        onError,
+    } = conf;
 
     const multiple = files.length > 1;
-  /**
-   * We can't start uploading file until the page has fully loaded. Therefor we
-   * test if we can find an input[type=file] in the page.
-   */
+    /**
+     * We can't start uploading file until the page has fully loaded. Therefor we
+     * test if we can find an input[type=file] in the page.
+    */
     waitFor({
         onTest() {
             const loaded = page.evaluate(() => {
@@ -72,12 +71,12 @@ uploadFiles = (conf) => {
  */
 check = (conf) => {
     const {
-    id,
-    page,
-    files,
-    onReady,
-    onError,
-  } = conf;
+        id,
+        page,
+        files,
+        onReady,
+        onError,
+    } = conf;
 
     const multiple = files.length > 1;
 
@@ -95,16 +94,15 @@ check = (conf) => {
                     numFiles: document.querySelectorAll('tr.cutable').length,
                 };
             });
-      // console.log(multiple, data.name)
+            // console.log(multiple, data.name)
             if (data.name === '') {
                 return false;
             }
             if (multiple === true) {
-                return files.some(file =>
-          // console.log(file, data.name, file.indexOf(data.name))
-           file.indexOf(data.name) !== -1);
+                // console.log(file, data.name, file.indexOf(data.name))
+                return files.some(file => file.indexOf(data.name) !== -1);
             }
-      // console.log(files[0], files[0].indexOf(data.name))
+            // console.log(files[0], files[0].indexOf(data.name))
             return files[0].indexOf(data.name) !== -1;
         },
         onReady() {

@@ -1,8 +1,8 @@
+import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
 // declare functions
-let openFolder; // main function
 let check; // check if the folder has been opened
 
 
@@ -25,34 +25,28 @@ let check; // check if the folder has been opened
  *                                  returns false or reaches the timeout.
  * @return     {void}      no return value
  */
-openFolder = (conf) => {
+const openFolder = (conf) => {
     const {
-    id,
-    page,
-    index = null,
-    name = null,
-    onError,
-  } = conf;
+        id,
+        page,
+        index = null,
+        name = null,
+        onError,
+    } = conf;
 
     let data;
     waitFor({
         onTest() {
             data = page.evaluate((i, n) => {
-        // get the table row representing the folder by index or by folder name
+                // get the table row representing the folder by index or by folder name
                 const folders = document.querySelectorAll('tr.folder');
-                let r,
-                    folder;
+                let r;
+                let folder;
                 if (folders) {
-          // no index passed, so we search by folder name
+                    // no index passed, so we search by folder name
                     if (i === null) {
-                        i = 0;
-                        for (const f of Array.from(folders)) {
-                            if (f.querySelector('td.name').innerHTML === n) {
-                                folder = f;
-                                break;
-                            }
-                            i++;
-                        }
+                        i = R.findIndex(f =>
+                            f.querySelector('td.name').innerHTML === n, Array.from(folders));
                     }
                     folder = folders[i];
                     n = folder.querySelector('td.name').innerHTML;
@@ -67,7 +61,7 @@ openFolder = (conf) => {
             return data.name !== '';
         },
         onReady() {
-      // page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
+            // page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
             check({ ...conf, ...data });
         },
         onError(error) {
@@ -107,16 +101,16 @@ check = (conf) => {
                     return { loaded: false };
                 }
                 let loaded = true;
-        // let names = []
+                // let names = []
                 Array.from(folderNames).forEach((n) => {
-          // names.push(n.innerHTML)
+                    // names.push(n.innerHTML)
                     if (n.innerHTML === folderName) {
                         loaded = false;
                     }
                 });
                 return {
                     loaded,
-          // folderNames: names,
+                    // folderNames: names,
                     numFiles: document.querySelectorAll('tr.cutable').length,
                     numFolders: document.querySelectorAll('tr.folder').length,
                 };

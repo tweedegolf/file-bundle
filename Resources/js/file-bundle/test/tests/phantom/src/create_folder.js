@@ -2,7 +2,6 @@ import { waitFor } from './util';
 import config from './config';
 
 // declare functions
-let createFolder; // main function
 let typeName; // type the name of the folder in the input field
 let submit; // press the "create folder" button
 let check; // check if the the new folder has been created succesfully
@@ -21,22 +20,22 @@ let check; // check if the the new folder has been created succesfully
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.
  */
-createFolder = function (conf) {
+const createFolder = (conf) => {
     const {
-    id,
-    page,
-    onError,
-  } = conf;
+        id,
+        page,
+        onError,
+      } = conf;
 
     waitFor({
         onTest() {
             const data = page.evaluate(() => {
-        // get the "create folder" button
+                // get the "create folder" button
                 const s = document.querySelectorAll('button[type=button] > span.text-label');
                 const buttons = [];
                 let clicked = false;
-        // find the "create folder" button by reading the labels on the buttons,
-        // when found click on it
+                // find the "create folder" button by reading the labels on the buttons,
+                // when found click on it
                 if (s) {
                     Array.from(s).forEach((span) => {
                         buttons.push(span.innerHTML);
@@ -55,9 +54,9 @@ createFolder = function (conf) {
                     buttons: [],
                 };
             });
-      // data.buttons.forEach(button => {
-      //   console.log(button)
-      // })
+            // data.buttons.forEach(button => {
+            //   console.log(button)
+            // })
             return data.ready;
         },
         onReady() {
@@ -78,12 +77,12 @@ createFolder = function (conf) {
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-typeName = function (conf) {
+typeName = (conf) => {
     const {
-    id,
-    page,
-    name,
-    onError,
+        id,
+        page,
+        name,
+        onError,
   } = conf;
 
     waitFor({
@@ -120,12 +119,12 @@ typeName = function (conf) {
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-submit = function (conf) {
+submit = (conf) => {
     const {
-    id,
-    page,
-    onError,
-  } = conf;
+        id,
+        page,
+        onError,
+    } = conf;
 
     waitFor({
         onTest() {
@@ -168,13 +167,13 @@ submit = function (conf) {
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-check = function (conf) {
+check = (conf) => {
     const {
-    id,
-    page,
-    onError,
-    onReady,
-  } = conf;
+        id,
+        page,
+        onError,
+        onReady,
+    } = conf;
 
     let data;
     waitFor({

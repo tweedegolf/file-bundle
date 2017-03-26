@@ -30,7 +30,7 @@ const getFolder = (folderId) => {
         };
     }
 
-  // map file and folder ids to their corresponding description objects
+    // map file and folder ids to their corresponding description objects
     let { files, folders } = folderData;
     files = files.map(id => data.files[id]);
     folders = folders.map(id => data.folders[id]);
@@ -55,7 +55,7 @@ const getFolder = (folderId) => {
  *                        message.
  */
 const addFolder = (name, parentId) => {
-  // fake error
+    // fake error
     if (name === 'errorfolder') {
         return {
             error: 'Could not create folder "errorfolder"',
@@ -69,14 +69,14 @@ const addFolder = (name, parentId) => {
         folder_count: 0,
     });
 
-  // store the new folder in the database
+    // store the new folder in the database
     data.folders[folder.id] = folder;
     data.tree[folder.id] = {
         files: [],
         folders: [],
     };
 
-  // update the parent folder of the new folder
+    // update the parent folder of the new folder
     data.tree[parentId].folders.push(folder.id);
     data.folders[parentId].folder_count = data.tree[parentId].folders.length;
 
@@ -94,7 +94,7 @@ const addFolder = (name, parentId) => {
  * @return     {Object}  Returns a no-error object, or a fake error message
  */
 const deleteFolder = (folderId) => {
-  // test error
+    // test error
     if (folderId === 1000) {
         return {
             error: 'Folder could not be deleted',
@@ -112,7 +112,7 @@ const deleteFolder = (folderId) => {
         data.tree[parentId].folders.splice(index, 1);
     }
     // update parent folder
-    data.folders[parentId].folder_count--;
+    data.folders[parentId].folder_count -= 1;
     // perform the actual delete
     delete data.folders[folderId];
     return {
@@ -151,22 +151,22 @@ const addFiles = (files, folderId) => {
  *                                                 contents will not be
  *                                                 affected.
  */
-const removeFilesFromFolders = function (file_ids, exclude_folder_id) {
-    Object.keys(data.folders).forEach((folder_id) => {
-        if (folder_id !== exclude_folder_id) {
-      // console.log(`checking folder ${folder_id}`)
-            const folder = data.folders[folder_id];
-      // array containing ids of all the files in this folder
-            const ids = data.tree[folder_id].files;
-      // console.log(` - files in this folder ${ids}`)
-      // filter files
-            file_ids.forEach((id) => {
+const removeFilesFromFolders = (fileIds, excludeFolderId) => {
+    Object.keys(data.folders).forEach((folderId) => {
+        if (folderId !== excludeFolderId) {
+            // console.log(`checking folder ${folderId}`)
+            const folder = data.folders[folderId];
+            // array containing ids of all the files in this folder
+            const ids = data.tree[folderId].files;
+            // console.log(` - files in this folder ${ids}`)
+            // filter files
+            fileIds.forEach((id) => {
                 const index = ids.indexOf(id);
-        // console.log(` - filtering ${id} found at index ${index}`)
+                // console.log(` - filtering ${id} found at index ${index}`)
                 if (index !== -1) {
-          // console.log(`removing file '${id}'' from folder '${folder_id}'`)
-                    data.tree[folder_id].files.splice(index, 1);
-                    folder.file_count--;
+                    // console.log(`removing file '${id}'' from folder '${folderId}'`)
+                    data.tree[folderId].files.splice(index, 1);
+                    folder.file_count -= 1;
                 }
             });
         }
@@ -185,25 +185,25 @@ const removeFilesFromFolders = function (file_ids, exclude_folder_id) {
  * @return     {Object}         Returns a no-error object, or a fake error
  *                              message
  */
-const moveFiles = (fileIds, folderId) => {
-  // test error
+const moveFiles = (aFileIds, folderId) => {
+    // test error
     if (folderId === 1000) {
         return {
             error: 'Could not move files to folder with id "1000"',
         };
     }
-
-  // remove files from their original location
-    if (fileIds instanceof Array === false) {
-        fileIds = [fileIds];
+    let fileIds;
+    // remove files from their original location
+    if (aFileIds instanceof Array === false) {
+        fileIds = [aFileIds];
     }
     fileIds = fileIds.map(id => parseInt(id, 10));
     removeFilesFromFolders(fileIds, folderId);
-  // add files to the files array of the new folder
+    // add files to the files array of the new folder
     data.tree[folderId].files.push(...fileIds);
-  // update file count
+    // update file count
     data.folders[folderId].file_count += fileIds.length;
-  // console.log('data %j', data)
+    // console.log('data %j', data)
     return {
         error: false,
     };
@@ -217,7 +217,7 @@ const moveFiles = (fileIds, folderId) => {
  * @return     {Object}  Returns a no-error object, or a faked error message
  */
 const deleteFile = (fileId) => {
-  // for testings error messages
+    // for testings error messages
     if (fileId === 1000) {
         // fileId 1000 does probably not really exist so no need to remove it
         return {

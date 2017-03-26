@@ -15,14 +15,14 @@ const months = [
     'Dec',
 ];
 
-export const addLeadingZeros = function (value) {
+export const addLeadingZeros = (value) => {
     if (value < 10) {
         return `0${value}`;
     }
     return `${value}`;
 };
 
-export const formatDate = function (millis, format = 'dMy') {
+export const formatDate = (millis, format = 'dMy') => {
     const d = new Date(millis);
     const year = d.getFullYear();
     const month = d.getMonth();
@@ -59,30 +59,30 @@ export const formatDate = function (millis, format = 'dMy') {
  * @param      {Function}  callback  The custom function that performs the
  *                                   cleans up
  */
-export function cleanup(callback) {
-  // attach user callback to the process event emitter
-  // if no callback, it will still exit gracefully on Ctrl-C
+export const cleanup = (callback) => {
+    // attach user callback to the process event emitter
+    // if no callback, it will still exit gracefully on Ctrl-C
     callback = callback || (() => {});
     process.on('cleanup', callback);
 
-  // do app specific cleaning before exiting
+    // do app specific cleaning before exiting
     process.on('exit', () => {
         process.emit('cleanup');
     });
 
-  // catch ctrl+c event and exit normally
+    // catch ctrl+c event and exit normally
     process.on('SIGINT', () => {
         console.log('Ctrl-C...');
         process.exit(2);
     });
 
-  // catch uncaught exceptions, trace, then exit normally
+    // catch uncaught exceptions, trace, then exit normally
     process.on('uncaughtException', (e) => {
         console.log('Uncaught Exception...');
         console.log(e.stack);
         process.exit(99);
     });
-}
+};
 
 
 /**
@@ -91,7 +91,7 @@ export function cleanup(callback) {
  *
  * @param      {string}  url     The url to be parsed
  */
-export function getIdFromUrl(url) {
+export const getIdFromUrl = (url) => {
     let id = url.substring(url.lastIndexOf('/') + 1);
 
     if (isNaN(id) || id === '') {
@@ -100,9 +100,9 @@ export function getIdFromUrl(url) {
         id = parseInt(id, 10);
     }
     return id;
-}
+};
 
-
+// used to create a unique file id
 let fileId = 100;
 /**
  * Creates a file description object
@@ -111,20 +111,21 @@ let fileId = 100;
  *
  * @return     {Object}  The file description object
  */
-export function createFileDescription(data) {
+export const createFileDescription = (data) => {
     const {
-    name,
-    size_bytes,
-    mimetype,
-    uniqueName,
-  } = data;
+        name,
+        size_bytes,
+        mimetype,
+        uniqueName,
+      } = data;
 
-    const create_ts = new Date().getTime();
+    fileId += 1;
+    const createTs = new Date().getTime();
 
     const file = {
-        create_ts,
-        created: formatDate(create_ts, 'dd-mm-yyyy hh:mm'),
-        id: fileId++,
+        create_ts: createTs,
+        created: formatDate(createTs, 'dd-mm-yyyy hh:mm'),
+        id: fileId,
         name,
         original: `/media/${uniqueName}`,
         thumb: `/media/thumb/${uniqueName}`,
@@ -134,9 +135,10 @@ export function createFileDescription(data) {
     };
 
     return file;
-}
+};
 
 
+// used to create a unique folder id
 let folderId = 100;
 /**
  * Creates a folder description object
@@ -147,18 +149,19 @@ let folderId = 100;
  */
 export function createFolderDescription(data) {
     const {
-    name,
-    parent,
-    file_count,
-    folder_count,
-  } = data;
+        name,
+        parent,
+        file_count,
+        folder_count,
+      } = data;
 
-    const create_ts = new Date().getTime();
+    folderId += 1;
+    const createTs = new Date().getTime();
 
     const file = {
-        create_ts,
-        created: formatDate(create_ts, 'dd-mm-yyyy hh:mm'),
-        id: folderId++,
+        create_ts: createTs,
+        created: formatDate(createTs, 'dd-mm-yyyy hh:mm'),
+        id: folderId,
         name,
         file_count,
         folder_count,
@@ -171,4 +174,3 @@ export function createFolderDescription(data) {
 
     return file;
 }
-

@@ -43,7 +43,7 @@ export default class TaskRunner {
    *                                  task to another
    */
     runTask(extraArgs) {
-        this.taskIndex++;
+        this.taskIndex += 1;
         if (this.taskIndex < this.maxIndex) {
             const task = this.tasks[this.taskIndex];
             if (this.debug === true) {

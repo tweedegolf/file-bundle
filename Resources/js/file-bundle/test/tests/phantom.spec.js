@@ -1,15 +1,15 @@
-import child_process from 'child_process';
+import childProcess from 'child_process';
 import path from 'path';
 import jasmine from './index';
 
 const {
-  beforeAll,
-  describe,
-  it,
-  expect,
+    beforeAll,
+    describe,
+    it,
+    expect,
 } = jasmine.env;
 
-const exec = child_process.exec;
+const exec = childProcess.exec;
 
 /**
  * Function that runs a phantomjs script on the command line. The output of the
@@ -33,7 +33,7 @@ const phantom = (script, ...params) => new Promise((resolve, reject) => {
         if (err !== null) {
             console.log('err:', err);
         }
-      // console.log('stderr:', stderr)
+        // console.log('stderr:', stderr)
 
         let errorMessage = '';
 
@@ -62,11 +62,11 @@ describe('User interaction tests with phantomjs', () => {
     let result;
     let subResult;
 
-  // beforeAll(async function() {
-  //   result = await phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
-  //   result = JSON.parse(result)
-  //   console.log(result)
-  // })
+    // beforeAll(async function() {
+    //   result = await phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
+    //   result = JSON.parse(result)
+    //   console.log(result)
+    // })
 
     beforeAll((done) => {
         phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
