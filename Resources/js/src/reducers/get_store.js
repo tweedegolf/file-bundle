@@ -24,7 +24,7 @@ export default function getStore() {
                 tree: treeInitialState,
             },
             compose(
-                autoRehydrate(),
+                // autoRehydrate(),
                 applyMiddleware(
                     // thunkMiddleware,
                     createLogger({ collapsed: true }),
@@ -35,4 +35,4 @@ export default function getStore() {
     return store;
 }
 
-console.log('[STORE]', getStore().getState().tree.currentFolder);
+// console.log('[STORE]', getStore().getState().tree.currentFolder);

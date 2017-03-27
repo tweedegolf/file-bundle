@@ -33,30 +33,30 @@ export function getLocalState() {
     };
     let selected = [];
     let currentFolderId = null;
-    // let tree = localStorage.getItem('tree');
-    // if (tree !== null) {
-    //     tree = JSON.parse(tree);
-    //     // console.log('stored tree', R.clone(tree));
-    //     allFiles = JSON.parse(localStorage.getItem('allFiles'));
-    //     allFolders = JSON.parse(localStorage.getItem('allFolders'));
-    //     currentFolderId = JSON.parse(localStorage.getItem('currentFolderId'));
-    //     selected = JSON.parse(localStorage.getItem('selected'));
+    let tree = localStorage.getItem('tree');
+    if (tree !== null) {
+        tree = JSON.parse(tree);
+        // console.log('stored tree', R.clone(tree));
+        allFiles = JSON.parse(localStorage.getItem('allFiles'));
+        allFolders = JSON.parse(localStorage.getItem('allFolders'));
+        currentFolderId = JSON.parse(localStorage.getItem('currentFolderId'));
+        selected = JSON.parse(localStorage.getItem('selected'));
 
-    //     if (selected === null) {
-    //         selected = [];
-    //     } else {
-    //         /**
-    //          * Only the ids of the selected files are stored but the state expects
-    //          * File description objects in the selected array; so we replace the ids
-    //          * by their corresponding File objects
-    //          */
-    //         selected = selected.map(fileId => allFiles[fileId]);
-    //     }
-    // } else {
-    //     tree = {};
-    // }
+        if (selected === null) {
+            selected = [];
+        } else {
+            /**
+             * Only the ids of the selected files are stored but the state expects
+             * File description objects in the selected array; so we replace the ids
+             * by their corresponding File objects
+             */
+            selected = selected.map(fileId => allFiles[fileId]);
+        }
+    } else {
+        tree = {};
+    }
 
-    let tree = {};
+    // let tree = {};
 
     return {
         currentFolderId,

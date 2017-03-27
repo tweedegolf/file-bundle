@@ -53,9 +53,10 @@ export const init = (selected) => {
     }
     const currentFolderId = cache.init();
     // optimistic loading
-    openFolder(store.getState().tree.currentFolder);
+    openFolder(currentFolderId);
+    // openFolder(store.getState().tree.currentFolder);
     // begin periodically persisting the store
-    persistStore(store);
+    // persistStore(store);
 
     // get the complete tree from the server and update view if necessary
     // setTimeout(() => {
