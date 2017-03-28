@@ -1,11 +1,32 @@
 import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
-import { autoRehydrate } from 'redux-persist';
+import { autoRehydrate, persistStore } from 'redux-persist';
 // import thunkMiddleware from 'redux-thunk'
 import { ui, uiInitialState } from '../reducers/ui_reducer';
 import { tree, treeInitialState } from '../reducers/tree_reducer';
 
 let store = null;
+
+export const getNewStore = () => {
+    const s = createStore(
+        combineReducers({
+            ui,
+            tree,
+        }), {
+            ui: uiInitialState,
+            tree: treeInitialState,
+        },
+        compose(
+            applyMiddleware(
+                // thunkMiddleware,
+                createLogger({ collapsed: true }),
+            ),
+            autoRehydrate(),
+        ),
+    );
+    persistStore(s);
+    return s;
+};
 
 /**
  * Singleton function that returns the global Redux state. Sometimes we need to
@@ -13,26 +34,9 @@ let store = null;
  * we can use <tt>getStore()</tt>, it does not create a new global state
  * instance if it has already been created.
  */
-export default function getStore() {
+export function getStore() {
     if (store === null) {
-        store = createStore(
-            combineReducers({
-                ui,
-                tree,
-            }), {
-                ui: uiInitialState,
-                tree: treeInitialState,
-            },
-            compose(
-                // autoRehydrate(),
-                applyMiddleware(
-                    // thunkMiddleware,
-                    createLogger({ collapsed: true }),
-                ),
-            ),
-        );
+        store = getNewStore();
     }
     return store;
 }
-
-// console.log('[STORE]', getStore().getState().tree.currentFolder);

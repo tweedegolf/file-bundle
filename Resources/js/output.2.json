@@ -1,0 +1,61 @@
+{
+    "allFilesById": {
+        "1": {
+            "create_ts": 1470914525,
+            "created": "11-08-2016 13:22",
+            "id": 1,
+            "name": "DodgerBlue.jpg",
+            "original": "/media/57ac5fdd4f51a_DodgerBlue.jpg",
+            "size": "2 kB",
+            "size_bytes": 2086,
+            "thumb": "/media/thumb/57ac5fdd4f51a_DodgerBlue.jpg",
+            "type": "jpg"
+        }
+    },
+    "allFoldersById": {
+        "1": {
+            "create_ts": 1470914525,
+            "created": "11-08-2016 13:22",
+            "fileIds": [],
+            "file_count": 0,
+            "folderIds": [],
+            "folder_count": 0,
+            "id": 1,
+            "name": "colors",
+            "parent": null,
+            "size": "",
+            "size_bytes": 0,
+            "type": "folder"
+        },
+        "null": {
+            "fileIds": [
+                1
+            ],
+            "file_count": 1,
+            "folderIds": [
+                1
+            ],
+            "folder_count": 1,
+            "id": null,
+            "name": ".."
+        }
+    },
+    "currentFolder": {
+        "create_ts": 1470914525,
+        "created": "11-08-2016 13:22",
+        "fileIds": [],
+        "file_count": 0,
+        "folderIds": [],
+        "folder_count": 0,
+        "id": 1,
+        "name": "colors",
+        "parent": null,
+        "size": "",
+        "size_bytes": 0,
+        "type": "folder"
+    },
+    "currentFolderId": 1,
+    "files": [],
+    "folders": [],
+    "parentFolder": null
+}

@@ -1,7 +1,7 @@
 import R from 'ramda';
-import { persistStore } from 'redux-persist';
 import * as ActionTypes from '../util/constants';
-import getStore from '../reducers/get_store';
+import { getStore } from '../reducers/store';
+import openFolder2 from './open_folder';
 import cache from '../util/cache';
 
 const store = getStore();
@@ -51,17 +51,16 @@ export const init = (selected) => {
             },
         });
     }
-    const currentFolderId = cache.init();
+    // const currentFolderId = cache.init();
     // optimistic loading
-    openFolder(currentFolderId);
-    // openFolder(store.getState().tree.currentFolder);
-    // begin periodically persisting the store
-    // persistStore(store);
-
+    // openFolder(currentFolderId);
+    const currentFolderId = store.getState().tree.currentFolderId;
+    console.log('currentFolderId', currentFolderId);
+    openFolder2(currentFolderId);
     // get the complete tree from the server and update view if necessary
-    // setTimeout(() => {
-    //     openFolder(null);
-    // }, 500);
+    setTimeout(() => {
+        openFolder2(currentFolderId, true); // force load
+    }, 500);
 };
 
 
@@ -73,6 +72,8 @@ export const init = (selected) => {
  *                                id null
  * @return     {void}  dispatches actions
  */
+export const openFolder = openFolder2;
+/*
 export const openFolder = (id) => {
     dispatch({
         type: ActionTypes.OPEN_FOLDER,
@@ -82,6 +83,8 @@ export const openFolder = (id) => {
     cache.loadFolder(id)
         .then(
             (payload) => {
+                console.log('persist');
+                persistStore(store);
                 dispatch({
                     type: ActionTypes.FOLDER_OPENED,
                     payload,

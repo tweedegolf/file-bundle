@@ -1,3 +1,4 @@
+import R from 'ramda';
 import * as ActionTypes from '../util/constants';
 
 /**
@@ -14,17 +15,25 @@ import * as ActionTypes from '../util/constants';
  *
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
+let undef;
+const currentFolder = {
+    id: null,
+    name: '..',
+    file_count: 0,
+    folder_count: 0,
+    fileIds: [],
+    folderIds: [],
+};
 export const treeInitialState = {
+    allFilesById: {},
+    allFoldersById: {
+        null: currentFolder,
+    },
     files: [],
     folders: [],
-    // currentFolder: {
-    //   id: null,
-    //   name: '..',
-    //   file_count: 0,
-    //   folder_count: 0,
-    // },
-    currentFolder: null,
-    parentFolder: null,
+    currentFolder,
+    parentFolder: undef,
+    currentFolderId: null,
 };
 
 
@@ -33,9 +42,13 @@ export function tree(state = treeInitialState, action) {
      * Contents of a folder has been loaded from the server or from cache
      */
     if (action.type === ActionTypes.FOLDER_OPENED) {
+        // console.log(action.payload);
+        // return { ...action.payload }
         return {
-            ...state,
+            allFilesById: action.payload.allFilesById,
+            allFoldersById: action.payload.allFoldersById,
             currentFolder: action.payload.currentFolder,
+            currentFolderId: action.payload.currentFolderId,
             parentFolder: action.payload.parentFolder,
             files: action.payload.files,
             folders: action.payload.folders,
