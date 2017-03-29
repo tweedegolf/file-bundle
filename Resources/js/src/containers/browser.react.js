@@ -33,7 +33,7 @@ const mapStateToProps = (state) => {
 
     return {
         // tree props
-        currentFolder: state.tree.currentFolder,
+        currentFolderId: state.tree.currentFolder.id,
 
         // ui props
         sort,
@@ -68,7 +68,7 @@ export default class Browser extends React.Component {
         previewUrl: PropTypes.string,
         ascending: PropTypes.bool.isRequired,
         expanded: PropTypes.bool.isRequired,
-        currentFolder: PropTypes.shape(folderShape).isRequired,
+        currentFolderId: PropTypes.number,
         isAddingFolder: PropTypes.bool.isRequired,
         isUploadingFiles: PropTypes.bool.isRequired,
         loadingFolderWithId: PropTypes.number,
@@ -83,6 +83,7 @@ export default class Browser extends React.Component {
         sort: null,
         scrollPosition: null,
         loadingFolderWithId: null,
+        currentFolderId: null,
     }
 
     constructor(props) {
@@ -98,9 +99,9 @@ export default class Browser extends React.Component {
         this.onKeyDown = (event) => {
             event.stopPropagation();
             if (event.keyCode === 38) {
-                Actions.setHover(-1, this.props.currentFolder.id);
+                Actions.setHover(-1, this.props.currentFolderId);
             } else if (event.keyCode === 40) {
-                Actions.setHover(+1, this.props.currentFolder.id);
+                Actions.setHover(+1, this.props.currentFolderId);
             }
         };
 
@@ -110,9 +111,9 @@ export default class Browser extends React.Component {
                 return;
             }
             if (R.isNil(event.files) === false) {
-                uploadFiles(event.files, this.props.currentFolder.id);
+                uploadFiles(event.files, this.props.currentFolderId);
             } else {
-                uploadFiles(Array.from(event.target.files), this.props.currentFolder.id);
+                uploadFiles(Array.from(event.target.files), this.props.currentFolderId);
             }
         };
 
@@ -191,7 +192,7 @@ export default class Browser extends React.Component {
         const toolbar = (<Toolbar
           selected={this.props.selected}
           clipboard={this.props.clipboard}
-          currentFolder={this.props.currentFolder}
+          currentFolderId={this.props.currentFolderId}
           isAddingFolder={this.props.isAddingFolder}
           browser={this.props.browser}
           onCut={Actions.cutFiles}
@@ -267,6 +268,7 @@ export default class Browser extends React.Component {
                                     </tr>
                                 </thead>
                                 <List
+                                  // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
                                   selectFile={this.selectFile}
                                   browser={this.props.browser}
                                   imagesOnly={this.imagesOnly}

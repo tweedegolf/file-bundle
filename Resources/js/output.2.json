@@ -5,23 +5,38 @@
             "created": "11-08-2016 13:22",
             "id": 1,
             "name": "DodgerBlue.jpg",
+            "new": false,
             "original": "/media/57ac5fdd4f51a_DodgerBlue.jpg",
             "size": "2 kB",
             "size_bytes": 2086,
             "thumb": "/media/thumb/57ac5fdd4f51a_DodgerBlue.jpg",
             "type": "jpg"
+        },
+        "101": {
+            "create_ts": 1490785928171,
+            "created": "29-03-2017 13:12",
+            "id": 101,
+            "name": "3lpx75ya967l_wd1280.jpg",
+            "original": "/media/15b19c403e4_3lpx75ya967l_wd1280.jpg",
+            "size": "113.62 kB",
+            "size_bytes": 113623,
+            "thumb": "/media/thumb/15b19c403e4_3lpx75ya967l_wd1280.jpg",
+            "type": "jpeg"
         }
     },
     "allFoldersById": {
         "1": {
             "create_ts": 1470914525,
             "created": "11-08-2016 13:22",
-            "fileIds": [],
-            "file_count": 0,
+            "fileIds": [
+                101
+            ],
+            "file_count": 1,
             "folderIds": [],
             "folder_count": 0,
             "id": 1,
             "name": "colors",
+            "new": false,
             "parent": null,
             "size": "",
             "size_bytes": 0,
@@ -43,19 +58,45 @@
     "currentFolder": {
         "create_ts": 1470914525,
         "created": "11-08-2016 13:22",
-        "fileIds": [],
-        "file_count": 0,
+        "fileIds": [
+            101
+        ],
+        "file_count": 1,
         "folderIds": [],
         "folder_count": 0,
         "id": 1,
         "name": "colors",
+        "new": false,
         "parent": null,
         "size": "",
         "size_bytes": 0,
         "type": "folder"
     },
     "currentFolderId": 1,
-    "files": [],
+    "files": [
+        {
+            "create_ts": 1490785928171,
+            "created": "29-03-2017 13:12",
+            "id": 101,
+            "name": "3lpx75ya967l_wd1280.jpg",
+            "original": "/media/15b19c403e4_3lpx75ya967l_wd1280.jpg",
+            "size": "113.62 kB",
+            "size_bytes": 113623,
+            "thumb": "/media/thumb/15b19c403e4_3lpx75ya967l_wd1280.jpg",
+            "type": "jpeg"
+        }
+    ],
     "folders": [],
-    "parentFolder": null
+    "parentFolder": {
+        "fileIds": [
+            1
+        ],
+        "file_count": 1,
+        "folderIds": [
+            1
+        ],
+        "folder_count": 1,
+        "id": null,
+        "name": ".."
+    }
 }

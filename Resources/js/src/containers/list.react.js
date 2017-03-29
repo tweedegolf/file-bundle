@@ -19,10 +19,12 @@ const mapStateToProps = (state) => {
         ascending,
     } = state.ui;
 
+    const files = R.filter(f => f.isTrashed !== true, state.tree.files);
+
     return {
         // tree props
         folders: sortBy(state.tree.folders, sort, ascending),
-        files: sortBy(state.tree.files, sort, ascending),
+        files: sortBy(files, sort, ascending),
         parentFolder: state.tree.parentFolder,
         currentFolderId: state.tree.currentFolderId,
 

@@ -7,7 +7,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { fileShape } from './file.react';
-import { folderShape } from './folder.react';
 
 export default class Toolbar extends React.Component {
 
@@ -17,7 +16,7 @@ export default class Toolbar extends React.Component {
         onCancel: PropTypes.func.isRequired,
         onPaste: PropTypes.func.isRequired,
         onCut: PropTypes.func.isRequired,
-        currentFolder: PropTypes.shape(folderShape),
+        currentFolderId: PropTypes.number,
         isUploadingFiles: PropTypes.bool.isRequired,
         loadingFolderWithId: PropTypes.number,
         isAddingFolder: PropTypes.bool.isRequired,
@@ -27,7 +26,7 @@ export default class Toolbar extends React.Component {
     }
 
     static defaultProps = {
-        currentFolder: null,
+        currentFolderId: null,
         loadingFolderWithId: null,
     }
 
@@ -53,7 +52,7 @@ export default class Toolbar extends React.Component {
         this.setState({ showForm: false });
         const name = this.folderName.value;
         if (name !== '') {
-            this.props.onAddFolder(name, this.props.currentFolder.id);
+            this.props.onAddFolder(name, this.props.currentFolderId);
         }
     }
 
@@ -86,7 +85,7 @@ export default class Toolbar extends React.Component {
                   disabled={this.props.selected.length === 0}
                   onClick={() => {
                       // files that are currently in selected will be moved to the clipboard
-                      this.props.onCut(this.props.currentFolder.id);
+                      this.props.onCut(this.props.currentFolderId);
                   }}
                 >
                     <span className="fa fa-cut" />
