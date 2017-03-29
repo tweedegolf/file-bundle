@@ -92,11 +92,11 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.UPLOAD_DONE) {
         return {
             ...state,
-            currentFolder: {
-                ...state.currentFolder,
-                file_count: action.payload.file_count,
-            },
-            files: [...state.files, ...action.payload.files],
+            allFilesById: action.payload.allFilesById,
+            allFoldersById: action.payload.allFoldersById,
+            currentFolder: action.payload.currentFolder,
+            files: action.payload.files,
+            errors: action.payload.errors,
         };
 
     /**

@@ -7,9 +7,10 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const loadFolder = (folderId, forceLoad) => new Promise((resolve, reject) => {
+const loadFolder = (folderId, forceLoad, resolve, reject) => {
     const state = store.getState().tree;
-    // should we bother cloning these?
+    // should we actually bother cloning these? we will clone them
+    // again as we create a new state in the tree reducer
     const allFilesById = { ...state.allFilesById };
     const allFoldersById = { ...state.allFoldersById };
     const currentFolder = allFoldersById[folderId];
@@ -23,17 +24,17 @@ const loadFolder = (folderId, forceLoad) => new Promise((resolve, reject) => {
         fromCache = false;
     }
 
-    console.log('loadFolder', folderId, fromCache, state);
+    // console.log('loadFolder', folderId, fromCache, forceLoad, state);
 
     if (fromCache) {
         const files = R.map((id) => {
-            const f = state.allFiles[id];
+            const f = state.allFilesById[id];
             f.new = false;
             return f;
         }, currentFolder.fileIds);
 
         const folders = R.map((id) => {
-            const f = state.allFolders[id];
+            const f = allFoldersById[id];
             f.new = false;
             return f;
         }, currentFolder.folderIds);
@@ -69,8 +70,8 @@ const loadFolder = (folderId, forceLoad) => new Promise((resolve, reject) => {
                     allFilesById[f.id] = f;
                 }, files);
 
-                let parentFolder = null;
-                if (folderId === null) {
+                let parentFolder;
+                if (folderId !== null) {
                     parentFolder = allFoldersById[currentFolder.parent];
                 }
 
@@ -100,7 +101,7 @@ const loadFolder = (folderId, forceLoad) => new Promise((resolve, reject) => {
             },
         );
     }
-});
+};
 
 
 export default (id, forceLoad = false) => {
@@ -109,19 +110,20 @@ export default (id, forceLoad = false) => {
         payload: { id },
     });
 
-    loadFolder(id, forceLoad)
-        .then(
-            (payload) => {
-                dispatch({
-                    type: Constants.FOLDER_OPENED,
-                    payload,
-                });
-            },
-            (payload) => {
-                dispatch({
-                    type: Constants.ERROR_OPENING_FOLDER,
-                    payload,
-                });
-            },
-        );
+    loadFolder(
+        id,
+        forceLoad,
+        (payload) => {
+            dispatch({
+                type: Constants.FOLDER_OPENED,
+                payload,
+            });
+        },
+        (payload) => {
+            dispatch({
+                type: Constants.ERROR_OPENING_FOLDER,
+                payload,
+            });
+        },
+    );
 };

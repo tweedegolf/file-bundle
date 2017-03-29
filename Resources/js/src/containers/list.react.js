@@ -10,6 +10,7 @@ import File, { fileShape } from '../components/file.react';
 import Folder, { folderShape } from '../components/folder.react';
 import { sortBy } from '../util/util';
 import * as Actions from '../actions';
+import openFolder from '../actions/open_folder';
 
 const mapStateToProps = (state) => {
     const {
@@ -72,7 +73,7 @@ export default class List extends React.Component {
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
                 return;
             }
-            Actions.openFolder(folderId);
+            openFolder(folderId);
         };
     }
 

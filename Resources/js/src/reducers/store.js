@@ -25,9 +25,6 @@ export const getNewStore = () => {
         ),
     );
     persistStore(s);
-    setTimeout(() => {
-        console.log(s.getState().tree);
-    }, 10);
     return s;
 };
 

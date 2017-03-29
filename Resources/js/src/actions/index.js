@@ -1,7 +1,7 @@
 import R from 'ramda';
 import * as ActionTypes from '../util/constants';
 import { getStore } from '../reducers/store';
-import openFolder2 from './open_folder';
+import openFolder from './open_folder';
 import cache from '../util/cache';
 
 const store = getStore();
@@ -54,44 +54,8 @@ export const init = (selected) => {
     // start with optimistic loading from localstorage (if present) then fetch
     // the data from the server and update view if necessary
     setTimeout(() => {
-        openFolder2(store.getState().tree.currentFolderId, true); // force load
+        openFolder(store.getState().tree.currentFolderId, true); // true means: force load
     }, 500);
-};
-
-
-/**
- * Try to load the contents of the folder with the specified id. This triggers
- * an API call if data is not already available in local storage.
- *
- * @param      {?number}  id      The id of the folder, the top root folder has
- *                                id null
- * @return     {void}  dispatches actions
- */
-export const openFolder = openFolder2;
-/*
-export const openFolder = (id) => {
-    dispatch({
-        type: ActionTypes.OPEN_FOLDER,
-        payload: { id },
-    });
-
-    cache.loadFolder(id)
-        .then(
-            (payload) => {
-                console.log('persist');
-                persistStore(store);
-                dispatch({
-                    type: ActionTypes.FOLDER_OPENED,
-                    payload,
-                });
-            },
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.ERROR_OPENING_FOLDER,
-                    payload,
-                });
-            },
-        );
 };
 
 
@@ -213,42 +177,6 @@ export const cancelCutAndPasteFiles = function () {
     dispatch({
         type: ActionTypes.CANCEL_CUT_AND_PASTE_FILES,
     });
-};
-
-
-/**
- * Uploads new files to the server. Triggers an API call.
- *
- * @param      {Array}    file_list       The FileList converted to Array
- *                                        containing all the files as File
- *                                        instance that will be uploaded
- * @param      {?number}  current_folder  The id of the folders where the files
- *                                        will be added to after they are
- *                                        uploaded
- * @return     {void}  returns nothing
- */
-export const upload = (fileList, currentFolder) => {
-    const files = Array.from(fileList);
-    dispatch({
-        type: ActionTypes.UPLOAD_START,
-        payload: { files },
-    });
-
-    cache.addFiles(files, currentFolder)
-        .then(
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.UPLOAD_DONE,
-                    payload,
-                });
-            },
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.ERROR_UPLOADING_FILE,
-                    payload,
-                });
-            },
-        );
 };
 
 

@@ -15,6 +15,7 @@ import Toolbar from '../components/toolbar.react';
 import Preview from '../components/preview.react';
 import Errors, { errorShape } from '../components/errors.react';
 import * as Actions from '../actions';
+import uploadFiles from '../actions/upload_files';
 import { fileShape } from '../components/file.react';
 import { folderShape } from '../components/folder.react';
 
@@ -110,9 +111,9 @@ export default class Browser extends React.Component {
                 return;
             }
             if (R.isNil(event.files) === false) {
-                Actions.upload(event.files, this.props.currentFolder.id);
+                uploadFiles(event.files, this.props.currentFolder.id);
             } else {
-                Actions.upload(Array.from(event.target.files), this.props.currentFolder.id);
+                uploadFiles(Array.from(event.target.files), this.props.currentFolder.id);
             }
         };
 
