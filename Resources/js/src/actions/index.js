@@ -51,15 +51,10 @@ export const init = (selected) => {
             },
         });
     }
-    // const currentFolderId = cache.init();
-    // optimistic loading
-    // openFolder(currentFolderId);
-    const currentFolderId = store.getState().tree.currentFolderId;
-    console.log('currentFolderId', currentFolderId);
-    openFolder2(currentFolderId);
-    // get the complete tree from the server and update view if necessary
+    // start with optimistic loading from localstorage (if present) then fetch
+    // the data from the server and update view if necessary
     setTimeout(() => {
-        openFolder2(currentFolderId, true); // force load
+        openFolder2(store.getState().tree.currentFolderId, true); // force load
     }, 500);
 };
 

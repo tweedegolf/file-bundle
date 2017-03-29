@@ -17,14 +17,17 @@ export const getNewStore = () => {
             tree: treeInitialState,
         },
         compose(
+            autoRehydrate(),
             applyMiddleware(
                 // thunkMiddleware,
                 createLogger({ collapsed: true }),
             ),
-            autoRehydrate(),
         ),
     );
     persistStore(s);
+    setTimeout(() => {
+        console.log(s.getState().tree);
+    }, 10);
     return s;
 };
 
