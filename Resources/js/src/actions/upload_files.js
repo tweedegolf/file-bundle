@@ -18,19 +18,19 @@ const uploadFiles = (fileList, folderId, resolve, reject) => {
 
     api.upload(fileList, folderId,
         (rejected, newFiles) => {
-            newFiles.forEach((f) => {
-                files.push(f);
-                allFilesById[f.id] = f;
-                currentFolder.fileIds.push(f.id);
-                f.new = true;
-            });
+            R.forEach((f) => {
+                const f1 = { ...f, new: true };
+                files.push(f1);
+                allFilesById[f1.id] = f1;
+                currentFolder.fileIds.push(f1.id);
+            }, newFiles);
 
-            const errors = Object.keys(rejected).map(key => ({
+            const errors = R.map(key => ({
                 id: getUID(),
                 type: Constants.ERROR_UPLOADING_FILE,
                 data: key,
                 messages: rejected[key],
-            }));
+            }), R.keys(rejected));
 
             allFoldersById[folderId].file_count = currentFolder.fileIds.length;
 
@@ -44,15 +44,12 @@ const uploadFiles = (fileList, folderId, resolve, reject) => {
         },
         (error) => {
             // console.log(error)
-            const errors = [];
-            fileList.forEach((f) => {
-                errors.push({
-                    id: getUID(),
-                    type: Constants.ERROR_UPLOADING_FILE,
-                    data: f.name,
-                    messages: error,
-                });
-            });
+            const errors = R.map(f => ({
+                id: getUID(),
+                type: Constants.ERROR_UPLOADING_FILE,
+                data: f.name,
+                messages: error,
+            }), fileList);
             reject({ errors });
         },
     );

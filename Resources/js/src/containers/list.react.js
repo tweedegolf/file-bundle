@@ -11,6 +11,7 @@ import Folder, { folderShape } from '../components/folder.react';
 import { sortBy } from '../util/util';
 import * as Actions from '../actions';
 import openFolder from '../actions/open_folder';
+import deleteFile from '../actions/delete_file';
 
 const mapStateToProps = (state) => {
     const {
@@ -23,6 +24,7 @@ const mapStateToProps = (state) => {
         folders: sortBy(state.tree.folders, sort, ascending),
         files: sortBy(state.tree.files, sort, ascending),
         parentFolder: state.tree.parentFolder,
+        currentFolderId: state.tree.currentFolderId,
 
         // ui props
         sort,
@@ -58,6 +60,7 @@ export default class List extends React.Component {
         hover: PropTypes.number.isRequired,
         parentFolder: PropTypes.shape(folderShape),
         selectFile: PropTypes.func.isRequired,
+        currentFolderId: PropTypes.number,
     }
 
     static defaultProps = {
@@ -65,6 +68,7 @@ export default class List extends React.Component {
         deletingFileWithId: null,
         deleteFileWithId: null,
         parentFolder: null,
+        currentFolderId: null,
     }
 
     constructor() {
@@ -93,7 +97,7 @@ export default class List extends React.Component {
               file={file}
               hovering={this.props.hover === (i -= 1)}
               selectFile={this.props.selectFile}
-              deleteFile={Actions.deleteFile}
+              deleteFile={R.curry(deleteFile)(this.props.currentFolderId)}
               showPreview={Actions.showPreview}
               confirmDelete={Actions.confirmDelete}
               selected={this.props.selected}

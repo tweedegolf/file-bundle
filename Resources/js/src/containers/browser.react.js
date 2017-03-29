@@ -38,7 +38,7 @@ const mapStateToProps = (state) => {
         // ui props
         sort,
         ascending,
-        preview: state.ui.preview,
+        previewUrl: state.ui.previewUrl,
         expanded: state.ui.expanded,
         selected: state.ui.selected,
         clipboard: state.ui.clipboard,
@@ -65,10 +65,10 @@ export default class Browser extends React.Component {
         }),
         scrollPosition: PropTypes.number,
         sort: PropTypes.string,
-        preview: PropTypes.string,
+        previewUrl: PropTypes.string,
         ascending: PropTypes.bool.isRequired,
         expanded: PropTypes.bool.isRequired,
-        currentFolder: PropTypes.shape(folderShape),
+        currentFolder: PropTypes.shape(folderShape).isRequired,
         isAddingFolder: PropTypes.bool.isRequired,
         isUploadingFiles: PropTypes.bool.isRequired,
         loadingFolderWithId: PropTypes.number,
@@ -79,11 +79,10 @@ export default class Browser extends React.Component {
 
     static defaultProps = {
         options: null,
-        preview: null,
+        previewUrl: null,
         sort: null,
         scrollPosition: null,
         loadingFolderWithId: null,
-        currentFolder: null,
     }
 
     constructor(props) {
@@ -213,7 +212,7 @@ export default class Browser extends React.Component {
           showPreview={Actions.showPreview}
         />);
 
-        const preview = <Preview file={this.props.preview} />;
+        const preview = <Preview url={this.props.previewUrl} />;
 
         if (this.props.expanded === false) {
             return (<div>

@@ -58,40 +58,6 @@ export const init = (selected) => {
     }, 500);
 };
 
-
-/**
- * Deletes a single file from a folder. Triggers an API call.
- *
- * @param      {number}   file_id            The id of the file that will be
- *                                           deleted.
- * @param      {?number}  current_folder_id  The id of the folder that contains
- *                                           the file that will be deleted.
- * @return     {void}  dispatches actions
- */
-export const deleteFile = (file_id, current_folder_id) => {
-    dispatch({
-        type: ActionTypes.DELETE_FILE,
-        payload: { file_id },
-    });
-
-    cache.deleteFile(file_id, current_folder_id)
-        .then(
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.FILE_DELETED,
-                    payload,
-                });
-            },
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.ERROR_DELETING_FILE,
-                    payload,
-                });
-            },
-        );
-};
-
-
 /**
  * Deletes an empty folder. Triggers an API call.
  *
@@ -245,10 +211,10 @@ export const dismissError = function (error_id) {
  *
  * @param      {string}  image_url  The url of the full size image.
  */
-export const showPreview = function (image_url) {
+export const showPreview = (imageUrl) => {
     dispatch({
         type: ActionTypes.SHOW_PREVIEW,
-        payload: { image_url },
+        payload: { imageUrl },
     });
 };
 

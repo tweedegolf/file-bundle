@@ -3,7 +3,7 @@ import R from 'ramda';
 import { showPreview } from '../actions';
 
 const Preview = (props) => {
-    if (R.isNil(props.preview)) {
+    if (R.isNil(props.url)) {
         return null;
     }
     const p = {
@@ -14,16 +14,16 @@ const Preview = (props) => {
         },
     };
     return (<div {...p}>
-        <div style={{ backgroundImage: `url(${props.preview})` }} />
+        <div style={{ backgroundImage: `url(${props.url})` }} />
     </div>);
 };
 
 Preview.propTypes = {
-    preview: PropTypes.string,
+    url: PropTypes.string,
 };
 
 Preview.defaultProps = {
-    preview: null,
+    url: null,
 };
 
 export default Preview;

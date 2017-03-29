@@ -14,7 +14,7 @@ import cache from '../util/cache';
  * @property   {boolean}  expanded              Whether the browser is showing
  *                                              or not: in filepicker mode you
  *                                              may choose to hide the browser
- * @property   {?number}  preview               The id of the file that will be
+ * @property   {?number}  previewUrl            The url of the file that will be
  *                                              previewed fullscreen, currently
  *                                              implemented only for images
  * @property   {?number}  deleteFileWithId      null or the id of the file that
@@ -71,7 +71,7 @@ export const uiInitialState = {
     sort: 'create_ts',
     ascending: false,
     expanded: false,
-    preview: null,
+    previewUrl: null,
     deleteFileWithId: null,
     hover: -1,
     errors: [],
@@ -326,7 +326,7 @@ export function ui(state = uiInitialState, action) {
     } else if (action.type === ActionTypes.SHOW_PREVIEW) {
         return {
             ...state,
-            preview: action.payload.image_url,
+            previewUrl: action.payload.imageUrl,
         };
 
     /**
