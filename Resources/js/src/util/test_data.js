@@ -1,4 +1,4 @@
-export default const data = {
+export default {
     null: {
         id: null,
         folders: [{
@@ -29,6 +29,10 @@ export default const data = {
                 }, {
                     name: 'kip',
                     id: 132,
+                }],
+                files: [{
+                    id: 444,
+                    name: 'I am the only file here!',
                 }],
             }],
         }, {
