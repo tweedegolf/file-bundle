@@ -1,7 +1,7 @@
 /* eslint no-use-before-define: off */
 
 import R from 'ramda';
-// import data from './test_data';
+import data from './test_data';
 
 const mapIndexed = R.addIndex(R.map);
 
@@ -68,15 +68,20 @@ const getItemById = (itemType, { items, lookFor, parentId, rootFolderId = null }
     const filterFound = R.filter(o => o.found, R.flatten(result));
     const item = R.length(filterFound) !== 0 ? filterFound[0] : null;
     if (item === null) {
-        return `could not find item ${lookFor}`;
+        const error = `could not find ${R.dropLast(1, itemType)} with id ${lookFor}`;
+        console.error(error);
+        return error;
     }
     const lensPath = getLensPath({ items: result, target: item, itemType, rootFolderId });
     // console.log(result);
-    // console.log(R.view(lensPath, data));
+    console.log(R.view(lensPath, data));
     return lensPath;
 };
 
 export const getFileById = R.curry(getItemById)('files');
 export const getFolderById = R.curry(getItemById)('folders');
 
-// getFileById({ items: data.null.folders, lookFor: 444, parentId: null });
+getFileById({ items: data.null.folders, lookFor: 444, parentId: null });
+getFileById({ items: data.null.folders, lookFor: 445, parentId: null });
+getFolderById({ items: data.null.folders, lookFor: 445, parentId: null });
+getFolderById({ items: data.null.folders, lookFor: 13, parentId: null });
