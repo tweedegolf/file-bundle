@@ -7,10 +7,26 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
+const traverseTree = (tree, id, path) => {
+    if (R.isNil(tree.folders) === false) {
+        return R.map(folder => traverseTree(folder, id, path), tree.folders);
+    }
+};
+
+const findInTree = (tree, id) => {
+    if (id === null) {
+        return tree[id];
+    }
+    const rootFolderId = null;
+    const path = [null];
+    return traverseTree(tree[rootFolderId], id, path);
+};
+
 const loadFolder = (folderId, forceLoad, resolve, reject) => {
     const state = store.getState().tree;
     // should we actually bother cloning these? we will clone them
     // again as we create a new state in the tree reducer
+    const tree = { ...state.tree };
     const allFilesById = { ...state.allFilesById };
     const allFoldersById = { ...state.allFoldersById };
     const currentFolder = allFoldersById[folderId];

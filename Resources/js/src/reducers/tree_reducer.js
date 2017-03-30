@@ -21,10 +21,15 @@ const currentFolder = {
     name: '..',
     file_count: 0,
     folder_count: 0,
+    files: [],
+    folders: [],
     fileIds: [],
     folderIds: [],
 };
 export const treeInitialState = {
+    tree: {
+        null: currentFolder,
+    },
     allFilesById: {},
     allFoldersById: {
         null: currentFolder,
