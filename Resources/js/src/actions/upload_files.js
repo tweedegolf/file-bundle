@@ -19,6 +19,7 @@ const uploadFiles = (fileList, folderId, resolve, reject) => {
                 const f1 = { ...f, new: true };
                 currentFolder.files.push(f1);
             }, newFiles);
+            currentFolder.file_count = R.length(currentFolder.files);
 
             const errors = R.map(key => ({
                 id: getUID(),

@@ -10,7 +10,7 @@ const dispatch = store.dispatch;
 
 const deleteFile = (fileId, folderId, resolve, reject) => {
     const state = store.getState().tree;
-    const rootFolder = R.clone(state.rootFolder);
+    let rootFolder = R.clone(state.rootFolder);
     const currentFolder = getFolderById({ rootFolder, folderId });
 
     api.deleteFile(fileId,
@@ -18,12 +18,15 @@ const deleteFile = (fileId, folderId, resolve, reject) => {
             const file = getFileById({ fileId, rootFolder });
             file.isTrashed = true;
             currentFolder.file_count -= 1;
-            const index = R.findIndex(R.propEq('id', fileId))(currentFolder.files);
-            currentFolder.files = R.update(index, file, currentFolder.files);
+            // const index = R.findIndex(R.propEq('id', fileId))(currentFolder.files);
+            // currentFolder.files = R.update(index, file, currentFolder.files);
             // or use: replaceFileById({ fileId, file, rootFolder });
+            rootFolder = replaceFileById({ fileId, file, rootFolder });
+            console.log(R.clone(rootFolder));
+            rootFolder = replaceFolderById({ folderId, folder: currentFolder, rootFolder });
 
             resolve({
-                rootFolder: replaceFolderById({ folderId, folder: currentFolder, rootFolder }),
+                rootFolder,
                 currentFolder,
             });
         },
