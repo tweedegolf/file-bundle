@@ -56,6 +56,7 @@ export function tree(state = treeInitialState, action) {
         return {
             ...state,
             currentFolder: action.payload.currentFolder,
+            rootFolder: action.payload.rootFolder,
         };
 
     /**
@@ -82,6 +83,7 @@ export function tree(state = treeInitialState, action) {
         return {
             ...state,
             currentFolder: action.payload.currentFolder,
+            rootFolder: action.payload.rootFolder,
             errors: action.payload.errors,
         };
 

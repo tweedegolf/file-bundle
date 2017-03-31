@@ -3,26 +3,21 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
+import { getFolderById, replaceFolderById } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
 const uploadFiles = (fileList, folderId, resolve, reject) => {
     const state = store.getState().tree;
-    // should we actually bother cloning these? we will clone them
-    // again as we create a new state in the tree reducer
-    const files = [...state.files];
-    const allFilesById = { ...state.allFilesById };
-    const allFoldersById = { ...state.allFoldersById };
-    const currentFolder = allFoldersById[folderId];
+    const rootFolder = R.clone(state.rootFolder);
+    const currentFolder = getFolderById({ rootFolder, folderId });
 
     api.upload(fileList, folderId,
         (rejected, newFiles) => {
             R.forEach((f) => {
                 const f1 = { ...f, new: true };
-                files.push(f1);
-                allFilesById[f1.id] = f1;
-                currentFolder.fileIds.push(f1.id);
+                currentFolder.files.push(f1);
             }, newFiles);
 
             const errors = R.map(key => ({
@@ -32,13 +27,9 @@ const uploadFiles = (fileList, folderId, resolve, reject) => {
                 messages: rejected[key],
             }), R.keys(rejected));
 
-            allFoldersById[folderId].file_count = currentFolder.fileIds.length;
-
             resolve({
-                allFilesById,
-                allFoldersById,
                 currentFolder,
-                files,
+                rootFolder: replaceFolderById({ folderId, folder: currentFolder, rootFolder }),
                 errors,
             });
         },

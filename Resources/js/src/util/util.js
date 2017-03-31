@@ -1,3 +1,5 @@
+import R from 'ramda';
+
 /**
  * Executes an array of promises one after eachother, i.e.: the next promise
  * will be executed as soon as the former has resolved or rejected. Note that
@@ -49,13 +51,13 @@ export const chainPromises = function (index, promises, resolve, reject, values 
             type: 'general',
             messages: ['not a function'],
         });
-        index++;
+        index += 1;
         chainPromises(index, promises, resolve, reject, values, errors);
     }
 
     func(...args).then(
     (value) => {
-        index++;
+        index += 1;
         values.push(parseResolveValue(value));
         if (index === numPromises) {
             resolve(values, errors);
@@ -64,7 +66,7 @@ export const chainPromises = function (index, promises, resolve, reject, values 
         }
     },
     (error) => {
-        index++;
+        index += 1;
         errors.push(parseRejectValue(error));
       // if all promises have rejected, we can reject the chained promise as a whole
         if (index === numPromises) {
@@ -86,16 +88,10 @@ export const chainPromises = function (index, promises, resolve, reject, values 
  * @param      {boolean}  ascending  Whether to sort ascending or not
  */
 export function sortBy(array, key, ascending) {
-    array.sort((a, b) => {
-        if (a[key] < b[key]) {
-            return ascending ? 1 : -1;
-        }
-        if (a[key] > b[key]) {
-            return ascending ? -1 : 1;
-        }
-        return 0;
-    });
-    return array;
+    if (ascending === true) {
+        return R.sort(R.ascend(R.prop(key)), array);
+    }
+    return R.sort(R.descend(R.prop(key)), array);
 }
 
 
@@ -106,7 +102,8 @@ let uid = 0;
  * @return     {number}  The uid.
  */
 export function getUID() {
-    return `${uid++}${new Date()}`;
+    uid += 1;
+    return `${uid}${new Date()}`;
 }
 
 /**
@@ -135,7 +132,7 @@ export function getUUID() {
  *  }
  * </code>
  */
-export const sortItems = function (payload) {
+export const sortItems = (payload) => {
     const {
     items,
     sort,

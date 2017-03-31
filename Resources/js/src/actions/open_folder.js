@@ -10,9 +10,8 @@ const dispatch = store.dispatch;
 
 const loadFolder = (folderId, forceLoad, resolve, reject) => {
     const state = store.getState().tree;
-    let rootFolder = state.rootFolder;
-    const rootFolderId = rootFolder.id;
-    const currentFolder = getFolderById({ rootFolder, lookFor: folderId });
+    const rootFolder = R.clone(state.rootFolder);
+    const currentFolder = getFolderById({ rootFolder, folderId });
 
     let fromCache = true;
     if (forceLoad === true) {
@@ -22,11 +21,10 @@ const loadFolder = (folderId, forceLoad, resolve, reject) => {
     } else if (R.isNil(currentFolder.files)) {
         fromCache = false;
     }
-    // console.log('loadFolder', folderId, fromCache, forceLoad, state);
 
     let parentFolder;
-    if (folderId !== rootFolderId) {
-        parentFolder = getFolderById({ rootFolder, lookFor: currentFolder.parent });
+    if (folderId !== rootFolder.id) {
+        parentFolder = getFolderById({ rootFolder, folderId: currentFolder.parent });
     }
 
     if (fromCache) {
@@ -53,12 +51,10 @@ const loadFolder = (folderId, forceLoad, resolve, reject) => {
                 currentFolder.file_count = currentFolder.files.length;
                 currentFolder.folder_count = currentFolder.folders.length;
 
-                rootFolder = replaceFolderById({ folderId, folder: currentFolder, rootFolder });
-
                 resolve({
                     currentFolder,
                     parentFolder,
-                    rootFolder,
+                    rootFolder: replaceFolderById({ folderId, folder: currentFolder, rootFolder }),
                 });
             },
             (messages) => {
@@ -73,7 +69,6 @@ const loadFolder = (folderId, forceLoad, resolve, reject) => {
         );
     }
 };
-
 
 export default (id, forceLoad = false) => {
     dispatch({

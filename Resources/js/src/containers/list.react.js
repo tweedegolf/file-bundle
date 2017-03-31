@@ -8,31 +8,27 @@ import R from 'ramda';
 import { connect } from 'react-redux';
 import File, { fileShape } from '../components/file.react';
 import Folder, { folderShape } from '../components/folder.react';
-import { sortBy } from '../util/util';
 import * as Actions from '../actions';
 import openFolder from '../actions/open_folder';
 import deleteFile from '../actions/delete_file';
+import currentFolderSelector from '../reducers/current_folder_selector';
 
 const mapStateToProps = (state) => {
     const {
-        sort,
-        ascending,
-    } = state.ui;
-
-    const currentFolder = state.tree.currentFolder;
-    // console.log(currentFolder);
-    const files = R.filter(f => f.isTrashed !== true, currentFolder.files);
+        files,
+        folders,
+    } = currentFolderSelector(state);
 
     return {
         // tree props
-        folders: sortBy(currentFolder.folders, sort, ascending),
-        files: sortBy(files, sort, ascending),
+        files,
+        folders,
         parentFolder: state.tree.parentFolder,
-        currentFolderId: currentFolder.id,
+        currentFolderId: state.tree.currentFolder.id,
 
         // ui props
-        sort,
-        ascending,
+        sort: state.ui.sort,
+        ascending: state.ui.ascending,
         preview: state.ui.preview,
         expanded: state.ui.expanded,
         hover: state.ui.hover,

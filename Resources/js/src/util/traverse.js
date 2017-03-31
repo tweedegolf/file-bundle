@@ -49,10 +49,7 @@ const getPath = ({ items, target, rootFolderId, itemType }) => {
         // console.log(parent);
         path.push(parent.index);
     }
-    let lensPath = R.reduce((acc, item) => [...acc, 'folders', item], [rootFolderId], R.reverse(path));
-    if (itemType === 'files') {
-        lensPath = R.update(R.length(lensPath) - 2, 'files', lensPath);
-    }
+    const lensPath = R.reduce((acc, item) => [...acc, 'folders', item], [rootFolderId], R.reverse(path));
     // console.log(lensPath);
     return lensPath;
 };
@@ -61,9 +58,9 @@ const getItemById = (itemType, { items, lookFor, parentId }) => {
     // console.log(items, lookFor, parentId);
     const tmp = loop({ items, lookFor, parentId, itemType });
     const result = R.flatten(tmp);
-    // console.log(result);
+    console.log(result);
     const filterFound = R.filter(o => o.found, result);
-    // console.log(filterFound);
+    console.log(filterFound);
     const item = R.length(filterFound) !== 0 ? filterFound[0] : null;
     if (item === null) {
         const error = `could not find ${R.dropLast(1, itemType)} with id ${lookFor}`;
@@ -75,35 +72,48 @@ const getItemById = (itemType, { items, lookFor, parentId }) => {
     return R.reject(R.isNil, lensPath);
 };
 
-export const getFileById = R.curry(getItemById)('files');
-export const getFolderById = ({ rootFolder, lookFor }) => {
-    // console.log(rootFolder, lookFor);
+export const getFileById = ({ rootFolder, fileId }) => {
+    const lensPath = getItemById('files', { items: [rootFolder], lookFor: fileId, rootFolderId: rootFolder.id });
+    const lensPath1 = R.update(R.length(lensPath) - 2, 'files', lensPath);
+    const lensPath2 = R.tail(lensPath1);
+    const foundFile = R.view(R.lensPath(lensPath2), [rootFolder]);
+    console.log(lensPath2, foundFile);
+    return R.clone(foundFile);
+};
+
+export const getFolderById = ({ rootFolder, folderId }) => {
     const rootFolderId = rootFolder.id;
-    if (lookFor === rootFolderId) {
+    if (folderId === rootFolderId) {
         return rootFolder;
     }
     const items = rootFolder.folders;
-    let lensPath = lookupTable[lookFor];
+    let lensPath = lookupTable[folderId];
     if (R.isNil(lensPath)) {
-        lensPath = getItemById('folders', { items, lookFor, rootFolderId });
-        lookupTable[lookFor] = lensPath;
+        lensPath = getItemById('folders', { items, lookFor: folderId, rootFolderId });
+        lookupTable[folderId] = lensPath;
     }
     const foundFolder = R.view(R.lensPath(lensPath), rootFolder);
     // console.log(lensPath, foundFolder);
-    return foundFolder;
+    return R.clone(foundFolder);
 };
 
 export const replaceFolderById = ({ folderId, folder, rootFolder }) => {
-    // console.log(folderId);
+    // console.log(folderId, folder, rootFolder);
     if (folderId === rootFolder.id) {
         return folder;
     }
-
     let lensPath = lookupTable[folderId];
     if (R.isNil(lensPath)) {
-        lensPath = getItemById('folders', { rootFolder, folderId, rootFolderId: rootFolder.id });
+        lensPath = getItemById('folders', { items: rootFolder.folders, lookFor: folderId, rootFolderId: rootFolder.id });
         lookupTable[folderId] = lensPath;
     }
     // console.log(lensPath, folder);
     return R.set(R.lensPath(lensPath), folder, rootFolder);
+};
+
+export const replaceFileById = ({ fileId, file, rootFolder }) => {
+    const lensPath = getItemById('files', { items: [rootFolder], lookFor: fileId, rootFolderId: rootFolder.id });
+    const lensPath1 = R.update(R.length(lensPath) - 2, 'files', lensPath);
+    console.log(lensPath1, file);
+    return R.set(R.lensPath(lensPath1), file, rootFolder);
 };
