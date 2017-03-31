@@ -16,29 +16,20 @@ import * as ActionTypes from '../util/constants';
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
 let undef;
-const currentFolder = {
+// change rootFolder for chroot
+const rootFolder = {
     id: null,
     name: '..',
     file_count: 0,
     folder_count: 0,
     files: [],
     folders: [],
-    fileIds: [],
-    folderIds: [],
 };
 export const treeInitialState = {
-    tree: {
-        null: currentFolder,
-    },
-    allFilesById: {},
-    allFoldersById: {
-        null: currentFolder,
-    },
-    files: [],
-    folders: [],
-    currentFolder,
+    rootFolder,
+    currentFolder: rootFolder,
     parentFolder: undef,
-    currentFolderId: null,
+    errors: [],
 };
 
 
@@ -50,13 +41,10 @@ export function tree(state = treeInitialState, action) {
         // console.log(action.payload);
         // return { ...action.payload }
         return {
-            allFilesById: action.payload.allFilesById,
-            allFoldersById: action.payload.allFoldersById,
+            ...state,
             currentFolder: action.payload.currentFolder,
-            currentFolderId: action.payload.currentFolderId,
             parentFolder: action.payload.parentFolder,
-            files: action.payload.files,
-            folders: action.payload.folders,
+            rootFolder: action.payload.rootFolder,
         };
 
     /**
@@ -67,10 +55,7 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.FILE_DELETED) {
         return {
             ...state,
-            allFilesById: action.payload.allFilesById,
-            allFoldersById: action.payload.allFoldersById,
             currentFolder: action.payload.currentFolder,
-            files: action.payload.files,
         };
 
     /**
@@ -96,10 +81,7 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.UPLOAD_DONE) {
         return {
             ...state,
-            allFilesById: action.payload.allFilesById,
-            allFoldersById: action.payload.allFoldersById,
             currentFolder: action.payload.currentFolder,
-            files: action.payload.files,
             errors: action.payload.errors,
         };
 

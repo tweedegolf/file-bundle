@@ -37,7 +37,6 @@ import R from 'ramda';
 import api from './api';
 import { getUID } from './util';
 import * as Constants from './constants';
-import { getLocalState, storeLocal } from './local_storage';
 
 let tree;
 let allFiles;
@@ -192,7 +191,6 @@ const loadFolder = (folderId, firstRun) => new Promise((resolve, reject) => {
                 });
 
                 tree[folderId] = treeFolder;
-                storeLocal({ tree }, { allFiles }, { allFolders });
 
                 if (folderId === null) {
                     allFolders[folderId].file_count = files.length;
@@ -266,7 +264,6 @@ const addFiles = (fileList, folderId) => {
                 const fileCount = treeFolder.fileIds.length;
                 allFolders[folderId].file_count = fileCount;
 
-                storeLocal({ tree }, { allFiles }, { allFolders });
 
                 resolve({
                     fileCount,
@@ -344,7 +341,6 @@ const moveFiles = (files, folderId) => {
                         }
                         //console.log(parentId, file_count_parent)
                 */
-                storeLocal({ tree }, { allFolders });
                 resolve({
                     // file_count_parent,
                     file_count,
@@ -399,7 +395,6 @@ const deleteFile = (fileId, folderId) => {
                 allFolders[folderId].file_count = fileCount;
 
                 delete allFiles[fileId];
-                storeLocal({ tree }, { allFiles }, { allFolders });
                 resolve({
                     fileCount,
                     files,
@@ -455,7 +450,6 @@ const addFolder = (folderName, parentFolderId) => {
                 const folderCount = treeFolder.folderIds.length;
                 treeFolder.folderCount = folderCount;
                 allFolders[parentFolderId].folder_count = folderCount;
-                storeLocal({ tree }, { allFolders });
 
                 let errors = [];
                 if (errorMessages.length > 0) {
@@ -523,7 +517,6 @@ const deleteFolder = (folderId, parentFolderId) => {
                 allFolders[parentFolderId].folder_count = folderCount;
 
                 delete allFolders[folderId];
-                storeLocal({ tree }, { allFolders });
 
                 resolve({
                     folderCount,

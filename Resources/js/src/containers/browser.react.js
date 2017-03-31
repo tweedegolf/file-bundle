@@ -17,7 +17,6 @@ import Errors, { errorShape } from '../components/errors.react';
 import * as Actions from '../actions';
 import uploadFiles from '../actions/upload_files';
 import { fileShape } from '../components/file.react';
-import { folderShape } from '../components/folder.react';
 
 const columnHeaders = {
     name: 'Naam',

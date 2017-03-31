@@ -3,107 +3,62 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
+import { getFolderById, replaceFolderById } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
-const traverseTree = (tree, id, path) => {
-    if (R.isNil(tree.folders) === false) {
-        return R.map(folder => traverseTree(folder, id, path), tree.folders);
-    }
-};
-
-const findInTree = (tree, id) => {
-    if (id === null) {
-        return tree[id];
-    }
-    const rootFolderId = null;
-    const path = [null];
-    return traverseTree(tree[rootFolderId], id, path);
-};
-
 const loadFolder = (folderId, forceLoad, resolve, reject) => {
     const state = store.getState().tree;
-    // should we actually bother cloning these? we will clone them
-    // again as we create a new state in the tree reducer
-    const tree = { ...state.tree };
-    const allFilesById = { ...state.allFilesById };
-    const allFoldersById = { ...state.allFoldersById };
-    const currentFolder = allFoldersById[folderId];
+    let rootFolder = state.rootFolder;
+    const rootFolderId = rootFolder.id;
+    const currentFolder = getFolderById({ rootFolder, lookFor: folderId });
 
     let fromCache = true;
     if (forceLoad === true) {
         fromCache = false;
     } else if (R.isNil(currentFolder)) {
         fromCache = false;
-    } else if (R.isNil(currentFolder.fileIds)) {
+    } else if (R.isNil(currentFolder.files)) {
         fromCache = false;
     }
-
     // console.log('loadFolder', folderId, fromCache, forceLoad, state);
 
+    let parentFolder;
+    if (folderId !== rootFolderId) {
+        parentFolder = getFolderById({ rootFolder, lookFor: currentFolder.parent });
+    }
+
     if (fromCache) {
-        const files = R.map((id) => {
-            const f = state.allFilesById[id];
-            f.new = false;
-            return f;
-        }, currentFolder.fileIds);
-
-        const folders = R.map((id) => {
-            const f = allFoldersById[id];
-            f.new = false;
-            return f;
-        }, currentFolder.folderIds);
-
-        let parentFolder;
-        if (folderId !== null) {
-            parentFolder = allFoldersById[currentFolder.parent];
-        }
-
         resolve({
-            allFilesById,
-            allFoldersById,
-            currentFolderId: folderId,
             currentFolder,
             parentFolder,
-            files,
-            folders,
+            rootFolder,
         });
     } else {
         api.openFolder(
             folderId,
             (folders, files) => {
-                currentFolder.folderIds = [];
-                currentFolder.fileIds = [];
+                currentFolder.folders = [];
+                currentFolder.files = [];
 
                 R.forEach((f) => {
-                    currentFolder.folderIds.push(f.id);
-                    allFoldersById[f.id] = f;
+                    currentFolder.folders.push(f);
                 }, folders);
 
                 R.forEach((f) => {
-                    currentFolder.fileIds.push(f.id);
-                    allFilesById[f.id] = f;
+                    currentFolder.files.push(f);
                 }, files);
 
-                let parentFolder;
-                if (folderId !== null) {
-                    parentFolder = allFoldersById[currentFolder.parent];
-                }
+                currentFolder.file_count = currentFolder.files.length;
+                currentFolder.folder_count = currentFolder.folders.length;
 
-                currentFolder.file_count = files.length;
-                currentFolder.folder_count = folders.length;
-
-                allFoldersById[folderId] = currentFolder;
+                rootFolder = replaceFolderById({ folderId, folder: currentFolder, rootFolder });
 
                 resolve({
-                    allFilesById,
-                    allFoldersById,
-                    currentFolderId: folderId,
                     currentFolder,
                     parentFolder,
-                    files,
-                    folders,
+                    rootFolder,
                 });
             },
             (messages) => {

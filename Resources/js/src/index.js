@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import Browser from './containers/browser.react';
 import { getStore } from './reducers/store';
-import { getFileById } from './util/traverse';
 
 const store = getStore();
 

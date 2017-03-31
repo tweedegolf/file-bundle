@@ -54,7 +54,7 @@ export const init = (selected) => {
     // start with optimistic loading from localstorage (if present) then fetch
     // the data from the server and update view if necessary
     setTimeout(() => {
-        openFolder(store.getState().tree.currentFolderId, true); // true means: force load
+        openFolder(store.getState().tree.currentFolder.id, true); // true means: force load
     }, 500);
 };
 
