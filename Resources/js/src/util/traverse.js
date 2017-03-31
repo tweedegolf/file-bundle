@@ -75,7 +75,7 @@ const findItemById = (itemType, { items, lookFor, parentId }) => {
     const lensPath = getPath({ items: result, target: item, itemType, rootFolderId: parentId });
     // console.log(R.view(lensPath, data));
     lookupTable[lookFor] = lensPath;
-    return R.clone(item);
+    return R.clone(item.item);
 };
 
 const lookup = (itemType, { rootFolder, itemId }) => {
@@ -89,7 +89,7 @@ const lookup = (itemType, { rootFolder, itemId }) => {
         lookupTable[itemId] = null;
         return findItemById(itemType, { items: [rootFolder], lookFor: itemId, parentId: rootFolder.id });
     }
-    // console.log(lensPath, foundItem);
+    // console.log('found', lensPath, foundItem);
     return foundItem;
 };
 
@@ -99,8 +99,9 @@ const replaceItemById = (itemType, { itemId, item, rootFolder }) => {
         findItemById(itemType, { items: [rootFolder], lookFor: itemId, rootFolderId: rootFolder.id });
         lensPath = lookupTable[itemId];
     }
-    R.set(R.lensPath(lensPath), item, [rootFolder]);
-    return rootFolder;
+    // console.log(itemId, lensPath, item);
+    const result = R.set(R.lensPath(lensPath), item, [rootFolder]);
+    return result[0];
 };
 
 
@@ -114,8 +115,13 @@ export const getFolderById = ({ rootFolder, folderId }) => {
 export const getFileById = ({ rootFolder, fileId }) =>
     lookup('files', { rootFolder, itemId: fileId });
 
-export const replaceFolderById = ({ folderId, folder, rootFolder }) =>
-    replaceItemById('folders', { itemId: folderId, item: folder, rootFolder });
+export const replaceFolderById = ({ folderId, folder, rootFolder }) => {
+    if (folderId === rootFolder.id) {
+        return folder;
+    }
+    // console.log(folder);
+    return replaceItemById('folders', { itemId: folderId, item: folder, rootFolder });
+};
 
 export const replaceFileById = ({ fileId, file, rootFolder }) =>
     replaceItemById('files', { itemId: fileId, item: file, rootFolder });

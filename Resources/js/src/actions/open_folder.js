@@ -51,10 +51,12 @@ const loadFolder = (folderId, forceLoad, resolve, reject) => {
                 currentFolder.file_count = currentFolder.files.length;
                 currentFolder.folder_count = currentFolder.folders.length;
 
+                const t = replaceFolderById({ folderId, folder: currentFolder, rootFolder });
+
                 resolve({
                     currentFolder,
                     parentFolder,
-                    rootFolder: replaceFolderById({ folderId, folder: currentFolder, rootFolder }),
+                    rootFolder: t,
                 });
             },
             (messages) => {

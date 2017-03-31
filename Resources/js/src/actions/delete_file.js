@@ -3,7 +3,7 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { getFolderById, getFileById, replaceFolderById } from '../util/traverse';
+import { getFolderById, getFileById, replaceFolderById, replaceFileById } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
@@ -20,6 +20,7 @@ const deleteFile = (fileId, folderId, resolve, reject) => {
             currentFolder.file_count -= 1;
             const index = R.findIndex(R.propEq('id', fileId))(currentFolder.files);
             currentFolder.files = R.update(index, file, currentFolder.files);
+            // or use: replaceFileById({ fileId, file, rootFolder });
 
             resolve({
                 rootFolder: replaceFolderById({ folderId, folder: currentFolder, rootFolder }),
