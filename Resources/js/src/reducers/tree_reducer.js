@@ -57,6 +57,7 @@ export function tree(state = treeInitialState, action) {
             ...state,
             currentFolder: action.payload.currentFolder,
             rootFolder: action.payload.rootFolder,
+            errors: action.payload.errors,
         };
 
     /**
@@ -67,11 +68,8 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.FOLDER_DELETED) {
         return {
             ...state,
-            currentFolder: {
-                ...state.currentFolder,
-                folder_count: action.payload.folder_count,
-            },
-            folders: action.payload.folders,
+            currentFolder: action.payload.currentFolder,
+            rootFolder: action.payload.rootFolder,
         };
 
     /**
@@ -95,11 +93,8 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.FOLDER_ADDED) {
         return {
             ...state,
-            currentFolder: {
-                ...state.currentFolder,
-                folder_count: action.payload.folder_count,
-            },
-            folders: [...state.folders, ...action.payload.folders],
+            currentFolder: action.payload.currentFolder,
+            rootFolder: action.payload.rootFolder,
         };
 
     /**
@@ -109,16 +104,8 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.FILES_MOVED) {
         return {
             ...state,
-            currentFolder: {
-                ...state.currentFolder,
-                file_count: action.payload.file_count,
-            },
-            // -> disabled for now: needs rethinking
-            // parentFolder: {
-            //   ...state.parentFolder,
-            //   file_count: action.payload.file_count_parent,
-            // },
-            files: [...state.files, ...action.payload.files],
+            currentFolder: action.payload.currentFolder,
+            rootFolder: action.payload.rootFolder,
         };
     }
 

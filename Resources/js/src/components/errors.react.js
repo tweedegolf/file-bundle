@@ -25,7 +25,7 @@ const createErrors = ({ errors, onDismiss }) => mapIndexed((error, index) => {
         </span>);
     } else if (error.type === ErrorTypes.ERROR_DELETING_FILE) {
         message = (<span>
-            <strong>{'Verwijderen van "{error.data}" niet gelukt.'}</strong>
+            <strong>{`Verwijderen van "${error.data}" niet gelukt.`}</strong>
             {error.messages.join(' ')}
             {/* Het bestand is in gebruik.*/}
         </span>);

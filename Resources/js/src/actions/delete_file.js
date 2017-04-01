@@ -3,14 +3,14 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { getFolderById, getFileById, replaceFolderById, replaceFileById } from '../util/traverse';
+import { getFolderById, getFileById, replaceFolderById } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
 const deleteFile = (fileId, folderId, resolve, reject) => {
     const state = store.getState().tree;
-    let rootFolder = R.clone(state.rootFolder);
+    const rootFolder = R.clone(state.rootFolder);
     const currentFolder = getFolderById({ rootFolder, folderId });
 
     api.deleteFile(fileId,
@@ -18,15 +18,11 @@ const deleteFile = (fileId, folderId, resolve, reject) => {
             const file = getFileById({ fileId, rootFolder });
             file.isTrashed = true;
             currentFolder.file_count -= 1;
-            // const index = R.findIndex(R.propEq('id', fileId))(currentFolder.files);
-            // currentFolder.files = R.update(index, file, currentFolder.files);
-            // or use: replaceFileById({ fileId, file, rootFolder });
-            rootFolder = replaceFileById({ fileId, file, rootFolder });
-            console.log(R.clone(rootFolder));
-            rootFolder = replaceFolderById({ folderId, folder: currentFolder, rootFolder });
+            const index = R.findIndex(R.propEq('id', fileId))(currentFolder.files);
+            currentFolder.files = R.update(index, file, currentFolder.files);
 
             resolve({
-                rootFolder,
+                rootFolder: replaceFolderById({ folderId, folder: currentFolder, rootFolder }),
                 currentFolder,
             });
         },

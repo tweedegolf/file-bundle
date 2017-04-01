@@ -228,8 +228,11 @@ const deleteFile = (fileId) => {
     const file = R.clone(data.files[fileId]);
     file.isTrashed = true;
     data.files[fileId] = file;
+    // return {
+    //     error: false,
+    // };
     return {
-        error: false,
+        error: 'Dikke vette error man!',
     };
 };
 
