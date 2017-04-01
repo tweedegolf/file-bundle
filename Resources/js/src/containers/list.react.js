@@ -24,7 +24,6 @@ const mapStateToProps = (state) => {
         files,
         folders,
         parentFolder: state.tree.parentFolder,
-        currentFolderId: state.tree.currentFolder.id,
 
         // ui props
         sort: state.ui.sort,
@@ -60,7 +59,6 @@ export default class List extends React.Component {
         hover: PropTypes.number.isRequired,
         parentFolder: PropTypes.shape(folderShape),
         selectFile: PropTypes.func.isRequired,
-        currentFolderId: PropTypes.number,
     }
 
     static defaultProps = {
@@ -68,7 +66,6 @@ export default class List extends React.Component {
         deletingFileWithId: null,
         deleteFileWithId: null,
         parentFolder: null,
-        currentFolderId: null,
     }
 
     constructor() {
@@ -97,7 +94,7 @@ export default class List extends React.Component {
               file={file}
               hovering={this.props.hover === (i -= 1)}
               selectFile={this.props.selectFile}
-              deleteFile={R.curry(deleteFile)(this.props.currentFolderId)}
+              deleteFile={deleteFile}
               showPreview={Actions.showPreview}
               confirmDelete={Actions.confirmDelete}
               selected={this.props.selected}

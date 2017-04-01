@@ -16,7 +16,6 @@ export default class Toolbar extends React.Component {
         onCancel: PropTypes.func.isRequired,
         onPaste: PropTypes.func.isRequired,
         onCut: PropTypes.func.isRequired,
-        currentFolderId: PropTypes.number,
         isUploadingFiles: PropTypes.bool.isRequired,
         loadingFolderWithId: PropTypes.number,
         isAddingFolder: PropTypes.bool.isRequired,
@@ -26,7 +25,6 @@ export default class Toolbar extends React.Component {
     }
 
     static defaultProps = {
-        currentFolderId: null,
         loadingFolderWithId: null,
     }
 
@@ -36,40 +34,39 @@ export default class Toolbar extends React.Component {
             showForm: false,
         };
 
-    // hide create new folder popup if user clicks somewhere outside the popup
-/*
-    addEventListener('mousedown', e => {
-        if(e.target !== this.refs.button_add_folder && e.target !== this.refs.button_save_folder && e.target !== this.folderName){
+        this.onAddFolder = () => {
+            this.setState({ showForm: false });
+            const name = this.folderName.value;
+            if (name !== '') {
+                this.props.onAddFolder(name);
+            }
+        };
+
+        this.onKeyPress = (e) => {
+            if (e.which === 13) {
+                e.preventDefault();
+                this.onAddFolder();
+            }
+        };
+
+        this.onShowForm = () => {
             this.setState({
-            showForm: false
-            })
-        }
-        })
-*/
-    }
-
-    onAddFolder() {
-        this.setState({ showForm: false });
-        const name = this.folderName.value;
-        if (name !== '') {
-            this.props.onAddFolder(name, this.props.currentFolderId);
-        }
-    }
-
-    onKeyPress(e) {
-        if (e.which === 13) {
-            e.preventDefault();
-            this.onAddFolder();
-        }
-    }
-
-    onShowForm() {
-        this.setState({
-            showForm: true,
-        }, () => {
-            this.folderName.value = '';
-            this.folderName.focus();
+                showForm: true,
+            }, () => {
+                this.folderName.value = '';
+                this.folderName.focus();
+            });
+        };
+/*
+        // hide create new folder popup if user clicks somewhere outside the popup
+        addEventListener('mousedown', e => {
+            if (e.target !== this.refs.button_add_folder &&
+               e.target !== this.refs.button_save_folder &&
+               e.target !== this.folderName) {
+                this.setState({ showForm: false });
+            }
         });
+*/
     }
 
     render() {
@@ -83,10 +80,8 @@ export default class Toolbar extends React.Component {
                   type="button"
                   className="btn btn-sm btn-default"
                   disabled={this.props.selected.length === 0}
-                  onClick={() => {
-                      // files that are currently in selected will be moved to the clipboard
-                      this.props.onCut(this.props.currentFolderId);
-                  }}
+                  // files that are currently in selected will be moved to the clipboard
+                  onClick={this.props.onCut}
                 >
                     <span className="fa fa-cut" />
                     <span className="text-label">Knippen</span>
@@ -96,9 +91,7 @@ export default class Toolbar extends React.Component {
                   type="button"
                   className="btn btn-sm btn-default"
                   disabled={this.props.clipboard.length === 0}
-                  onClick={() => {
-                      this.props.onPaste();
-                  }}
+                  onClick={this.props.onPaste}
                 >
                     <span className="fa fa-paste" />
                     <span className="text-label">Plakken</span>
@@ -108,9 +101,7 @@ export default class Toolbar extends React.Component {
                   type="button"
                   className="btn btn-sm btn-default"
                   disabled={this.props.clipboard.length + this.props.selected.length === 0}
-                  onClick={() => {
-                      this.props.onCancel();
-                  }}
+                  onClick={this.props.onCancel}
                 >
                     <span className="fa fa-times-circle-o" />
                     <span className="text-label">Annuleren</span>
@@ -125,7 +116,7 @@ export default class Toolbar extends React.Component {
                   type="button"
                   ref={(btn) => { this.buttonAdd = btn; }}
                   className={newFolderClass}
-                  onClick={() => { this.onShowForm(); }}
+                  onClick={this.onShowForm}
                   disabled={this.props.isAddingFolder}
                 >
                     <span className="fa fa-folder-o" />
@@ -138,13 +129,13 @@ export default class Toolbar extends React.Component {
                       ref={(input) => { this.folderName = input; }}
                       type="text"
                       placeholder="Mapnaam"
-                      onKeyPress={() => { this.onKeyPress(); }}
+                      onKeyPress={this.onKeyPress}
                     />
                     <button
                       type="button"
                       ref={(btn) => { this.buttonSave = btn; }}
                       className="btn btn-sm btn-success pull-right"
-                      onClick={() => { this.onAddFolder(); }}
+                      onClick={this.onAddFolder}
                     >
                         <span className="fa fa-save" />
                         <span className="text-label">Opslaan</span>

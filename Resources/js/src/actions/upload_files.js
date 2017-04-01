@@ -8,10 +8,11 @@ import { getFolderById, replaceFolderById } from '../util/traverse';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const uploadFiles = (fileList, folderId, resolve, reject) => {
+const uploadFiles = (fileList, resolve, reject) => {
     const state = store.getState().tree;
     const rootFolder = R.clone(state.rootFolder);
-    const currentFolder = getFolderById({ rootFolder, folderId });
+    const currentFolder = R.clone(state.currentFolder);
+    const folderId = currentFolder.id;
 
     api.upload(fileList, folderId,
         (rejected, newFiles) => {
@@ -48,7 +49,7 @@ const uploadFiles = (fileList, folderId, resolve, reject) => {
     );
 };
 
-export default (fileList, currentFolder) => {
+export default (fileList) => {
     const files = Array.from(fileList);
     dispatch({
         type: Constants.UPLOAD_START,
@@ -57,7 +58,6 @@ export default (fileList, currentFolder) => {
 
     uploadFiles(
         files,
-        currentFolder,
         (payload) => {
             dispatch({
                 type: Constants.UPLOAD_DONE,

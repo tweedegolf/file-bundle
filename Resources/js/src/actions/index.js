@@ -145,39 +145,6 @@ export const cancelCutAndPasteFiles = function () {
     });
 };
 
-
-/**
- * Adds a new folder to the current folder
- *
- * @param      {string}   folder_name        The name of the new folder
- * @param      {?number}  current_folder_id  The id of the the current folder,
- *                                           i.e. the folder that will contain
- *                                           the new folder
- * @return     {void}  returns nothing, dispatches actions
- */
-export const addFolder = function (folder_name, current_folder_id) {
-    dispatch({
-        type: ActionTypes.ADD_FOLDER,
-    });
-
-    cache.addFolder(folder_name, current_folder_id)
-        .then(
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.FOLDER_ADDED,
-                    payload,
-                });
-            },
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.ERROR_ADDING_FOLDER,
-                    payload,
-                });
-            },
-        );
-};
-
-
 /**
  * Changes the sorting column or sorting order of the items in the browser list
  *

@@ -3,15 +3,16 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { getFolderById, getFileById, replaceFolderById } from '../util/traverse';
+import { getFileById, replaceFolderById } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
-const deleteFile = (fileId, folderId, resolve, reject) => {
+const deleteFile = (fileId, resolve, reject) => {
     const state = store.getState().tree;
     const rootFolder = R.clone(state.rootFolder);
-    const currentFolder = getFolderById({ rootFolder, folderId });
+    const currentFolder = R.clone(state.currentFolder);
+    const folderId = currentFolder.id;
 
     api.deleteFile(fileId,
         () => {
@@ -39,7 +40,7 @@ const deleteFile = (fileId, folderId, resolve, reject) => {
     );
 };
 
-export default (currentFolderId, fileId) => {
+export default (fileId) => {
     dispatch({
         type: Constants.DELETE_FILE,
         payload: { fileId },
@@ -47,7 +48,6 @@ export default (currentFolderId, fileId) => {
 
     deleteFile(
         fileId,
-        currentFolderId,
         (payload) => {
             dispatch({
                 type: Constants.FILE_DELETED,

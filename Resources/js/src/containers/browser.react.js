@@ -16,6 +16,7 @@ import Preview from '../components/preview.react';
 import Errors, { errorShape } from '../components/errors.react';
 import * as Actions from '../actions';
 import uploadFiles from '../actions/upload_files';
+import addFolder from '../actions/add_folder';
 import { fileShape } from '../components/file.react';
 
 const columnHeaders = {
@@ -110,9 +111,9 @@ export default class Browser extends React.Component {
                 return;
             }
             if (R.isNil(event.files) === false) {
-                uploadFiles(event.files, this.props.currentFolderId);
+                uploadFiles(event.files);
             } else {
-                uploadFiles(Array.from(event.target.files), this.props.currentFolderId);
+                uploadFiles(Array.from(event.target.files));
             }
         };
 
@@ -198,7 +199,7 @@ export default class Browser extends React.Component {
           onPaste={Actions.pasteFiles}
           onCancel={Actions.cancelCutAndPasteFiles}
           uploadFiles={this.uploadFiles}
-          onAddFolder={Actions.addFolder}
+          onAddFolder={addFolder}
           isUploadingFiles={this.props.isUploadingFiles}
           loadingFolderWithId={this.props.loadingFolderWithId}
         />);

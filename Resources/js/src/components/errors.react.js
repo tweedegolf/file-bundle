@@ -27,27 +27,25 @@ const createErrors = ({ errors, onDismiss }) => mapIndexed((error, index) => {
         message = (<span>
             <strong>{`Verwijderen van "${error.data}" niet gelukt.`}</strong>
             {error.messages.join(' ')}
-            {/* Het bestand is in gebruik.*/}
         </span>);
     } else if (error.type === ErrorTypes.ERROR_DELETING_FOLDER) {
         message = (<span>
-            <strong>{'Verwijderen van de folder "{error.data}" is niet gelukt.'}</strong>
+            <strong>{`Verwijderen van de folder "${error.data}" is niet gelukt.`}</strong>
             {error.messages.join(' ')}
-            {/* De map is niet helemaal leeg.*/}
         </span>);
     } else if (error.type === ErrorTypes.ERROR_ADDING_FOLDER) {
         message = (<span>
-            <strong>{'Aanmaken van de folder "{error.data}" is niet gelukt.'}</strong>
+            <strong>{`Aanmaken van de folder "${error.data}" is niet gelukt.`}</strong>
             {error.messages.join(' ')}
         </span>);
     } else if (error.type === ErrorTypes.ERROR_OPENING_FOLDER) {
         message = (<span>
-            <strong>{'Kan de folder "{error.data}" niet openen.'}</strong>
+            <strong>{`Kan de folder "${error.data}" niet openen.`}</strong>
             {error.messages.join(' ')}
         </span>);
     } else if (error.type === ErrorTypes.ERROR_MOVING_FILES) {
         message = (<span>
-            <strong>{'Kan de file niet "{error.data}" niet verplaatsen.'}</strong>
+            <strong>{`Kan de file niet "${error.data}" niet verplaatsen.`}</strong>
             {error.messages.join(' ')}
         </span>);
     } else {
