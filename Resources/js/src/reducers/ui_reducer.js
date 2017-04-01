@@ -1,5 +1,4 @@
 import * as ActionTypes from '../util/constants';
-import cache from '../util/cache';
 
 /**
  * The initial ui state
@@ -382,33 +381,33 @@ export function ui(state = uiInitialState, action) {
     /**
      * User has clicked the checkbox of a file: if this file is not already
      * selected it will be selected, otherwise it will be deselected. In
-     * filepicker mode you can set a boolean property 'multiple'; if this value is
-     * set to false only one file at the time can be selected.
+     * filepicker mode you can set a boolean property 'multiple'; if this value
+     * is set to false only one file at the time can be selected.
      *
-     * @param      {number}   id        The id of the file whose select checkbox
-     *                                  has been clicked
+     * @param      {file}     file      The file whose select checkbox has been
+     *                                  clicked
      * @param      {boolean}  browser   False if the tool is in filepicker mode
      * @param      {boolean}  multiple  Whether it is allowed to have multiple
      *                                  files selected
      */
     } else if (action.type === ActionTypes.SELECT_FILE) {
         const {
-            id,
+            file,
             browser,
             multiple,
         } = action.payload;
 
         let selected = [...state.selected];
-        const index = selected.findIndex(file => file.id === id);
+        const index = selected.findIndex(f => f.id === file.id);
 
         if (browser === false && multiple === false) {
             if (index === -1) {
-                selected = [cache.getFileById(id)];
+                selected = [file];
             } else {
                 selected = [];
             }
         } else if (index === -1) {
-            selected.push(cache.getFileById(id));
+            selected.push(file);
         } else {
             selected.splice(index, 1);
         }

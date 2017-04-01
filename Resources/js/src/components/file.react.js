@@ -126,7 +126,13 @@ export default class File extends React.Component {
         if (this.props.browser) {
             if (this.props.deleteFileWithId !== file.id) {
                 btnDownload =
-                    (<a className="btn btn-sm btn-primary" title="Download" download={file.name} href={file.original} onClick={e => e.stopPropagation()}>
+                    (<a
+                      className="btn btn-sm btn-primary"
+                      title="Download"
+                      download={file.name}
+                      href={file.original}
+                      onClick={e => e.stopPropagation()}
+                    >
                         <span className="fa fa-download" />
                     </a>);
             }
@@ -169,7 +175,7 @@ export default class File extends React.Component {
         const p = {
             className,
             onClick: () => {
-                this.props.selectFile(file.id);
+                this.props.selectFile(file);
             },
         };
         return (

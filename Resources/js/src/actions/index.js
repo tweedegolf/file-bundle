@@ -2,35 +2,16 @@ import R from 'ramda';
 import * as ActionTypes from '../util/constants';
 import { getStore } from '../reducers/store';
 import openFolder from './open_folder';
+import pasteFiles from './paste_files';
 import cache from '../util/cache';
+
+export addFolder from './add_folder';
+export deleteFile from './delete_file';
+export uploadFiles from './upload_files';
+export { openFolder, pasteFiles };
 
 const store = getStore();
 const dispatch = store.dispatch;
-
-/**
- * @name       SelectFileArg
- * @type       {Object}
- * @param      {boolean}  browser   If false the tool is in Filepicker mode.
- * @param      {boolean}  multiple  If false, user may only select one file at
- *                                  the time.
- * @param      {number}   id        The id of a file file; if that id is not
- *                                  already stored in the state, the file will
- *                                  be selected. If an id is already stored in
- *                                  the state, the corresponding file will be
- *                                  deselected.
- */
-/**
- * Adds a file id to the selected file ids array in the state.
- *
- * @param {SelectFileArg} data Argument passed.
- */
-export const selectFile = (data) => {
-    dispatch({
-        type: ActionTypes.SELECT_FILE,
-        payload: { ...data },
-    });
-};
-
 
 /**
  * Initialisation function that hydrates the state from local storage or by
@@ -92,54 +73,43 @@ export const deleteFolder = (folder_id, current_folder_id) => {
         );
 };
 
+/**
+ * @name       SelectFileArg
+ * @type       {Object}
+ * @param      {boolean}  browser   If false the tool is in Filepicker mode.
+ * @param      {boolean}  multiple  If false, user may only select one file at
+ *                                  the time.
+ * @param      {number}   id        The id of a file file; if that id is not
+ *                                  already stored in the state, the file will
+ *                                  be selected. If an id is already stored in
+ *                                  the state, the corresponding file will be
+ *                                  deselected.
+ */
+/**
+ * Adds a file id to the selected file ids array in the state.
+ *
+ * @param {SelectFileArg} data Argument passed.
+ */
+export const selectFile = (data) => {
+    dispatch({
+        type: ActionTypes.SELECT_FILE,
+        payload: { ...data },
+    });
+};
 
 /**
  * Cut files, i.e. move the currently selected files to the clipboard
  */
-export const cutFiles = function () {
+export const cutFiles = () => {
     dispatch({
         type: ActionTypes.CUT_FILES,
     });
 };
 
-
-/**
- * Paste files, i.e. move the files in the clipboard to another folder. This
- * triggers an API call.
- *
- * @param      {Array}    files              Array containing the {@link
- *                                           FileDescr File} objects
- *                                           representing the files that will be
- *                                           moved
- * @param      {?number}  current_folder_id  The id of the current folder, i.e.
- *                                           where the files will be moved to.
- * @return     {void}  dispatches actions
- */
-export const pasteFiles = function (files, current_folder_id) {
-    // dispatch ui state action here?
-
-    cache.moveFiles(files, current_folder_id)
-        .then(
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.FILES_MOVED,
-                    payload,
-                });
-            },
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.ERROR_MOVING_FILES,
-                    payload,
-                });
-            },
-        );
-};
-
-
 /**
  * Move files in clipboard array back to the selected array
  */
-export const cancelCutAndPasteFiles = function () {
+export const cancelCutAndPasteFiles = () => {
     dispatch({
         type: ActionTypes.CANCEL_CUT_AND_PASTE_FILES,
     });
@@ -152,7 +122,7 @@ export const cancelCutAndPasteFiles = function () {
  *                               current sorting column, the sorting order will
  *                               be reversed.
  */
-export const changeSorting = function (sort) {
+export const changeSorting = (sort) => {
     dispatch({
         type: ActionTypes.CHANGE_SORTING,
         payload: { sort },

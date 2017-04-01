@@ -15,8 +15,6 @@ import Toolbar from '../components/toolbar.react';
 import Preview from '../components/preview.react';
 import Errors, { errorShape } from '../components/errors.react';
 import * as Actions from '../actions';
-import uploadFiles from '../actions/upload_files';
-import addFolder from '../actions/add_folder';
 import { fileShape } from '../components/file.react';
 
 const columnHeaders = {
@@ -111,15 +109,15 @@ export default class Browser extends React.Component {
                 return;
             }
             if (R.isNil(event.files) === false) {
-                uploadFiles(event.files);
+                Actions.uploadFiles(event.files);
             } else {
-                uploadFiles(Array.from(event.target.files));
+                Actions.uploadFiles(Array.from(event.target.files));
             }
         };
 
         // files can be selected by clicking the checkbox in front of the filename
         // in the filelist
-        this.selectFile = (id) => {
+        this.selectFile = (file) => {
             /**
              * User has already clicked on the 'cut' button so she can't select files
              * anymore until she pastes or cancels.
@@ -129,7 +127,7 @@ export default class Browser extends React.Component {
             }
 
             Actions.selectFile({
-                id,
+                file,
                 multiple: this.canSelectMultipleFiles,
                 browser: this.props.browser,
             });
@@ -199,7 +197,7 @@ export default class Browser extends React.Component {
           onPaste={Actions.pasteFiles}
           onCancel={Actions.cancelCutAndPasteFiles}
           uploadFiles={this.uploadFiles}
-          onAddFolder={addFolder}
+          onAddFolder={Actions.addFolder}
           isUploadingFiles={this.props.isUploadingFiles}
           loadingFolderWithId={this.props.loadingFolderWithId}
         />);

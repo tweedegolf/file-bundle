@@ -117,8 +117,8 @@ const replaceItemById = (itemType, { itemId, item, rootFolder }) => {
         lensPath = lookupTable[itemId];
     }
     // console.log(itemId, lensPath, item);
-    const result = R.set(R.lensPath(lensPath), item, [rootFolder]);
-    return result[0];
+    const result = R.compose(R.head, R.set(R.lensPath(lensPath), item))([rootFolder]);
+    return result;
 };
 
 

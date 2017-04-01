@@ -9,8 +9,6 @@ import { connect } from 'react-redux';
 import File, { fileShape } from '../components/file.react';
 import Folder, { folderShape } from '../components/folder.react';
 import * as Actions from '../actions';
-import openFolder from '../actions/open_folder';
-import deleteFile from '../actions/delete_file';
 import currentFolderSelector from '../reducers/current_folder_selector';
 
 const mapStateToProps = (state) => {
@@ -74,7 +72,7 @@ export default class List extends React.Component {
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
                 return;
             }
-            openFolder(folderId);
+            Actions.openFolder(folderId);
         };
     }
 
@@ -94,7 +92,7 @@ export default class List extends React.Component {
               file={file}
               hovering={this.props.hover === (i -= 1)}
               selectFile={this.props.selectFile}
-              deleteFile={deleteFile}
+              deleteFile={Actions.deleteFile}
               showPreview={Actions.showPreview}
               confirmDelete={Actions.confirmDelete}
               selected={this.props.selected}
