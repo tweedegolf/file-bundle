@@ -105,6 +105,7 @@ export function tree(state = treeInitialState, action) {
         return {
             ...state,
             currentFolder: action.payload.currentFolder,
+            parentFolder: action.payload.parentFolder,
             rootFolder: action.payload.rootFolder,
         };
     }

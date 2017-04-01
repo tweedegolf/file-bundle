@@ -209,7 +209,7 @@ const openFolder = (folder_id, onSuccess, onError) => {
  *
  * @type       {number}
  */
-const delay = 1000;
+const delay = 0;
 
 export default {
 /**

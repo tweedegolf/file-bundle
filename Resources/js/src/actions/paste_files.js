@@ -3,17 +3,20 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { replaceFolderById, replaceFileById } from '../util/traverse';
+import { getFolderById, replaceFolderById, removeFiles } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
-const moveFiles = (files, resolve, reject) => {
-    const state = store.getState().tree;
-    const rootFolder = R.clone(state.rootFolder);
-    const currentFolder = R.clone(state.currentFolder);
+const moveFiles = (resolve, reject) => {
+    const {
+        tree: treeState,
+        ui: uiState,
+    } = store.getState();
+    let rootFolder = R.clone(treeState.rootFolder);
+    const currentFolder = R.clone(treeState.currentFolder);
     const folderId = currentFolder.id;
-    console.log(files);
+    const files = uiState.clipboard;
     const fileIds = R.map(f => f.id, files);
 
     api.paste(fileIds, folderId,
@@ -22,14 +25,12 @@ const moveFiles = (files, resolve, reject) => {
                 currentFolder.files.push(R.merge(f, { new: true }));
             });
             currentFolder.file_count = R.length(currentFolder.files);
-/*
-            R.forEach((f) => {
-                // TODO: implement a removeFileById function in traverse.js
-                rootFolder = replaceFileById({ fileId: f.id, file: null, rootFolder });
-            }, files);
-*/
+
+            rootFolder = removeFiles({ rootFolder, files });
+
             resolve({
                 rootFolder: replaceFolderById({ folderId: currentFolder.id, folder: currentFolder, rootFolder }),
+                parentFolder: getFolderById({ rootFolder, folderId: currentFolder.parent }),
                 currentFolder,
             });
         },
@@ -45,10 +46,9 @@ const moveFiles = (files, resolve, reject) => {
     );
 };
 
-export default (files) => {
+export default () => {
     // dispatch ui state action here?
     moveFiles(
-        files,
         (payload) => {
             dispatch({
                 type: Constants.FILES_MOVED,
