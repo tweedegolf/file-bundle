@@ -29,8 +29,13 @@ const mapStateToProps = (state) => {
         ascending,
     } = state.ui;
 
+    const numItemsInCurrentFolder =
+        R.length(state.tree.currentFolder.folders) +
+        R.length(state.tree.currentFolder.files);
+
     return {
         // tree props
+        numItemsInCurrentFolder,
         currentFolderId: state.tree.currentFolder.id,
 
         // ui props
@@ -70,6 +75,7 @@ export default class Browser extends React.Component {
         isAddingFolder: PropTypes.bool.isRequired,
         isUploadingFiles: PropTypes.bool.isRequired,
         loadingFolderWithId: PropTypes.number,
+        numItemsInCurrentFolder: PropTypes.number.isRequired,
         errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
@@ -97,9 +103,9 @@ export default class Browser extends React.Component {
         this.onKeyDown = (event) => {
             event.stopPropagation();
             if (event.keyCode === 38) {
-                Actions.setHover(-1, this.props.currentFolderId);
+                Actions.setHover(-1, this.props.numItemsInCurrentFolder);
             } else if (event.keyCode === 40) {
-                Actions.setHover(+1, this.props.currentFolderId);
+                Actions.setHover(+1, this.props.numItemsInCurrentFolder);
             }
         };
 

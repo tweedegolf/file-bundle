@@ -311,7 +311,7 @@ export function ui(state = uiInitialState, action) {
      * messages.
      */
     } else if (action.type === ActionTypes.DISMISS_ERROR) {
-        const errors = state.errors.filter(error => error.id !== action.payload.error_id);
+        const errors = state.errors.filter(error => error.id !== action.payload.errorId);
 
         return {
             ...state,
@@ -344,7 +344,7 @@ export function ui(state = uiInitialState, action) {
         } = action.payload;
 
         let hover = state.hover + diff;
-        // console.log(diff, max, hover)
+        // console.log(diff, max, hover);
         if (hover > max) {
             hover = 0;
         } else if (hover < 0) {

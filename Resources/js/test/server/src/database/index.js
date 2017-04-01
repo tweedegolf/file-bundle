@@ -196,6 +196,8 @@ const moveFiles = (aFileIds, folderId) => {
     // remove files from their original location
     if (aFileIds instanceof Array === false) {
         fileIds = [aFileIds];
+    } else {
+        fileIds = aFileIds;
     }
     fileIds = fileIds.map(id => parseInt(id, 10));
     removeFilesFromFolders(fileIds, folderId);

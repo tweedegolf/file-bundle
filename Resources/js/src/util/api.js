@@ -92,7 +92,8 @@ const deleteFile = (file_id, onSuccess, onError) => {
  * @return     {void}      Calls success or error callback
  */
 const paste = (file_ids, folder_id, onSuccess, onError) => {
-  // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
+    // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
+    // console.log('[API]', file_ids, folder_id);
     const url = `${server}/admin/file/move${folder_id ? `/${folder_id}` : ''}`;
     const req = request.post(url).type('form');
     req.send({ 'files[]': file_ids });

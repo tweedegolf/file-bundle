@@ -78,6 +78,7 @@ export default class List extends React.Component {
 
     render() {
         // console.log(this.props);
+        // TODO: reverse i!
         let i = this.props.folders.length + this.props.files.length;
 
         // sorted file listing

@@ -3,7 +3,6 @@ import * as ActionTypes from '../util/constants';
 import { getStore } from '../reducers/store';
 import openFolder from './open_folder';
 import pasteFiles from './paste_files';
-import cache from '../util/cache';
 
 export addFolder from './add_folder';
 export deleteFile from './delete_file';
@@ -48,14 +47,15 @@ export const init = (selected) => {
  *                                          the parent folder of the folder that
  *                                          will be deleted
  * @return     {void}  dispatches actions
- */
+*/
+// TODO: delete folder including its content
 export const deleteFolder = (folder_id, current_folder_id) => {
     dispatch({
         type: ActionTypes.DELETE_FOLDER,
         payload: { folder_id },
     });
 
-
+/*
     cache.deleteFolder(folder_id, current_folder_id)
         .then(
             (payload) => {
@@ -71,6 +71,7 @@ export const deleteFolder = (folder_id, current_folder_id) => {
                 });
             },
         );
+*/
 };
 
 /**
@@ -135,10 +136,10 @@ export const changeSorting = (sort) => {
  *
  * @param      {number}  error_id  The unique identifier of the error.
  */
-export const dismissError = function (error_id) {
+export const dismissError = (errorId) => {
     dispatch({
         type: ActionTypes.DISMISS_ERROR,
-        payload: { error_id },
+        payload: { errorId },
     });
 };
 
@@ -163,7 +164,7 @@ export const showPreview = (imageUrl) => {
  * @param      {number}  id      The id of the file will be deleted after
  *                               confirmation
  */
-export const confirmDelete = function (id) {
+export const confirmDelete = (id) => {
     dispatch({
         type: ActionTypes.CONFIRM_DELETE,
         payload: { id },
@@ -174,26 +175,21 @@ export const confirmDelete = function (id) {
 /**
  * User selects a file by using the arrow keys of the keyboard.
  *
- * @param      {number}   diff       Value is -1 if user has clicked the arrow
- *                                   down key and +1 if the arrow up key has
- *                                   been pressed.
- * @param      {?number}  folder_id  The id of the current folder; we need this
- *                                   id to get the number of items in this
- *                                   folder from the cache. The number of items
- *                                   is used to determine if we need to wrap
- *                                   around the selection, e.g. if the current
- *                                   selection is the last item in the list, and
- *                                   the user has pressed the arrow down button,
- *                                   the selection will wrap around resulting in
- *                                   the first item in the list being selected.
+ * @param      {number}  diff    Value is -1 if user has clicked the arrow down
+ *                               key and +1 if the arrow up key has been
+ *                               pressed.
+ * @param      {number}  max     The number of items in this folder. The number
+ *                               of items is used to determine if we need to
+ *                               wrap around the selection, e.g. if the current
+ *                               selection is the last item in the list, and the
+ *                               user has pressed the arrow down button, the
+ *                               selection will wrap around resulting in the
+ *                               first item in the list being selected.
  */
-export const setHover = function (diff, folder_id) {
+export const setHover = (diff, max) => {
     dispatch({
         type: ActionTypes.SET_HOVER,
-        payload: {
-            diff,
-            max: cache.getItemCount(folder_id),
-        },
+        payload: { diff, max },
     });
 };
 
@@ -204,7 +200,7 @@ export const setHover = function (diff, folder_id) {
  * @param      {number}  scroll  The position of the list in pixels measured
  *                               from the top.
  */
-export const setScrollPosition = function (scroll) {
+export const setScrollPosition = (scroll) => {
     dispatch({
         type: ActionTypes.SET_SCROLL_POSITION,
         payload: { scroll },
@@ -216,7 +212,7 @@ export const setScrollPosition = function (scroll) {
  * In Filepicker mode the user sees a button to expand and collapse the browser.
  * In Browser mode the browser is always expanded.
  */
-export const expandBrowser = function () {
+export const expandBrowser = () => {
     dispatch({
         type: ActionTypes.EXPAND_BROWSER,
     });
