@@ -70,19 +70,28 @@ const getPath = ({ items, target, rootFolderId, itemType }) => {
     return lensPath;
 };
 
-// Find the item by id and return the item and other data; this other data (the index of
+// Finds the item by id and returns the item and other data; this other data (the index of
 // the item in the array, the id of its parent folder) is used to create an array
 // that describes the data path to this item. The array is stored in the lookupTable
 // for memoization. The data that can be converted to a Ramda lensPath for super fast future
 // lookups.
-const findItemById = (itemType, { items, lookFor, parentId }) => {
+const getItemData = (itemType, { items, lookFor }) => {
     // console.log(items, lookFor, parentId);
+    let itemData = lookupTable[lookFor];
+    if (R.isNil(itemData) === false) {
+        const test = R.view(R.lensPath(itemData.lensPath), items);
+        if (R.isNil(test) === false) {
+            return itemData;
+        }
+        lookupTable[lookFor] = null;
+    }
+    const parentId = items[0].id;
     const tmp = loop({ items, lookFor, parentId, itemType });
     const result = R.flatten(tmp);
     // console.log(result);
     const filterFound = R.filter(o => o.found, result);
     // console.log(filterFound);
-    const itemData = R.length(filterFound) !== 0 ? filterFound[0] : null;
+    itemData = R.length(filterFound) !== 0 ? filterFound[0] : null;
     if (itemData === null) {
         const error = `could not find ${R.dropLast(1, itemType)} with id ${lookFor}`;
         console.error(error);
@@ -95,71 +104,66 @@ const findItemById = (itemType, { items, lookFor, parentId }) => {
     return itemData;
 };
 
-// checks if there is a valid lensPath for this item
-const lookup = (itemType, { rootFolder, itemId }) => {
+const getItemById = (itemType, { rootFolder, itemId }) => {
     // console.log('lookupTable', lookupTable);
-    let itemData = lookupTable[itemId];
-    if (R.isNil(itemData)) {
-        itemData = findItemById(itemType, { items: [rootFolder], lookFor: itemId, parentId: rootFolder.id });
-        return R.clone(itemData.item);
-    }
-
+    const itemData = getItemData(itemType, { items: [rootFolder], lookFor: itemId });
     const foundItem = R.view(R.lensPath(itemData.lensPath), [rootFolder]);
-    if (R.isNil(foundItem)) {
-        // apparently the item has been (re)moved
-        lookupTable[itemId] = null;
-        itemData = findItemById(itemType, { items: [rootFolder], lookFor: itemId, parentId: rootFolder.id });
-        return R.clone(itemData.item);
-    }
-    // console.log('found', lensPath, foundItem);
     return R.clone(foundItem);
 };
 
 const replaceItemById = (itemType, { itemId, item, rootFolder }) => {
-    let itemData = lookupTable[itemId];
-    if (R.isNil(itemData)) {
-        itemData = findItemById(itemType, { items: [rootFolder], lookFor: itemId, rootFolderId: rootFolder.id });
-    }
-    const lensPath = itemData.lensPath;
-    // console.log(itemId, lensPath, item);
-    const result = R.compose(R.head, R.set(R.lensPath(lensPath), item))([rootFolder]);
+    const itemData = getItemData(itemType, { items: [rootFolder], lookFor: itemId });
+    const result = R.compose(R.head, R.set(R.lensPath(itemData.lensPath), item))([rootFolder]);
     return result;
 };
 
 const removeItem = (itemType, rootFolder, item) => {
-    let itemData = lookupTable[item.id];
-    if (R.isNil(itemData)) {
-        itemData = findItemById(itemType, { items: [rootFolder], lookFor: item.id, parentId: rootFolder.id });
-    }
-    const parentFolder = lookup('folders', { rootFolder, itemId: itemData.parent });
+    const itemData = getItemData(itemType, { items: [rootFolder], lookFor: item.id });
+    const parentFolder = getItemById('folders', { rootFolder, itemId: itemData.parent });
     parentFolder.files = R.reject(f => f.id === item.id, parentFolder.files);
     parentFolder.file_count = R.length(parentFolder.files);
+    console.log(parentFolder.files);
     return replaceFolderById({ folderId: parentFolder.id, folder: parentFolder, rootFolder });
 };
 
-export const getFolderById = ({ rootFolder, folderId }) => {
+const getFolderById = ({ rootFolder, folderId }) => {
     if (folderId === rootFolder.id) {
         return rootFolder;
     }
-    return lookup('folders', { rootFolder, itemId: folderId });
+    return getItemById('folders', { rootFolder, itemId: folderId });
 };
 
-export const getFileById = ({ rootFolder, fileId }) =>
-    lookup('files', { rootFolder, itemId: fileId });
+const getFileById = ({ rootFolder, fileId }) =>
+    getItemById('files', { rootFolder, itemId: fileId });
 
-export const replaceFolderById = ({ folderId, folder, rootFolder }) => {
+const replaceFolderById = ({ folderId, folder, rootFolder }) => {
     if (folderId === rootFolder.id) {
         return folder;
     }
     return replaceItemById('folders', { itemId: folderId, item: folder, rootFolder });
 };
 
-export const replaceFileById = ({ fileId, file, rootFolder }) =>
+const replaceFileById = ({ fileId, file, rootFolder }) =>
     replaceItemById('files', { itemId: fileId, item: file, rootFolder });
 
-export const removeFile = ({ rootFolder, file }) => removeItem('files', rootFolder, file);
+const removeFile = ({ rootFolder, file }) => removeItem('files', rootFolder, file);
+const removeFiles = ({ rootFolder, files }) => {
+    const max = R.length(files);
+    const updateRootFolder = (index, rf) => {
+        if (index === max) {
+            console.log(index, rf);
+            return rf;
+        }
+        return updateRootFolder(index + 1, removeFile({ rootFolder: rf, file: files[index] }));
+    };
+    return updateRootFolder(0, rootFolder);
+};
 
-export const removeFiles = ({ rootFolder, files }) => {
-    const removeFileCurried = R.curry(removeItem)('files')(rootFolder);
-    return R.compose(R.head, R.takeLast(1))(R.map(removeFileCurried, files));
+
+export {
+    getFolderById,
+    replaceFolderById,
+    getFileById,
+    replaceFileById,
+    removeFiles,
 };
