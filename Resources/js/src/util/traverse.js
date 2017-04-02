@@ -5,7 +5,10 @@ import R from 'ramda';
 const mapIndexed = R.addIndex(R.map);
 
 // Here we store all data paths for memoization
-const lookupTable = {};
+const lookupTable = {
+    files: {},
+    folders: {},
+};
 
 // Main loop that traverses the tree
 const loop = ({ items, lookFor, parentId, itemType }) =>
@@ -22,6 +25,8 @@ const check = ({ item, index, lookFor, parentId, itemType }) => {
         index,
         parent: parentId,
         id: item.id,
+        name: item.name,
+        type: itemType,
         item,
         found,
     };
@@ -77,13 +82,14 @@ const getPath = ({ items, target, rootFolderId, itemType }) => {
 // lookups.
 const getItemData = (itemType, { items, lookFor }) => {
     // console.log(items, lookFor, parentId);
-    let itemData = lookupTable[lookFor];
+    let itemData = lookupTable[itemType][lookFor];
+    // console.log(lookFor, '=>', itemData);
     if (R.isNil(itemData) === false) {
         const test = R.view(R.lensPath(itemData.lensPath), items);
         if (R.isNil(test) === false) {
             return itemData;
         }
-        lookupTable[lookFor] = null;
+        lookupTable[itemType][lookFor] = null;
     }
     const parentId = items[0].id;
     const tmp = loop({ items, lookFor, parentId, itemType });
@@ -100,12 +106,15 @@ const getItemData = (itemType, { items, lookFor }) => {
     const lensPath = getPath({ items: result, target: itemData, itemType, rootFolderId: parentId });
     // console.log(R.view(lensPath, data));
     itemData.lensPath = lensPath;
-    lookupTable[lookFor] = itemData;
+    lookupTable[itemType][lookFor] = itemData;
     return itemData;
 };
 
 const getItemById = (itemType, { rootFolder, itemId }) => {
     // console.log('lookupTable', lookupTable);
+    if (itemId === rootFolder.id) {
+        return rootFolder;
+    }
     const itemData = getItemData(itemType, { items: [rootFolder], lookFor: itemId });
     const foundItem = R.view(R.lensPath(itemData.lensPath), [rootFolder]);
     return R.clone(foundItem);
@@ -119,10 +128,13 @@ const replaceItemById = (itemType, { itemId, item, rootFolder }) => {
 
 const removeItem = (itemType, rootFolder, item) => {
     const itemData = getItemData(itemType, { items: [rootFolder], lookFor: item.id });
+    console.log(rootFolder);
     const parentFolder = getItemById('folders', { rootFolder, itemId: itemData.parent });
     parentFolder.files = R.reject(f => f.id === item.id, parentFolder.files);
     parentFolder.file_count = R.length(parentFolder.files);
-    console.log(parentFolder.files);
+    lookupTable[itemType][item.id] = null;
+    // console.log(lookupTable);
+    // console.log(parentFolder.files);
     return replaceFolderById({ folderId: parentFolder.id, folder: parentFolder, rootFolder });
 };
 
@@ -151,7 +163,7 @@ const removeFiles = ({ rootFolder, files }) => {
     const max = R.length(files);
     const updateRootFolder = (index, rf) => {
         if (index === max) {
-            console.log(index, rf);
+            // console.log(index, rf);
             return rf;
         }
         return updateRootFolder(index + 1, removeFile({ rootFolder: rf, file: files[index] }));
