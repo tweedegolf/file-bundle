@@ -118,6 +118,7 @@ export default class List extends React.Component {
           folder={folder}
           onDelete={Actions.deleteFolder}
           onOpenFolder={this.openFolder}
+          deleteFolderWithId={this.props.deleteFolderWithId}
           loadingFolderWithId={this.props.loadingFolderWithId}
         />), this.props.folders);
 
