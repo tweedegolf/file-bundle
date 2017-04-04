@@ -1,4 +1,3 @@
-import R from 'ramda';
 import * as ActionTypes from '../util/constants';
 
 /**
@@ -29,8 +28,8 @@ export function tree(state = treeInitialState, action) {
     if (action.type === ActionTypes.INIT) {
         return {
             ...state,
-            rootFolderId: action.payload.rootFolderId,
             foldersById: action.payload.foldersById,
+            rootFolderId: action.payload.rootFolderId,
         };
     /**
      * Contents of a folder has been loaded from the server or from cache
@@ -40,9 +39,9 @@ export function tree(state = treeInitialState, action) {
         // return { ...action.payload }
         return {
             ...state,
-            currentFolder: action.payload.currentFolder,
-            parentFolder: action.payload.parentFolder,
             filesById: action.payload.filesById,
+            parentFolder: action.payload.parentFolder,
+            currentFolder: action.payload.currentFolder,
             foldersById: action.payload.foldersById,
         };
 
@@ -54,8 +53,9 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.FILE_DELETED) {
         return {
             ...state,
+            filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
             currentFolder: action.payload.currentFolder,
-            rootFolder: action.payload.rootFolder,
             errors: action.payload.errors,
         };
 
@@ -67,8 +67,9 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.FOLDER_DELETED) {
         return {
             ...state,
+            filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
             currentFolder: action.payload.currentFolder,
-            rootFolder: action.payload.rootFolder,
         };
 
     /**
@@ -79,8 +80,9 @@ export function tree(state = treeInitialState, action) {
     } else if (action.type === ActionTypes.UPLOAD_DONE) {
         return {
             ...state,
+            filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
             currentFolder: action.payload.currentFolder,
-            rootFolder: action.payload.rootFolder,
             errors: action.payload.errors,
         };
 
@@ -93,7 +95,7 @@ export function tree(state = treeInitialState, action) {
         return {
             ...state,
             currentFolder: action.payload.currentFolder,
-            rootFolder: action.payload.rootFolder,
+            foldersById: action.payload.foldersById,
         };
 
     /**
@@ -104,8 +106,8 @@ export function tree(state = treeInitialState, action) {
         return {
             ...state,
             currentFolder: action.payload.currentFolder,
-            parentFolder: action.payload.parentFolder,
-            rootFolder: action.payload.rootFolder,
+            foldersById: action.payload.foldersById,
+            filesById: action.payload.filesById,
         };
     }
 

@@ -3,35 +3,44 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { getFolderById, replaceFolderById, removeFiles } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
 const moveFiles = (resolve, reject) => {
+    const ui = store.getState().ui;
+    const tree = store.getState().tree;
     const {
-        tree: treeState,
-        ui: uiState,
-    } = store.getState();
-    let rootFolder = R.clone(treeState.rootFolder);
-    const currentFolder = R.clone(treeState.currentFolder);
-    const folderId = currentFolder.id;
-    const files = uiState.clipboard;
+        currentFolder,
+        filesById,
+        foldersById,
+    } = tree;
+
+    const files = ui.clipboard;
     const fileIds = R.map(f => f.id, files);
 
-    api.paste(fileIds, folderId,
+    api.paste(fileIds, currentFolder.id,
         () => {
             files.forEach((f) => {
+                filesById[f.id] = f;
                 currentFolder.files.push(R.merge(f, { new: true }));
             });
             currentFolder.file_count = R.length(currentFolder.files);
+            foldersById[currentFolder.id] = currentFolder;
 
-            rootFolder = removeFiles({ rootFolder, files });
+            R.forEach((folder) => {
+                if (folder.id !== currentFolder.id) {
+                    R.forEach((fileId) => {
+                        folder.files = R.reject(file => file.id === fileId, folder.files);
+                        folder.file_count = R.length(folder.files);
+                    }, fileIds);
+                }
+            }, R.values(foldersById));
 
             resolve({
-                rootFolder: replaceFolderById({ folderId: currentFolder.id, folder: currentFolder, rootFolder }),
-                parentFolder: getFolderById({ rootFolder, folderId: currentFolder.parent }),
                 currentFolder,
+                foldersById,
+                filesById,
             });
         },
         (messages) => {

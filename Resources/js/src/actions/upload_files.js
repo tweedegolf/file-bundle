@@ -3,23 +3,28 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { getFolderById, replaceFolderById } from '../util/traverse';
+
+const store = getStore();
+const dispatch = store.dispatch;
 
 const uploadFiles = (fileList, resolve, reject) => {
-    const store = getStore();
-    const state = store.getState().tree;
-    const rootFolder = R.clone(state.rootFolder);
-    const currentFolder = R.clone(state.currentFolder);
-    const folderId = currentFolder.id;
+    const tree = store.getState().tree;
+    const {
+        currentFolder,
+        filesById,
+        foldersById,
+    } = tree;
 
-    api.upload(fileList, folderId,
+    api.upload(fileList, currentFolder.id,
         (rejected, newFiles) => {
             R.forEach((f) => {
                 const f1 = { ...f, new: true };
                 currentFolder.files.push(f1);
+                filesById[f1.id] = f1;
             }, newFiles);
 
             currentFolder.file_count = R.length(currentFolder.files);
+            foldersById[currentFolder.id] = currentFolder;
 
             const errors = R.map(key => ({
                 id: getUID(),
@@ -30,7 +35,8 @@ const uploadFiles = (fileList, resolve, reject) => {
 
             resolve({
                 currentFolder,
-                rootFolder: replaceFolderById({ folderId, folder: currentFolder, rootFolder }),
+                foldersById,
+                filesById,
                 errors,
             });
         },
@@ -48,7 +54,6 @@ const uploadFiles = (fileList, resolve, reject) => {
 };
 
 export default (fileList) => {
-    const dispatch = getStore().dispatch;
     const files = Array.from(fileList);
     dispatch({
         type: Constants.UPLOAD_START,

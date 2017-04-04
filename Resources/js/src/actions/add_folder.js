@@ -3,24 +3,26 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { replaceFolderById } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
 const addFolder = (folderName, resolve, reject) => {
-    const state = store.getState().tree;
-    const rootFolder = R.clone(state.rootFolder);
-    const currentFolder = R.clone(state.currentFolder);
-    const currentFolderId = currentFolder.id;
+    const tree = store.getState().tree;
+    const {
+        currentFolder,
+        foldersById,
+    } = tree;
 
-    api.addFolder(folderName, currentFolderId,
+    api.addFolder(folderName, currentFolder.id,
         (folders, errorMessages) => {
             folders.forEach((f) => {
+                foldersById[f.id] = f;
                 currentFolder.folders.push(R.merge(f, { new: true }));
             });
 
             currentFolder.folder_count = R.length(currentFolder.folders);
+            foldersById[currentFolder.id] = currentFolder;
 
             let errors = [];
             if (errorMessages.length > 0) {
@@ -33,8 +35,8 @@ const addFolder = (folderName, resolve, reject) => {
             }
 
             resolve({
-                rootFolder: replaceFolderById({ folderId: currentFolderId, folder: currentFolder, rootFolder }),
                 currentFolder,
+                foldersById,
                 errors,
                 //errors: [{id: 7777, type: 'generic', messages: ['oh my, this is an error!']}]
             });
