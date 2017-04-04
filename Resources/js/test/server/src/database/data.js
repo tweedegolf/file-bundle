@@ -26,6 +26,17 @@ export default {
             size: '2 kB',
             size_bytes: 2086,
         },
+        2: {
+            create_ts: 1470914525,
+            created: '11-08-2016 13:22',
+            id: 2,
+            name: 'RosyBrown.jpg',
+            original: '/media/57ac5fdd5a124_RosyBrown.jpg',
+            thumb: '/media/thumb/57ac5fdd5a124_RosyBrown.jpg',
+            type: 'jpg',
+            size: '2 kB',
+            size_bytes: 2086,
+        },
     },
     folders: {
         0: {
@@ -47,14 +58,31 @@ export default {
             // thumb: null,
             type: 'folder',
         },
+        2: {
+            create_ts: 1470914525,
+            created: '11-08-2016 13:22',
+            file_count: 0,
+            folder_count: 0,
+            id: 2,
+            name: 'subfolder colors',
+            parent: 1,
+            size: '',
+            size_bytes: 0,
+            // thumb: null,
+            type: 'folder',
+        },
     },
     tree: {
         0: {
-            files: [1],
+            files: [1, 2],
             folders: [1],
         },
         1: {
-            files: [],
+            files: [1],
+            folders: [2],
+        },
+        2: {
+            files: [2],
             folders: [],
         },
     },
