@@ -28,10 +28,10 @@ export default {
         },
     },
     folders: {
-        null: {
+        0: {
             file_count: 1,
             folder_count: 1,
-            id: null,
+            id: 0,
             type: 'folder',
         },
         1: {
@@ -41,7 +41,7 @@ export default {
             folder_count: 0,
             id: 1,
             name: 'colors',
-            parent: null,
+            parent: 0,
             size: '',
             size_bytes: 0,
             // thumb: null,
@@ -49,7 +49,7 @@ export default {
         },
     },
     tree: {
-        null: {
+        0: {
             files: [1],
             folders: [1],
         },

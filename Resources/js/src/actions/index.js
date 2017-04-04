@@ -22,19 +22,34 @@ const dispatch = store.dispatch;
  *                                 array of file ids to the HTML element's
  *                                 dataset; this array is passed as argument.
  */
-export const init = (selected) => {
-    if (R.isNil(selected) === false) {
-        dispatch({
-            type: ActionTypes.SELECT_FILES,
-            payload: {
-                selected,
-            },
-        });
-    }
+export const init = (options) => {
+    const rootFolderId = options.rootFolderId;
+    const foldersById = store.getState().tree.foldersById;
+    foldersById[rootFolderId] = {
+        id: rootFolderId,
+        name: '..',
+        file_count: 0,
+        folder_count: 0,
+    };
+
+    dispatch({
+        type: ActionTypes.INIT,
+        payload: {
+            selected: options.selected || [],
+            rootFolderId,
+            foldersById,
+        },
+    });
+
+    const currentFolderId = R.cond([
+        [R.isNil, R.always(rootFolderId)],
+        [R.isEmpty, R.always(rootFolderId)],
+        [R.T, cf => cf.id],
+    ])(store.getState().tree.currentFolder);
     // start with optimistic loading from localstorage (if present) then fetch
     // the data from the server and update view if necessary
     setTimeout(() => {
-        openFolder(store.getState().tree.currentFolder.id, true); // true means: force load
+        openFolder(currentFolderId, true); // true means: force load
     }, 500);
 };
 

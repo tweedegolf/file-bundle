@@ -15,7 +15,7 @@ export const folderShape = {
     folder_count: PropTypes.number.isRequired,
     id: PropTypes.number, // the id of the root folder is 'null'
     name: PropTypes.string.isRequired,
-    parent: PropTypes.string,
+    parent: PropTypes.number,
     type: PropTypes.string,
     size: PropTypes.string,
     size_bytes: PropTypes.number,

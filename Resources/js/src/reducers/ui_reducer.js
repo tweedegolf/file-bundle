@@ -426,7 +426,7 @@ export function ui(state = uiInitialState, action) {
      *                                        the dataset property of the root
      *                                        HTML element
      */
-    } else if (action.type === ActionTypes.SELECT_FILES) {
+    } else if (action.type === ActionTypes.INIT) {
         return {
             ...state,
             selected: [...action.payload.selected],

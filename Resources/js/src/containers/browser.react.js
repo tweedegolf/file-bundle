@@ -29,14 +29,16 @@ const mapStateToProps = (state) => {
         ascending,
     } = state.ui;
 
-    const numItemsInCurrentFolder =
-        R.length(state.tree.currentFolder.folders) +
-        R.length(state.tree.currentFolder.files);
+    const [currentFolderId, numItemsInCurrentFolder] = R.cond([
+        [R.isNil, R.always([null, 0])],
+        [R.isEmpty, R.always([null, 0])],
+        [R.T, cf => [cf.id, R.length(cf.folders) + R.length(cf.files)]],
+    ])(state.tree.currentFolder);
 
     return {
         // tree props
         numItemsInCurrentFolder,
-        currentFolderId: state.tree.currentFolder.id,
+        currentFolderId,
 
         // ui props
         sort,
@@ -62,6 +64,7 @@ export default class Browser extends React.Component {
     static propTypes = {
         browser: PropTypes.bool.isRequired,
         options: PropTypes.shape({
+            rootFolderId: PropTypes.number.isRequired,
             selected: PropTypes.number,
             multiple: PropTypes.bool,
             images_only: PropTypes.bool,
@@ -82,7 +85,11 @@ export default class Browser extends React.Component {
     }
 
     static defaultProps = {
-        options: null,
+        options: {
+            images_only: false,
+            multiple: true,
+            selected: null,
+        },
         previewUrl: null,
         sort: null,
         scrollPosition: null,
@@ -92,12 +99,8 @@ export default class Browser extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.canSelectMultipleFiles = R.isNil(props.options) === false &&
-            R.isNil(props.options.multiple) === false;
-
-        this.imagesOnly = this.props.options ?
-            this.props.options.images_only : false;
+        this.canSelectMultipleFiles = props.options.multiple || true;
+        this.imagesOnly = props.options.images_only || false;
 
         // select files and folders using the arrow up and -down key of your keyboard
         this.onKeyDown = (event) => {
@@ -144,11 +147,7 @@ export default class Browser extends React.Component {
         // Filepicker mode: the selected files can be set in the dataset of the HTML
         // element.
         if (this.props.browser === false) {
-            let selected = null;
-            if (this.props.options !== null) {
-                selected = this.props.options.selected;
-            }
-            Actions.init(selected);
+            Actions.init(this.props.options);
         }
 
         // Browser mode: by default, the browser is not expanded, therefor we have
@@ -158,7 +157,7 @@ export default class Browser extends React.Component {
             // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown, false);
             Actions.expandBrowser();
-            Actions.init();
+            Actions.init(this.props.options);
         }
     }
 
@@ -183,6 +182,10 @@ export default class Browser extends React.Component {
     }
 
     render() {
+        if (R.isNil(this.props.currentFolderId)) {
+            return <div>initializing...</div>;
+        }
+
         const headers = R.map(([column, name]) =>
             <SortHeader
               key={column}

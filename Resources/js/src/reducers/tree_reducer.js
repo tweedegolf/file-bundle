@@ -15,36 +15,35 @@ import * as ActionTypes from '../util/constants';
  *
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
-let undef;
-// change rootFolder for chroot
-const rootFolder = {
-    id: null,
-    name: '..',
-    file_count: 0,
-    folder_count: 0,
-    files: [],
-    folders: [],
-};
 export const treeInitialState = {
-    rootFolder,
-    currentFolder: rootFolder,
-    parentFolder: undef,
+    rootFolderId: null,
+    currentFolder: {},
+    parentFolder: {},
+    filesById: {},
+    foldersById: {},
     errors: [],
 };
 
 
 export function tree(state = treeInitialState, action) {
+    if (action.type === ActionTypes.INIT) {
+        return {
+            ...state,
+            rootFolderId: action.payload.rootFolderId,
+            foldersById: action.payload.foldersById,
+        };
     /**
      * Contents of a folder has been loaded from the server or from cache
      */
-    if (action.type === ActionTypes.FOLDER_OPENED) {
+    } else if (action.type === ActionTypes.FOLDER_OPENED) {
         // console.log(action.payload);
         // return { ...action.payload }
         return {
             ...state,
             currentFolder: action.payload.currentFolder,
             parentFolder: action.payload.parentFolder,
-            rootFolder: action.payload.rootFolder,
+            filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
         };
 
     /**

@@ -3,15 +3,20 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
-import { getFolderById, replaceFolderById } from '../util/traverse';
 
 const store = getStore();
 const dispatch = store.dispatch;
 
 const loadFolder = (folderId, forceLoad, resolve, reject) => {
-    const state = store.getState().tree;
-    const rootFolder = R.clone(state.rootFolder);
-    const currentFolder = getFolderById({ rootFolder, folderId });
+    const tree = store.getState().tree;
+    const {
+        rootFolderId,
+        filesById,
+        foldersById,
+    } = tree;
+
+    const currentFolder = foldersById[folderId];
+    // console.log(currentFolder);
 
     let fromCache = true;
     if (forceLoad === true) {
@@ -22,16 +27,22 @@ const loadFolder = (folderId, forceLoad, resolve, reject) => {
         fromCache = false;
     }
 
-    let parentFolder;
-    if (folderId !== rootFolder.id) {
-        parentFolder = getFolderById({ rootFolder, folderId: currentFolder.parent });
+    let pf;
+    if (currentFolder.id !== rootFolderId) {
+        pf = foldersById[currentFolder.parent];
+    }
+
+    if (R.isNil(currentFolder.id)) {
+        currentFolder.id = rootFolderId;
+        currentFolder.name = '..';
     }
 
     if (fromCache) {
         resolve({
+            parentFolder: pf,
             currentFolder,
-            parentFolder,
-            rootFolder,
+            foldersById,
+            filesById,
         });
     } else {
         api.openFolder(
@@ -41,22 +52,24 @@ const loadFolder = (folderId, forceLoad, resolve, reject) => {
                 currentFolder.files = [];
 
                 R.forEach((f) => {
+                    foldersById[f.id] = f;
                     currentFolder.folders.push(f);
                 }, folders);
 
                 R.forEach((f) => {
+                    filesById[f.id] = f;
                     currentFolder.files.push(f);
                 }, files);
 
                 currentFolder.file_count = currentFolder.files.length;
                 currentFolder.folder_count = currentFolder.folders.length;
-
-                const t = replaceFolderById({ folderId, folder: currentFolder, rootFolder });
+                foldersById[folderId] = currentFolder;
 
                 resolve({
+                    parentFolder: pf,
                     currentFolder,
-                    parentFolder,
-                    rootFolder: t,
+                    foldersById,
+                    filesById,
                 });
             },
             (messages) => {

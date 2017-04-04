@@ -3,6 +3,7 @@
  * @type       {string}
  * @file       constants that describe actions
  */
+export const INIT = 'INIT';
 
  /**
   * API call: upload files, processed by:
@@ -144,7 +145,7 @@ export const SELECT_FILE = 'SELECT_FILE';
  *
  * @type       {string}
  */
-export const SELECT_FILES = 'SELECT_FILES';
+// export const SELECT_FILES = 'SELECT_FILES';
 
 /**
  * Selected files are being cut, processed by:
