@@ -15,12 +15,14 @@ const mapStateToProps = (state) => {
     const {
         files,
         folders,
+        currentFolderId,
     } = currentFolderSelector(state);
 
     return {
         // tree props
         files,
         folders,
+        currentFolderId,
         parentFolder: state.tree.parentFolder,
 
         // ui props
@@ -44,6 +46,7 @@ const mapStateToProps = (state) => {
 export default class List extends React.Component {
 
     static propTypes = {
+        currentFolderId: PropTypes.number,
         files: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         folders: PropTypes.arrayOf(PropTypes.shape(folderShape)).isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
@@ -60,6 +63,7 @@ export default class List extends React.Component {
     }
 
     static defaultProps = {
+        currentFolderId: null,
         loadingFolderWithId: null,
         deletingFileWithId: null,
         deleteFileWithId: null,
@@ -77,7 +81,10 @@ export default class List extends React.Component {
     }
 
     render() {
-        // console.log(this.props);
+        if (R.isNil(this.props.currentFolderId)) {
+            return false;
+        }
+
         // TODO: reverse i!
         let i = this.props.folders.length + this.props.files.length;
 

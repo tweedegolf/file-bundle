@@ -8,14 +8,14 @@ import { getStore } from './reducers/store';
 
 const store = getStore();
 
+const getOptions = element => R.cond([
+    [R.isNil, R.always(null)],
+    [R.T, data => JSON.parse(data)],
+])(element.dataset.options);
+
 // an element with the id 'tg_file_browser' will be converted to a interactive file browser
 // note that there can only be one of these
 const browser = document.getElementById('tg_file_browser');
-const getOptions = element => R.cond([
-    [R.isNil, R.always(null)],
-    [R.T, options => JSON.parse(options)],
-])(element.dataset.options);
-
 if (browser !== null) {
     ReactDOM.render(<Provider store={store} >
         <Browser

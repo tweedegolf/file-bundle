@@ -25,6 +25,7 @@ export default createSelector(
         return {
             files,
             folders,
+            currentFolderId: currentFolder.id,
         };
     },
 );

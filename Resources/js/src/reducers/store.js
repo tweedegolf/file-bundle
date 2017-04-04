@@ -2,40 +2,37 @@ import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
 import { autoRehydrate, persistStore } from 'redux-persist';
 // import thunkMiddleware from 'redux-thunk'
+import R from 'ramda';
 import { ui, uiInitialState } from '../reducers/ui_reducer';
 import { tree, treeInitialState } from '../reducers/tree_reducer';
 
 let store = null;
+
+const initialState = {
+    ui: uiInitialState,
+    tree: treeInitialState,
+};
 
 export const getNewStore = () => {
     const s = createStore(
         combineReducers({
             ui,
             tree,
-        }), {
-            ui: uiInitialState,
-            tree: treeInitialState,
-        },
+        }),
+        initialState,
         compose(
-            // autoRehydrate(),
+            autoRehydrate(),
             applyMiddleware(
                 // thunkMiddleware,
                 createLogger({ collapsed: true }),
             ),
         ),
     );
-    // persistStore(s);
     return s;
 };
 
-/**
- * Singleton function that returns the global Redux state. Sometimes we need to
- * access the store outside Redux' <tt>connect()</tt> function; in those cases
- * we can use <tt>getStore()</tt>, it does not create a new global state
- * instance if it has already been created.
- */
 export function getStore() {
-    if (store === null) {
+    if (R.isNil(store)) {
         store = getNewStore();
     }
     return store;

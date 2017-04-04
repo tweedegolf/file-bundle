@@ -52,6 +52,8 @@ const mapStateToProps = (state) => {
         isUploadingFiles: state.ui.isUploadingFiles, // true or false
         scrollPosition: state.ui.scrollPosition, // null or numeric value
         errors: state.ui.errors,
+        multiple: state.ui.multiple,
+        imagesOnly: state.ui.imagesOnly,
     };
 };
 
@@ -63,12 +65,8 @@ export default class Browser extends React.Component {
 
     static propTypes = {
         browser: PropTypes.bool.isRequired,
-        options: PropTypes.shape({
-            rootFolderId: PropTypes.number.isRequired,
-            selected: PropTypes.number,
-            multiple: PropTypes.bool,
-            images_only: PropTypes.bool,
-        }),
+        multiple: PropTypes.bool.isRequired,
+        imagesOnly: PropTypes.bool.isRequired,
         scrollPosition: PropTypes.number,
         sort: PropTypes.string,
         previewUrl: PropTypes.string,
@@ -82,14 +80,14 @@ export default class Browser extends React.Component {
         errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
         selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
+        options: PropTypes.shape({
+            multiple: PropTypes.bool,
+            images_only: PropTypes.bool,
+            root_folder_id: PropTypes.number.isRequired,
+        }).isRequired,
     }
 
     static defaultProps = {
-        options: {
-            images_only: false,
-            multiple: true,
-            selected: null,
-        },
         previewUrl: null,
         sort: null,
         scrollPosition: null,
@@ -99,8 +97,6 @@ export default class Browser extends React.Component {
 
     constructor(props) {
         super(props);
-        this.canSelectMultipleFiles = props.options.multiple || true;
-        this.imagesOnly = props.options.images_only || false;
 
         // select files and folders using the arrow up and -down key of your keyboard
         this.onKeyDown = (event) => {
@@ -137,7 +133,7 @@ export default class Browser extends React.Component {
 
             Actions.selectFile({
                 file,
-                multiple: this.canSelectMultipleFiles,
+                multiple: this.multiple,
                 browser: this.props.browser,
             });
         };
@@ -213,7 +209,7 @@ export default class Browser extends React.Component {
 
         const selected = (<SelectedFiles
           browser={this.props.browser}
-          multiple={this.canSelectMultipleFiles}
+          multiple={this.props.multiple}
           selected={this.props.selected}
           clipboard={this.props.clipboard}
           selectFile={this.selectFile}
@@ -278,7 +274,7 @@ export default class Browser extends React.Component {
                                   // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
                                   selectFile={this.selectFile}
                                   browser={this.props.browser}
-                                  imagesOnly={this.imagesOnly}
+                                  imagesOnly={this.props.imagesOnly}
                                 />
                             </table>
                         </div>

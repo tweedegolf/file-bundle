@@ -5,10 +5,8 @@ import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 import { getFolderById, replaceFolderById } from '../util/traverse';
 
-const store = getStore();
-const dispatch = store.dispatch;
-
 const uploadFiles = (fileList, resolve, reject) => {
+    const store = getStore();
     const state = store.getState().tree;
     const rootFolder = R.clone(state.rootFolder);
     const currentFolder = R.clone(state.currentFolder);
@@ -50,6 +48,7 @@ const uploadFiles = (fileList, resolve, reject) => {
 };
 
 export default (fileList) => {
+    const dispatch = getStore().dispatch;
     const files = Array.from(fileList);
     dispatch({
         type: Constants.UPLOAD_START,

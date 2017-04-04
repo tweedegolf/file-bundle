@@ -82,6 +82,8 @@ export const uiInitialState = {
     scrollPosition: null,
     selected: [],
     clipboard: [],
+    multiple: true,
+    imagesOnly: false,
 };
 
 
