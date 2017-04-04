@@ -7,6 +7,7 @@ import pasteFiles from './paste_files';
 
 export addFolder from './add_folder';
 export deleteFile from './delete_file';
+export deleteFolder from './delete_folder';
 export uploadFiles from './upload_files';
 export { openFolder, pasteFiles };
 
@@ -54,42 +55,6 @@ export const init = (options) => {
         ])(store.getState().tree.currentFolder);
         openFolder(currentFolderId, true);
     });
-};
-
-/**
- * Deletes an empty folder. Triggers an API call.
- *
- * @param      {number}  folder_id          The id of the folder that will be
- *                                          deleted
- * @param      {number}  current_folder_id  The id of the current folder, i.e.
- *                                          the parent folder of the folder that
- *                                          will be deleted
- * @return     {void}  dispatches actions
-*/
-// TODO: delete folder including its content
-export const deleteFolder = (folder_id, current_folder_id) => {
-    dispatch({
-        type: ActionTypes.DELETE_FOLDER,
-        payload: { folder_id },
-    });
-
-/*
-    cache.deleteFolder(folder_id, current_folder_id)
-        .then(
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.FOLDER_DELETED,
-                    payload,
-                });
-            },
-            (payload) => {
-                dispatch({
-                    type: ActionTypes.ERROR_DELETING_FOLDER,
-                    payload,
-                });
-            },
-        );
-*/
 };
 
 /**
@@ -185,6 +150,13 @@ export const showPreview = (imageUrl) => {
 export const confirmDelete = (id) => {
     dispatch({
         type: ActionTypes.CONFIRM_DELETE,
+        payload: { id },
+    });
+};
+
+export const confirmDeleteFolder = (id) => {
+    dispatch({
+        type: ActionTypes.CONFIRM_DELETE_FOLDER,
         payload: { id },
     });
 };

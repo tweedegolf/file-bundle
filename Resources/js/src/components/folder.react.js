@@ -25,20 +25,17 @@ const Folder = (props) => {
     const folder = props.folder;
     const className = `folder${folder.new ? ' success' : ''}${props.hovering ? ' selected' : ''}`;
 
-    let btnDelete = null;
-    if (folder.file_count === 0 && folder.folder_count === 0 && props.parent === false) {
-        const p = {
-            onClick: (e) => {
-                e.stopPropagation();
-                props.onDelete(folder.id);
-            },
-            type: 'button',
-            className: 'btn btn-sm btn-danger',
-        };
-        btnDelete = (<button {...p}>
-            <span className="fa fa-trash-o" />
-        </button>);
-    }
+    const p1 = {
+        onClick: (e) => {
+            e.stopPropagation();
+            props.onDelete(folder.id);
+        },
+        type: 'button',
+        className: 'btn btn-sm btn-danger',
+    };
+    const btnDelete = (<button {...p1}>
+        <span className="fa fa-trash-o" />
+    </button>);
 
     let icon = <span className="fa fa-folder" />;
     if (props.loading && props.loading === folder.id) {
@@ -66,14 +63,14 @@ const Folder = (props) => {
         </span>);
     }
 
-    const p = {
+    const p2 = {
         onClick: () => {
             props.onOpenFolder(folder.id);
         },
         className,
     };
     return (
-        <tr {...p}>
+        <tr {...p2}>
             <td className="select" />
             <td className="preview">{icon}</td>
             <td className="name">{folder.name}</td>

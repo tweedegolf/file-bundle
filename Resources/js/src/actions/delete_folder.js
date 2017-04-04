@@ -7,7 +7,7 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const deleteFolder = (fileId, resolve, reject) => {
+const deleteFolder = (folderId, resolve, reject) => {
     const tree = store.getState().tree;
     const {
         currentFolder,
@@ -15,13 +15,16 @@ const deleteFolder = (fileId, resolve, reject) => {
         foldersById,
     } = tree;
 
-    api.deleteFolder(fileId,
+    api.deleteFolder(folderId,
         () => {
-            const file = filesById[fileId];
-            file.isTrashed = true;
-            const index = R.findIndex(R.propEq('id', fileId))(currentFolder.files);
-            currentFolder.files = R.update(index, file, currentFolder.files);
-            currentFolder.file_count = R.length(currentFolder.files);
+            const folder = foldersById[folderId];
+            folder.files = R.map(f => ({ ...f, isTrashed: true }), folder.files);
+            // R.forEach((f) => { filesById[f.id] = f; }, folder.files);
+            folder.isTrashed = true;
+
+            const index = R.findIndex(R.propEq('id', folderId))(currentFolder.folders);
+            currentFolder.folders = R.update(index, folder, currentFolder.folders);
+            currentFolder.folder_count = R.length(currentFolder.folders);
             foldersById[currentFolder.id] = currentFolder;
 
             resolve({
@@ -31,11 +34,11 @@ const deleteFolder = (fileId, resolve, reject) => {
             });
         },
         (messages) => {
-            const file = filesById[fileId];
+            const folder = foldersById[folderId];
             const errors = [{
                 id: getUID(),
-                data: file.name,
-                type: Constants.ERROR_DELETING_FILE,
+                data: folder.name,
+                type: Constants.ERROR_DELETING_FOLDER,
                 messages,
             }];
             reject({ errors });
@@ -43,17 +46,17 @@ const deleteFolder = (fileId, resolve, reject) => {
     );
 };
 
-export default (fileId) => {
+export default (folderId) => {
     dispatch({
-        type: Constants.DELETE_FILE,
-        payload: { fileId },
+        type: Constants.DELETE_FOLDER,
+        payload: { folderId },
     });
 
-    deleteFile(
-        fileId,
+    deleteFolder(
+        folderId,
         (payload) => {
             dispatch({
-                type: Constants.FILE_DELETED,
+                type: Constants.FOLDER_DELETED,
                 payload,
             });
         },

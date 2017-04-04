@@ -55,6 +55,7 @@ export default class List extends React.Component {
         imagesOnly: PropTypes.bool.isRequired,
         ascending: PropTypes.bool.isRequired,
         loadingFolderWithId: PropTypes.number,
+        deleteFolderWithId: PropTypes.number,
         deleteFileWithId: PropTypes.number,
         isUploadingFiles: PropTypes.bool.isRequired,
         hover: PropTypes.number.isRequired,
@@ -66,7 +67,9 @@ export default class List extends React.Component {
         currentFolderId: null,
         loadingFolderWithId: null,
         deletingFileWithId: null,
+        deletingFolderWithId: null,
         deleteFileWithId: null,
+        deleteFolderWithId: null,
         parentFolder: null,
     }
 
@@ -117,6 +120,7 @@ export default class List extends React.Component {
           parent={false}
           folder={folder}
           onDelete={Actions.deleteFolder}
+          confirmDelete={Actions.confirmDelete}
           onOpenFolder={this.openFolder}
           deleteFolderWithId={this.props.deleteFolderWithId}
           loadingFolderWithId={this.props.loadingFolderWithId}
