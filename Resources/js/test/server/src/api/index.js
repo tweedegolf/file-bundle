@@ -80,6 +80,20 @@ const moveFiles = (req, res) => {
 };
 
 
+const emptyRecycleBin = (req, res) => {
+    console.log('[API] empty recycle bin');
+
+    const data = database.emptyRecycleBin();
+    if (data.error !== false) {
+        res.setHeader('Content-Type', 'text/plain');
+        res.status(500).send(data.error);
+    } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
+    }
+};
+
+
 const closeServer = (req, res) => {
     console.log('[API] closing server');
     res.setHeader('Content-Type', 'text/plain');
@@ -96,4 +110,5 @@ export default{
     moveFiles,
     deleteFile,
     closeServer,
+    emptyRecycleBin,
 };

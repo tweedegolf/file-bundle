@@ -57,6 +57,7 @@ export default {
             size_bytes: 0,
             // thumb: null,
             type: 'folder',
+            isTrashed: true,
         },
         2: {
             create_ts: 1470914525,

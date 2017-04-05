@@ -102,24 +102,24 @@ const deleteFolder = (folderId) => {
     }
 
     const folder = data.folders[folderId];
-    const parentId = folder.parent;
-    // the array of folders inside the parent folder
-    const folders = data.tree[parentId].folders;
-    // find the index of the folder that will be deleted
-    const index = folders.indexOf(folderId);
-    // remove the folder id of the folder that will be deleted
-    if (index !== -1) {
-        data.tree[parentId].folders.splice(index, 1);
-    }
-    // update parent folder
-    data.folders[parentId].folder_count -= 1;
-    // perform the actual delete
-    delete data.folders[folderId];
+    folder.isTrashed = true;
+
+    const files = data.tree[folderId].files;
+    R.forEach((f) => {
+        const f1 = { ...f, isTrashed: true };
+        data.files[f.id] = f1;
+    }, files);
+
+    const folders = data.tree[folderId].folders;
+    R.forEach((f) => {
+        const f1 = { ...f, isTrashed: true };
+        data.folders[f.id] = f1;
+    }, folders);
+
     return {
         error: false,
     };
 };
-
 
 /**
  * Adds newly uploaded files to the database, called by uploadFiles() defined in
@@ -238,10 +238,35 @@ const deleteFile = (fileId) => {
     // };
 };
 
+const reduceToMap = arr => R.reduce((acc, item) => ({ ...acc, [item.id]: item }), {}, arr);
 
 const emptyRecycleBin = () => {
     // find all files with the isTrashed flag set to 'true' and delete them
-    // use: removeFilesFromFolders
+    data.files = R.compose(reduceToMap, R.filter(f => f.isTrashed !== true))(R.values(data.files));
+    data.folders = R.compose(reduceToMap, R.filter(f => f.isTrashed !== true))(R.values(data.folders));
+    // console.log(data.files);
+    // console.log(data.folders);
+    const tmp = R.forEach((key) => {
+        if (R.isNil(data.folders[key])) {
+            return null;
+        }
+        const item = data.tree[key];
+        // console.log(key, item.files);
+        // console.log(R.filter(id => R.isNil(data.files[id]) === false, item.files));
+        const t = {
+            files: R.filter(id => R.isNil(data.files[id]) === false, item.files),
+            folders: R.filter(id => R.isNil(data.folders[id]) === false, item.folders),
+        };
+        console.log(key, t);
+        return t;
+    }, R.keys(data.tree));
+    console.log(tmp);
+
+    return {
+        error: false,
+        files: data.files,
+        folders: data.folders,
+    };
 };
 
 
@@ -252,4 +277,5 @@ export default{
     addFiles,
     moveFiles,
     deleteFile,
+    emptyRecycleBin,
 };
