@@ -10,11 +10,9 @@ const dispatch = store.dispatch;
 const moveFiles = (resolve, reject) => {
     const ui = store.getState().ui;
     const tree = store.getState().tree;
-    const {
-        currentFolder,
-        filesById,
-        foldersById,
-    } = tree;
+    const currentFolder = R.clone(tree.currentFolder);
+    const filesById = R.clone(tree.filesById);
+    const foldersById = R.clone(tree.foldersById);
 
     const files = ui.clipboard;
     const fileIds = R.map(f => f.id, files);

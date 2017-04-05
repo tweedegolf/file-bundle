@@ -25,24 +25,54 @@ const Folder = (props) => {
     const folder = props.folder;
     const className = `folder${folder.new ? ' success' : ''}${props.hovering ? ' selected' : ''}`;
 
-    const p1 = {
-        onClick: (e) => {
-            e.stopPropagation();
-            props.onDelete(folder.id);
-        },
-        type: 'button',
-        className: 'btn btn-sm btn-danger',
-    };
-    const btnDelete = (<button {...p1}>
-        <span className="fa fa-trash-o" />
-    </button>);
+    let confirm = null;
+    let btnDelete = null;
+
+    if (props.deleteFolderWithId === folder.id) {
+        confirm = (<div className="confirm">
+            <button
+              type="button"
+              className="btn btn-sm btn-primary"
+              onClick={(e) => {
+                  e.stopPropagation();
+                  props.confirmDelete(null);
+              }}
+            >
+                <span className="text-label">Annuleren</span>
+                <span className="fa fa-times" />
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-sm btn-danger"
+              onClick={(e) => {
+                  e.stopPropagation();
+                  props.deleteFolder(folder.id);
+              }}
+            >
+                <span className="text-label">Definitief verwijderen</span>
+                <span className="fa fa-trash-o" />
+            </button>
+        </div>);
+    } else if (props.backToParent === false) {
+        btnDelete = (<button
+          type="button"
+          className="btn btn-sm btn-danger"
+          onClick={(e) => {
+              e.stopPropagation();
+              props.confirmDelete(folder.id);
+          }}
+        >
+            <span className="fa fa-trash-o" />
+        </button>);
+    }
 
     let icon = <span className="fa fa-folder" />;
     if (props.loading && props.loading === folder.id) {
         icon = <span className="fa fa-circle-o-notch fa-spin" />;
     }
 
-    if (props.parent === true) {
+    if (props.backToParent === true) {
         icon = <span className="fa fa-chevron-up" />;
         // className = 'folder muted'
     }
@@ -63,20 +93,21 @@ const Folder = (props) => {
         </span>);
     }
 
-    const p2 = {
+    const p = {
         onClick: () => {
             props.onOpenFolder(folder.id);
         },
         className,
     };
     return (
-        <tr {...p2}>
+        <tr {...p}>
             <td className="select" />
             <td className="preview">{icon}</td>
             <td className="name">{folder.name}</td>
             <td className="size">
                 {folderCount}
                 {fileCount}
+                {confirm}
             </td>
             <td className="date">{folder.created}</td>
             <td className="buttons">{btnDelete}</td>
@@ -87,16 +118,20 @@ const Folder = (props) => {
 Folder.propTypes = {
     folder: PropTypes.shape(folderShape).isRequired,
     hovering: PropTypes.bool,
-    onDelete: PropTypes.func,
     onOpenFolder: PropTypes.func.isRequired,
     loading: PropTypes.number,
-    parent: PropTypes.bool.isRequired,
+    backToParent: PropTypes.bool.isRequired,
+    deleteFolder: PropTypes.func,
+    confirmDelete: PropTypes.func,
+    deleteFolderWithId: PropTypes.number,
 };
 
 Folder.defaultProps = {
     hovering: null,
-    loading: null, // when loading is 'null' it actually means that the root folder is loading
-    onDelete: null, // parent folder on top of list cannot be deleted
+    loading: null,
+    deleteFolder: null,
+    confirmDelete: null,
+    deleteFolderWithId: null,
 };
 
 export default Folder;

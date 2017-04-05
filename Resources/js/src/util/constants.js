@@ -214,7 +214,10 @@ export const SHOW_PREVIEW = 'SHOW_PREVIEW';
  *
  * @type       {string}
  */
-export const CONFIRM_DELETE = 'CONFIRM_DELETE';
+export const CONFIRM_DELETE_FILE = 'CONFIRM_DELETE_FILE';
+
+export const CONFIRM_DELETE_FOLDER = 'CONFIRM_DELETE_FOLDER';
+
 
 /**
  * Expand the browser, processed by:

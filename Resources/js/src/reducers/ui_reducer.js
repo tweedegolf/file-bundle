@@ -72,6 +72,7 @@ export const uiInitialState = {
     expanded: false,
     previewUrl: null,
     deleteFileWithId: null,
+    deleteFolderWithId: null,
     hover: -1,
     errors: [],
     loadingFolderWithId: -1,
@@ -136,10 +137,15 @@ export function ui(state = uiInitialState, action) {
      * confirmation popup was already showing and that the user has clicked on the
      * 'cancel' button, or has clicked anywhere outside the popup.
      */
-    } else if (action.type === ActionTypes.CONFIRM_DELETE) {
+    } else if (action.type === ActionTypes.CONFIRM_DELETE_FILE) {
         return {
             ...state,
             deleteFileWithId: action.payload.id,
+        };
+    } else if (action.type === ActionTypes.CONFIRM_DELETE_FOLDER) {
+        return {
+            ...state,
+            deleteFolderWithId: action.payload.id,
         };
 
 
@@ -159,6 +165,7 @@ export function ui(state = uiInitialState, action) {
     } else if (action.type === ActionTypes.FILE_DELETED) {
         return {
             ...state,
+            deleteFileWithId: null,
             deletingFileWithId: null,
         };
 
@@ -169,6 +176,7 @@ export function ui(state = uiInitialState, action) {
     } else if (action.type === ActionTypes.ERROR_DELETING_FILE) {
         return {
             ...state,
+            deleteFileWithId: null,
             deletingFileWithId: null,
             errors: [...state.errors, ...action.payload.errors],
         };
@@ -192,6 +200,7 @@ export function ui(state = uiInitialState, action) {
     } else if (action.type === ActionTypes.FOLDER_DELETED) {
         return {
             ...state,
+            deleteFolderWithId: null,
             deletingFolderWithId: null,
         };
 
@@ -201,6 +210,7 @@ export function ui(state = uiInitialState, action) {
     } else if (action.type === ActionTypes.ERROR_DELETING_FOLDER) {
         return {
             ...state,
+            deleteFolderWithId: null,
             deletingFolderWithId: null,
             errors: [...state.errors, ...action.payload.errors],
         };
@@ -215,7 +225,6 @@ export function ui(state = uiInitialState, action) {
         return {
             ...state,
             loadingFolderWithId: action.payload.id,
-            deleteFileWithId: null,
         };
 
     /**

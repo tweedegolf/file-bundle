@@ -9,17 +9,17 @@ const dispatch = store.dispatch;
 
 const deleteFolder = (folderId, resolve, reject) => {
     const tree = store.getState().tree;
-    const {
-        currentFolder,
-        filesById,
-        foldersById,
-    } = tree;
+    const currentFolder = R.clone(tree.currentFolder);
+    const filesById = R.clone(tree.filesById);
+    const foldersById = R.clone(tree.foldersById);
 
     api.deleteFolder(folderId,
         () => {
             const folder = foldersById[folderId];
-            folder.files = R.map(f => ({ ...f, isTrashed: true }), folder.files);
-            // R.forEach((f) => { filesById[f.id] = f; }, folder.files);
+            if (R.isNil(folder.files) === false) {
+                folder.files = R.map(f => ({ ...f, isTrashed: true }), folder.files);
+                R.forEach((f) => { filesById[f.id] = f; }, folder.files);
+            }
             folder.isTrashed = true;
 
             const index = R.findIndex(R.propEq('id', folderId))(currentFolder.folders);

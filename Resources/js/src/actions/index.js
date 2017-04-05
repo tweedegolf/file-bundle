@@ -147,9 +147,9 @@ export const showPreview = (imageUrl) => {
  * @param      {number}  id      The id of the file will be deleted after
  *                               confirmation
  */
-export const confirmDelete = (id) => {
+export const confirmDeleteFile = (id) => {
     dispatch({
-        type: ActionTypes.CONFIRM_DELETE,
+        type: ActionTypes.CONFIRM_DELETE_FILE,
         payload: { id },
     });
 };

@@ -9,10 +9,8 @@ const dispatch = store.dispatch;
 
 const addFolder = (folderName, resolve, reject) => {
     const tree = store.getState().tree;
-    const {
-        currentFolder,
-        foldersById,
-    } = tree;
+    const currentFolder = R.clone(tree.currentFolder);
+    const foldersById = R.clone(tree.foldersById);
 
     api.addFolder(folderName, currentFolder.id,
         (folders, errorMessages) => {

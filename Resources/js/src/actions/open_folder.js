@@ -9,12 +9,9 @@ const dispatch = store.dispatch;
 
 const loadFolder = (folderId, forceLoad, resolve, reject) => {
     const tree = store.getState().tree;
-    const {
-        rootFolderId,
-        filesById,
-        foldersById,
-    } = tree;
-
+    const filesById = R.clone(tree.filesById);
+    const foldersById = R.clone(tree.foldersById);
+    const rootFolderId = tree.rootFolderId;
     const currentFolder = foldersById[folderId];
     // console.log(currentFolder);
 

@@ -20,12 +20,13 @@ export default createSelector(
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
         const currentFolder = tree.currentFolder;
         const files = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.files);
-        const folders = sortBy(sort, currentFolder.folders);
+        const folders = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.folders);
 
         return {
             files,
             folders,
             currentFolderId: currentFolder.id,
+            rootFolderId: tree.rootFolderId,
         };
     },
 );

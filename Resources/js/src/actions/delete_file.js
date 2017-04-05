@@ -9,11 +9,9 @@ const dispatch = store.dispatch;
 
 const deleteFile = (fileId, resolve, reject) => {
     const tree = store.getState().tree;
-    const {
-        currentFolder,
-        filesById,
-        foldersById,
-    } = tree;
+    const currentFolder = R.clone(tree.currentFolder);
+    const filesById = R.clone(tree.filesById);
+    const foldersById = R.clone(tree.foldersById);
 
     api.deleteFile(fileId,
         () => {

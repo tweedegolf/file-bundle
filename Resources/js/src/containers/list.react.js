@@ -36,6 +36,7 @@ const mapStateToProps = (state) => {
         loadingFolderWithId: state.ui.loadingFolderWithId, // null or number
         deleteFileWithId: state.ui.deleteFileWithId, // null or number
         deletingFileWithId: state.ui.deletingFileWithId, // null or number
+        deleteFolderWithId: state.ui.deleteFolderWithId, // null or number
         deletingFolderWithId: state.ui.deletingFolderWithId, // null or number
         isAddingFolder: state.ui.isAddingFolder, // true or false
         isUploadingFiles: state.ui.isUploadingFiles, // true or false
@@ -55,8 +56,8 @@ export default class List extends React.Component {
         imagesOnly: PropTypes.bool.isRequired,
         ascending: PropTypes.bool.isRequired,
         loadingFolderWithId: PropTypes.number,
-        deleteFolderWithId: PropTypes.number,
         deleteFileWithId: PropTypes.number,
+        deleteFolderWithId: PropTypes.number,
         isUploadingFiles: PropTypes.bool.isRequired,
         hover: PropTypes.number.isRequired,
         parentFolder: PropTypes.shape(folderShape),
@@ -105,7 +106,7 @@ export default class List extends React.Component {
               selectFile={this.props.selectFile}
               deleteFile={Actions.deleteFile}
               showPreview={Actions.showPreview}
-              confirmDelete={Actions.confirmDelete}
+              confirmDelete={Actions.confirmDeleteFile}
               selected={this.props.selected}
               clipboard={this.props.clipboard}
               browser={this.props.browser}
@@ -117,11 +118,11 @@ export default class List extends React.Component {
         let folders = R.map(folder => (<Folder
           hovering={this.props.hover === (i -= 1)}
           key={`folder-${folder.id}`}
-          parent={false}
+          backToParent={false}
           folder={folder}
-          onDelete={Actions.deleteFolder}
-          confirmDelete={Actions.confirmDelete}
+          deleteFolder={Actions.deleteFolder}
           onOpenFolder={this.openFolder}
+          confirmDelete={Actions.confirmDeleteFolder}
           deleteFolderWithId={this.props.deleteFolderWithId}
           loadingFolderWithId={this.props.loadingFolderWithId}
         />), this.props.folders);
@@ -133,12 +134,11 @@ export default class List extends React.Component {
         }
 
         // show parent directory button
-        let parent = null;
-
-        if (this.props.parentFolder !== null) {
-            parent = (<Folder
+        let backToParent = null;
+        if (R.isNil(this.props.parentFolder) === false) {
+            backToParent = (<Folder
               key={`folder-${this.props.parentFolder.name}`}
-              parent={true}
+              backToParent={true}
               folder={this.props.parentFolder}
               loadingFolderWithId={this.props.loadingFolderWithId}
               onOpenFolder={this.openFolder}
@@ -154,7 +154,7 @@ export default class List extends React.Component {
 
         return (<tbody className={loadingList}>
             {loadingMessage}
-            {parent}
+            {backToParent}
             {folders}
             {files}
         </tbody>);
