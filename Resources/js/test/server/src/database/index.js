@@ -21,7 +21,7 @@ const getFolder = (folderId) => {
     // console.log(folderId);
     const folderData = data.tree[folderId];
     if (typeof folderData === 'undefined' || folderId === 1000) {
-    // folder id 1000 is a test id -> this alway generates an error
+        // folder id 1000 is a test id -> this alway generates an error
         if (folderId !== 1000) {
             console.error('this should not happen!');
         }
@@ -31,13 +31,10 @@ const getFolder = (folderId) => {
     }
 
     // map file and folder ids to their corresponding description objects
-    let { files, folders } = folderData;
-    files = files.map(id => data.files[id]);
-    folders = folders.map(id => data.folders[id]);
-
+    const { files, folders } = folderData;
     return {
-        files,
-        folders,
+        files: R.map(id => data.files[id], files),
+        folders: R.map(id => data.folders[id], folders),
     };
 };
 
@@ -78,7 +75,7 @@ const addFolder = (name, parentId) => {
 
     // update the parent folder of the new folder
     data.tree[parentId].folders.push(folder.id);
-    data.folders[parentId].folder_count = data.tree[parentId].folders.length;
+    data.folders[parentId].folder_count = R.length(data.tree[parentId].folders);
 
     return {
         new_folders: [folder],
@@ -103,6 +100,8 @@ const deleteFolder = (folderId) => {
 
     const folder = data.folders[folderId];
     folder.isTrashed = true;
+
+    // TODO: add recursive delete!
 
     const files = data.tree[folderId].files;
     R.forEach((f) => {
@@ -239,28 +238,23 @@ const deleteFile = (fileId) => {
 };
 
 const reduceToMap = arr => R.reduce((acc, item) => ({ ...acc, [item.id]: item }), {}, arr);
+const filterDeleted = arr => R.map((key) => {
+    if (R.isNil(data.folders[key])) {
+        return null;
+    }
+    const item = data.tree[key];
+    const t = {
+        files: R.filter(id => R.isNil(data.files[id]) === false, item.files),
+        folders: R.filter(id => R.isNil(data.folders[id]) === false, item.folders),
+    };
+    return [key, t];
+}, arr);
 
 const emptyRecycleBin = () => {
     // find all files with the isTrashed flag set to 'true' and delete them
     data.files = R.compose(reduceToMap, R.filter(f => f.isTrashed !== true))(R.values(data.files));
     data.folders = R.compose(reduceToMap, R.filter(f => f.isTrashed !== true))(R.values(data.folders));
-    // console.log(data.files);
-    // console.log(data.folders);
-    const tmp = R.forEach((key) => {
-        if (R.isNil(data.folders[key])) {
-            return null;
-        }
-        const item = data.tree[key];
-        // console.log(key, item.files);
-        // console.log(R.filter(id => R.isNil(data.files[id]) === false, item.files));
-        const t = {
-            files: R.filter(id => R.isNil(data.files[id]) === false, item.files),
-            folders: R.filter(id => R.isNil(data.folders[id]) === false, item.folders),
-        };
-        console.log(key, t);
-        return t;
-    }, R.keys(data.tree));
-    console.log(tmp);
+    data.tree = R.compose(R.fromPairs, R.reject(R.isNil), filterDeleted)(R.keys(data.tree));
 
     return {
         error: false,
