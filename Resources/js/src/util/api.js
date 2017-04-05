@@ -132,19 +132,20 @@ const addFolder = (name, folder_id, onSuccess, onError) => {
 /**
  * Delete a folder, folder has to be emptied first
  *
- * @param      {?number}   folder_id  The id of the folder that will be deleted
+ * @param      {?number}   folderId   The id of the folder that will be deleted
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const deleteFolder = (folder_id, onSuccess, onError) => {
-    const url = `${server}/admin/file/delete/folder/${folder_id}`;
+const deleteFolder = (folderId, onSuccess, onError) => {
+    const url = `${server}/admin/file/delete/folder/${folderId}`;
     const req = request.post(url).type('form');
     req.end((err, res) => {
         if (err) {
-      // console.log(err)
+            // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
+            console.log(res.body.data);
             onSuccess();
         }
     });

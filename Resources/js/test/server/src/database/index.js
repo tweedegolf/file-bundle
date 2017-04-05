@@ -98,25 +98,18 @@ const deleteFolder = (folderId) => {
         };
     }
 
-    const folder = data.folders[folderId];
-    folder.isTrashed = true;
-
-    // TODO: add recursive delete!
-
-    const files = data.tree[folderId].files;
-    R.forEach((f) => {
-        const f1 = { ...f, isTrashed: true };
-        data.files[f.id] = f1;
-    }, files);
-
-    const folders = data.tree[folderId].folders;
-    R.forEach((f) => {
-        const f1 = { ...f, isTrashed: true };
-        data.folders[f.id] = f1;
+    const folders = R.append(data.folders[folderId], data.tree[folderId].folders);
+    R.forEach((folder) => {
+        data.folders[folder.id] = { ...folder, isTrashed: true };
+        const files = data.tree[folderId].files;
+        R.forEach((fileId) => {
+            data.files[fileId] = { ...data.files[fileId], isTrashed: true };
+        }, files);
     }, folders);
 
     return {
         error: false,
+        data,
     };
 };
 
@@ -225,7 +218,7 @@ const deleteFile = (fileId) => {
             error: 'File could not be deleted!',
         };
     }
-    // perform delete
+    // perform delete (may be cloning is not necessary)
     const file = R.clone(data.files[fileId]);
     file.isTrashed = true;
     data.files[fileId] = file;
