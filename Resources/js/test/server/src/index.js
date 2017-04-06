@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({
 // add busboy middleware for multipart support
 app.use(busboy());
 
+// app.post('/admin/file/list*', api.getFolder);
 app.get('/admin/file/list*', api.getFolder);
 app.post('/admin/file/upload*', api.uploadFiles);
 app.post('/admin/file/move*', api.moveFiles);

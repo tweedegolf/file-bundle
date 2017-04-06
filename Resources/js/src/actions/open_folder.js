@@ -30,7 +30,7 @@ const fromCache = (folderId) => {
     };
 };
 
-const loadFolder = (folderId, resolve, reject) => {
+const loadFolder = (folderId, checkRootFolder = false, resolve, reject) => {
     const tree = store.getState().tree;
     const filesById = R.clone(tree.filesById);
     const foldersById = R.clone(tree.foldersById);
@@ -46,8 +46,14 @@ const loadFolder = (folderId, resolve, reject) => {
         currentFolder.name = '..';
     }
 
+    let rfCheck;
+    if (checkRootFolder === true) {
+        rfCheck = rootFolderId;
+    }
+
     api.openFolder(
         folderId,
+        rfCheck,
         (folders, files) => {
             currentFolder.folders = [];
             currentFolder.files = [];
@@ -85,13 +91,13 @@ const loadFolder = (folderId, resolve, reject) => {
     );
 };
 
-export default (id, forceLoad = false) => {
+export default ({ id, checkRootFolder, forceLoad }) => {
     dispatch({
         type: Constants.OPEN_FOLDER,
         payload: { id },
     });
 
-    if (forceLoad !== true) {
+    if (forceLoad !== true && R.isNil(checkRootFolder)) {
         const payload = fromCache(id);
         // console.log('cache', payload);
         if (R.isNil(payload) === false) {
@@ -107,6 +113,7 @@ export default (id, forceLoad = false) => {
 
     loadFolder(
         id,
+        checkRootFolder,
         (payload) => {
             dispatch({
                 type: Constants.FOLDER_OPENED,

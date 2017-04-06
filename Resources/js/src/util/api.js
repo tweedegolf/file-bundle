@@ -188,23 +188,11 @@ const upload = (file_list, folder_id, onSuccess, onError) => {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const openFolder = (folderId, onSuccess, onError) => {
+const openFolder = (folderId, rootFolderId, onSuccess, onError) => {
     const url = `${server}/admin/file/list/${folderId}`;
-  // let url = '/admin/file/list/999'
-    const req = request.get(url);
-    req.end((err, res) => {
-        if (err) {
-      // console.log(err, res)
-            onError([res.text, res.error.message, err.toString()]);
-        } else {
-            onSuccess(res.body.folders, res.body.files);
-        }
-    });
-};
-
-export const openRootFolder = (folderId, onSuccess, onError) => {
-    const url = `${server}/admin/file/root/${folderId}`;
-  // let url = '/admin/file/list/999'
+    // let url = '/admin/file/list/999'
+    // const req = request.post(url).type('form');
+    // req.send({ rootFolderId });
     const req = request.get(url);
     req.end((err, res) => {
         if (err) {

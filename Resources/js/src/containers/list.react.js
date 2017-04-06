@@ -80,7 +80,7 @@ export default class List extends React.Component {
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
                 return;
             }
-            Actions.openFolder(folderId);
+            Actions.openFolder({ id: folderId });
         };
     }
 

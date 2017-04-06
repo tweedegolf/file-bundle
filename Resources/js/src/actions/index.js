@@ -1,61 +1,17 @@
-import R from 'ramda';
-import { persistStore } from 'redux-persist';
 import * as ActionTypes from '../util/constants';
 import { getStore } from '../reducers/store';
 import openFolder from './open_folder';
 import pasteFiles from './paste_files';
 
+export init from './init';
 export addFolder from './add_folder';
 export deleteFile from './delete_file';
 export deleteFolder from './delete_folder';
 export uploadFiles from './upload_files';
 export { openFolder, pasteFiles };
 
-const store = getStore();
-const dispatch = store.dispatch;
+const dispatch = getStore().dispatch;
 
-/**
- * Initialization function that hydrates the state from local storage or by
- * setting default values; called from the componentDidMount function in the
- * main container: <tt>./containers/browser.react.js</tt>
- *
- * @param      {?Array}  selected  The ids of the files that will be selected.
- *                                 Only used in Filepicker mode. You can add an
- *                                 array of file ids to the HTML element's
- *                                 dataset; this array is passed as argument.
- */
-export const init = (options) => {
-    const rootFolderId = options.root_folder_id;
-    const foldersById = store.getState().tree.foldersById;
-    foldersById[rootFolderId] = {
-        id: rootFolderId,
-        name: '..',
-        file_count: 0,
-        folder_count: 0,
-    };
-
-    dispatch({
-        type: ActionTypes.INIT,
-        payload: {
-            selected: options.selected || [],
-            rootFolderId,
-            foldersById,
-        },
-    });
-
-    // todo: add logic that checks if the current folder that is retrieved
-    // from local storage may actually be accessed by this user;
-    // 1. check if root_folder_id provided in the html data tag is the same as in local storage
-    // 2. check if the current folder is a sub folder of the root folder
-    persistStore(store, {}, () => {
-        const currentFolderId = R.cond([
-            [R.isNil, R.always(rootFolderId)],
-            [R.isEmpty, R.always(rootFolderId)],
-            [R.T, cf => cf.id],
-        ])(store.getState().tree.currentFolder);
-        openFolder(currentFolderId);
-    });
-};
 
 /**
  * @name       SelectFileArg
