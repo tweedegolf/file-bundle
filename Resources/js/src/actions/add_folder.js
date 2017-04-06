@@ -1,3 +1,4 @@
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -7,7 +8,7 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const addFolder = (folderName, resolve, reject) => {
+const addFolder = (folderName: string, resolve: Function, reject: Function) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
     const foldersById = R.clone(tree.foldersById);
@@ -51,7 +52,7 @@ const addFolder = (folderName, resolve, reject) => {
     );
 };
 
-export default (folderName) => {
+export default (folderName: string) => {
     dispatch({
         type: Constants.ADD_FOLDER,
     });

@@ -1,3 +1,4 @@
+// @flow
 import * as ActionTypes from '../util/constants';
 
 /**
@@ -23,8 +24,26 @@ export const treeInitialState = {
     errors: [],
 };
 
+type stateType = {
+    currentFolder?: {},
+    rootFolderId?: (number | null),
+    parentFolder?: ({} | null),
+    filesById?: {},
+    foldersById?: {},
+    errors?: Array<string>
+};
 
-export function tree(state = treeInitialState, action) {
+type actionType = (
+    ActionTypes.INIT |
+    ActionTypes.FOLDER_OPENED |
+    ActionTypes.FILE_DELETED |
+    ActionTypes.FOLDER_DELETED |
+    ActionTypes.UPLOAD_DONE |
+    ActionTypes.FOLDER_ADDED |
+    ActionTypes.FILES_MOVED
+);
+
+export function tree(state:stateType = treeInitialState, action: { type: actionType, payload: stateType}) {
     if (action.type === ActionTypes.INIT) {
         return {
             ...state,

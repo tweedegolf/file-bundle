@@ -1,3 +1,4 @@
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -7,7 +8,7 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const moveFiles = (resolve, reject) => {
+const moveFiles = (resolve: Function, reject: Function) => {
     const ui = store.getState().ui;
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);

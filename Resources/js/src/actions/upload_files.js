@@ -1,3 +1,4 @@
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -7,13 +8,13 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const uploadFiles = (fileList, resolve, reject) => {
+const uploadFiles = (files: Array<string>, resolve: Function, reject: Function) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
     const filesById = R.clone(tree.filesById);
     const foldersById = R.clone(tree.foldersById);
 
-    api.upload(fileList, currentFolder.id,
+    api.upload(files, currentFolder.id,
         (rejected, newFiles) => {
             R.forEach((f) => {
                 const f1 = { ...f, new: true };
@@ -45,13 +46,13 @@ const uploadFiles = (fileList, resolve, reject) => {
                 type: Constants.ERROR_UPLOADING_FILE,
                 data: f.name,
                 messages: error,
-            }), fileList);
+            }), files);
             reject({ errors });
         },
     );
 };
 
-export default (fileList) => {
+export default (fileList: global.FileList) => {
     const files = Array.from(fileList);
     dispatch({
         type: Constants.UPLOAD_START,

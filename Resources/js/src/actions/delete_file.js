@@ -1,3 +1,4 @@
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -7,7 +8,7 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const deleteFile = (fileId, resolve, reject) => {
+const deleteFile = (fileId: number, resolve: Function, reject: Function) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
     const filesById = R.clone(tree.filesById);
@@ -41,7 +42,7 @@ const deleteFile = (fileId, resolve, reject) => {
     );
 };
 
-export default (fileId) => {
+export default (fileId: number) => {
     dispatch({
         type: Constants.DELETE_FILE,
         payload: { fileId },

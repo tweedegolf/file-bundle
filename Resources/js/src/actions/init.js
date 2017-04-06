@@ -1,3 +1,4 @@
+// @flow
 import R from 'ramda';
 import { persistStore } from 'redux-persist';
 import { getStore } from '../reducers/store';
@@ -7,7 +8,7 @@ import { openFolder } from '../actions';
 const store = getStore();
 const dispatch = store.dispatch;
 
-export default (options) => {
+export default (options: { root_folder_id: number, selected: ?Array<string> }) => {
     persistStore(store, {}, () => {
         const rootFolderId = options.root_folder_id;
         const foldersById = store.getState().tree.foldersById;

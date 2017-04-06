@@ -61,7 +61,7 @@ gulp.task('watch_js', () => {
     b.add(sources.main_js);
     b.transform(babelify.configure({
         compact: false,
-        presets: ['es2015', 'react', 'stage-0'],
+        presets: ['es2015', 'react', 'stage-0', 'flow'],
         plugins: ['transform-decorators-legacy'],
     }));
 

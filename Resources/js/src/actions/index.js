@@ -1,13 +1,14 @@
+// @flow
 import * as ActionTypes from '../util/constants';
 import { getStore } from '../reducers/store';
 import openFolder from './open_folder';
 import pasteFiles from './paste_files';
 
-export init from './init';
-export addFolder from './add_folder';
-export deleteFile from './delete_file';
-export deleteFolder from './delete_folder';
-export uploadFiles from './upload_files';
+export { default as init } from './init';
+export { default as addFolder } from './add_folder';
+export { default as deleteFile } from './delete_file';
+export { default as deleteFolder } from './delete_folder';
+export { default as uploadFiles } from './upload_files';
 export { openFolder, pasteFiles };
 
 const dispatch = getStore().dispatch;
@@ -30,7 +31,7 @@ const dispatch = getStore().dispatch;
  *
  * @param {SelectFileArg} data Argument passed.
  */
-export const selectFile = (data) => {
+export const selectFile = (data: { browser: boolean, multiple: boolean, id: number }) => {
     dispatch({
         type: ActionTypes.SELECT_FILE,
         payload: { ...data },
@@ -62,7 +63,7 @@ export const cancelCutAndPasteFiles = () => {
  *                               current sorting column, the sorting order will
  *                               be reversed.
  */
-export const changeSorting = (sort) => {
+export const changeSorting = (sort: boolean) => {
     dispatch({
         type: ActionTypes.CHANGE_SORTING,
         payload: { sort },
@@ -75,7 +76,7 @@ export const changeSorting = (sort) => {
  *
  * @param      {number}  error_id  The unique identifier of the error.
  */
-export const dismissError = (errorId) => {
+export const dismissError = (errorId: number) => {
     dispatch({
         type: ActionTypes.DISMISS_ERROR,
         payload: { errorId },
@@ -88,7 +89,7 @@ export const dismissError = (errorId) => {
  *
  * @param      {string}  image_url  The url of the full size image.
  */
-export const showPreview = (imageUrl) => {
+export const showPreview = (imageUrl: string) => {
     dispatch({
         type: ActionTypes.SHOW_PREVIEW,
         payload: { imageUrl },
@@ -103,14 +104,14 @@ export const showPreview = (imageUrl) => {
  * @param      {number}  id      The id of the file will be deleted after
  *                               confirmation
  */
-export const confirmDeleteFile = (id) => {
+export const confirmDeleteFile = (id: number) => {
     dispatch({
         type: ActionTypes.CONFIRM_DELETE_FILE,
         payload: { id },
     });
 };
 
-export const confirmDeleteFolder = (id) => {
+export const confirmDeleteFolder = (id: number) => {
     dispatch({
         type: ActionTypes.CONFIRM_DELETE_FOLDER,
         payload: { id },
@@ -132,7 +133,7 @@ export const confirmDeleteFolder = (id) => {
  *                               selection will wrap around resulting in the
  *                               first item in the list being selected.
  */
-export const setHover = (diff, max) => {
+export const setHover = (diff: number, max: number) => {
     dispatch({
         type: ActionTypes.SET_HOVER,
         payload: { diff, max },
@@ -146,7 +147,7 @@ export const setHover = (diff, max) => {
  * @param      {number}  scroll  The position of the list in pixels measured
  *                               from the top.
  */
-export const setScrollPosition = (scroll) => {
+export const setScrollPosition = (scroll: number) => {
     dispatch({
         type: ActionTypes.SET_SCROLL_POSITION,
         payload: { scroll },

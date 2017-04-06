@@ -1,3 +1,4 @@
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -8,7 +9,7 @@ const store = getStore();
 const dispatch = store.dispatch;
 
 // optimistic update
-const fromCache = (folderId) => {
+const fromCache = (folderId: number) => {
     const tree = store.getState().tree;
     const filesById = R.clone(tree.filesById);
     const foldersById = R.clone(tree.foldersById);
@@ -30,7 +31,7 @@ const fromCache = (folderId) => {
     };
 };
 
-const loadFolder = (folderId, checkRootFolder = false, resolve, reject) => {
+const loadFolder = (folderId: number, checkRootFolder: boolean, resolve: Function, reject: Function) => {
     const tree = store.getState().tree;
     const filesById = R.clone(tree.filesById);
     const foldersById = R.clone(tree.foldersById);
@@ -91,7 +92,8 @@ const loadFolder = (folderId, checkRootFolder = false, resolve, reject) => {
     );
 };
 
-export default ({ id, checkRootFolder, forceLoad }) => {
+export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boolean }) => {
+    const { id, checkRootFolder = false, forceLoad = false } = data;
     dispatch({
         type: Constants.OPEN_FOLDER,
         payload: { id },
