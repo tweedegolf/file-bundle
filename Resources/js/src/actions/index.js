@@ -53,7 +53,7 @@ export const init = (options) => {
             [R.isEmpty, R.always(rootFolderId)],
             [R.T, cf => cf.id],
         ])(store.getState().tree.currentFolder);
-        openFolder(currentFolderId, true);
+        openFolder(currentFolderId);
     });
 };
 

@@ -7,7 +7,30 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const loadFolder = (folderId, forceLoad, resolve, reject) => {
+// optimistic update
+const fromCache = (folderId) => {
+    const tree = store.getState().tree;
+    const filesById = R.clone(tree.filesById);
+    const foldersById = R.clone(tree.foldersById);
+    const rootFolderId = tree.rootFolderId;
+    const currentFolder = foldersById[folderId];
+
+    if (R.isNil(currentFolder) || R.isNil(currentFolder.files)) {
+        return null;
+    }
+
+    const parentFolder = (currentFolder.id === rootFolderId) ?
+        null : foldersById[currentFolder.parent];
+
+    return {
+        parentFolder,
+        currentFolder,
+        foldersById,
+        filesById,
+    };
+};
+
+const loadFolder = (folderId, resolve, reject) => {
     const tree = store.getState().tree;
     const filesById = R.clone(tree.filesById);
     const foldersById = R.clone(tree.foldersById);
@@ -15,71 +38,51 @@ const loadFolder = (folderId, forceLoad, resolve, reject) => {
     const currentFolder = foldersById[folderId];
     // console.log(currentFolder);
 
-    let fromCache = true;
-    if (forceLoad === true) {
-        fromCache = false;
-    } else if (R.isNil(currentFolder)) {
-        fromCache = false;
-    } else if (R.isNil(currentFolder.files)) {
-        fromCache = false;
-    }
-
-    let pf;
-    if (currentFolder.id !== rootFolderId) {
-        pf = foldersById[currentFolder.parent];
-    }
+    const parentFolder = (currentFolder.id === rootFolderId) ?
+        null : foldersById[currentFolder.parent];
 
     if (R.isNil(currentFolder.id)) {
         currentFolder.id = rootFolderId;
         currentFolder.name = '..';
     }
 
-    if (fromCache) {
-        resolve({
-            parentFolder: pf,
-            currentFolder,
-            foldersById,
-            filesById,
-        });
-    } else {
-        api.openFolder(
-            folderId,
-            (folders, files) => {
-                currentFolder.folders = [];
-                currentFolder.files = [];
+    api.openFolder(
+        folderId,
+        (folders, files) => {
+            currentFolder.folders = [];
+            currentFolder.files = [];
 
-                R.forEach((f) => {
-                    foldersById[f.id] = f;
-                    currentFolder.folders.push(f);
-                }, folders);
+            R.forEach((f) => {
+                foldersById[f.id] = f;
+                currentFolder.folders.push(f);
+            }, folders);
 
-                R.forEach((f) => {
-                    filesById[f.id] = f;
-                    currentFolder.files.push(f);
-                }, files);
+            R.forEach((f) => {
+                filesById[f.id] = f;
+                currentFolder.files.push(f);
+            }, files);
 
-                currentFolder.file_count = currentFolder.files.length;
-                currentFolder.folder_count = currentFolder.folders.length;
-                foldersById[folderId] = currentFolder;
+            currentFolder.file_count = currentFolder.files.length;
+            currentFolder.folder_count = currentFolder.folders.length;
+            foldersById[folderId] = currentFolder;
 
-                resolve({
-                    parentFolder: pf,
-                    currentFolder,
-                    foldersById,
-                    filesById,
-                });
-            },
-            (messages) => {
-                const errors = [{
-                    id: getUID(),
-                    data: currentFolder.name,
-                    type: Constants.ERROR_OPENING_FOLDER,
-                    messages,
-                }];
-                reject({ errors });
-            },
-        );
-    }
+            resolve({
+                parentFolder,
+                currentFolder,
+                foldersById,
+                filesById,
+            });
+        },
+        (messages) => {
+            const errors = [{
+                id: getUID(),
+                data: currentFolder.name,
+                type: Constants.ERROR_OPENING_FOLDER,
+                messages,
+            }];
+            reject({ errors });
+        },
+    );
 };
 
 export default (id, forceLoad = false) => {
@@ -88,9 +91,22 @@ export default (id, forceLoad = false) => {
         payload: { id },
     });
 
+    if (forceLoad !== true) {
+        const payload = fromCache(id);
+        // console.log('cache', payload);
+        if (R.isNil(payload) === false) {
+            dispatch({
+                type: Constants.FOLDER_OPENED,
+                payload,
+            });
+        }
+    }
+
+    // setTimeout(() => {
+    // }, 1000);
+
     loadFolder(
         id,
-        forceLoad,
         (payload) => {
             dispatch({
                 type: Constants.FOLDER_OPENED,
