@@ -1,3 +1,4 @@
+// @flow
 import * as ActionTypes from '../util/constants';
 
 /**
@@ -87,6 +88,46 @@ export const uiInitialState = {
     imagesOnly: false,
 };
 
+type file = {
+}
+
+type StateType = {
+    sort: string,
+    ascending: boolean,
+    expanded: boolean,
+    previewUrl: (string | null),
+    deleteFileWithId: (number | null),
+    deleteFolderWithId: (number | null),
+    hover: number,
+    errors: Array<string>,
+    loadingFolderWithId: number,
+    deletingFileWithId: (number | null),
+    deletingFolderWithId: (number | null),
+    isAddingFolder: boolean,
+    isUploadingFiles: boolean,
+    scrollPosition: (number | null),
+    selected: Array<file>,
+    clipboard: Array<file>,
+    multiple: boolean,
+    imagesOnly: boolean,
+};
+
+type ActionType = {
+    id: (
+        'INIT' |
+        'FOLDER_OPENED' |
+        'FILE_DELETED' |
+        'FOLDER_DELETED' |
+        'UPLOAD_DONE' |
+        'FOLDER_ADDED' |
+        'FILES_MOVED'
+    ),
+    payload: {
+        id?: number,
+        errors?: Array<string>
+    }
+};
+
 
 /**
  * Reduce function, listens for certain action types and changes the change,
@@ -96,7 +137,7 @@ export const uiInitialState = {
  * @param      {string}  action  The action type
  * @return     {Object}  The new state
  */
-export function ui(state = uiInitialState, action) {
+export function ui(state:StateType = uiInitialState, action: ActionType) {
     /**
      * User has added a folder, we can show a progress indicator while we make
      * an API call to the server

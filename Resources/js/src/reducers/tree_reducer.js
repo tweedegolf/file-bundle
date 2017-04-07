@@ -33,17 +33,21 @@ type stateType = {
     errors?: Array<string>
 };
 
-type actionType = (
-    ActionTypes.INIT |
-    ActionTypes.FOLDER_OPENED |
-    ActionTypes.FILE_DELETED |
-    ActionTypes.FOLDER_DELETED |
-    ActionTypes.UPLOAD_DONE |
-    ActionTypes.FOLDER_ADDED |
-    ActionTypes.FILES_MOVED
-);
+type ActionType = {
+    id: (
+        'INIT' |
+        'FOLDER_OPENED' |
+        'FILE_DELETED' |
+        'FOLDER_DELETED' |
+        'UPLOAD_DONE' |
+        'FOLDER_ADDED' |
+        'FILES_MOVED'
+    ),
+    payload: (null | {})
+};
 
-export function tree(state:stateType = treeInitialState, action: { type: actionType, payload: stateType}) {
+
+export function tree(state:stateType = treeInitialState, action: { type: ActionType, payload: stateType}) {
     if (action.type === ActionTypes.INIT) {
         return {
             ...state,
