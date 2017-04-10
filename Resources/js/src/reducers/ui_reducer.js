@@ -1,4 +1,5 @@
 // @flow
+import R from 'ramda';
 import * as ActionTypes from '../util/constants';
 
 /**
@@ -88,10 +89,7 @@ export const uiInitialState = {
     imagesOnly: false,
 };
 
-type file = {
-}
-
-type StateType = {
+type UIStateType = {
     sort: string,
     ascending: boolean,
     expanded: boolean,
@@ -106,26 +104,10 @@ type StateType = {
     isAddingFolder: boolean,
     isUploadingFiles: boolean,
     scrollPosition: (number | null),
-    selected: Array<file>,
-    clipboard: Array<file>,
+    selected: Array<string>,
+    clipboard: Array<string>,
     multiple: boolean,
-    imagesOnly: boolean,
-};
-
-type ActionType = {
-    id: (
-        'INIT' |
-        'FOLDER_OPENED' |
-        'FILE_DELETED' |
-        'FOLDER_DELETED' |
-        'UPLOAD_DONE' |
-        'FOLDER_ADDED' |
-        'FILES_MOVED'
-    ),
-    payload: {
-        id?: number,
-        errors?: Array<string>
-    }
+    imagesOnly: boolean
 };
 
 
@@ -137,7 +119,7 @@ type ActionType = {
  * @param      {string}  action  The action type
  * @return     {Object}  The new state
  */
-export function ui(state:StateType = uiInitialState, action: ActionType) {
+export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIStateType => {
     /**
      * User has added a folder, we can show a progress indicator while we make
      * an API call to the server
@@ -158,7 +140,7 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
         return {
             ...state,
             isAddingFolder: false,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
     /**
@@ -169,7 +151,7 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
         return {
             ...state,
             isAddingFolder: false,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
     /**
@@ -219,7 +201,7 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
             ...state,
             deleteFileWithId: null,
             deletingFileWithId: null,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
 
@@ -231,7 +213,7 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
     } else if (action.type === ActionTypes.DELETE_FOLDER) {
         return {
             ...state,
-            deletingFolderWithId: action.payload.folder_id,
+            deletingFolderWithId: action.payload.folder_id || undefined,
         };
 
     /**
@@ -253,7 +235,7 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
             ...state,
             deleteFolderWithId: null,
             deletingFolderWithId: null,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
 
@@ -313,7 +295,7 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
             sort: 'create_ts',
             scrollPosition: 0,
             isUploadingFiles: false,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
     /**
@@ -450,7 +432,13 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
         } = action.payload;
 
         let selected = [...state.selected];
-        const index = selected.findIndex(f => f.id === file.id);
+        const index = selected.findIndex((f: FileType): boolean => {
+            let id: number;
+            if (file === undefined || file === null) {
+                id = file.id || undefined;
+            }
+            return f.id === id;
+        });
 
         if (browser === false && multiple === false) {
             if (index === -1) {
@@ -481,7 +469,7 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
     } else if (action.type === ActionTypes.INIT) {
         return {
             ...state,
-            selected: [...action.payload.selected],
+            selected: [...action.payload.selected || []],
             // selected: [...state.selected, ...action.payload.selected]
         };
 
@@ -532,4 +520,4 @@ export function ui(state:StateType = uiInitialState, action: ActionType) {
         };
     }
     return state;
-}
+};

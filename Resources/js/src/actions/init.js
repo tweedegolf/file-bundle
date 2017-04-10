@@ -6,7 +6,7 @@ import * as Constants from '../util/constants';
 import { openFolder } from '../actions';
 
 const store = getStore();
-const dispatch = store.dispatch;
+const dispatch: Dispatch = store.dispatch;
 
 export default (options: { root_folder_id: number, selected: ?Array<string> }) => {
     persistStore(store, {}, () => {
@@ -35,7 +35,7 @@ export default (options: { root_folder_id: number, selected: ?Array<string> }) =
         const currentFolderId = R.cond([
             [R.isNil, R.always(rootFolderId)],
             [R.isEmpty, R.always(rootFolderId)],
-            [R.T, cf => cf.id],
+            [R.T, (cf: FolderType): number => { return cf.id; }],
         ])(store.getState().tree.currentFolder);
 
         if (noCache === true) {

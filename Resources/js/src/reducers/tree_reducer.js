@@ -24,30 +24,17 @@ export const treeInitialState = {
     errors: [],
 };
 
-type stateType = {
+type TreeStateType = {
     currentFolder?: {},
     rootFolderId?: (number | null),
     parentFolder?: ({} | null),
     filesById?: {},
     foldersById?: {},
-    errors?: Array<string>
+    errors: Array<string>
 };
 
-type ActionType = {
-    id: (
-        'INIT' |
-        'FOLDER_OPENED' |
-        'FILE_DELETED' |
-        'FOLDER_DELETED' |
-        'UPLOAD_DONE' |
-        'FOLDER_ADDED' |
-        'FILES_MOVED'
-    ),
-    payload: (null | {})
-};
-
-
-export function tree(state:stateType = treeInitialState, action: { type: ActionType, payload: stateType}) {
+export const tree = (state: TreeStateType = treeInitialState,
+    action: { type: ActionType, payload: TreeStateType}): TreeStateType => {
     if (action.type === ActionTypes.INIT) {
         return {
             ...state,
@@ -135,4 +122,4 @@ export function tree(state:stateType = treeInitialState, action: { type: ActionT
     }
 
     return state;
-}
+};
