@@ -97,15 +97,15 @@ type UIStateType = {
     deleteFileWithId: (number | null),
     deleteFolderWithId: (number | null),
     hover: number,
-    errors: Array<string>,
+    errors: Array<ErrorType>,
     loadingFolderWithId: number,
     deletingFileWithId: (number | null),
     deletingFolderWithId: (number | null),
     isAddingFolder: boolean,
     isUploadingFiles: boolean,
     scrollPosition: (number | null),
-    selected: Array<string>,
-    clipboard: Array<string>,
+    selected: Array<TypeFile>,
+    clipboard: Array<TypeFile>,
     multiple: boolean,
     imagesOnly: boolean
 };
@@ -213,7 +213,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
     } else if (action.type === ActionTypes.DELETE_FOLDER) {
         return {
             ...state,
-            deletingFolderWithId: action.payload.folder_id || undefined,
+            deletingFolderWithId: action.payload.folder_id,
         };
 
     /**
@@ -267,7 +267,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
         return {
             ...state,
             loadingFolderWithId: -1,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
 
@@ -305,7 +305,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
         return {
             ...state,
             isUploadingFiles: false,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
 
@@ -316,7 +316,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
     } else if (action.type === ActionTypes.ERROR_MOVING_FILES) {
         return {
             ...state,
-            errors: [...state.errors, ...action.payload.errors],
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
 
@@ -345,8 +345,8 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * messages.
      */
     } else if (action.type === ActionTypes.DISMISS_ERROR) {
-        const errors = state.errors.filter(error => error.id !== action.payload.errorId);
-
+        const errors: Array<ErrorType> = state.errors.filter((error: ErrorType): boolean =>
+            error.id !== action.payload.errorId);
         return {
             ...state,
             errors,
@@ -373,8 +373,8 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      */
     } else if (action.type === ActionTypes.SET_HOVER) {
         const {
-            diff,
-            max,
+            diff = 0,
+            max = state.hover,
         } = action.payload;
 
         let hover = state.hover + diff;
@@ -431,14 +431,12 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
             multiple,
         } = action.payload;
 
+        if (typeof file === 'undefined' || file === null) {
+            return state;
+        }
+
         let selected = [...state.selected];
-        const index = selected.findIndex((f: FileType): boolean => {
-            let id: number;
-            if (file === undefined || file === null) {
-                id = file.id || undefined;
-            }
-            return f.id === id;
-        });
+        const index = selected.findIndex((f: TypeFile): boolean => f.id === file.id);
 
         if (browser === false && multiple === false) {
             if (index === -1) {

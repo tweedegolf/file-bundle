@@ -11,6 +11,7 @@ import * as ErrorTypes from '../util/constants';
 const mapIndexed = R.addIndex(R.map);
 
 export const errorShape = {
+    id: PropTypes.string,
     type: PropTypes.string,
     messages: PropTypes.arrayOf(PropTypes.string),
 };
