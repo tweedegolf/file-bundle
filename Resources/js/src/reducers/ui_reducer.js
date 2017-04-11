@@ -89,27 +89,6 @@ export const uiInitialState = {
     imagesOnly: false,
 };
 
-type UIStateType = {
-    sort: string,
-    ascending: boolean,
-    expanded: boolean,
-    previewUrl: (string | null),
-    deleteFileWithId: (number | null),
-    deleteFolderWithId: (number | null),
-    hover: number,
-    errors: Array<ErrorType>,
-    loadingFolderWithId: number,
-    deletingFileWithId: (number | null),
-    deletingFolderWithId: (number | null),
-    isAddingFolder: boolean,
-    isUploadingFiles: boolean,
-    scrollPosition: (number | null),
-    selected: Array<TypeFile>,
-    clipboard: Array<TypeFile>,
-    multiple: boolean,
-    imagesOnly: boolean
-};
-
 
 /**
  * Reduce function, listens for certain action types and changes the change,
@@ -436,7 +415,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
         }
 
         let selected = [...state.selected];
-        const index = selected.findIndex((f: TypeFile): boolean => f.id === file.id);
+        const index = selected.findIndex((f: FileType): boolean => f.id === file.id);
 
         if (browser === false && multiple === false) {
             if (index === -1) {

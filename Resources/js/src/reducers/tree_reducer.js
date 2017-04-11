@@ -24,15 +24,6 @@ export const treeInitialState = {
     errors: [],
 };
 
-type TreeStateType = {
-    currentFolder?: {},
-    rootFolderId?: (number | null),
-    parentFolder?: ({} | null),
-    filesById?: {},
-    foldersById?: {},
-    errors: Array<string>
-};
-
 export const tree = (state: TreeStateType = treeInitialState,
     action: { type: ActionType, payload: TreeStateType}): TreeStateType => {
     if (action.type === ActionTypes.INIT) {

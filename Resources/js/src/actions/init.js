@@ -5,10 +5,10 @@ import { getStore } from '../reducers/store';
 import * as Constants from '../util/constants';
 import { openFolder } from '../actions';
 
-const store = getStore();
-const dispatch: Dispatch = store.dispatch;
+const store: StoreType = getStore();
+const dispatch: DispatchType = store.dispatch;
 
-export default (options: { root_folder_id: number, selected: ?Array<TypeFile> }) => {
+export default (options: { root_folder_id: number, selected: ?Array<FileType> }) => {
     persistStore(store, {}, () => {
         const rootFolderId = options.root_folder_id;
         const foldersById = store.getState().tree.foldersById;
@@ -35,7 +35,7 @@ export default (options: { root_folder_id: number, selected: ?Array<TypeFile> })
         const currentFolderId = R.cond([
             [R.isNil, R.always(rootFolderId)],
             [R.isEmpty, R.always(rootFolderId)],
-            [R.T, (cf: TypeFolder): number => cf.id],
+            [R.T, (cf: FolderType): number => cf.id],
         ])(store.getState().tree.currentFolder);
 
         if (noCache === true) {

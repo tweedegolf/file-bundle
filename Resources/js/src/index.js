@@ -6,8 +6,7 @@ import R from 'ramda';
 import Browser from './containers/browser.react';
 import { getStore } from './reducers/store';
 
-const store = getStore();
-
+const store: StoreType = getStore();
 const getOptions = element => R.cond([
     [R.isNil, R.always(null)],
     [R.T, data => JSON.parse(data)],

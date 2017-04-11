@@ -31,7 +31,7 @@ export const getNewStore = () => {
     return s;
 };
 
-export function getStore() {
+export function getStore(): StoreType {
     if (R.isNil(store)) {
         store = getNewStore();
     }

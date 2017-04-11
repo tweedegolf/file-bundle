@@ -27,7 +27,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // declare functions
 var createFolder = void 0; // main function
 var typeName = void 0; // type the name of the folder in the input field
-var submit = void 0; // press the "create folder" button
+var submit = void 0; // press the "create folder" button343
 var check = void 0; // check if the the new folder has been created succesfully
 
 
@@ -681,7 +681,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new ErrorType("Cannot call a class as a function"); } }
 
 var TaskRunner = function () {
 
@@ -1105,13 +1105,13 @@ require('../../modules/core.regexp.escape');
 module.exports = require('../../modules/_core').RegExp.escape;
 },{"../../modules/_core":31,"../../modules/core.regexp.escape":127}],11:[function(require,module,exports){
 module.exports = function(it){
-  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  if(typeof it != 'function')throw ErrorType(it + ' is not a function!');
   return it;
 };
 },{}],12:[function(require,module,exports){
 var cof = require('./_cof');
 module.exports = function(it, msg){
-  if(typeof it != 'number' && cof(it) != 'Number')throw TypeError(msg);
+  if(typeof it != 'number' && cof(it) != 'Number')throw ErrorType(msg);
   return +it;
 };
 },{"./_cof":26}],13:[function(require,module,exports){
@@ -1125,13 +1125,13 @@ module.exports = function(key){
 },{"./_hide":48,"./_wks":125}],14:[function(require,module,exports){
 module.exports = function(it, Constructor, name, forbiddenField){
   if(!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)){
-    throw TypeError(name + ': incorrect invocation!');
+    throw ErrorType(name + ': incorrect invocation!');
   } return it;
 };
 },{}],15:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  if(!isObject(it))throw ErrorType(it + ' is not an object!');
   return it;
 };
 },{"./_is-object":57}],16:[function(require,module,exports){
@@ -1274,7 +1274,7 @@ module.exports = function(that, callbackfn, aLen, memo, isRight){
     }
     index += i;
     if(isRight ? index < 0 : length <= index){
-      throw TypeError('Reduce of empty array with no initial value');
+      throw ErrorType('Reduce of empty array with no initial value');
     }
   }
   for(;isRight ? index >= 0 : length > index; index += i)if(index in self){
@@ -1510,7 +1510,7 @@ var classof = require('./_classof')
   , from    = require('./_array-from-iterable');
 module.exports = function(NAME){
   return function toJSON(){
-    if(classof(this) != NAME)throw TypeError(NAME + "#toJSON isn't generic");
+    if(classof(this) != NAME)throw ErrorType(NAME + "#toJSON isn't generic");
     return from(this);
   };
 };
@@ -1655,7 +1655,7 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
         while(index--)$instance[ADDER](index, index);
         return !$instance.has(-0);
       });
-    if(!ACCEPT_ITERABLES){ 
+    if(!ACCEPT_ITERABLES){
       C = wrapper(function(target, iterable){
         anInstance(target, C, NAME);
         var that = inheritIfRequired(new Base, target, C);
@@ -1724,13 +1724,13 @@ var anObject    = require('./_an-object')
   , NUMBER      = 'number';
 
 module.exports = function(hint){
-  if(hint !== 'string' && hint !== NUMBER && hint !== 'default')throw TypeError('Incorrect hint');
+  if(hint !== 'string' && hint !== NUMBER && hint !== 'default')throw ErrorType('Incorrect hint');
   return toPrimitive(anObject(this), hint != NUMBER);
 };
 },{"./_an-object":15,"./_to-primitive":118}],35:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function(it){
-  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  if(it == undefined)throw ErrorType("Can't call method on  " + it);
   return it;
 };
 },{}],36:[function(require,module,exports){
@@ -1809,7 +1809,7 @@ $export.P = 8;   // proto
 $export.B = 16;  // bind
 $export.W = 32;  // wrap
 $export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
+$export.R = 128; // real proto method for `library`
 module.exports = $export;
 },{"./_core":31,"./_ctx":33,"./_global":46,"./_hide":48,"./_redefine":95}],41:[function(require,module,exports){
 var MATCH = require('./_wks')('match');
@@ -1889,7 +1889,7 @@ var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
     , f      = ctx(fn, that, entries ? 2 : 1)
     , index  = 0
     , length, step, iterator, result;
-  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
+  if(typeof iterFn != 'function')throw ErrorType(iterable + ' is not iterable!');
   // fast case for arrays with default iterator
   if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
     result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
@@ -2418,7 +2418,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   if(IE8_DOM_DEFINE)try {
     return dP(O, P, Attributes);
   } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('get' in Attributes || 'set' in Attributes)throw ErrorType('Accessors not supported!');
   if('value' in Attributes)O[P] = Attributes.value;
   return O;
 };
@@ -2687,7 +2687,7 @@ var isObject = require('./_is-object')
   , anObject = require('./_an-object');
 var check = function(O, proto){
   anObject(O);
-  if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
+  if(!isObject(proto) && proto !== null)throw ErrorType(proto + ": can't set as prototype!");
 };
 module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
@@ -2782,7 +2782,7 @@ var isRegExp = require('./_is-regexp')
   , defined  = require('./_defined');
 
 module.exports = function(that, searchString, NAME){
-  if(isRegExp(searchString))throw TypeError('String#' + NAME + " doesn't accept regex!");
+  if(isRegExp(searchString))throw ErrorType('String#' + NAME + " doesn't accept regex!");
   return String(defined(that));
 };
 },{"./_defined":35,"./_is-regexp":58}],107:[function(require,module,exports){
@@ -2992,7 +2992,7 @@ module.exports = function(it, S){
   if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
   if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
   if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  throw TypeError("Can't convert object to primitive value");
+  throw ErrorType("Can't convert object to primitive value");
 };
 },{"./_is-object":57}],119:[function(require,module,exports){
 'use strict';
@@ -3038,7 +3038,7 @@ if(require('./_descriptors')){
     , dP                  = $DP.f
     , gOPD                = $GOPD.f
     , RangeError          = global.RangeError
-    , TypeError           = global.TypeError
+    , ErrorType           = global.ErrorType
     , Uint8Array          = global.Uint8Array
     , ARRAY_BUFFER        = 'ArrayBuffer'
     , SHARED_BUFFER       = 'Shared' + ARRAY_BUFFER
@@ -3088,7 +3088,7 @@ if(require('./_descriptors')){
   });
 
   var strictToLength = function(it, SAME){
-    if(it === undefined)throw TypeError(WRONG_LENGTH);
+    if(it === undefined)throw ErrorType(WRONG_LENGTH);
     var number = +it
       , length = toLength(it);
     if(SAME && !same(number, length))throw RangeError(WRONG_LENGTH);
@@ -3103,12 +3103,12 @@ if(require('./_descriptors')){
 
   var validate = function(it){
     if(isObject(it) && TYPED_ARRAY in it)return it;
-    throw TypeError(it + ' is not a typed array!');
+    throw ErrorType(it + ' is not a typed array!');
   };
 
   var allocate = function(C, length){
     if(!(isObject(C) && TYPED_CONSTRUCTOR in C)){
-      throw TypeError('It is not a typed array constructor!');
+      throw ErrorType('It is not a typed array constructor!');
     } return new C(length);
   };
 
@@ -4288,7 +4288,7 @@ var $export = require('./_export')
 $export($export.S + $export.F * !($acosh
   // V8 bug: https://code.google.com/p/v8/issues/detail?id=3509
   && Math.floor($acosh(Number.MAX_VALUE)) == 710
-  // Tor Browser bug: Math.acosh(Infinity) -> NaN 
+  // Tor Browser bug: Math.acosh(Infinity) -> NaN
   && $acosh(Infinity) == Infinity
 ), 'Math', {
   acosh: function acosh(x){
@@ -4306,14 +4306,14 @@ function asinh(x){
   return !isFinite(x = +x) || x == 0 ? x : x < 0 ? -asinh(-x) : Math.log(x + Math.sqrt(x * x + 1));
 }
 
-// Tor Browser bug: Math.asinh(0) -> -0 
+// Tor Browser bug: Math.asinh(0) -> -0
 $export($export.S + $export.F * !($asinh && 1 / $asinh(0) > 0), 'Math', {asinh: asinh});
 },{"./_export":40}],160:[function(require,module,exports){
 // 20.2.2.7 Math.atanh(x)
 var $export = require('./_export')
   , $atanh  = Math.atanh;
 
-// Tor Browser bug: Math.atanh(-0) -> 0 
+// Tor Browser bug: Math.atanh(-0) -> 0
 $export($export.S + $export.F * !($atanh && 1 / $atanh(-0) < 0), 'Math', {
   atanh: function atanh(x){
     return (x = +x) == 0 ? x : Math.log((1 + x) / (1 - x)) / 2;
@@ -4751,7 +4751,7 @@ $export($export.P + $export.F * ($fails(function(){
 })), 'Number', {
   toPrecision: function toPrecision(precision){
     var that = aNumberValue(this, 'Number#toPrecision: incorrect invocation!');
-    return precision === undefined ? $toPrecision.call(that) : $toPrecision.call(that, precision); 
+    return precision === undefined ? $toPrecision.call(that) : $toPrecision.call(that, precision);
   }
 });
 },{"./_a-number-value":12,"./_export":40,"./_fails":42}],187:[function(require,module,exports){
@@ -4907,7 +4907,7 @@ var LIBRARY            = require('./_library')
   , task               = require('./_task').set
   , microtask          = require('./_microtask')()
   , PROMISE            = 'Promise'
-  , TypeError          = global.TypeError
+  , ErrorType          = global.ErrorType
   , process            = global.process
   , $Promise           = global[PROMISE]
   , process            = global.process
@@ -4942,7 +4942,7 @@ var newPromiseCapability = function(C){
 var PromiseCapability = GenericPromiseCapability = function(C){
   var resolve, reject;
   this.promise = new C(function($$resolve, $$reject){
-    if(resolve !== undefined || reject !== undefined)throw TypeError('Bad Promise constructor');
+    if(resolve !== undefined || reject !== undefined)throw ErrorType('Bad Promise constructor');
     resolve = $$resolve;
     reject  = $$reject;
   });
@@ -4983,7 +4983,7 @@ var notify = function(promise, isReject){
             if(domain)domain.exit();
           }
           if(result === reaction.promise){
-            reject(TypeError('Promise-chain cycle'));
+            reject(ErrorType('Promise-chain cycle'));
           } else if(then = isThenable(result)){
             then.call(result, resolve, reject);
           } else resolve(result);
@@ -5055,7 +5055,7 @@ var $resolve = function(value){
   promise._d = true;
   promise = promise._w || promise; // unwrap
   try {
-    if(promise === value)throw TypeError("Promise can't be resolved itself");
+    if(promise === value)throw ErrorType("Promise can't be resolved itself");
     if(then = isThenable(value)){
       microtask(function(){
         var wrapper = {_w: promise, _d: false}; // wrap
@@ -6026,7 +6026,7 @@ var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
 // 19.4.1.1 Symbol([description])
 if(!USE_NATIVE){
   $Symbol = function Symbol(){
-    if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor!');
+    if(this instanceof $Symbol)throw ErrorType('Symbol is not a constructor!');
     var tag = uid(arguments.length > 0 ? arguments[0] : undefined);
     var $set = function(value){
       if(this === ObjectProto)$set.call(OPSymbols, value);
@@ -6074,7 +6074,7 @@ $export($export.S + $export.F * !USE_NATIVE, 'Symbol', {
   // 19.4.2.5 Symbol.keyFor(sym)
   keyFor: function keyFor(key){
     if(isSymbol(key))return keyOf(SymbolRegistry, key);
-    throw TypeError(key + ' is not a symbol!');
+    throw ErrorType(key + ' is not a symbol!');
   },
   useSetter: function(){ setter = true; },
   useSimple: function(){ setter = false; }
@@ -6871,7 +6871,7 @@ require('./_iter-create')($RegExpStringIterator, 'RegExp String', function next(
 $export($export.P, 'String', {
   matchAll: function matchAll(regexp){
     defined(this);
-    if(!isRegExp(regexp))throw TypeError(regexp + ' is not a regexp!');
+    if(!isRegExp(regexp))throw ErrorType(regexp + ' is not a regexp!');
     var S     = String(this)
       , flags = 'flags' in RegExpProto ? String(regexp.flags) : getFlags.call(regexp)
       , rx    = new RegExp(regexp.source, ~flags.indexOf('g') ? flags : 'g' + flags);

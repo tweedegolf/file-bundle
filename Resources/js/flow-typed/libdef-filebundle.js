@@ -2,15 +2,15 @@
 
 import * as Constants from '../src/util/constants';
 
-declare type TypePayload = {
+declare type PayloadType = {
     id?: number,
     errors?: Array<ErrorType>,
     foldersById?: Array<number>,
     rootFolderId?: number,
-    selected?: Array<TypeFile>,
-    clipboard?: Array<TypeFile>,
+    selected?: Array<FileType>,
+    clipboard?: Array<FileType>,
     scroll?: number,
-    file?: TypeFile,
+    file?: FileType,
     browser?: boolean,
     multiple?: boolean,
     folder_id?: number,
@@ -23,9 +23,10 @@ declare type TypePayload = {
     isAddingFolder?: boolean,
 };
 
+// const actionTypes = R.join(R.keys(Constants), '|');
 declare type ActionType = {
-    type: (
-        Constants.INIT |
+//    type: actionTypes,
+    type: (Constants.INIT |
         Constants.FOLDER_OPENED |
         Constants.FILE_DELETED |
         Constants.FOLDER_DELETED |
@@ -35,11 +36,11 @@ declare type ActionType = {
         Constants.FOLDER_OPENED |
         Constants.ERROR_OPENING_FOLDER
     ),
-    payload: TypePayload
+    payload: PayloadType
 };
 
 
-declare type TypeFolder = ({
+declare type FolderType = {
     create_ts?: number,
     created?: string,
     file_count?: number,
@@ -50,11 +51,11 @@ declare type TypeFolder = ({
     type?: string,
     size?: string,
     size_bytes?: number,
-    files?: Array<TypeFile>,
-    folders?: Array<TypeFolder>,
-} | null);
+    files: Array<FileType>,
+    folders: Array<FolderType>,
+};
 
-declare type TypeFile = ({
+declare type FileType = {
     create_ts: number,
     created: string,
     id: number,
@@ -64,12 +65,50 @@ declare type TypeFile = ({
     type: string,
     size: string,
     size_bytes: number,
-} | null);
+};
 
-declare type Dispatch = (action: ActionType) => void;
+declare type DispatchType = (action: ActionType) => void;
 
 declare type ErrorType = {
     id: string,
     type: string,
     messages: Array<string>,
-}
+};
+
+declare type TreeStateType = {
+    currentFolder?: {},
+    rootFolderId?: (number | null),
+    parentFolder?: ({} | null),
+    filesById?: {},
+    foldersById?: {},
+    errors: Array<ErrorType>
+};
+
+
+declare type UIStateType = {
+    sort: string,
+    ascending: boolean,
+    expanded: boolean,
+    previewUrl: (string | null),
+    deleteFileWithId: (number | null),
+    deleteFolderWithId: (number | null),
+    hover: number,
+    errors: Array<ErrorType>,
+    loadingFolderWithId: number,
+    deletingFileWithId: (number | null),
+    deletingFolderWithId: (number | null),
+    isAddingFolder: boolean,
+    isUploadingFiles: boolean,
+    scrollPosition: (number | null),
+    selected: Array<FileType>,
+    clipboard: Array<FileType>,
+    multiple: boolean,
+    imagesOnly: boolean
+};
+
+declare type StoreType = {
+    tree: TreeStateType,
+    ui: UIStateType,
+    dispatch: DispatchType,
+    getStore: () => StoreType,
+};

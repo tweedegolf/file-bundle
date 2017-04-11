@@ -6,32 +6,41 @@ import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
 const store = getStore();
-const dispatch = store.dispatch;
+const dispatch: DispatchType = store.dispatch;
 
-type OpenFolderType = ({
-    parentFolder: TypeFolder,
-    currentFolder: TypeFolder,
+type ResolveType = {
+    parentFolder: FolderType | null,
+    currentFolder: FolderType,
     foldersById: {
-        id: TypeFolder,
+        id: FolderType,
     },
     filesById: {
-        id: TypeFile,
+        id: FileType,
     }
-} | null);
+};
+
+type RejectType = {
+    errors: Array<{
+        id: string,
+        data: string,
+        type: Constants.ERROR_OPENING_FOLDER,
+        messages: Array<string>,
+    }>
+};
 
 // optimistic update
-const fromCache = (folderId: number): OpenFolderType => {
+const fromCache = (folderId: number): ?ResolveType => {
     const tree = store.getState().tree;
-    const filesById: {id: TypeFile} = R.clone(tree.filesById);
-    const foldersById: {id: TypeFolder} = R.clone(tree.foldersById);
+    const filesById: {id: FileType} = R.clone(tree.filesById);
+    const foldersById: {id: FolderType} = R.clone(tree.foldersById);
     const rootFolderId: number = tree.rootFolderId;
-    const currentFolder: TypeFolder = foldersById[folderId];
+    const currentFolder: FolderType = foldersById[folderId];
 
     if (R.isNil(currentFolder) || R.isNil(currentFolder.files)) {
         return null;
     }
 
-    const parentFolder: TypeFolder = (currentFolder.id === rootFolderId) ?
+    const parentFolder: (FolderType | null) = (currentFolder.id === rootFolderId) ?
         null : foldersById[currentFolder.parent];
 
     return {
@@ -43,14 +52,15 @@ const fromCache = (folderId: number): OpenFolderType => {
 };
 
 const loadFolder = (folderId: number, checkRootFolder: boolean,
-    resolve: () => OpenFolderType, reject: () => mixed) => {
+    resolve: (payload: ResolveType) => mixed,
+    reject: (payload: RejectType) => mixed) => {
     const tree = store.getState().tree;
-    const filesById: {id: TypeFile} = R.clone(tree.filesById);
-    const foldersById: {id: TypeFolder} = R.clone(tree.foldersById);
+    const filesById: {id: FileType} = R.clone(tree.filesById);
+    const foldersById: {id: FolderType} = R.clone(tree.foldersById);
     const rootFolderId: number = tree.rootFolderId;
-    const currentFolder: TypeFolder = foldersById[folderId];
+    const currentFolder: FolderType = foldersById[folderId];
 
-    const parentFolder: TypeFolder = (currentFolder.id === rootFolderId) ?
+    const parentFolder: (FolderType | null) = (currentFolder.id === rootFolderId) ?
         null : foldersById[currentFolder.parent];
 
     if (R.isNil(currentFolder.id)) {
@@ -70,7 +80,7 @@ const loadFolder = (folderId: number, checkRootFolder: boolean,
             currentFolder.folders = [];
             currentFolder.files = [];
 
-            R.forEach((f: TypeFolder) => {
+            R.forEach((f: FolderType) => {
                 foldersById[f.id] = f;
                 currentFolder.folders.push(f);
             }, folders);
@@ -127,13 +137,13 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
     loadFolder(
         id,
         checkRootFolder,
-        (payload: TypePayload) => {
+        (payload: ResolveType) => {
             dispatch({
                 type: Constants.FOLDER_OPENED,
                 payload,
             });
         },
-        (payload: TypePayload) => {
+        (payload: RejectType) => {
             dispatch({
                 type: Constants.ERROR_OPENING_FOLDER,
                 payload,
