@@ -4,8 +4,6 @@ import * as Constants from '../src/util/constants';
 
 declare type PayloadType = {
     id?: number,
-    errors?: Array<ErrorType>,
-    foldersById?: Array<number>,
     rootFolderId?: number,
     selected?: Array<FileType>,
     clipboard?: Array<FileType>,
@@ -17,26 +15,52 @@ declare type PayloadType = {
     max?: number,
     diff?: number,
     hover?: number,
-    sort?: string,
     errorId?: string,
     imageUrl?: string,
-    isAddingFolder?: boolean,
+    parentFolder?: FolderType | null,
+    currentFolder?: FolderType,
+    foldersById?: {
+        id?: FolderType,
+    },
+    filesById?: {
+        id?: FileType,
+    },
+    errors?: Array<{
+        id: string,
+        data: string,
+        type: Constants.ERROR_OPENING_FOLDER,
+        messages: Array<string>,
+    }>
 };
 
-// const actionTypes = R.join(R.keys(Constants), '|');
+declare type FolderAddedPayloadType = {
+    isAddingFolder: boolean,
+    errors: Array<ErrorType>,
+};
+
+declare type DeleteFilePayloadType = {
+    deleteFileWithId: number | null
+};
+
+declare type DeleteFolderPayloadType = {
+    deleteFolderWithId: number | null
+};
+
+declare type ChangeSortingPayloadType = {
+    sort: string
+};
+
+const actionTypes = R.join(R.keys(Constants), '|');
 declare type ActionType = {
-//    type: actionTypes,
-    type: (Constants.INIT |
-        Constants.FOLDER_OPENED |
-        Constants.FILE_DELETED |
-        Constants.FOLDER_DELETED |
-        Constants.UPLOAD_DONE |
-        Constants.FOLDER_ADDED |
-        Constants.FILES_MOVED |
-        Constants.FOLDER_OPENED |
-        Constants.ERROR_OPENING_FOLDER
+    type: actionTypes,
+    payload: (
+        PayloadType |
+        PayloadFolderAddedType |
+        ChangeSortingPayloadType |
+        DeleteFilePayloadType |
+        DeleteFolderPayloadType |
+        null
     ),
-    payload: PayloadType
 };
 
 
@@ -76,11 +100,15 @@ declare type ErrorType = {
 };
 
 declare type TreeStateType = {
-    currentFolder?: {},
-    rootFolderId?: (number | null),
-    parentFolder?: ({} | null),
-    filesById?: {},
-    foldersById?: {},
+    currentFolder: {},
+    rootFolderId: number | null,
+    parentFolder: {} | null,
+    filesById: {
+        id?: FileType,
+    },
+    foldersById: {
+        id?: FolderType,
+    },
     errors: Array<ErrorType>
 };
 
@@ -106,9 +134,14 @@ declare type UIStateType = {
     imagesOnly: boolean
 };
 
+declare type StateType = {
+    tree: TreeStateType,
+    ui: UIStateType,
+};
+
 declare type StoreType = {
     tree: TreeStateType,
     ui: UIStateType,
     dispatch: DispatchType,
-    getStore: () => StoreType,
+    getState: () => StateType,
 };

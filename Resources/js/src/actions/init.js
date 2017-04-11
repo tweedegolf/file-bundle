@@ -10,8 +10,8 @@ const dispatch: DispatchType = store.dispatch;
 
 export default (options: { root_folder_id: number, selected: ?Array<FileType> }) => {
     persistStore(store, {}, () => {
-        const rootFolderId = options.root_folder_id;
-        const foldersById = store.getState().tree.foldersById;
+        const rootFolderId: number = options.root_folder_id;
+        const foldersById: { id?: FolderType } = store.getState().tree.foldersById;
 
         foldersById[rootFolderId] = {
             id: rootFolderId,

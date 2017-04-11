@@ -1,5 +1,4 @@
 // @flow
-import R from 'ramda';
 import * as ActionTypes from '../util/constants';
 
 /**
@@ -116,10 +115,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * tree reducer as well.
      */
     } else if (action.type === ActionTypes.FOLDER_ADDED) {
+        const a: FolderAddedPayloadType = action;
         return {
             ...state,
             isAddingFolder: false,
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...a.payload.errors],
         };
 
     /**
@@ -127,10 +127,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * progress indicator and show the error(s)
      */
     } else if (action.type === ActionTypes.ERROR_ADDING_FOLDER) {
+        const a: FolderAddedPayloadType = action;
         return {
             ...state,
             isAddingFolder: false,
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...a.payload.errors],
         };
 
     /**
@@ -140,14 +141,16 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * 'cancel' button, or has clicked anywhere outside the popup.
      */
     } else if (action.type === ActionTypes.CONFIRM_DELETE_FILE) {
+        const a: DeleteFilePayloadType = action;
         return {
             ...state,
-            deleteFileWithId: action.payload.id,
+            deleteFileWithId: a.payload.id,
         };
     } else if (action.type === ActionTypes.CONFIRM_DELETE_FOLDER) {
+        const a: DeleteFolderPayloadType = action;
         return {
             ...state,
-            deleteFolderWithId: action.payload.id,
+            deleteFolderWithId: a.payload.id,
         };
 
 
@@ -306,16 +309,22 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * (ascending or descending) will be left unaffected.
      */
     } else if (action.type === ActionTypes.CHANGE_SORTING) {
+        const a: ChangeSortingPayloadType = action;
+        const sort = a.sort;
         let ascending = state.ascending;
-        if (state.sort === action.payload.sort) {
+        if (state.sort === sort) {
             ascending = !ascending;
         }
 
         return {
             ...state,
             ascending,
-            sort: action.payload.sort,
-            // errors: [...state.errors, {id: 7777, type: 'generic', messages: ['oh my, this is an error!']}],
+            sort,
+            // errors: [...state.errors, {
+            //     id: 7777,
+            //     type: 'generic',
+            //     messages: ['oh my, this is an error!'],
+            // }],
         };
 
     /**

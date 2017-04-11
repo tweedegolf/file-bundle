@@ -5,35 +5,15 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
-const store = getStore();
+const store: StoreType = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-type ResolveType = {
-    parentFolder: FolderType | null,
-    currentFolder: FolderType,
-    foldersById: {
-        id: FolderType,
-    },
-    filesById: {
-        id: FileType,
-    }
-};
-
-type RejectType = {
-    errors: Array<{
-        id: string,
-        data: string,
-        type: Constants.ERROR_OPENING_FOLDER,
-        messages: Array<string>,
-    }>
-};
-
 // optimistic update
-const fromCache = (folderId: number): ?ResolveType => {
+const fromCache = (folderId: number): PayloadType | null => {
     const tree = store.getState().tree;
-    const filesById: {id: FileType} = R.clone(tree.filesById);
-    const foldersById: {id: FolderType} = R.clone(tree.foldersById);
-    const rootFolderId: number = tree.rootFolderId;
+    const filesById: {id?: FileType} = R.clone(tree.filesById);
+    const foldersById: {id?: FolderType} = R.clone(tree.foldersById);
+    const rootFolderId: number | null = tree.rootFolderId;
     const currentFolder: FolderType = foldersById[folderId];
 
     if (R.isNil(currentFolder) || R.isNil(currentFolder.files)) {
@@ -52,18 +32,18 @@ const fromCache = (folderId: number): ?ResolveType => {
 };
 
 const loadFolder = (folderId: number, checkRootFolder: boolean,
-    resolve: (payload: ResolveType) => mixed,
-    reject: (payload: RejectType) => mixed) => {
+    resolve: (payload: PayloadType) => mixed,
+    reject: (payload: PayloadType) => mixed) => {
     const tree = store.getState().tree;
-    const filesById: {id: FileType} = R.clone(tree.filesById);
-    const foldersById: {id: FolderType} = R.clone(tree.foldersById);
-    const rootFolderId: number = tree.rootFolderId;
+    const filesById: {id?: FileType} = R.clone(tree.filesById);
+    const foldersById: {id?: FolderType} = R.clone(tree.foldersById);
+    const rootFolderId: number | null = tree.rootFolderId;
     const currentFolder: FolderType = foldersById[folderId];
 
     const parentFolder: (FolderType | null) = (currentFolder.id === rootFolderId) ?
         null : foldersById[currentFolder.parent];
 
-    if (R.isNil(currentFolder.id)) {
+    if (R.isNil(currentFolder.id) && rootFolderId !== null) {
         currentFolder.id = rootFolderId;
         currentFolder.name = '..';
     }
@@ -121,9 +101,9 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
     });
 
     if (forceLoad !== true && R.isNil(checkRootFolder)) {
-        const payload = fromCache(id);
+        const payload: PayloadType | null = fromCache(id);
         // console.log('cache', payload);
-        if (R.isNil(payload) === false) {
+        if (payload !== null) {
             dispatch({
                 type: Constants.FOLDER_OPENED,
                 payload,
@@ -137,13 +117,13 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
     loadFolder(
         id,
         checkRootFolder,
-        (payload: ResolveType) => {
+        (payload: PayloadType) => {
             dispatch({
                 type: Constants.FOLDER_OPENED,
                 payload,
             });
         },
-        (payload: RejectType) => {
+        (payload: PayloadType) => {
             dispatch({
                 type: Constants.ERROR_OPENING_FOLDER,
                 payload,

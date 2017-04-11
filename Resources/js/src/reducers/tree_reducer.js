@@ -15,7 +15,7 @@ import * as ActionTypes from '../util/constants';
  *
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
-export const treeInitialState = {
+export const treeInitialState: TreeStateType = {
     currentFolder: {},
     rootFolderId: null,
     parentFolder: null,
