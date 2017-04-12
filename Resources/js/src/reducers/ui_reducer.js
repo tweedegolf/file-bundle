@@ -45,7 +45,8 @@ import * as ActionTypes from '../util/constants';
  *                                              deleted. Note that the root
  *                                              folder, which has id null can
  *                                              not be deleted!
- * @property   {boolean}  isAddingFolder        true if a new folder is in the
+ * @property   {boolean}  isAddingFolder        true if a new folder is in the    // action: { type: string, payload: TreeStateType}): TreeStateType => {
+
  *                                              process of being created
  * @property   {boolean}  isUploadingFiles      true if the user is uploading
  *                                              one of more files
@@ -115,7 +116,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * tree reducer as well.
      */
     } else if (action.type === ActionTypes.FOLDER_ADDED) {
-        const a: PayloadFolderAddedType = action;
+        const a: ActionFolderAddedType = action;
         return {
             ...state,
             isAddingFolder: false,
@@ -127,7 +128,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * progress indicator and show the error(s)
      */
     } else if (action.type === ActionTypes.ERROR_ADDING_FOLDER) {
-        const a: PayloadFolderAdedType = action;
+        const a: ActionErrorType = action;
         return {
             ...state,
             isAddingFolder: false,
@@ -230,9 +231,10 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * the server. This action is also processed by the tree reducer.
      */
     } else if (action.type === ActionTypes.OPEN_FOLDER) {
+        const a: ActionOpenFolderType = action;
         return {
             ...state,
-            loadingFolderWithId: action.payload.id,
+            loadingFolderWithId: a.payload.id,
         };
 
     /**

@@ -9,7 +9,7 @@ const store = getStore();
 const dispatch = store.dispatch;
 
 const deleteFile = (fileId: number,
-    resolve: (payload: PayloadDeleteFileType) => mixed,
+    resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
@@ -52,7 +52,7 @@ export default (fileId: number) => {
 
     deleteFile(
         fileId,
-        (payload: PayloadDeleteFileType) => {
+        (payload: PayloadDeletedType) => {
             dispatch({
                 type: Constants.FILE_DELETED,
                 payload,

@@ -17,62 +17,96 @@ declare type PayloadType = {
     imageUrl?: string,
 };
 
-declare type PayloadErrorType = {
-    errors: Array<ErrorType>,
-};
-
-declare type PayloadDeleteType = {
-    id: number | null
-};
-
-declare type PayloadOpenFolderType = {
-    parentFolder: FolderType | null,
-    currentFolder: FolderType,
-    foldersById: { id?: FolderType },
-    filesById: { id?: FileType },
-};
-
-declare type PayloadAddFolderType = {
-    currentFolder: FolderType,
-    foldersById: { id: FolderType },
-    errors: Array<ErrorType>,
-};
-
-declare type PayloadFolderAddedType = {
-    isAddingFolder: boolean,
-    errors: Array<ErrorType>,
-};
-
-declare type PayloadDeleteFileType = {
-    currentFolder: FolderType,
-    filesById: { id: FileType },
-    foldersById: { id: FolderType },
-};
-
-declare type ChangeSortingPayloadType = {
-    sort: string
-};
-
+// used for all errors that are emitted via actions
 const errorTypes = R.join(R.filter((key: string) => key.indexOf('ERROR_') === 0, R.keys(Constants)), '|');
 declare type ActionErrorType = {
     type: errorTypes;
     payload: PayloadErrorType,
 };
 
-declare type ActionType = (
-    ActionDeleteType |
-    ActionErrorType
-);
+declare type PayloadErrorType = {
+    errors: Array<ErrorType>,
+};
 
+// used when files or folders are in the process of being deleted
 declare type ActionDeleteType = {
     type: (Constants.DELETE_FOLDER |
            Constants.CONFIRM_DELETE_FOLDER |
            Constants.FOLDER_DELETED |
            Constants.DELETE_FILE |
-           Constants.CONFIRM_DELETE_FILE |
-           Constants.FILE_DELETED),
+           Constants.CONFIRM_DELETE_FILE),
     payload: PayloadDeleteType
 };
+
+declare type PayloadDeleteType = {
+    id: number | null
+};
+
+// used when files or folders are actually deleted
+declare type ActionDeletedType = {
+    type: (Constants.FOLDER_DELETED |
+           Constants.FILE_DELETED),
+    payload: PayloadDeletedType
+};
+
+declare type PayloadDeletedType = {
+    currentFolder: FolderType,
+    filesById: { id: FileType },
+    foldersById: { id: FolderType },
+};
+
+declare type ActionOpenFolderType = {
+    type: Constants.OPEN_FOLDER,
+    payload: {
+        id: number,
+    },
+};
+
+// used when the contents of a folder has been fetched successfully from the server
+// or from localstorage
+declare type ActionFolderOpenedType = {
+    type: Constants.FOLDER_OPENED,
+    payload: PayloadFolderOpenedType,
+};
+
+declare type PayloadFolderOpenedType = {
+    parentFolder: FolderType | null,
+    currentFolder: FolderType,
+    foldersById: { id?: FolderType },
+    filesById: { id?: FileType },
+};
+
+// add folder
+declare type ActionAddFolderType = {
+    type: Constants.ADD_FOLDER,
+    payload: PayloadAddFolderType,
+};
+
+declare type PayloadAddFolderType = {
+    id: String,
+};
+
+// folder added
+declare type ActionFolderAddedType = {
+    type: Constants.FOLDER_ADDED,
+    payload: PayloadFolderAddedType,
+};
+
+declare type PayloadFolderAddedType = {
+    currentFolder: FolderType,
+    foldersById: { id: FolderType },
+    errors: Array<ErrorType>,
+};
+
+declare type ActionType = (
+    ActionDeleteType |
+    ActionDeletedType |
+    ActionOpenFolderType |
+    ActionFolderOpenedType |
+    ActionAddFolderType |
+    ActionFolderAddedType |
+    ActionErrorType
+);
 
 declare type FolderType = {
     create_ts?: number,
@@ -87,6 +121,7 @@ declare type FolderType = {
     size_bytes?: number,
     files: Array<FileType>,
     folders: Array<FolderType>,
+    isTrashed?: boolean,
 };
 
 declare type FileType = {
@@ -99,6 +134,7 @@ declare type FileType = {
     type: string,
     size: string,
     size_bytes: number,
+    isTrashed?: boolean,
 };
 
 declare type DispatchType = (action: ActionType) => void;

@@ -1,5 +1,5 @@
 // @flow
-import * as ActionTypes from '../util/constants';
+import * as Constants from '../util/constants';
 
 /**
  * Initial tree state
@@ -24,9 +24,22 @@ export const treeInitialState: TreeStateType = {
     errors: [],
 };
 
+type TreeActionType = {
+    type: (
+        Constants.INIT |
+        Constants.FOLDER_OPENED |
+        Constants.FILE_DELETED |
+        Constants.FOLDER_DELETED |
+        Constants.UPLOAD_DONE |
+        Constants.FOLDER_ADDED |
+        Constants.FILES_MOVED
+    ),
+    payload: TreeStateType,
+};
+
 export const tree = (state: TreeStateType = treeInitialState,
-    action: { type: ActionType, payload: TreeStateType}): TreeStateType => {
-    if (action.type === ActionTypes.INIT) {
+    action: TreeActionType): TreeStateType => {
+    if (action.type === Constants.INIT) {
         return {
             ...state,
             foldersById: action.payload.foldersById,
@@ -35,7 +48,7 @@ export const tree = (state: TreeStateType = treeInitialState,
     /**
      * Contents of a folder has been loaded from the server or from cache
      */
-    } else if (action.type === ActionTypes.FOLDER_OPENED) {
+    } else if (action.type === Constants.FOLDER_OPENED) {
         // console.log(action.payload);
         // return { ...action.payload }
         return {
@@ -51,13 +64,12 @@ export const tree = (state: TreeStateType = treeInitialState,
      * currentFolder object and update the files array containing all files in
      * this folder
      */
-    } else if (action.type === ActionTypes.FILE_DELETED) {
+    } else if (action.type === Constants.FILE_DELETED) {
         return {
             ...state,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
             currentFolder: action.payload.currentFolder,
-            errors: action.payload.errors,
         };
 
     /**
@@ -65,7 +77,7 @@ export const tree = (state: TreeStateType = treeInitialState,
      * needs to be updated as well as the folders array containing all folders
      * in the current folder
      */
-    } else if (action.type === ActionTypes.FOLDER_DELETED) {
+    } else if (action.type === Constants.FOLDER_DELETED) {
         return {
             ...state,
             filesById: action.payload.filesById,
@@ -78,7 +90,7 @@ export const tree = (state: TreeStateType = treeInitialState,
      * needs to be updated as well as the files array containing all files in
      * the current folder
      */
-    } else if (action.type === ActionTypes.UPLOAD_DONE) {
+    } else if (action.type === Constants.UPLOAD_DONE) {
         return {
             ...state,
             filesById: action.payload.filesById,
@@ -92,7 +104,7 @@ export const tree = (state: TreeStateType = treeInitialState,
      * needs to be updated as well as the folders array containing all folders
      * in the current folder
      */
-    } else if (action.type === ActionTypes.FOLDER_ADDED) {
+    } else if (action.type === Constants.FOLDER_ADDED) {
         return {
             ...state,
             currentFolder: action.payload.currentFolder,
@@ -103,7 +115,7 @@ export const tree = (state: TreeStateType = treeInitialState,
      * Files have been cut and pasted from another location to the current
      * folder
      */
-    } else if (action.type === ActionTypes.FILES_MOVED) {
+    } else if (action.type === Constants.FILES_MOVED) {
         return {
             ...state,
             currentFolder: action.payload.currentFolder,

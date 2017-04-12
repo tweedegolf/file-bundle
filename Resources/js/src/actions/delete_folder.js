@@ -5,10 +5,12 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
-const store = getStore();
-const dispatch = store.dispatch;
+const store: StoreType = getStore();
+const dispatch: DispatchType = store.dispatch;
 
-const deleteFolder = (folderId: number, resolve: Function, reject: Function) => {
+const deleteFolder = (folderId: number,
+    resolve: (payload: PayloadDeletedType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
     const filesById = R.clone(tree.filesById);
@@ -18,8 +20,8 @@ const deleteFolder = (folderId: number, resolve: Function, reject: Function) => 
         () => {
             const folder = foldersById[folderId];
             if (R.isNil(folder.files) === false) {
-                folder.files = R.map(f => ({ ...f, isTrashed: true }), folder.files);
-                R.forEach((f) => { filesById[f.id] = f; }, folder.files);
+                folder.files = R.map((f: FileType): FileType => ({ ...f, isTrashed: true }), folder.files);
+                R.forEach((f: FileType) => { filesById[f.id] = f; }, folder.files);
             }
             folder.isTrashed = true;
 
@@ -34,7 +36,7 @@ const deleteFolder = (folderId: number, resolve: Function, reject: Function) => 
                 foldersById,
             });
         },
-        (messages) => {
+        (messages: Array<string>) => {
             const folder = foldersById[folderId];
             const errors = [{
                 id: getUID(),
@@ -55,13 +57,13 @@ export default (folderId: number) => {
 
     deleteFolder(
         folderId,
-        (payload) => {
+        (payload: PayloadDeletedType) => {
             dispatch({
                 type: Constants.FOLDER_DELETED,
                 payload,
             });
         },
-        (payload) => {
+        (payload: PayloadErrorType) => {
             dispatch({
                 type: Constants.ERROR_DELETING_FILE,
                 payload,
