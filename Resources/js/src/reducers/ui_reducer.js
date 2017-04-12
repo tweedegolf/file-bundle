@@ -115,7 +115,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * tree reducer as well.
      */
     } else if (action.type === ActionTypes.FOLDER_ADDED) {
-        const a: FolderAddedPayloadType = action;
+        const a: PayloadFolderAddedType = action;
         return {
             ...state,
             isAddingFolder: false,
@@ -127,7 +127,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * progress indicator and show the error(s)
      */
     } else if (action.type === ActionTypes.ERROR_ADDING_FOLDER) {
-        const a: FolderAddedPayloadType = action;
+        const a: PayloadFolderAdedType = action;
         return {
             ...state,
             isAddingFolder: false,
@@ -141,13 +141,13 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * 'cancel' button, or has clicked anywhere outside the popup.
      */
     } else if (action.type === ActionTypes.CONFIRM_DELETE_FILE) {
-        const a: DeleteFilePayloadType = action;
+        const a: ActionDeleteType = action;
         return {
             ...state,
             deleteFileWithId: a.payload.id,
         };
     } else if (action.type === ActionTypes.CONFIRM_DELETE_FOLDER) {
-        const a: DeleteFolderPayloadType = action;
+        const a: ActionDeleteType = action;
         return {
             ...state,
             deleteFolderWithId: a.payload.id,
@@ -158,9 +158,10 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * User really wants to delete the file, show progress indicator during API call
      */
     } else if (action.type === ActionTypes.DELETE_FILE) {
+        const a: ActionDeleteType = action;
         return {
             ...state,
-            deletingFileWithId: action.payload.id,
+            deletingFileWithId: a.payload.id,
         };
 
     /**
@@ -179,11 +180,12 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * another user or a network error occured.
      */
     } else if (action.type === ActionTypes.ERROR_DELETING_FILE) {
+        const a: ActionErrorType = action;
         return {
             ...state,
             deleteFileWithId: null,
             deletingFileWithId: null,
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...a.payload.errors],
         };
 
 
@@ -213,11 +215,12 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * Something went wrong: network error, etc.
      */
     } else if (action.type === ActionTypes.ERROR_DELETING_FOLDER) {
+        const a: ActionErrorType = action;
         return {
             ...state,
             deleteFolderWithId: null,
             deletingFolderWithId: null,
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...a.payload.errors],
         };
 
 
@@ -246,10 +249,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionType): UIS
      * Something went wrong opening the folder; show error messages
      */
     } else if (action.type === ActionTypes.ERROR_OPENING_FOLDER) {
+        const a: ActionErrorType = action;
         return {
             ...state,
             loadingFolderWithId: -1,
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...a.payload.errors],
         };
 
 

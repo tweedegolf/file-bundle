@@ -70,8 +70,8 @@ if (typeof port !== 'undefined' && port !== 80 && port !== 8080) {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const deleteFile = (file_id, onSuccess, onError) => {
-    const req = request.post(`/admin/file/delete/${file_id}`);
+const deleteFile = (fileId, onSuccess, onError) => {
+    const req = request.post(`/admin/file/delete/${fileId}`);
     req.end((err, res) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
@@ -91,12 +91,13 @@ const deleteFile = (file_id, onSuccess, onError) => {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const paste = (file_ids, folder_id, onSuccess, onError) => {
-    // if no folder_id is specified, the files will be pasted in their original folder -> this yields a React error!
+const paste = (fileIds, folderId, onSuccess, onError) => {
+    // if no folder_id is specified, the files will be pasted in their original folder ->
+    // this yields a React error!
     // console.log('[API]', file_ids, folder_id);
-    const url = `${server}/admin/file/move${folder_id ? `/${folder_id}` : ''}`;
+    const url = `${server}/admin/file/move${folderId ? `/${folderId}` : ''}`;
     const req = request.post(url).type('form');
-    req.send({ 'files[]': file_ids });
+    req.send({ 'files[]': fileIds });
     req.end((err, res) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
@@ -116,8 +117,8 @@ const paste = (file_ids, folder_id, onSuccess, onError) => {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const addFolder = (name, folder_id, onSuccess, onError) => {
-    const url = `${server}/admin/file/create/folder${folder_id !== null ? `/${folder_id}` : ''}`;
+const addFolder = (name, folderId, onSuccess, onError) => {
+    const url = `${server}/admin/file/create/folder${folderId !== null ? `/${folderId}` : ''}`;
     const req = request.post(url).type('form');
     req.send({ name });
     req.end((err, res) => {
@@ -145,7 +146,7 @@ const deleteFolder = (folderId, onSuccess, onError) => {
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            console.log(res.body.data);
+            // console.log(res.body.data);
             onSuccess();
         }
     });
@@ -163,10 +164,10 @@ const deleteFolder = (folderId, onSuccess, onError) => {
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const upload = (file_list, folder_id, onSuccess, onError) => {
-    const url = `${server}/admin/file/upload${folder_id ? `/${folder_id}` : ''}`;
+const upload = (fileList, folderId, onSuccess, onError) => {
+    const url = `${server}/admin/file/upload${folderId ? `/${folderId}` : ''}`;
     const req = request.post(url);
-    file_list.forEach((file) => {
+    fileList.forEach((file) => {
     // console.log(file)
         req.attach(file.name, file);
     });

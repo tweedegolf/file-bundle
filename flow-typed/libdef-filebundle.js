@@ -1,10 +1,8 @@
 /* eslint no-undef: 0 */
-
-import * as Constants from '../src/util/constants';
+import R from 'ramda';
+import * as Constants from '../Resources/js/src/util/constants';
 
 declare type PayloadType = {
-    id?: number,
-    rootFolderId?: number,
     selected?: Array<FileType>,
     clipboard?: Array<FileType>,
     scroll?: number,
@@ -17,52 +15,64 @@ declare type PayloadType = {
     hover?: number,
     errorId?: string,
     imageUrl?: string,
-    parentFolder?: FolderType | null,
-    currentFolder?: FolderType,
-    foldersById?: {
-        id?: FolderType,
-    },
-    filesById?: {
-        id?: FileType,
-    },
-    errors?: Array<{
-        id: string,
-        data: string,
-        type: Constants.ERROR_OPENING_FOLDER,
-        messages: Array<string>,
-    }>
 };
 
-declare type FolderAddedPayloadType = {
+declare type PayloadErrorType = {
+    errors: Array<ErrorType>,
+};
+
+declare type PayloadDeleteType = {
+    id: number | null
+};
+
+declare type PayloadOpenFolderType = {
+    parentFolder: FolderType | null,
+    currentFolder: FolderType,
+    foldersById: { id?: FolderType },
+    filesById: { id?: FileType },
+};
+
+declare type PayloadAddFolderType = {
+    currentFolder: FolderType,
+    foldersById: { id: FolderType },
+    errors: Array<ErrorType>,
+};
+
+declare type PayloadFolderAddedType = {
     isAddingFolder: boolean,
     errors: Array<ErrorType>,
 };
 
-declare type DeleteFilePayloadType = {
-    deleteFileWithId: number | null
-};
-
-declare type DeleteFolderPayloadType = {
-    deleteFolderWithId: number | null
+declare type PayloadDeleteFileType = {
+    currentFolder: FolderType,
+    filesById: { id: FileType },
+    foldersById: { id: FolderType },
 };
 
 declare type ChangeSortingPayloadType = {
     sort: string
 };
 
-const actionTypes = R.join(R.keys(Constants), '|');
-declare type ActionType = {
-    type: actionTypes,
-    payload: (
-        PayloadType |
-        PayloadFolderAddedType |
-        ChangeSortingPayloadType |
-        DeleteFilePayloadType |
-        DeleteFolderPayloadType |
-        null
-    ),
+const errorTypes = R.join(R.filter((key: string) => key.indexOf('ERROR_') === 0, R.keys(Constants)), '|');
+declare type ActionErrorType = {
+    type: errorTypes;
+    payload: PayloadErrorType,
 };
 
+declare type ActionType = (
+    ActionDeleteType |
+    ActionErrorType
+);
+
+declare type ActionDeleteType = {
+    type: (Constants.DELETE_FOLDER |
+           Constants.CONFIRM_DELETE_FOLDER |
+           Constants.FOLDER_DELETED |
+           Constants.DELETE_FILE |
+           Constants.CONFIRM_DELETE_FILE |
+           Constants.FILE_DELETED),
+    payload: PayloadDeleteType
+};
 
 declare type FolderType = {
     create_ts?: number,
@@ -95,6 +105,7 @@ declare type DispatchType = (action: ActionType) => void;
 
 declare type ErrorType = {
     id: string,
+    data?: string,
     type: string,
     messages: Array<string>,
 };

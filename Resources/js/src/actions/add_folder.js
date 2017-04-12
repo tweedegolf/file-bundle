@@ -8,14 +8,16 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const addFolder = (folderName: string, resolve: Function, reject: Function) => {
+const addFolder = (folderName: string,
+    resolve: (payload: PayloadAddFolderType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
     const foldersById = R.clone(tree.foldersById);
 
     api.addFolder(folderName, currentFolder.id,
-        (folders, errorMessages) => {
-            folders.forEach((f) => {
+        (folders: Array<FolderType>, errorMessages: Array<string>) => {
+            folders.forEach((f: FolderType) => {
                 foldersById[f.id] = f;
                 currentFolder.folders.push(R.merge(f, { new: true }));
             });
@@ -40,7 +42,7 @@ const addFolder = (folderName: string, resolve: Function, reject: Function) => {
                 //errors: [{id: 7777, type: 'generic', messages: ['oh my, this is an error!']}]
             });
         },
-        (messages) => {
+        (messages: Array<string>) => {
             const errors = [{
                 id: getUID(),
                 data: folderName,
@@ -59,13 +61,13 @@ export default (folderName: string) => {
 
     addFolder(
         folderName,
-        (payload) => {
+        (payload: PayloadAddFolderType) => {
             dispatch({
                 type: Constants.FOLDER_ADDED,
                 payload,
             });
         },
-        (payload) => {
+        (payload: PayloadErrorType) => {
             dispatch({
                 type: Constants.ERROR_ADDING_FOLDER,
                 payload,

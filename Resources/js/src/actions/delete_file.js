@@ -8,7 +8,9 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const deleteFile = (fileId: number, resolve: Function, reject: Function) => {
+const deleteFile = (fileId: number,
+    resolve: (payload: PayloadDeleteFileType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
     const filesById = R.clone(tree.filesById);
@@ -29,7 +31,7 @@ const deleteFile = (fileId: number, resolve: Function, reject: Function) => {
                 foldersById,
             });
         },
-        (messages) => {
+        (messages: Array<string>) => {
             const file = filesById[fileId];
             const errors = [{
                 id: getUID(),
@@ -50,13 +52,13 @@ export default (fileId: number) => {
 
     deleteFile(
         fileId,
-        (payload) => {
+        (payload: PayloadDeleteFileType) => {
             dispatch({
                 type: Constants.FILE_DELETED,
                 payload,
             });
         },
-        (payload) => {
+        (payload: PayloadErrorType) => {
             dispatch({
                 type: Constants.ERROR_DELETING_FILE,
                 payload,

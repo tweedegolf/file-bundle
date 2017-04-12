@@ -9,7 +9,7 @@ const store: StoreType = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 // optimistic update
-const fromCache = (folderId: number): PayloadType | null => {
+const fromCache = (folderId: number): PayloadOpenFolderType | null => {
     const tree = store.getState().tree;
     const filesById: {id?: FileType} = R.clone(tree.filesById);
     const foldersById: {id?: FolderType} = R.clone(tree.foldersById);
@@ -32,8 +32,8 @@ const fromCache = (folderId: number): PayloadType | null => {
 };
 
 const loadFolder = (folderId: number, checkRootFolder: boolean,
-    resolve: (payload: PayloadType) => mixed,
-    reject: (payload: PayloadType) => mixed) => {
+    resolve: (payload: PayloadOpenFolderType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
     const filesById: {id?: FileType} = R.clone(tree.filesById);
     const foldersById: {id?: FolderType} = R.clone(tree.foldersById);
@@ -101,7 +101,7 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
     });
 
     if (forceLoad !== true && R.isNil(checkRootFolder)) {
-        const payload: PayloadType | null = fromCache(id);
+        const payload: PayloadOpenFolderType | null = fromCache(id);
         // console.log('cache', payload);
         if (payload !== null) {
             dispatch({
@@ -117,13 +117,13 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
     loadFolder(
         id,
         checkRootFolder,
-        (payload: PayloadType) => {
+        (payload: PayloadOpenFolderType) => {
             dispatch({
                 type: Constants.FOLDER_OPENED,
                 payload,
             });
         },
-        (payload: PayloadType) => {
+        (payload: PayloadErrorType) => {
             dispatch({
                 type: Constants.ERROR_OPENING_FOLDER,
                 payload,
