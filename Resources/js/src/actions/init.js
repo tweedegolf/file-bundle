@@ -11,7 +11,7 @@ const dispatch: DispatchType = store.dispatch;
 export default (options: OptionsType) => {
     persistStore(store, {}, () => {
         const rootFolderId: number = options.rootFolderId;
-        const tmp = store.getState().tree.foldersById;
+        const tmp: null | FoldersByIdType = store.getState().tree.foldersById;
         const rootFolder: FolderType = {
             id: rootFolderId,
             name: '..',

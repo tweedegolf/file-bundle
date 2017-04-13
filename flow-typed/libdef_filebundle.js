@@ -18,7 +18,7 @@ declare type ActionInitType = {
 declare type PayloadInitType = {
     selected: Array<FileType>,
     rootFolderId: number,
-    foldersById : { id: FolderType },
+    foldersById : FoldersByIdType,
 };
 
 // open folder
@@ -37,8 +37,8 @@ declare type ActionFolderOpenedType = {
 declare type PayloadFolderOpenedType = {
     parentFolder: FolderType | null,
     currentFolder: FolderType,
-    foldersById: { id: FolderType },
-    filesById: { id: FileType },
+    foldersById: FoldersByIdType,
+    filesById: FilesByIdType,
 };
 
 
@@ -54,7 +54,7 @@ declare type ActionFolderAddedType = {
 
 declare type PayloadFolderAddedType = {
     currentFolder: FolderType,
-    foldersById: { id: FolderType },
+    foldersById: FoldersByIdType,
     errors: Array<ErrorType>,
 };
 
@@ -94,8 +94,8 @@ declare type ActionDeletedType = {
 
 declare type PayloadDeletedType = {
     currentFolder: FolderType,
-    filesById: { id: FileType },
-    foldersById: { id: FolderType },
+    filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
 };
 
 declare type FolderType = {
@@ -140,12 +140,8 @@ declare type TreeStateType = {
     currentFolder: null | FolderType,
     rootFolderId: null | number,
     parentFolder: null | FolderType,
-    filesById: null | {
-        id: FileType,
-    },
-    foldersById: null | {
-        id: FolderType,
-    },
+    filesById: null | FilesByIdType,
+    foldersById: null | FoldersByIdType,
     errors: Array<ErrorType>
 };
 
@@ -205,8 +201,8 @@ type ActionUnionType =
 
 declare type DispatchType = (action: ActionUnionType) => void;
 
-declare type FoldersByIdType = { id: FolderType };
-declare type FilesByIdType = { id: FileType };
+declare type FoldersByIdType = { [id: number]: FolderType };
+declare type FilesByIdType = { [id: number]: FileType };
 
 
 // wip
