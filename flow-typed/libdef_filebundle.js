@@ -1,0 +1,228 @@
+/* eslint no-undef: 0 */
+import R from 'ramda';
+import * as Constants from '../Resources/js/src/util/constants';
+
+// options passed via HTML element's data-options attribute
+declare type OptionsType = {
+    rootFolderId: number,
+    selected?: Array<FileType>,
+    multiple?: boolean,
+};
+
+// init
+declare type ActionInitType = {
+    type: 'INIT',
+    payload: PayloadInitType,
+};
+
+declare type PayloadInitType = {
+    selected: Array<FileType>,
+    rootFolderId: number,
+    foldersById : { id: FolderType },
+};
+
+// open folder
+declare type ActionOpenFolderType = {
+    type: Constants.OPEN_FOLDER,
+    payload: {
+        id: number,
+    },
+};
+
+declare type ActionFolderOpenedType = {
+    type: 'FOLDER_OPENED',
+    payload: PayloadFolderOpenedType,
+};
+
+declare type PayloadFolderOpenedType = {
+    parentFolder: FolderType | null,
+    currentFolder: FolderType,
+    foldersById: { id: FolderType },
+    filesById: { id: FileType },
+};
+
+
+// add folder
+declare type ActionAddFolderType = {
+    type: Constants.ADD_FOLDER,
+};
+
+declare type ActionFolderAddedType = {
+    type: Constants.FOLDER_ADDED,
+    payload: PayloadFolderAddedType,
+};
+
+declare type PayloadFolderAddedType = {
+    currentFolder: FolderType,
+    foldersById: { id: FolderType },
+    errors: Array<ErrorType>,
+};
+
+
+// errors
+const errorTypes = R.join(R.filter((key: string) => key.indexOf('ERROR_') === 0, R.keys(Constants)), '|');
+declare type ActionErrorType = {
+    type: errorTypes;
+    payload: PayloadErrorType,
+};
+
+declare type PayloadErrorType = {
+    errors: Array<ErrorType>,
+};
+
+// initiate delete file or folder
+declare type ActionDeleteType = {
+    type: Constants.DELETE_FOLDER |
+          Constants.CONFIRM_DELETE_FOLDER |
+          Constants.FOLDER_DELETED |
+          Constants.DELETE_FILE |
+          Constants.CONFIRM_DELETE_FILE,
+    payload: PayloadDeleteType
+};
+
+declare type PayloadDeleteType = {
+    id: number | null
+};
+
+
+// file or folder deleted
+declare type ActionDeletedType = {
+    type: Constants.FOLDER_DELETED |
+          Constants.FILE_DELETED,
+    payload: PayloadDeletedType
+};
+
+declare type PayloadDeletedType = {
+    currentFolder: FolderType,
+    filesById: { id: FileType },
+    foldersById: { id: FolderType },
+};
+
+declare type FolderType = {
+    id: number,
+    name: string,
+    create_ts?: number,
+    created?: string,
+    file_count?: number,
+    folder_count?: number,
+    parent?: number,
+    type?: string,
+    size?: string,
+    size_bytes?: number,
+    files?: Array<FileType>,
+    folders?: Array<FolderType>,
+    isTrashed?: boolean,
+};
+
+declare type FileType = {
+    create_ts: number,
+    created: string,
+    id: number,
+    name: string,
+    original: string,
+    thumb: string,
+    type: string,
+    size: string,
+    size_bytes: number,
+    isTrashed?: boolean,
+};
+
+declare type ErrorType = {
+    id: string,
+    data?: string,
+    type: string,
+    messages: Array<string>,
+};
+
+
+// state
+declare type TreeStateType = {
+    currentFolder: null | FolderType,
+    rootFolderId: null | number,
+    parentFolder: null | FolderType,
+    filesById: null | {
+        id: FileType,
+    },
+    foldersById: null | {
+        id: FolderType,
+    },
+    errors: Array<ErrorType>
+};
+
+declare type UIStateType = {
+    sort: string,
+    ascending: boolean,
+    expanded: boolean,
+    previewUrl: string | null,
+    deleteFileWithId: number | null,
+    deleteFolderWithId: number | null,
+    hover: number,
+    errors: Array<ErrorType>,
+    loadingFolderWithId: number,
+    deletingFileWithId: number | null,
+    deletingFolderWithId: number | null,
+    isAddingFolder: boolean,
+    isUploadingFiles: boolean,
+    scrollPosition: number | null,
+    selected: Array<FileType>,
+    clipboard: Array<FileType>,
+    multiple: boolean,
+    imagesOnly: boolean
+};
+
+declare type StateType = {
+    tree: TreeStateType,
+    ui: UIStateType,
+};
+
+
+// redux
+declare type StoreType = {
+    tree: TreeStateType,
+    ui: UIStateType,
+    dispatch: DispatchType,
+    getState: () => StateType,
+};
+
+declare type ActionUnionTreeReducerType =
+    | ActionInitType
+    | ActionFolderOpenedType
+    | ActionDeleteType
+    | ActionDeletedType
+    | ActionFolderAddedType
+    | ActionErrorType
+;
+
+type ActionUnionType =
+    | ActionInitType
+    | ActionDeleteType
+    | ActionDeletedType
+    | ActionFolderOpenedType
+    | ActionAddFolderType
+    | ActionFolderAddedType
+    | ActionErrorType
+;
+
+declare type DispatchType = (action: ActionUnionType) => void;
+
+declare type FoldersByIdType = { id: FolderType };
+declare type FilesByIdType = { id: FileType };
+
+
+// wip
+/*
+declare type PayloadType = {
+    selected?: Array<FileType>,
+    clipboard?: Array<FileType>,
+    scroll?: number,
+    file?: FileType,
+    browser?: boolean,
+    multiple?: boolean,
+    folder_id?: number,
+    max?: number,
+    diff?: number,
+    hover?: number,
+    errorId?: string,
+    imageUrl?: string,
+};
+*/

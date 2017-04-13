@@ -8,31 +8,39 @@ import { openFolder } from '../actions';
 const store: StoreType = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-export default (options: { root_folder_id: number, selected: ?Array<FileType> }) => {
+export default (options: OptionsType) => {
     persistStore(store, {}, () => {
-        const rootFolderId: number = options.root_folder_id;
-        const foldersById: { id?: FolderType } = store.getState().tree.foldersById;
-
-        foldersById[rootFolderId] = {
+        const rootFolderId: number = options.rootFolderId;
+        const tmp = store.getState().tree.foldersById;
+        const rootFolder: FolderType = {
             id: rootFolderId,
             name: '..',
             file_count: 0,
             folder_count: 0,
         };
 
+        let foldersById: FoldersByIdType = {
+            [rootFolderId]: rootFolder,
+        };
+
+        if (tmp !== null) {
+            foldersById = { ...tmp, ...foldersById };
+        }
+
         const noCache = rootFolderId !== store.getState().tree.rootFolderId;
         // console.log(noCache, rootFolderId, store.getState().tree.rootFolderId);
-
-        dispatch({
-            type: Constants.INIT,
+        const action: ActionInitType = {
+            type: 'INIT',
             payload: {
                 selected: options.selected || [],
                 rootFolderId,
                 foldersById,
             },
-        });
+        };
 
-        const currentFolderId = R.cond([
+        dispatch(action);
+
+        const currentFolderId: number = R.cond([
             [R.isNil, R.always(rootFolderId)],
             [R.isEmpty, R.always(rootFolderId)],
             [R.T, (cf: FolderType): number => cf.id],

@@ -8,9 +8,9 @@ import Browser from './containers/browser.react';
 import { getStore } from './reducers/store';
 
 const store: StoreType = getStore();
-const getOptions = (element: HTMLElement | null): HTMLElement | null => R.cond([
+const getOptions = (element: HTMLElement): HTMLElement => R.cond([
     [R.isNil, R.always(null)],
-    [R.T, (data: any) => JSON.parse(data)],
+    [R.T, (data: string): OptionsType => JSON.parse(data)],
 ])(element.dataset.options);
 
 // an element with the id 'tg_file_browser' will be converted to a interactive file browser

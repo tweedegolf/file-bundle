@@ -9,7 +9,7 @@ const store = getStore();
 const dispatch = store.dispatch;
 
 const addFolder = (folderName: string,
-    resolve: (payload: PayloadAddFolderType) => mixed,
+    resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);
@@ -61,7 +61,7 @@ export default (folderName: string) => {
 
     addFolder(
         folderName,
-        (payload: PayloadAddFolderType) => {
+        (payload: PayloadFolderAddedType) => {
             dispatch({
                 type: Constants.FOLDER_ADDED,
                 payload,

@@ -16,30 +16,17 @@ import * as Constants from '../util/constants';
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
 export const treeInitialState: TreeStateType = {
-    currentFolder: {},
+    currentFolder: null,
     rootFolderId: null,
     parentFolder: null,
-    filesById: {},
-    foldersById: {},
+    filesById: null,
+    foldersById: null,
     errors: [],
 };
 
-type TreeActionType = {
-    type: (
-        Constants.INIT |
-        Constants.FOLDER_OPENED |
-        Constants.FILE_DELETED |
-        Constants.FOLDER_DELETED |
-        Constants.UPLOAD_DONE |
-        Constants.FOLDER_ADDED |
-        Constants.FILES_MOVED
-    ),
-    payload: TreeStateType,
-};
-
 export const tree = (state: TreeStateType = treeInitialState,
-    action: TreeActionType): TreeStateType => {
-    if (action.type === Constants.INIT) {
+    action: ActionUnionTreeReducerType): TreeStateType => {
+    if (action.type === 'INIT') {
         return {
             ...state,
             foldersById: action.payload.foldersById,
@@ -48,7 +35,7 @@ export const tree = (state: TreeStateType = treeInitialState,
     /**
      * Contents of a folder has been loaded from the server or from cache
      */
-    } else if (action.type === Constants.FOLDER_OPENED) {
+    } else if (action.type === 'FOLDER_OPENED') {
         // console.log(action.payload);
         // return { ...action.payload }
         return {
