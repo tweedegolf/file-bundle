@@ -35,7 +35,7 @@ declare type ActionFolderOpenedType = {
 };
 
 declare type PayloadFolderOpenedType = {
-    parentFolder: FolderType | null,
+    parentFolder: null | FolderType,
     currentFolder: FolderType,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,

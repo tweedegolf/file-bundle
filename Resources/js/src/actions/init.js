@@ -1,4 +1,4 @@
-// @flow
+// @flowoff
 import R from 'ramda';
 import { persistStore } from 'redux-persist';
 import { getStore } from '../reducers/store';

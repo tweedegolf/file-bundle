@@ -18,15 +18,18 @@ const fromCache = (folderId: number): PayloadFolderOpenedType | null => {
     let currentFolder = null;
     let parentFolder = null;
 
-    if (foldersById === null) {
+    // nothing loaded yet
+    if (foldersById === null || filesById === null) {
         return null;
     }
 
     currentFolder = foldersById[folderId];
     if (currentFolder !== null) {
-        if (currentFolder.id !== rootFolderId && typeof R.isNil(currentFolder.parent) === false) {
+        if (currentFolder.id !== rootFolderId && typeof currentFolder.parent !== 'undefined') {
             parentFolder = foldersById[currentFolder.parent];
         }
+    } else {
+        return null;
     }
 
     return {
@@ -35,6 +38,18 @@ const fromCache = (folderId: number): PayloadFolderOpenedType | null => {
         foldersById,
         filesById,
     };
+};
+
+
+const createError = (currentFolder: null | FolderType, messages: Array<string>): PayloadErrorType => {
+    const data: string = currentFolder === null ? 'no name' : currentFolder.name;
+    const errors = [{
+        id: getUID(),
+        data,
+        type: Constants.ERROR_OPENING_FOLDER,
+        messages,
+    }];
+    return { errors };
 };
 
 const loadFolder = (folderId: number, checkRootFolder: boolean,
@@ -71,47 +86,46 @@ const loadFolder = (folderId: number, checkRootFolder: boolean,
         folderId,
         rfCheck,
         (folders: Array<FolderType>, files: Array<FileType>) => {
-            if (currentFolder !== null && foldersById !== null && filesById !== null) {
-                const tmp: FolderType = currentFolder;
-                tmp.files = [];
-                tmp.folders = [];
+            if (foldersById !== null && filesById !== null) {
+                if (currentFolder !== null) {
+                    currentFolder.files = [];
+                    currentFolder.folders = [];
+                }
 
                 R.forEach((f: FolderType) => {
                     foldersById[f.id] = f;
-                    tmp.folders.push(f);
+                    if (currentFolder !== null && typeof currentFolder.folders !== 'undefined') {
+                        currentFolder.folders.push(f);
+                    }
                 }, folders);
 
                 R.forEach((f: FileType) => {
                     filesById[f.id] = f;
-                    tmp.files.push(f);
+                    if (currentFolder !== null && typeof currentFolder.files !== 'undefined') {
+                        currentFolder.files.push(f);
+                    }
                 }, files);
 
-                tmp.file_count = tmp.files.length;
-                tmp.folder_count = tmp.folders.length;
-                foldersById[folderId] = tmp;
+                if (currentFolder !== null) {
+                    currentFolder.file_count = files.length;
+                    currentFolder.folder_count = folders.length;
+                    foldersById[folderId] = currentFolder;
 
-                resolve({
-                    parentFolder,
-                    currentFolder: tmp,
-                    foldersById,
-                    filesById,
-                });
+                    resolve({
+                        parentFolder,
+                        currentFolder,
+                        foldersById,
+                        filesById,
+                    });
+                } else {
+                    reject(createError(currentFolder, ['currentFolder can not be null']));
+                }
             } else {
-                console.error('big phat error bro!');
+                reject(createError(currentFolder, ['filesById, foldersByid and currentFolder can not be null']));
             }
-
-
-
         },
         (messages: Array<string>) => {
-            const data: string = currentFolder === null ? 'no name' : currentFolder.name;
-            const errors = [{
-                id: getUID(),
-                data,
-                type: Constants.ERROR_OPENING_FOLDER,
-                messages,
-            }];
-            reject({ errors });
+            reject(createError(currentFolder, messages));
         },
     );
 };
