@@ -40,7 +40,6 @@ const fromCache = (folderId: number): PayloadFolderOpenedType | null => {
     };
 };
 
-
 const createError = (currentFolder: null | FolderType, messages: Array<string>): PayloadErrorType => {
     const data: string = currentFolder === null ? 'no name' : currentFolder.name;
     const errors = [{

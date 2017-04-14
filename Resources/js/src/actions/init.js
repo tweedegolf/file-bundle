@@ -1,4 +1,4 @@
-// @flowoff
+// @flow
 import R from 'ramda';
 import { persistStore } from 'redux-persist';
 import { getStore } from '../reducers/store';
@@ -11,7 +11,6 @@ const dispatch: DispatchType = store.dispatch;
 export default (options: OptionsType) => {
     persistStore(store, {}, () => {
         const rootFolderId: number = options.rootFolderId;
-        const tmp: null | FoldersByIdType = store.getState().tree.foldersById;
         const rootFolder: FolderType = {
             id: rootFolderId,
             name: '..',
@@ -19,12 +18,13 @@ export default (options: OptionsType) => {
             folder_count: 0,
         };
 
-        let foldersById: FoldersByIdType = {
-            [rootFolderId]: rootFolder,
-        };
-
-        if (R.isNil(tmp) === false) {
-            foldersById = { ...tmp, ...foldersById };
+        let foldersById: null | FoldersByIdType = store.getState().tree.foldersById;
+        if (foldersById === null) {
+            foldersById = {
+                [rootFolderId]: rootFolder,
+            };
+        } else {
+            foldersById = { ...foldersById, [rootFolderId]: rootFolder };
         }
 
         const noCache = rootFolderId !== store.getState().tree.rootFolderId;
@@ -40,13 +40,8 @@ export default (options: OptionsType) => {
 
         dispatch(action);
 
-        // const currentFolderId: number = R.cond([
-        //     [R.isNil, R.always(rootFolderId)],
-        //     [R.T, (cf: FolderType): number => cf.id],
-        // ])(store.getState().tree.currentFolder);
-
-        const tmp2: null | FolderType = store.getState().tree.currentFolder
-        const currentFolderId: number = tmp2 === null ? rootFolder : tmp;
+        const tmp: null | FolderType = store.getState().tree.currentFolder;
+        const currentFolderId = tmp === null ? rootFolderId : tmp.id;
 
         if (noCache === true) {
             openFolder({ id: currentFolderId, checkRootFolder: true });

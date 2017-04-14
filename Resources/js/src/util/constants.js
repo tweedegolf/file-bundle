@@ -3,7 +3,7 @@
  * @type       {string}
  * @file       constants that describe actions
  */
-export const INIT = 'INIT';
+export const INIT: 'INIT' = 'INIT';
 
  /**
   * API call: upload files, processed by:

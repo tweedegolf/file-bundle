@@ -1,4 +1,4 @@
-// @flowoff
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -8,38 +8,54 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
+const createError = (messages: Array<string>, file: null | FileType = null) => {
+    const data: string = file !== null ? file.name : 'no name';
+    const errors = [{
+        id: getUID(),
+        type: Constants.ERROR_DELETING_FILE,
+        data,
+        messages,
+    }];
+    return { errors };
+};
+
 const deleteFile = (fileId: number,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
-    const currentFolder = R.clone(tree.currentFolder);
-    const filesById = R.clone(tree.filesById);
-    const foldersById = R.clone(tree.foldersById);
+    const currentFolder: null | FolderType = R.clone(tree.currentFolder);
+    const filesById: null | FilesByIdType = R.clone(tree.filesById);
+    const foldersById: null | FoldersByIdType = R.clone(tree.foldersById);
 
     api.deleteFile(fileId,
         () => {
-            const file = filesById[fileId];
-            file.isTrashed = true;
-            const index = R.findIndex(R.propEq('id', fileId))(currentFolder.files);
-            currentFolder.files = R.update(index, file, currentFolder.files);
-            currentFolder.file_count = R.length(currentFolder.files);
-            foldersById[currentFolder.id] = currentFolder;
-
-            resolve({
-                currentFolder,
-                filesById,
-                foldersById,
-            });
+            if (filesById !== null && foldersById !== null) {
+                const file = filesById[fileId];
+                file.isTrashed = true;
+                if (currentFolder !== null) {
+                    if (typeof currentFolder.files !== 'undefined') {
+                        const files: Array<FileType> = currentFolder.files;
+                        const index = R.findIndex(R.propEq('id', fileId))(files);
+                        currentFolder.files = R.update(index, file, files);
+                        currentFolder.file_count = R.length(currentFolder.files);
+                        foldersById[currentFolder.id] = currentFolder;
+                    }
+                    resolve({
+                        currentFolder,
+                        filesById,
+                        foldersById,
+                    });
+                }
+            } else {
+                reject(createError(['FilesById and foldersById can not by null']));
+            }
         },
         (messages: Array<string>) => {
-            const file = filesById[fileId];
-            const errors = [{
-                id: getUID(),
-                data: file.name,
-                type: Constants.ERROR_DELETING_FILE,
-                messages,
-            }];
-            reject({ errors });
+            let file: null | FileType = null;
+            if (filesById !== null) {
+                file = filesById[fileId];
+            }
+            reject(createError(messages, file));
         },
     );
 };

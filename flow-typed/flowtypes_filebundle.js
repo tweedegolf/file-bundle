@@ -11,6 +11,7 @@ declare type OptionsType = {
 
 // init
 declare type ActionInitType = {
+    // type: typeof Constants.INIT,
     type: 'INIT',
     payload: PayloadInitType,
 };
@@ -23,14 +24,16 @@ declare type PayloadInitType = {
 
 // open folder
 declare type ActionOpenFolderType = {
-    type: Constants.OPEN_FOLDER,
+    // type: Constants.OPEN_FOLDER,
+    type: 'OPEN_FOLDER',
     payload: {
         id: number,
     },
 };
 
 declare type ActionFolderOpenedType = {
-    type: Constants.FOLDER_OPENED,
+    // type: Constants.FOLDER_OPENED,
+    type: 'FOLDER_OPENED',
     payload: PayloadFolderOpenedType,
 };
 
@@ -44,11 +47,11 @@ declare type PayloadFolderOpenedType = {
 
 // add folder
 declare type ActionAddFolderType = {
-    type: Constants.ADD_FOLDER,
+    type: 'ADD_FOLDER',
 };
 
 declare type ActionFolderAddedType = {
-    type: Constants.FOLDER_ADDED,
+    type: 'FOLDER_ADDED',
     payload: PayloadFolderAddedType,
 };
 
@@ -72,11 +75,11 @@ declare type PayloadErrorType = {
 
 // initiate delete file or folder
 declare type ActionDeleteType = {
-    type: Constants.DELETE_FOLDER |
-          Constants.CONFIRM_DELETE_FOLDER |
-          Constants.FOLDER_DELETED |
-          Constants.DELETE_FILE |
-          Constants.CONFIRM_DELETE_FILE,
+    type: 'DELETE_FOLDER' |
+          'CONFIRM_DELETE_FOLDER' |
+          'FOLDER_DELETED' |
+          'DELETE_FILE' |
+          'CONFIRM_DELETE_FILE',
     payload: PayloadDeleteType
 };
 
@@ -87,8 +90,8 @@ declare type PayloadDeleteType = {
 
 // file or folder deleted
 declare type ActionDeletedType = {
-    type: Constants.FOLDER_DELETED |
-          Constants.FILE_DELETED,
+    type: 'FOLDER_DELETED' |
+          'FILE_DELETED',
     payload: PayloadDeletedType
 };
 

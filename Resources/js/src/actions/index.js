@@ -1,5 +1,5 @@
 // @flow
-import * as ActionTypes from '../util/constants';
+import * as Constants from '../util/constants';
 import { getStore } from '../reducers/store';
 import openFolder from './open_folder';
 import pasteFiles from './paste_files';
@@ -11,8 +11,7 @@ export { default as deleteFolder } from './delete_folder';
 export { default as uploadFiles } from './upload_files';
 export { openFolder, pasteFiles };
 
-const dispatch = getStore().dispatch;
-
+const dispatch: DispatchType = getStore().dispatch;
 
 /**
  * @name       SelectFileArg
@@ -33,7 +32,7 @@ const dispatch = getStore().dispatch;
  */
 export const selectFile = (data: { browser: boolean, multiple: boolean, id: number }) => {
     dispatch({
-        type: ActionTypes.SELECT_FILE,
+        type: Constants.SELECT_FILE,
         payload: { ...data },
     });
 };
@@ -43,7 +42,7 @@ export const selectFile = (data: { browser: boolean, multiple: boolean, id: numb
  */
 export const cutFiles = () => {
     dispatch({
-        type: ActionTypes.CUT_FILES,
+        type: Constants.CUT_FILES,
     });
 };
 
@@ -52,7 +51,7 @@ export const cutFiles = () => {
  */
 export const cancelCutAndPasteFiles = () => {
     dispatch({
-        type: ActionTypes.CANCEL_CUT_AND_PASTE_FILES,
+        type: Constants.CANCEL_CUT_AND_PASTE_FILES,
     });
 };
 
@@ -65,7 +64,7 @@ export const cancelCutAndPasteFiles = () => {
  */
 export const changeSorting = (sort: boolean) => {
     dispatch({
-        type: ActionTypes.CHANGE_SORTING,
+        type: Constants.CHANGE_SORTING,
         payload: { sort },
     });
 };
@@ -78,7 +77,7 @@ export const changeSorting = (sort: boolean) => {
  */
 export const dismissError = (errorId: number) => {
     dispatch({
-        type: ActionTypes.DISMISS_ERROR,
+        type: Constants.DISMISS_ERROR,
         payload: { errorId },
     });
 };
@@ -91,7 +90,7 @@ export const dismissError = (errorId: number) => {
  */
 export const showPreview = (imageUrl: string) => {
     dispatch({
-        type: ActionTypes.SHOW_PREVIEW,
+        type: Constants.SHOW_PREVIEW,
         payload: { imageUrl },
     });
 };
@@ -106,14 +105,14 @@ export const showPreview = (imageUrl: string) => {
  */
 export const confirmDeleteFile = (id: number) => {
     dispatch({
-        type: ActionTypes.CONFIRM_DELETE_FILE,
+        type: Constants.CONFIRM_DELETE_FILE,
         payload: { id },
     });
 };
 
 export const confirmDeleteFolder = (id: number) => {
     dispatch({
-        type: ActionTypes.CONFIRM_DELETE_FOLDER,
+        type: Constants.CONFIRM_DELETE_FOLDER,
         payload: { id },
     });
 };
@@ -135,7 +134,7 @@ export const confirmDeleteFolder = (id: number) => {
  */
 export const setHover = (diff: number, max: number) => {
     dispatch({
-        type: ActionTypes.SET_HOVER,
+        type: Constants.SET_HOVER,
         payload: { diff, max },
     });
 };
@@ -149,7 +148,7 @@ export const setHover = (diff: number, max: number) => {
  */
 export const setScrollPosition = (scroll: number) => {
     dispatch({
-        type: ActionTypes.SET_SCROLL_POSITION,
+        type: Constants.SET_SCROLL_POSITION,
         payload: { scroll },
     });
 };
@@ -161,6 +160,6 @@ export const setScrollPosition = (scroll: number) => {
  */
 export const expandBrowser = () => {
     dispatch({
-        type: ActionTypes.EXPAND_BROWSER,
+        type: Constants.EXPAND_BROWSER,
     });
 };
