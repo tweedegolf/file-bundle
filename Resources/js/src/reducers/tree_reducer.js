@@ -1,4 +1,4 @@
-// @flow
+// @flowoff
 import * as Constants from '../util/constants';
 
 /**
@@ -31,11 +31,12 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             foldersById: action.payload.foldersById,
             rootFolderId: action.payload.rootFolderId,
+            foo: action.payload.bar,
         };
     /**
      * Contents of a folder has been loaded from the server or from cache
      */
-    } else if (action.type === 'FOLDER_OPENED') {
+    } else if (action.type === Constants.FOLDER_OPENED) {
         // console.log(action.payload);
         // return { ...action.payload }
         return {

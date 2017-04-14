@@ -1,4 +1,4 @@
-// @flow
+// @flowoff
 import * as Constants from '../util/constants';
 
 /**

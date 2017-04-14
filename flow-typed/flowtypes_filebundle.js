@@ -1,6 +1,6 @@
 /* eslint no-undef: 0 */
 import R from 'ramda';
-import * as Constants from '../Resources/js/src/util/constants';
+import * as Constants from './src/util/constants';
 
 // options passed via HTML element's data-options attribute
 declare type OptionsType = {
@@ -30,7 +30,7 @@ declare type ActionOpenFolderType = {
 };
 
 declare type ActionFolderOpenedType = {
-    type: 'FOLDER_OPENED',
+    type: Constants.FOLDER_OPENED,
     payload: PayloadFolderOpenedType,
 };
 
@@ -189,7 +189,7 @@ declare type ActionUnionTreeReducerType =
     | ActionErrorType
 ;
 
-type ActionUnionType =
+declare type ActionUnionType =
     | ActionInitType
     | ActionDeleteType
     | ActionDeletedType

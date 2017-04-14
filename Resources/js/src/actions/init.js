@@ -23,7 +23,7 @@ export default (options: OptionsType) => {
             [rootFolderId]: rootFolder,
         };
 
-        if (tmp !== null) {
+        if (R.isNil(tmp) === false) {
             foldersById = { ...tmp, ...foldersById };
         }
 
@@ -40,11 +40,13 @@ export default (options: OptionsType) => {
 
         dispatch(action);
 
-        const currentFolderId: number = R.cond([
-            [R.isNil, R.always(rootFolderId)],
-            [R.isEmpty, R.always(rootFolderId)],
-            [R.T, (cf: FolderType): number => cf.id],
-        ])(store.getState().tree.currentFolder);
+        // const currentFolderId: number = R.cond([
+        //     [R.isNil, R.always(rootFolderId)],
+        //     [R.T, (cf: FolderType): number => cf.id],
+        // ])(store.getState().tree.currentFolder);
+
+        const tmp2: null | FolderType = store.getState().tree.currentFolder
+        const currentFolderId: number = tmp2 === null ? rootFolder : tmp;
 
         if (noCache === true) {
             openFolder({ id: currentFolderId, checkRootFolder: true });

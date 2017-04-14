@@ -11,17 +11,23 @@ const dispatch: DispatchType = store.dispatch;
 // optimistic update
 const fromCache = (folderId: number): PayloadFolderOpenedType | null => {
     const tree = store.getState().tree;
-    const filesById: {id?: FileType} = R.clone(tree.filesById);
-    const foldersById: {id?: FolderType} = R.clone(tree.foldersById);
+    const filesById: null | FilesByIdType = R.clone(tree.filesById);
+    const foldersById: null | FoldersByIdType = R.clone(tree.foldersById);
     const rootFolderId: number | null = tree.rootFolderId;
-    const currentFolder: FolderType = foldersById[folderId];
 
-    if (R.isNil(currentFolder) || R.isNil(currentFolder.files)) {
+    let currentFolder = null;
+    let parentFolder = null;
+
+    if (foldersById === null) {
         return null;
     }
 
-    const parentFolder: (FolderType | null) = (currentFolder.id === rootFolderId) ?
-        null : foldersById[currentFolder.parent];
+    currentFolder = foldersById[folderId];
+    if (currentFolder !== null) {
+        if (currentFolder.id !== rootFolderId && typeof R.isNil(currentFolder.parent) === false) {
+            parentFolder = foldersById[currentFolder.parent];
+        }
+    }
 
     return {
         parentFolder,
@@ -35,17 +41,25 @@ const loadFolder = (folderId: number, checkRootFolder: boolean,
     resolve: (payload: PayloadFolderOpenedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree = store.getState().tree;
-    const filesById: {id?: FileType} = R.clone(tree.filesById);
-    const foldersById: {id?: FolderType} = R.clone(tree.foldersById);
+    const filesById: null | FilesByIdType = R.clone(tree.filesById);
+    const foldersById: null | FoldersByIdType = R.clone(tree.foldersById);
     const rootFolderId: number | null = tree.rootFolderId;
-    const currentFolder: FolderType = foldersById[folderId];
 
-    const parentFolder: (FolderType | null) = (currentFolder.id === rootFolderId) ?
-        null : foldersById[currentFolder.parent];
+    let parentFolder: null | FolderType = null;
+    let currentFolder: null | FolderType = null;
 
-    if (R.isNil(currentFolder.id) && rootFolderId !== null) {
-        currentFolder.id = rootFolderId;
-        currentFolder.name = '..';
+    if (foldersById === null) {
+        if (rootFolderId !== null) {
+            currentFolder = {
+                id: rootFolderId,
+                name: '..',
+            };
+        }
+    } else {
+        currentFolder = foldersById[folderId];
+        if (currentFolder.id !== rootFolderId && typeof currentFolder.parent !== 'undefined') {
+            parentFolder = foldersById[currentFolder.parent];
+        }
     }
 
     let rfCheck;
@@ -57,34 +71,43 @@ const loadFolder = (folderId: number, checkRootFolder: boolean,
         folderId,
         rfCheck,
         (folders: Array<FolderType>, files: Array<FileType>) => {
-            currentFolder.folders = [];
-            currentFolder.files = [];
+            if (currentFolder !== null && foldersById !== null && filesById !== null) {
+                const tmp: FolderType = currentFolder;
+                tmp.files = [];
+                tmp.folders = [];
 
-            R.forEach((f: FolderType) => {
-                foldersById[f.id] = f;
-                currentFolder.folders.push(f);
-            }, folders);
+                R.forEach((f: FolderType) => {
+                    foldersById[f.id] = f;
+                    tmp.folders.push(f);
+                }, folders);
 
-            R.forEach((f: FileType) => {
-                filesById[f.id] = f;
-                currentFolder.files.push(f);
-            }, files);
+                R.forEach((f: FileType) => {
+                    filesById[f.id] = f;
+                    tmp.files.push(f);
+                }, files);
 
-            currentFolder.file_count = currentFolder.files.length;
-            currentFolder.folder_count = currentFolder.folders.length;
-            foldersById[folderId] = currentFolder;
+                tmp.file_count = tmp.files.length;
+                tmp.folder_count = tmp.folders.length;
+                foldersById[folderId] = tmp;
 
-            resolve({
-                parentFolder,
-                currentFolder,
-                foldersById,
-                filesById,
-            });
+                resolve({
+                    parentFolder,
+                    currentFolder: tmp,
+                    foldersById,
+                    filesById,
+                });
+            } else {
+                console.error('big phat error bro!');
+            }
+
+
+
         },
         (messages: Array<string>) => {
+            const data: string = currentFolder === null ? 'no name' : currentFolder.name;
             const errors = [{
                 id: getUID(),
-                data: currentFolder.name,
+                data,
                 type: Constants.ERROR_OPENING_FOLDER,
                 messages,
             }];
