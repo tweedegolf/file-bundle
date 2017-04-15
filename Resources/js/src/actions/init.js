@@ -18,12 +18,8 @@ export default (options: OptionsType) => {
             folder_count: 0,
         };
 
-        let foldersById: null | FoldersByIdType = store.getState().tree.foldersById;
-        if (foldersById === null) {
-            foldersById = {
-                [rootFolderId]: rootFolder,
-            };
-        } else {
+        let foldersById = store.getState().tree.foldersById;
+        if (foldersById[rootFolderId] === null) {
             foldersById = { ...foldersById, [rootFolderId]: rootFolder };
         }
 
@@ -40,8 +36,8 @@ export default (options: OptionsType) => {
 
         dispatch(action);
 
-        const tmp: null | FolderType = store.getState().tree.currentFolder;
-        const currentFolderId = tmp === null ? rootFolderId : tmp.id;
+        const tmp: number = store.getState().tree.currentFolder.id;
+        const currentFolderId: number = tmp === -1 ? rootFolderId : tmp;
 
         if (noCache === true) {
             openFolder({ id: currentFolderId, checkRootFolder: true });

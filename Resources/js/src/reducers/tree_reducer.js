@@ -15,12 +15,28 @@ import * as Constants from '../util/constants';
  *
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
+const fakeFolder: FolderType = {
+    id: -1,
+    name: 'fake',
+    files_count: 0,
+    folders_count: 0,
+};
+const fakeFile: FileType = {
+    id: -1,
+    name: 'fake',
+    create_ts: new Date().getTime(),
+    created: new Date().toDateString(),
+    type: 'fake',
+    size: '0 kB',
+    size_bytes: 0,
+};
+
 export const treeInitialState: TreeStateType = {
-    currentFolder: null,
-    rootFolderId: null,
+    currentFolder: fakeFolder,
+    rootFolderId: -1,
     parentFolder: null,
-    filesById: null,
-    foldersById: null,
+    filesById: { [fakeFile.id]: fakeFile },
+    foldersById:  { [fakeFolder.id]: fakeFolder },
     errors: [],
 };
 
@@ -31,7 +47,6 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             foldersById: action.payload.foldersById,
             rootFolderId: action.payload.rootFolderId,
-            foo: action.payload.bar,
         };
     /**
      * Contents of a folder has been loaded from the server or from cache

@@ -122,11 +122,11 @@ declare type FileType = {
     created: string,
     id: number,
     name: string,
-    original: string,
-    thumb: string,
     type: string,
     size: string,
     size_bytes: number,
+    original?: string,
+    thumb?: string,
     isTrashed?: boolean,
 };
 
@@ -140,11 +140,11 @@ declare type ErrorType = {
 
 // state
 declare type TreeStateType = {
-    currentFolder: null | FolderType,
-    rootFolderId: null | number,
+    currentFolder: FolderType,
+    rootFolderId: number,
     parentFolder: null | FolderType,
-    filesById: null | FilesByIdType,
-    foldersById: null | FoldersByIdType,
+    filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
     errors: Array<ErrorType>
 };
 
