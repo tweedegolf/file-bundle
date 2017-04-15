@@ -1,3 +1,4 @@
+// @flowoff
 import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
 import { autoRehydrate, persistStore } from 'redux-persist';
@@ -6,14 +7,16 @@ import R from 'ramda';
 import { ui, uiInitialState } from '../reducers/ui_reducer';
 import { tree, treeInitialState } from '../reducers/tree_reducer';
 
-let store = null;
-
-const initialState = {
+const initialState: StateType = {
     ui: uiInitialState,
     tree: treeInitialState,
 };
 
-export const getNewStore = () => {
+// create dummy store to prevent a null value
+let store: StoreType<StateType, ActionUnionType> = createStore(combineReducers({ ui, tree }), initialState);
+let initialized: boolean = false;
+
+export const getNewStore = (): StoreType<StateType, ActionUnionType> => {
     const s = createStore(
         combineReducers({
             ui,
@@ -31,8 +34,9 @@ export const getNewStore = () => {
     return s;
 };
 
-export function getStore(): StoreType {
-    if (R.isNil(store)) {
+export function getStore(): StoreType<StateType, ActionUnionType> {
+    if (initialized === false) {
+        initialized = true;
         store = getNewStore();
     }
     return store;

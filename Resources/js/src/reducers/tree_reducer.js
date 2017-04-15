@@ -20,6 +20,7 @@ const fakeFolder: FolderType = {
     name: 'fake',
     files_count: 0,
     folders_count: 0,
+    parent: null,
 };
 const fakeFile: FileType = {
     id: -1,

@@ -11,7 +11,7 @@ export { default as deleteFolder } from './delete_folder';
 export { default as uploadFiles } from './upload_files';
 export { openFolder, pasteFiles };
 
-const dispatch: DispatchType = getStore().dispatch;
+const dispatch: Dispatch = getStore().dispatch;
 
 /**
  * @name       SelectFileArg

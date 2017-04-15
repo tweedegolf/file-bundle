@@ -5,8 +5,8 @@ import { getStore } from '../reducers/store';
 import * as Constants from '../util/constants';
 import { openFolder } from '../actions';
 
-const store: StoreType = getStore();
-const dispatch: DispatchType = store.dispatch;
+const store: StoreType<StateType, ActionUnionType> = getStore();
+const dispatch: Dispatch = store.dispatch;
 
 export default (options: OptionsType) => {
     persistStore(store, {}, () => {
@@ -16,6 +16,7 @@ export default (options: OptionsType) => {
             name: '..',
             file_count: 0,
             folder_count: 0,
+            parent: null,
         };
 
         let foldersById = store.getState().tree.foldersById;
@@ -26,7 +27,7 @@ export default (options: OptionsType) => {
         const noCache = rootFolderId !== store.getState().tree.rootFolderId;
         // console.log(noCache, rootFolderId, store.getState().tree.rootFolderId);
         const action: ActionInitType = {
-            type: 'INIT',
+            type: Constants.INIT,
             payload: {
                 selected: options.selected || [],
                 rootFolderId,
@@ -36,8 +37,8 @@ export default (options: OptionsType) => {
 
         dispatch(action);
 
-        const tmp: number = store.getState().tree.currentFolder.id;
-        const currentFolderId: number = tmp === -1 ? rootFolderId : tmp;
+        const tmp = store.getState().tree.currentFolder.id;
+        const currentFolderId = tmp === -1 ? rootFolderId : tmp;
 
         if (noCache === true) {
             openFolder({ id: currentFolderId, checkRootFolder: true });

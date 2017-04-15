@@ -1,4 +1,4 @@
-// @flowoff
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -19,10 +19,12 @@ const addFolder = (folderName: string,
         (folders: Array<FolderType>, errorMessages: Array<string>) => {
             folders.forEach((f: FolderType) => {
                 foldersById[f.id] = f;
-                currentFolder.folders.push(R.merge(f, { new: true }));
+                if (typeof currentFolder.folders !== 'undefined') {
+                    currentFolder.folders.push(R.merge(f, { new: true }));
+                }
             });
 
-            currentFolder.folder_count = R.length(currentFolder.folders);
+            currentFolder.folder_count = R.length(folders);
             foldersById[currentFolder.id] = currentFolder;
 
             let errors = [];

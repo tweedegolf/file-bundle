@@ -1,5 +1,6 @@
 /* eslint no-undef: 0 */
 import R from 'ramda';
+import type { Dispatch, Store } from 'redux';
 import * as Constants from './src/util/constants';
 
 // options passed via HTML element's data-options attribute
@@ -108,7 +109,7 @@ declare type FolderType = {
     created?: string,
     file_count?: number,
     folder_count?: number,
-    parent?: number,
+    parent: null | number,
     type?: string,
     size?: string,
     size_bytes?: number,
@@ -174,12 +175,16 @@ declare type StateType = {
     ui: UIStateType,
 };
 
-
 // redux
-declare type StoreType = {
-    tree: TreeStateType,
-    ui: UIStateType,
-    dispatch: DispatchType,
+// declare type StoreType = {
+//     tree: TreeStateType,
+//     ui: UIStateType,
+//     dispatch: DispatchType,
+//     getState: () => StateType,
+// };
+// redux
+declare type StoreType<StateType, ActionUnionType> = {
+    dispatch: Dispatch,
     getState: () => StateType,
 };
 
@@ -202,7 +207,8 @@ declare type ActionUnionType =
     | ActionErrorType
 ;
 
-declare type DispatchType = (action: ActionUnionType) => void;
+// declare type DispatchType = (action: ActionUnionType) => void;
+declare type DispatchType = Dispatch;
 
 declare type FoldersByIdType = { [id: number]: FolderType };
 declare type FilesByIdType = { [id: number]: FileType };

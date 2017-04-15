@@ -5,7 +5,7 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
-const store: StoreType = getStore();
+const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 // optimistic update
@@ -22,7 +22,7 @@ const fromCache = (folderId: number): PayloadFolderOpenedType | null => {
 
     let parentFolder: null | FolderType = null;
     const currentFolder: FolderType = foldersById[folderId];
-    if (currentFolder.id !== rootFolderId && typeof currentFolder.parent !== 'undefined') {
+    if (currentFolder.id !== rootFolderId && currentFolder.parent !== null) {
         parentFolder = foldersById[currentFolder.parent];
     }
 
@@ -48,13 +48,16 @@ const createError = (currentFolder: null | FolderType, messages: Array<string>):
 const loadFolder = (folderId: number, checkRootFolder: boolean,
     resolve: (payload: PayloadFolderOpenedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree = store.getState().tree;
+    const tree: TreeStateType = store.getState().tree;
     const filesById: FilesByIdType = R.clone(tree.filesById);
     const foldersById: FoldersByIdType = R.clone(tree.foldersById);
     const rootFolderId: number = tree.rootFolderId;
 
     const currentFolder: FolderType = foldersById[folderId];
     let parentFolder: null | FolderType = null;
+    if (currentFolder.parent !== null) {
+        parentFolder = foldersById[currentFolder.parent];
+    }
 
     let rfCheck;
     if (checkRootFolder === true) {
@@ -110,10 +113,11 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
         const payload: PayloadFolderOpenedType | null = fromCache(id);
         // console.log('cache', payload);
         if (payload !== null) {
-            dispatch({
+            const a: ActionFolderOpenedType = {
                 type: Constants.FOLDER_OPENED,
                 payload,
-            });
+            };
+            dispatch(a);
         }
     }
 
