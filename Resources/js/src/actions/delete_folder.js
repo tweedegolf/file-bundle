@@ -1,11 +1,11 @@
-// @flowoff
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
-const store: StoreType = getStore();
+const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const deleteFolder = (folderId: number,
@@ -19,16 +19,19 @@ const deleteFolder = (folderId: number,
     api.deleteFolder(folderId,
         () => {
             const folder = foldersById[folderId];
-            if (R.isNil(folder.files) === false) {
+            if (typeof folder.files !== 'undefined') {
                 folder.files = R.map((f: FileType): FileType => ({ ...f, isTrashed: true }), folder.files);
                 R.forEach((f: FileType) => { filesById[f.id] = f; }, folder.files);
+                folder.isTrashed = true;
             }
-            folder.isTrashed = true;
 
-            const index = R.findIndex(R.propEq('id', folderId))(currentFolder.folders);
-            currentFolder.folders = R.update(index, folder, currentFolder.folders);
-            currentFolder.folder_count = R.length(currentFolder.folders);
-            foldersById[currentFolder.id] = currentFolder;
+            if (typeof currentFolder.folders !== 'undefined') {
+                const folders: FolderType[] = currentFolder.folders;
+                const index = R.findIndex(R.propEq('id', folderId))(folders);
+                currentFolder.folders = R.update(index, folder, folders);
+                currentFolder.folder_count = R.length(folders);
+                foldersById[currentFolder.id] = currentFolder;
+            }
 
             resolve({
                 currentFolder,
@@ -50,24 +53,27 @@ const deleteFolder = (folderId: number,
 };
 
 export default (folderId: number) => {
-    dispatch({
+    const a: ActionDeleteType = {
         type: Constants.DELETE_FOLDER,
-        payload: { folderId },
-    });
+        payload: { id: folderId },
+    };
+    dispatch(a);
 
     deleteFolder(
         folderId,
         (payload: PayloadDeletedType) => {
-            dispatch({
+            const a: ActionDeletedType = {
                 type: Constants.FOLDER_DELETED,
                 payload,
-            });
+            };
+            dispatch(a);
         },
         (payload: PayloadErrorType) => {
-            dispatch({
+            const a: ActionErrorType = {
                 type: Constants.ERROR_DELETING_FILE,
                 payload,
-            });
+            };
+            dispatch(a);
         },
     );
 };

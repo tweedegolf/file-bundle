@@ -1,7 +1,8 @@
 /* eslint no-undef: 0 */
 import R from 'ramda';
-import type { Dispatch, Store } from 'redux';
-import * as Constants from './src/util/constants';
+import type { Dispatch } from 'redux';
+import * as Constants from '../Resources/js/src/util/constants';
+// import actions from './src/util/actions';
 
 // options passed via HTML element's data-options attribute
 declare type OptionsType = {
@@ -184,8 +185,8 @@ declare type StateType = {
 // };
 // redux
 declare type StoreType<StateType, ActionUnionType> = {
-    dispatch: Dispatch,
-    getState: () => StateType,
+    dispatch: DispatchType,
+    getState(): StateType,
 };
 
 declare type ActionUnionTreeReducerType =
@@ -210,8 +211,8 @@ declare type ActionUnionType =
 // declare type DispatchType = (action: ActionUnionType) => void;
 declare type DispatchType = Dispatch;
 
-declare type FoldersByIdType = { [id: number]: FolderType };
-declare type FilesByIdType = { [id: number]: FileType };
+declare type FoldersByIdType = { id: FolderType };
+declare type FilesByIdType = { id: FileType };
 
 
 // wip

@@ -8,7 +8,8 @@ import { getUID } from '../util/util';
 const store = getStore();
 const dispatch = store.dispatch;
 
-const createError = (messages: Array<string>, file: null | FileType = null) => {
+const createError = (messages: Array<string>,
+    file: null | FileType = null): { errors: ErrorType[] } => {
     const data = file !== null ? file.name : 'no name';
     const errors = [{
         id: getUID(),
@@ -53,24 +54,27 @@ const deleteFile = (fileId: number,
 };
 
 export default (fileId: number) => {
-    dispatch({
+    const a: ActionDeleteType = {
         type: Constants.DELETE_FILE,
-        payload: { fileId },
-    });
+        payload: { id: fileId },
+    };
+    dispatch(a);
 
     deleteFile(
         fileId,
         (payload: PayloadDeletedType) => {
-            dispatch({
+            const a1: ActionDeletedType = {
                 type: Constants.FILE_DELETED,
                 payload,
-            });
+            };
+            dispatch(a1);
         },
         (payload: PayloadErrorType) => {
-            dispatch({
+            const a2: ActionErrorType = {
                 type: Constants.ERROR_DELETING_FILE,
                 payload,
-            });
+            };
+            dispatch(a2);
         },
     );
 };

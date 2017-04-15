@@ -3,6 +3,7 @@ import R from 'ramda';
 import { persistStore } from 'redux-persist';
 import { getStore } from '../reducers/store';
 import * as Constants from '../util/constants';
+import actions from '../util/actions';
 import { openFolder } from '../actions';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
