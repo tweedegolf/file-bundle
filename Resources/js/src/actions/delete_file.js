@@ -68,6 +68,10 @@ export default (fileId: number) => {
                 payload,
             };
             dispatch(a1);
+            // dispatch({
+            //     type: Constants.FILE_DELETED,
+            //     payload,
+            // });
         },
         (payload: PayloadErrorType) => {
             const a2: ActionErrorType = {

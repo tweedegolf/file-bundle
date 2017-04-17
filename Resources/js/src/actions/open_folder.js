@@ -2,7 +2,14 @@
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
-import * as Constants from '../util/constants';
+// import * as Constants from '../util/constants';
+import {
+    OPEN_FOLDER,
+    FOLDER_OPENED,
+    ERROR_OPENING_FOLDER,
+
+} from '../util/constants';
+// import actions from '../util/actions';
 import { getUID } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
@@ -40,7 +47,7 @@ const createError = (currentFolder: null | FolderType,
     const errors = [{
         id: getUID(),
         data,
-        type: Constants.ERROR_OPENING_FOLDER,
+        type: ERROR_OPENING_FOLDER,
         messages,
     }];
     return { errors };
@@ -106,7 +113,7 @@ const loadFolder = (folderId: number, checkRootFolder: boolean,
 export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boolean }) => {
     const { id, checkRootFolder = false, forceLoad = false } = data;
     dispatch({
-        type: Constants.OPEN_FOLDER,
+        type: OPEN_FOLDER,
         payload: { id },
     });
 
@@ -115,7 +122,7 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
         // console.log('cache', payload);
         if (payload !== null) {
             const a: ActionFolderOpenedType = {
-                type: Constants.FOLDER_OPENED,
+                type: FOLDER_OPENED,
                 payload,
             };
             dispatch(a);
@@ -130,13 +137,13 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
         checkRootFolder,
         (payload: PayloadFolderOpenedType) => {
             dispatch({
-                type: Constants.FOLDER_OPENED,
+                type: FOLDER_OPENED,
                 payload,
             });
         },
         (payload: PayloadErrorType) => {
             dispatch({
-                type: Constants.ERROR_OPENING_FOLDER,
+                type: ERROR_OPENING_FOLDER,
                 payload,
             });
         },

@@ -1,10 +1,9 @@
 // @flow
-import R from 'ramda';
 import { persistStore } from 'redux-persist';
 import { getStore } from '../reducers/store';
-import * as Constants from '../util/constants';
-import actions from '../util/actions';
+import { INIT } from '../util/constants';
 import { openFolder } from '../actions';
+
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
@@ -28,7 +27,7 @@ export default (options: OptionsType) => {
         const noCache = rootFolderId !== store.getState().tree.rootFolderId;
         // console.log(noCache, rootFolderId, store.getState().tree.rootFolderId);
         const action: ActionInitType = {
-            type: Constants.INIT,
+            type: INIT,
             payload: {
                 selected: options.selected || [],
                 rootFolderId,
