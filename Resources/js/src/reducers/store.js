@@ -1,4 +1,4 @@
-// @flow
+// @flowoff
 import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
 import { autoRehydrate, persistStore } from 'redux-persist';

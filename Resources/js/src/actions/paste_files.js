@@ -1,14 +1,16 @@
-// @flowoff
+// @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
-const store = getStore();
-const dispatch = store.dispatch;
+const store: StoreType<StateType, ActionUnionType> = getStore();
+const dispatch: DispatchType = store.dispatch;
 
-const moveFiles = (resolve: Function, reject: Function) => {
+const moveFiles = (
+    resolve: (payload: PayloadFolderAddedType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed) => {
     const ui = store.getState().ui;
     const tree = store.getState().tree;
     const currentFolder = R.clone(tree.currentFolder);

@@ -5,8 +5,8 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
-const store = getStore();
-const dispatch = store.dispatch;
+const store: StoreType<StateType, ActionUnionType> = getStore();
+const dispatch: DispatchType = store.dispatch;
 
 const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
@@ -64,16 +64,18 @@ export default (folderName: string) => {
     addFolder(
         folderName,
         (payload: PayloadFolderAddedType) => {
-            dispatch({
+            const a: ActionFolderAddedType = {
                 type: Constants.FOLDER_ADDED,
                 payload,
-            });
+            };
+            dispatch(a);
         },
         (payload: PayloadErrorType) => {
-            dispatch({
+            const a: ActionErrorType = {
                 type: Constants.ERROR_ADDING_FOLDER,
                 payload,
-            });
+            };
+            dispatch(a);
         },
     );
 };

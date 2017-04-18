@@ -62,18 +62,18 @@ export default (folderId: number) => {
     deleteFolder(
         folderId,
         (payload: PayloadDeletedType) => {
-            const a: ActionDeletedType = {
+            const a1: ActionDeletedType = {
                 type: Constants.FOLDER_DELETED,
                 payload,
             };
-            dispatch(a);
+            dispatch(a1);
         },
         (payload: PayloadErrorType) => {
-            const a: ActionErrorType = {
+            const a1: ActionErrorType = {
                 type: Constants.ERROR_DELETING_FILE,
                 payload,
             };
-            dispatch(a);
+            dispatch(a1);
         },
     );
 };

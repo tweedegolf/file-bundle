@@ -64,4 +64,6 @@ const actions: {[key: ActionStringsType]: ActionStringsType} = {
     SET_SCROLL_POSITION: 'SET_SCROLL_POSITION',
 };
 
-export default actions;
+export type Actions = $Keys<typeof actions>;
+
+// export default actions;

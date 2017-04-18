@@ -5,8 +5,8 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import { getUID } from '../util/util';
 
-const store = getStore();
-const dispatch = store.dispatch;
+const store: StoreType<StateType, ActionUnionType> = getStore();
+const dispatch: DispatchType = store.dispatch;
 
 const createError = (messages: Array<string>,
     file: null | FileType = null): { errors: ErrorType[] } => {
@@ -74,11 +74,11 @@ export default (fileId: number) => {
             // });
         },
         (payload: PayloadErrorType) => {
-            const a2: ActionErrorType = {
+            const a1: ActionErrorType = {
                 type: Constants.ERROR_DELETING_FILE,
                 payload,
             };
-            dispatch(a2);
+            dispatch(a1);
         },
     );
 };

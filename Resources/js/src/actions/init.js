@@ -4,7 +4,6 @@ import { getStore } from '../reducers/store';
 import { INIT } from '../util/constants';
 import { openFolder } from '../actions';
 
-
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
 

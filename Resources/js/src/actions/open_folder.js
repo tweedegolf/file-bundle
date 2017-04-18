@@ -136,16 +136,18 @@ export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boole
         id,
         checkRootFolder,
         (payload: PayloadFolderOpenedType) => {
-            dispatch({
+            const a: ActionFolderOpenedType = {
                 type: FOLDER_OPENED,
                 payload,
-            });
+            };
+            dispatch(a);
         },
         (payload: PayloadErrorType) => {
-            dispatch({
+            const a: ActionErrorType = {
                 type: ERROR_OPENING_FOLDER,
                 payload,
-            });
+            };
+            dispatch(a);
         },
     );
 };
