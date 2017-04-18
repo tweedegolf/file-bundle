@@ -20,7 +20,8 @@ const deleteFolder = (folderId: number,
         () => {
             const folder = foldersById[folderId];
             if (typeof folder.files !== 'undefined') {
-                folder.files = R.map((f: FileType): FileType => ({ ...f, isTrashed: true }), folder.files);
+                folder.files = R.map((f: FileType): FileType =>
+                    ({ ...f, isTrashed: true }), folder.files);
                 R.forEach((f: FileType) => { filesById[f.id] = f; }, folder.files);
                 folder.isTrashed = true;
             }

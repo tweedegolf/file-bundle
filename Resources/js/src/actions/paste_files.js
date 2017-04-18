@@ -9,7 +9,7 @@ const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const moveFiles = (
-    resolve: (payload: PayloadFolderAddedType) => mixed,
+    resolve: (payload: PayloadFilesMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const ui = store.getState().ui;
     const tree = store.getState().tree;
@@ -18,22 +18,26 @@ const moveFiles = (
     const foldersById = R.clone(tree.foldersById);
 
     const files = ui.clipboard;
-    const fileIds = R.map(f => f.id, files);
+    const fileIds = R.map((f: FileType): number => f.id, files);
 
     api.paste(fileIds, currentFolder.id,
         () => {
-            files.forEach((f) => {
+            R.forEach((f: FileType) => {
                 filesById[f.id] = f;
                 currentFolder.files.push(R.merge(f, { new: true }));
-            });
+            }, files);
             currentFolder.file_count = R.length(currentFolder.files);
             foldersById[currentFolder.id] = currentFolder;
 
-            R.forEach((folder) => {
+            R.forEach((folder: FolderType) => {
                 if (folder.id !== currentFolder.id) {
-                    R.forEach((fileId) => {
-                        folder.files = R.reject(file => file.id === fileId, folder.files);
-                        folder.file_count = R.length(folder.files);
+                    R.forEach((fileId: number) => {
+                        if (typeof folder.files !== 'undefined') {
+                            // deliberately re-assign property though it is ugly
+                            folder.files = R.reject((file: FileType): boolean =>
+                                file.id === fileId, folder.files);
+                            folder.file_count = R.length(folder.files);
+                        }
                     }, fileIds);
                 }
             }, R.values(foldersById));
@@ -44,8 +48,8 @@ const moveFiles = (
                 filesById,
             });
         },
-        (messages) => {
-            const errors = files.map(file => ({
+        (messages: string[]) => {
+            const errors = files.map((file: FileType): ErrorType => ({
                 id: getUID(),
                 data: file.name,
                 type: Constants.ERROR_MOVING_FILES,
@@ -59,17 +63,18 @@ const moveFiles = (
 export default () => {
     // dispatch ui state action here?
     moveFiles(
-        (payload) => {
+        (payload: PayloadFilesMovedType) => {
             dispatch({
                 type: Constants.FILES_MOVED,
                 payload,
             });
         },
-        (payload) => {
-            dispatch({
+        (payload: PayloadErrorType) => {
+            const a1: ActionErrorType = {
                 type: Constants.ERROR_MOVING_FILES,
                 payload,
-            });
+            };
+            dispatch(a1);
         },
     );
 };

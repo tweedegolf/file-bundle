@@ -1,3 +1,5 @@
+// not in use
+
 import R from 'ramda';
 
 type ActionStringsType =

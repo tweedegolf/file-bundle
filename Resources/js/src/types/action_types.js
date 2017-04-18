@@ -3,24 +3,21 @@
 import R from 'ramda';
 import * as Constants from '../util/constants';
 // import {
-//     FolderType,
 //     FileType,
+//     FolderType,
 //     FoldersByIdType,
-//     FilesByIdType,
-//     ErrorType,
 // } from './state_types';
 
-
 // init
-export type ActionInitType = {
-    type: Constants.INIT,
-    payload: PayloadInitType,
-};
-
 export type PayloadInitType = {
     selected: Array<FileType>,
     rootFolderId: number,
     foldersById : FoldersByIdType,
+};
+
+export type ActionInitType = {
+    type: Constants.INIT,
+    payload: PayloadInitType,
 };
 
 // open folder
@@ -81,6 +78,18 @@ export type PayloadUploadDoneType = {
     errors: ErrorType[],
 };
 
+// move files
+export type ActionFilesMovedType = {
+    type: Constants.FILES_MOVED,
+    payload: PayloadUploadDoneType,
+};
+
+export type PayloadFilesMovedType = {
+    currentFolder: FolderType,
+    foldersById: FoldersByIdType,
+    filesById: FilesByIdType,
+};
+
 // errors
 const errorTypes = R.join(R.filter((key: string) =>
     key.indexOf('ERROR_') === 0, R.keys(Constants)), '|');
@@ -124,10 +133,12 @@ declare type PayloadDeletedType = {
 declare type ActionUnionTreeReducerType =
     | ActionInitType
     | ActionFolderOpenedType
-    // | ActionDeleteType
-    // | ActionDeletedType
-    // | ActionFolderAddedType
-    // | ActionErrorType
+    | ActionDeleteType
+    | ActionDeletedType
+    | ActionFolderAddedType
+    | ActionFilesMovedType
+    | ActionUploadDoneType
+    | ActionErrorType
 ;
 
 declare type ActionUnionType =

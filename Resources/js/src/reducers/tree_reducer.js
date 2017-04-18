@@ -45,11 +45,15 @@ export const treeInitialState: TreeStateType = {
 export const tree = (state: TreeStateType = treeInitialState,
     action: ActionUnionTreeReducerType): TreeStateType => {
     if (action.type === Constants.INIT) {
-        const a: ActionInitType = action; // necessary because flow has issues with constants in disjoint unions
+        // necessary because flow has issues with constants in disjoint unions:
+        const a: ActionInitType = action;
+        const p: PayloadInitType = a.payload;
         return {
             ...state,
-            foldersById: a.payload.foldersById,
-            rootFolderId: a.payload.rootFolderId,
+            // foldersById: a.payload.foldersById,
+            // rootFolderId: a.payload.rootFolderId,
+            foldersById: p.foldersById,
+            rootFolderId: p.rootFolderId,
         };
     /**
      * Contents of a folder has been loaded from the server or from cache
@@ -99,12 +103,13 @@ export const tree = (state: TreeStateType = treeInitialState,
      */
     } else if (action.type === Constants.UPLOAD_DONE) {
         const a: ActionUploadDoneType = action;
+        const p: PayloadUploadDoneType = a.payload;
         return {
             ...state,
-            filesById: a.payload.filesById,
-            foldersById: a.payload.foldersById,
-            currentFolder: a.payload.currentFolder,
-            errors: a.payload.errors,
+            filesById: p.filesById,
+            foldersById: p.foldersById,
+            currentFolder: p.currentFolder,
+            errors: p.errors,
         };
 
     /**

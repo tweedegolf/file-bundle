@@ -25,16 +25,27 @@ export default (options: OptionsType) => {
 
         const noCache = rootFolderId !== store.getState().tree.rootFolderId;
         // console.log(noCache, rootFolderId, store.getState().tree.rootFolderId);
+/*
+        const payload: PayloadInitType = {
+            selected: options.selected || [],
+            rootFolderId,
+            foldersById,
+        };
         const action: ActionInitType = {
+            type: INIT,
+            payload,
+        };
+
+        dispatch(action);
+*/
+        dispatch({
             type: INIT,
             payload: {
                 selected: options.selected || [],
                 rootFolderId,
                 foldersById,
             },
-        };
-
-        dispatch(action);
+        });
 
         const tmp = store.getState().tree.currentFolder.id;
         const currentFolderId = tmp === -1 ? rootFolderId : tmp;
