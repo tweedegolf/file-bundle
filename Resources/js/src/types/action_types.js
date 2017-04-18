@@ -1,7 +1,7 @@
 /* eslint no-use-before-define: 0 */
 /* eslint no-undef: 0 */
 import R from 'ramda';
-import * as Constants from '../../Resources/js/src/util/constants';
+import * as Constants from '../util/constants';
 // import {
 //     FolderType,
 //     FileType,
@@ -12,31 +12,31 @@ import * as Constants from '../../Resources/js/src/util/constants';
 
 
 // init
-declare type ActionInitType = {
+export type ActionInitType = {
     type: Constants.INIT,
     payload: PayloadInitType,
 };
 
-declare type PayloadInitType = {
+export type PayloadInitType = {
     selected: Array<FileType>,
     rootFolderId: number,
     foldersById : FoldersByIdType,
 };
 
 // open folder
-declare type ActionOpenFolderType = {
+export type ActionOpenFolderType = {
     type: Constants.OPEN_FOLDER,
     payload: {
         id: number,
     },
 };
 
-declare type ActionFolderOpenedType = {
+export type ActionFolderOpenedType = {
     type: Constants.FOLDER_OPENED,
     payload: PayloadFolderOpenedType,
 };
 
-declare type PayloadFolderOpenedType = {
+export type PayloadFolderOpenedType = {
     parentFolder: null | FolderType,
     currentFolder: FolderType,
     foldersById: FoldersByIdType,
@@ -45,36 +45,56 @@ declare type PayloadFolderOpenedType = {
 
 
 // add folder
-declare type ActionAddFolderType = {
+export type ActionAddFolderType = {
     type: Constants.ADD_FOLDER,
 };
 
-declare type ActionFolderAddedType = {
+export type ActionFolderAddedType = {
     type: Constants.FOLDER_ADDED,
     payload: PayloadFolderAddedType,
 };
 
-declare type PayloadFolderAddedType = {
+export type PayloadFolderAddedType = {
     currentFolder: FolderType,
     foldersById: FoldersByIdType,
-    errors: Array<ErrorType>,
+    errors: ErrorType[],
 };
 
+
+// upload files
+export type ActionUploadStartType = {
+    type: Constants.UPLOAD_START,
+    payload: {
+        files: File[],
+    },
+};
+
+export type ActionUploadDoneType = {
+    type: Constants.UPLOAD_DONE,
+    payload: PayloadUploadDoneType,
+};
+
+export type PayloadUploadDoneType = {
+    currentFolder: FolderType,
+    foldersById: FoldersByIdType,
+    filesById: FilesByIdType,
+    errors: ErrorType[],
+};
 
 // errors
 const errorTypes = R.join(R.filter((key: string) =>
     key.indexOf('ERROR_') === 0, R.keys(Constants)), '|');
-declare type ActionErrorType = {
+export type ActionErrorType = {
     type: errorTypes;
     payload: PayloadErrorType,
 };
 
-declare type PayloadErrorType = {
-    errors: Array<ErrorType>,
+export type PayloadErrorType = {
+    errors: ErrorType[],
 };
 
 // initiate delete file or folder
-declare type ActionDeleteType = {
+export type ActionDeleteType = {
     type: Constants.DELETE_FOLDER |
           Constants.CONFIRM_DELETE_FOLDER |
           Constants.FOLDER_DELETED |

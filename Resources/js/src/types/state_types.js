@@ -4,7 +4,7 @@
 import type { Store, Dispatch } from 'redux';
 
 // state
-declare type TreeStateType = {
+export type TreeStateType = {
     currentFolder: FolderType,
     rootFolderId: number,
     parentFolder: null | FolderType,
@@ -13,7 +13,7 @@ declare type TreeStateType = {
     errors: Array<ErrorType>
 };
 
-declare type UIStateType = {
+export type UIStateType = {
     sort: string,
     ascending: boolean,
     expanded: boolean,
@@ -34,23 +34,23 @@ declare type UIStateType = {
     imagesOnly: boolean
 };
 
-declare type StateType = {
+export type StateType = {
     tree: TreeStateType,
     ui: UIStateType,
 };
 
 
 // redux
-declare type StoreType<S, A> = Store<S, A>;
-declare type DispatchType = Dispatch;
-// declare type DispatchType = (action: ActionUnionType) => void;
+export type StoreType<S, A> = Store<S, A>;
+export type DispatchType = Dispatch;
+// export type DispatchType = (action: ActionUnionType) => void;
 
 
 // data
-declare type FoldersByIdType = { [id: number]: FolderType };
-declare type FilesByIdType = { [id: number]: FileType };
+export type FoldersByIdType = { [id: number]: FolderType };
+export type FilesByIdType = { [id: number]: FileType };
 
-declare type FolderType = {
+export type FolderType = {
     id: number,
     name: string,
     create_ts?: number,
@@ -66,7 +66,7 @@ declare type FolderType = {
     isTrashed?: boolean,
 };
 
-declare type FileType = {
+export type FileType = {
     create_ts: number,
     created: string,
     id: number,
@@ -79,7 +79,7 @@ declare type FileType = {
     isTrashed?: boolean,
 };
 
-declare type ErrorType = {
+export type ErrorType = {
     id: string,
     data?: string,
     type: string,
@@ -87,7 +87,7 @@ declare type ErrorType = {
 };
 
 // options passed via HTML element's data-options attribute
-declare type OptionsType = {
+export type OptionsType = {
     rootFolderId: number,
     selected?: Array<FileType>,
     multiple?: boolean,
