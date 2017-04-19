@@ -1,35 +1,38 @@
 /* eslint no-use-before-define: 0 */
-/* eslint no-undef: 0 */
+/* eslint-disable */
 import R from 'ramda';
 import * as Constants from '../util/constants';
 // import {
-//     FileType,
 //     FolderType,
+//     FileType,
 //     FoldersByIdType,
+//     FilesByIdType,
+//     ErrorType,
 // } from './state_types';
 
+
 // init
+export type ActionInitType = {
+    type: 'INIT',
+    payload: PayloadInitType,
+};
+
 export type PayloadInitType = {
     selected: Array<FileType>,
     rootFolderId: number,
     foldersById : FoldersByIdType,
 };
 
-export type ActionInitType = {
-    type: Constants.INIT,
-    payload: PayloadInitType,
-};
-
 // open folder
 export type ActionOpenFolderType = {
-    type: Constants.OPEN_FOLDER,
+    type: 'OPEN_FOLDER',
     payload: {
         id: number,
     },
 };
 
 export type ActionFolderOpenedType = {
-    type: Constants.FOLDER_OPENED,
+    type: 'FOLDER_OPENED',
     payload: PayloadFolderOpenedType,
 };
 
@@ -43,31 +46,31 @@ export type PayloadFolderOpenedType = {
 
 // add folder
 export type ActionAddFolderType = {
-    type: Constants.ADD_FOLDER,
+    type: 'ADD_FOLDER',
 };
 
 export type ActionFolderAddedType = {
-    type: Constants.FOLDER_ADDED,
+    type: 'FOLDER_ADDED',
     payload: PayloadFolderAddedType,
 };
 
 export type PayloadFolderAddedType = {
     currentFolder: FolderType,
     foldersById: FoldersByIdType,
-    errors: ErrorType[],
+    errors: Array<ErrorType>,
 };
 
 
 // upload files
 export type ActionUploadStartType = {
-    type: Constants.UPLOAD_START,
+    type: 'UPLOAD_START',
     payload: {
         files: File[],
     },
 };
 
 export type ActionUploadDoneType = {
-    type: Constants.UPLOAD_DONE,
+    type: 'UPLOAD_DONE',
     payload: PayloadUploadDoneType,
 };
 
@@ -80,7 +83,7 @@ export type PayloadUploadDoneType = {
 
 // move files
 export type ActionFilesMovedType = {
-    type: Constants.FILES_MOVED,
+    type: 'FILES_MOVED',
     payload: PayloadUploadDoneType,
 };
 
@@ -99,49 +102,47 @@ export type ActionErrorType = {
 };
 
 export type PayloadErrorType = {
-    errors: ErrorType[],
+    errors: Array<ErrorType>,
 };
 
 // initiate delete file or folder
 export type ActionDeleteType = {
-    type: Constants.DELETE_FOLDER |
-          Constants.CONFIRM_DELETE_FOLDER |
-          Constants.FOLDER_DELETED |
-          Constants.DELETE_FILE |
-          Constants.CONFIRM_DELETE_FILE,
+    type: 'DELETE_FOLDER' |
+          'CONFIRM_DELETE_FOLDER' |
+          'FOLDER_DELETED' |
+          'DELETE_FILE' |
+          'CONFIRM_DELETE_FILE',
     payload: PayloadDeleteType
 };
 
-declare type PayloadDeleteType = {
+export type PayloadDeleteType = {
     id: number | null
 };
 
 
 // file or folder deleted
-declare type ActionDeletedType = {
-    type: Constants.FOLDER_DELETED |
-          Constants.FILE_DELETED,
+export type ActionDeletedType = {
+    type: 'FOLDER_DELETED' |
+          'FILE_DELETED',
     payload: PayloadDeletedType
 };
 
-declare type PayloadDeletedType = {
+export type PayloadDeletedType = {
     currentFolder: FolderType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
 };
 
-declare type ActionUnionTreeReducerType =
+export type ActionUnionTreeReducerType =
     | ActionInitType
     | ActionFolderOpenedType
-    | ActionDeleteType
-    | ActionDeletedType
-    | ActionFolderAddedType
-    | ActionFilesMovedType
-    | ActionUploadDoneType
-    | ActionErrorType
+    // | ActionDeleteType
+    // | ActionDeletedType
+    // | ActionFolderAddedType
+    // | ActionErrorType
 ;
 
-declare type ActionUnionType =
+export type ActionUnionType =
     | ActionInitType
     | ActionDeleteType
     | ActionDeletedType
@@ -183,10 +184,10 @@ const actions = {
     SET_SCROLL_POSITION: 'SET_SCROLL_POSITION',
 };
 
-declare type Actions = $Keys<typeof actions>;
+export type Actions = $Keys<typeof actions>;
 // wip
 /*
-declare type PayloadType = {
+export type PayloadType = {
     selected?: Array<FileType>,
     clipboard?: Array<FileType>,
     scroll?: number,

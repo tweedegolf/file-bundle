@@ -1,5 +1,5 @@
 // not in use
-
+/* eslint-disable */
 import R from 'ramda';
 
 type ActionStringsType =

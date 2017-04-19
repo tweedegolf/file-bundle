@@ -1,6 +1,4 @@
 /* eslint no-use-before-define: 0 */
-/* eslint no-undef: 0 */
-
 import type { Store, Dispatch } from 'redux';
 
 // state
@@ -42,8 +40,8 @@ export type StateType = {
 
 // redux
 export type StoreType<S, A> = Store<S, A>;
-export type DispatchType = Dispatch;
 // export type DispatchType = (action: ActionUnionType) => void;
+export type DispatchType = Dispatch;
 
 
 // data

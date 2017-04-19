@@ -1,3 +1,4 @@
+/* eslint no-param-reassignment: 0 */
 // @flow
 import R from 'ramda';
 import { getStore } from '../reducers/store';

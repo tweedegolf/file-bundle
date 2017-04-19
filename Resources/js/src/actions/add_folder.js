@@ -36,13 +36,13 @@ const addFolder = (folderName: string,
                     messages: errorMessages,
                 }];
             }
-
-            resolve({
+            const payload: PayloadFolderAddedType = {
                 currentFolder,
                 foldersById,
                 errors,
                 //errors: [{id: 7777, type: 'generic', messages: ['oh my, this is an error!']}]
-            });
+            };
+            resolve(payload);
         },
         (messages: Array<string>) => {
             const errors = [{
@@ -64,7 +64,8 @@ export default (folderName: string) => {
     addFolder(
         folderName,
         (payload: PayloadFolderAddedType) => {
-            const a: ActionFolderAddedType = {
+            // const a: ActionFolderAddedType = {
+            const a = {
                 type: Constants.FOLDER_ADDED,
                 payload,
             };
@@ -72,6 +73,7 @@ export default (folderName: string) => {
         },
         (payload: PayloadErrorType) => {
             const a: ActionErrorType = {
+            // const a = {
                 type: Constants.ERROR_ADDING_FOLDER,
                 payload,
             };
