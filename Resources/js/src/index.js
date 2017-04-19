@@ -1,4 +1,4 @@
-// @flowoff
+// @flow
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -8,7 +8,7 @@ import Browser from './containers/browser.react';
 import { getStore } from './reducers/store';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
-const getOptions = (element: HTMLElement): HTMLElement => R.cond([
+const getOptions = (element: HTMLElement): OptionsType | null => R.cond([
     [R.isNil, R.always(null)],
     [R.T, (data: string): OptionsType => JSON.parse(data)],
 ])(element.dataset.options);
@@ -28,7 +28,7 @@ if (browser !== null) {
 
 // an element with the class 'tg_file_picker' will be converted to a file selector
 // note there can be multiple file selectors in a single form
-const pickers = document.getElementsByClassName('tg_file_picker');
+const pickers: HTMLElement[] = Array.from(document.getElementsByClassName('tg_file_picker'));
 R.forEach((element: HTMLElement) => {
     ReactDOM.render(<Provider store={store} >
         <Browser

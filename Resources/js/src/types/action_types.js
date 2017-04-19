@@ -93,9 +93,37 @@ export type PayloadFilesMovedType = {
     filesById: FilesByIdType,
 };
 
+// change sorting
+export type ActionChangeSortingType = {
+    type: 'CHANGE_SORTING',
+    payload: PayloadChangeSortingType,
+};
+
+export type PayloadChangeSortingType = {
+    sort: 'name' | 'size_bytes' | 'create_ts',
+};
+
+// dismiss error
+export type ActionDismissErrorType = {
+    type: 'DISMISS_ERROR',
+    payload: PayloadDismissErrorType,
+};
+
+export type PayloadDismissErrorType = {
+    id: number,
+};
+
 // errors
-const errorTypes = R.join(R.filter((key: string) =>
-    key.indexOf('ERROR_') === 0, R.keys(Constants)), '|');
+// const errorTypes = R.join(R.filter((key: string) =>
+//     key.indexOf('ERROR_') === 0, R.keys(Constants)), '|');
+type errorTypes =
+    | 'ERROR_DELETING_FILE'
+    | 'ERROR_DELETING_FOLDER'
+    | 'ERROR_ADDING_FOLDER'
+    | 'ERROR_UPLOADING_FILE'
+    | 'ERROR_OPENING_FOLDER'
+    | 'ERROR_MOVING_FILES'
+;
 export type ActionErrorType = {
     type: errorTypes;
     payload: PayloadErrorType,
@@ -107,23 +135,24 @@ export type PayloadErrorType = {
 
 // initiate delete file or folder
 export type ActionDeleteType = {
-    type: 'DELETE_FOLDER' |
-          'CONFIRM_DELETE_FOLDER' |
-          'FOLDER_DELETED' |
-          'DELETE_FILE' |
-          'CONFIRM_DELETE_FILE',
+    type:
+        | 'DELETE_FOLDER'
+        | 'CONFIRM_DELETE_FOLDER'
+        | 'DELETE_FILE'
+        | 'CONFIRM_DELETE_FILE',
     payload: PayloadDeleteType
 };
 
 export type PayloadDeleteType = {
-    id: number | null
+    id: number | null,
 };
 
 
 // file or folder deleted
 export type ActionDeletedType = {
-    type: 'FOLDER_DELETED' |
-          'FILE_DELETED',
+    type:
+        | 'FOLDER_DELETED'
+        | 'FILE_DELETED',
     payload: PayloadDeletedType
 };
 
@@ -133,15 +162,16 @@ export type PayloadDeletedType = {
     foldersById: FoldersByIdType,
 };
 
+/*
 export type ActionUnionTreeReducerType =
     | ActionInitType
     | ActionFolderOpenedType
-    // | ActionDeleteType
-    // | ActionDeletedType
-    // | ActionFolderAddedType
-    // | ActionErrorType
+    | ActionDeleteType
+    | ActionDeletedType
+    | ActionFolderAddedType
+    | ActionErrorType
 ;
-
+*/
 export type ActionUnionType =
     | ActionInitType
     | ActionDeleteType
@@ -150,6 +180,11 @@ export type ActionUnionType =
     | ActionAddFolderType
     | ActionFolderAddedType
     | ActionErrorType
+    | ActionUploadStartType
+    | ActionUploadDoneType
+    | ActionFilesMovedType
+    | ActionDismissErrorType
+    | ActionChangeSortingType
 ;
 
 const actions = {
@@ -183,8 +218,8 @@ const actions = {
     SET_HOVER: 'SET_HOVER',
     SET_SCROLL_POSITION: 'SET_SCROLL_POSITION',
 };
+// export type Actions = $Keys<typeof actions>;
 
-export type Actions = $Keys<typeof actions>;
 // wip
 /*
 export type PayloadType = {

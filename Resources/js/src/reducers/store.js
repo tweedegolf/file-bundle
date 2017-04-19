@@ -1,9 +1,8 @@
 // @flow
 import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
-import { autoRehydrate, persistStore } from 'redux-persist';
+import { autoRehydrate } from 'redux-persist';
 // import thunkMiddleware from 'redux-thunk'
-import R from 'ramda';
 import type { CombinedReducer } from 'redux';
 import { ui, uiInitialState } from '../reducers/ui_reducer';
 import { tree, treeInitialState } from '../reducers/tree_reducer';

@@ -75,10 +75,10 @@ export const changeSorting = (sort: boolean) => {
  *
  * @param      {number}  error_id  The unique identifier of the error.
  */
-export const dismissError = (errorId: number) => {
+export const dismissError = (id: number) => {
     dispatch({
         type: Constants.DISMISS_ERROR,
-        payload: { errorId },
+        payload: { id },
     });
 };
 

@@ -1,5 +1,5 @@
-// @flowoff
-import * as Constants from '../util/constants';
+// @flow
+// import * as Constants from '../util/constants';
 
 /**
  * The initial ui state
@@ -45,8 +45,7 @@ import * as Constants from '../util/constants';
  *                                              deleted. Note that the root
  *                                              folder, which has id null can
  *                                              not be deleted!
- * @property   {boolean}  isAddingFolder        true if a new folder is in the    // action: { type: string, payload: TreeStateType}): TreeStateType => {
-
+ * @property   {boolean}  isAddingFolder        true if a new folder is in the
  *                                              process of being created
  * @property   {boolean}  isUploadingFiles      true if the user is uploading
  *                                              one of more files
@@ -89,12 +88,6 @@ export const uiInitialState: UIStateType = {
     imagesOnly: false,
 };
 
-type ActionUnionType =
-    | ActionFolderAddedType
-    | ActionErrorType
-;
-
-
 /**
  * Reduce function, listens for certain action types and changes the change,
  * optionally using the action's payload.
@@ -109,7 +102,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * User has added a folder, we can show a progress indicator while we make
      * an API call to the server
      */
-    if (action.type === Constants.ADD_FOLDER) {
+    if (action.type === 'ADD_FOLDER') {
         return {
             ...state,
             isAddingFolder: true,
@@ -121,24 +114,22 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * this is the case they will be displayed. This action is processed by the
      * tree reducer as well.
      */
-    } else if (action.type === Constants.FOLDER_ADDED) {
-        const a: ActionFolderAddedType = action;
+    } else if (action.type === 'FOLDER_ADDED') {
         return {
             ...state,
             isAddingFolder: false,
-            errors: [...state.errors, ...a.payload.errors],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**
      * Something went wrong during connection or at the server, we can remove the
      * progress indicator and show the error(s)
      */
-    } else if (action.type === Constants.ERROR_ADDING_FOLDER) {
-        const a: ActionErrorType = action;
+    } else if (action.type === 'ERROR_ADDING_FOLDER') {
         return {
             ...state,
             isAddingFolder: false,
-            errors: [...state.errors, ...a.payload.errors],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**
@@ -147,35 +138,32 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * confirmation popup was already showing and that the user has clicked on the
      * 'cancel' button, or has clicked anywhere outside the popup.
      */
-    } else if (action.type === Constants.CONFIRM_DELETE_FILE) {
-        const a: ActionDeleteType = action;
+    } else if (action.type === 'CONFIRM_DELETE_FILE') {
         return {
             ...state,
-            deleteFileWithId: a.payload.id,
+            deleteFileWithId: action.payload.id,
         };
-    } else if (action.type === Constants.CONFIRM_DELETE_FOLDER) {
-        const a: ActionDeleteType = action;
+    } else if (action.type === 'CONFIRM_DELETE_FOLDER') {
         return {
             ...state,
-            deleteFolderWithId: a.payload.id,
+            deleteFolderWithId: action.payload.id,
         };
 
 
     /**
      * User really wants to delete the file, show progress indicator during API call
      */
-    } else if (action.type === Constants.DELETE_FILE) {
-        const a: ActionDeleteType = action;
+    } else if (action.type === 'DELETE_FILE') {
         return {
             ...state,
-            deletingFileWithId: a.payload.id,
+            deletingFileWithId: action.payload.id,
         };
 
     /**
      * Response from the server: file has been deleted successfully. This action
      * is also processed by the tree reducer.
      */
-    } else if (action.type === Constants.FILE_DELETED) {
+    } else if (action.type === 'FILE_DELETED') {
         return {
             ...state,
             deleteFileWithId: null,
@@ -186,13 +174,12 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * Something went wrong, for instance the file has already been deleted by
      * another user or a network error occured.
      */
-    } else if (action.type === Constants.ERROR_DELETING_FILE) {
-        const a: ActionErrorType = action;
+    } else if (action.type === 'ERROR_DELETING_FILE') {
         return {
             ...state,
             deleteFileWithId: null,
             deletingFileWithId: null,
-            errors: [...state.errors, ...a.payload.errors],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
 
@@ -201,17 +188,17 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * call. Note that no confirmation popup will be showed; the folder will be
      * deleted right away (if it is empty)
      */
-    } else if (action.type === Constants.DELETE_FOLDER) {
+    } else if (action.type === 'DELETE_FOLDER') {
         return {
             ...state,
-            deletingFolderWithId: action.payload.folder_id,
+            deletingFolderWithId: action.payload.id,
         };
 
     /**
      * Response from server: folder has been deleted successfully. This action is
      * also processed by the tree reducer.
      */
-    } else if (action.type === Constants.FOLDER_DELETED) {
+    } else if (action.type === 'FOLDER_DELETED') {
         return {
             ...state,
             deleteFolderWithId: null,
@@ -221,13 +208,12 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     /**
      * Something went wrong: network error, etc.
      */
-    } else if (action.type === Constants.ERROR_DELETING_FOLDER) {
-        const a: ActionErrorType = action;
+    } else if (action.type === 'ERROR_DELETING_FOLDER') {
         return {
             ...state,
             deleteFolderWithId: null,
             deletingFolderWithId: null,
-            errors: [...state.errors, ...a.payload.errors],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
 
@@ -236,18 +222,17 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * from the local storage and if not present or outdated we retrieve it from
      * the server. This action is also processed by the tree reducer.
      */
-    } else if (action.type === Constants.OPEN_FOLDER) {
-        const a: ActionOpenFolderType = action;
+    } else if (action.type === 'OPEN_FOLDER') {
         return {
             ...state,
-            loadingFolderWithId: a.payload.id,
+            loadingFolderWithId: action.payload.id,
         };
 
     /**
      * Folder contents has been successfully retrieved from local storage or
      * server. We can hide the progress animation (if any)
      */
-    } else if (action.type === Constants.FOLDER_OPENED) {
+    } else if (action.type === 'FOLDER_OPENED') {
         return {
             ...state,
             loadingFolderWithId: -1,
@@ -256,12 +241,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     /**
      * Something went wrong opening the folder; show error messages
      */
-    } else if (action.type === Constants.ERROR_OPENING_FOLDER) {
-        const a: ActionErrorType = action;
+    } else if (action.type === 'ERROR_OPENING_FOLDER') {
         return {
             ...state,
             loadingFolderWithId: -1,
-            errors: [...state.errors, ...a.payload.errors],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
 
@@ -269,7 +253,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * User has selected files to upload; show progress indicator while they are
      * uploaded to the server
      */
-    } else if (action.type === Constants.UPLOAD_START) {
+    } else if (action.type === 'UPLOAD_START') {
         return {
             ...state,
             isUploadingFiles: true,
@@ -282,7 +266,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * for instance if some of the uploaded files are too large or of an
      * unsupported file type.
      */
-    } else if (action.type === Constants.UPLOAD_DONE) {
+    } else if (action.type === 'UPLOAD_DONE') {
         return {
             ...state,
             ascending: false,
@@ -295,7 +279,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     /**
      * This happens only in case of a network or server error
      */
-    } else if (action.type === Constants.ERROR_UPLOADING_FILE) {
+    } else if (action.type === 'ERROR_UPLOADING_FILE') {
         return {
             ...state,
             isUploadingFiles: false,
@@ -307,7 +291,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * An error occurred when the selected files were pasted into another folder.
      * Most likely this is a network or a server error.
      */
-    } else if (action.type === Constants.ERROR_MOVING_FILES) {
+    } else if (action.type === 'ERROR_MOVING_FILES') {
         return {
             ...state,
             errors: [...state.errors, ...action.payload.errors || []],
@@ -320,9 +304,8 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * Otherwise a new sorting column will be set and the current sort order
      * (ascending or descending) will be left unaffected.
      */
-    } else if (action.type === Constants.CHANGE_SORTING) {
-        const a: ChangeSortingPayloadType = action;
-        const sort = a.sort;
+    } else if (action.type === 'CHANGE_SORTING') {
+        const sort = action.payload.sort;
         let ascending = state.ascending;
         if (state.sort === sort) {
             ascending = !ascending;
@@ -344,9 +327,10 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * automatically; every new error message is added to the existing error
      * messages.
      */
-    } else if (action.type === Constants.DISMISS_ERROR) {
+    } else if (action.type === 'DISMISS_ERROR') {
+        const dismissId = action.payload.id;
         const errors: Array<ErrorType> = state.errors.filter((error: ErrorType): boolean =>
-            error.id !== action.payload.errorId);
+            error.id !== dismissId);
         return {
             ...state,
             errors,
@@ -356,7 +340,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * User has clicked on a file to show its full screen preview: currently only
      * implemented for images.
      */
-    } else if (action.type === Constants.SHOW_PREVIEW) {
+    } else if (action.type === 'SHOW_PREVIEW') {
         return {
             ...state,
             previewUrl: action.payload.imageUrl,
@@ -371,7 +355,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * @param      {number}  max     Number of items (files and folders) in the
      *                               current folder
      */
-    } else if (action.type === Constants.SET_HOVER) {
+    } else if (action.type === 'SET_HOVER') {
         const {
             diff = 0,
             max = state.hover,
@@ -395,7 +379,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * by code, for instance if new files have been added we want to show them on
      * top of the list and scroll the list to the top.
      */
-    } else if (action.type === Constants.SET_SCROLL_POSITION) {
+    } else if (action.type === 'SET_SCROLL_POSITION') {
         return {
             ...state,
             scrollPosition: action.payload.scroll,
@@ -406,7 +390,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * In filepicker mode the user can collapse and expand the browser window. In
      * browser mode the browser is always expanded.
      */
-    } else if (action.type === Constants.EXPAND_BROWSER) {
+    } else if (action.type === 'EXPAND_BROWSER') {
         return {
             ...state,
             expanded: !state.expanded,
@@ -424,7 +408,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * @param      {boolean}  multiple  Whether it is allowed to have multiple
      *                                  files selected
      */
-    } else if (action.type === Constants.SELECT_FILE) {
+    } else if (action.type === 'SELECT_FILE') {
         const {
             file,
             browser,
@@ -464,7 +448,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      *                                        the dataset property of the root
      *                                        HTML element
      */
-    } else if (action.type === Constants.INIT) {
+    } else if (action.type === 'INIT') {
         return {
             ...state,
             selected: [...action.payload.selected || []],
@@ -476,7 +460,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * selected files are moved from the selected array to the clipboard array of
      * the state.
      */
-    } else if (action.type === Constants.CUT_FILES) {
+    } else if (action.type === 'CUT_FILES') {
         return {
             ...state,
             clipboard: [...state.selected],
@@ -487,7 +471,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * The user cancels a cut action. The contents of the clipboard array is moved
      * back to the selected array.
      */
-    } else if (action.type === Constants.CANCEL_CUT_AND_PASTE_FILES) {
+    } else if (action.type === 'CANCEL_CUT_AND_PASTE_FILES') {
         return {
             ...state,
             clipboard: [],
@@ -499,7 +483,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * network or server error. The contents of the clipboard array is moved back
      * to the selected array of the state.
      */
-    } else if (action.type === Constants.ERROR_MOVING_FILES) {
+    } else if (action.type === 'ERROR_MOVING_FILES') {
         return {
             ...state,
             clipboard: [],
@@ -510,7 +494,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * Files are successfully moved to another folder. This action is processed by
      * the tree reducer as well.
      */
-    } else if (action.type === Constants.FILES_MOVED) {
+    } else if (action.type === 'FILES_MOVED') {
         return {
             ...state,
             clipboard: [],

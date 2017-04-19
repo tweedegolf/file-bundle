@@ -83,7 +83,7 @@ export default class Browser extends React.Component {
         options: PropTypes.shape({
             multiple: PropTypes.bool,
             images_only: PropTypes.bool,
-            root_folder_id: PropTypes.number.isRequired,
+            rootFolderId: PropTypes.number.isRequired,
         }).isRequired,
     }
 

@@ -42,7 +42,7 @@ export const treeInitialState: TreeStateType = {
 };
 
 export const tree = (state: TreeStateType = treeInitialState,
-    action: ActionUnionTreeReducerType): TreeStateType => {
+    action: ActionUnionType): TreeStateType => {
     switch (action.type) {
     case 'INIT':
         return {
