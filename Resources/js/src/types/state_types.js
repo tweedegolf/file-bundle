@@ -90,3 +90,5 @@ export type OptionsType = {
     selected?: Array<FileType>,
     multiple?: boolean,
 };
+
+export type SortEnumType = 'name' | 'size_bytes' | 'create_ts';

@@ -1,27 +1,56 @@
-// @flowoff
+// @flow
 import R from 'ramda';
 import { createSelector } from 'reselect';
 
-const getUI = state => state.ui;
-const getTree = state => state.tree;
+type ItemType = {
+    key: string,
+    isTrashed: boolean,
+};
 
-const resetNew = array => R.map(f => ({ ...f, new: false }), array);
-const filterTrashed = array => R.filter(f => f.isTrashed !== true, array);
-const sortAscendingBy = (key, array) => R.sort(R.ascend(R.prop(key)), array);
-const sortDescendingBy = (key, array) => R.sort(R.descend(R.prop(key)), array);
+// type ItemType = FileType | FolderType;
+
+// type FuncType = (key: string, array: ItemType[]) => ItemType[];
+
+type ReturnType = {
+    rootFolderId: null | number,
+    currentFolderId: number,
+    // folders: FolderType[],
+    // files: FileType[],
+    folders: ItemType[],
+    files: ItemType[],
+};
+
+const getUI = (state: StateType): UIStateType => state.ui;
+const getTree = (state: StateType): TreeStateType => state.tree;
+
+// const resetNew = array => R.map(f => ({ ...f, new: false }), array);
+const filterTrashed = (array: ItemType[]): ItemType[] =>
+    R.filter((f: ItemType): boolean => (f.isTrashed !== true), array);
+const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
+    R.sort(R.ascend(R.prop(key)), array);
+const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] =>
+    R.sort(R.descend(R.prop(key)), array);
 
 export default createSelector(
     [getUI, getTree],
-    (ui, tree) => {
+    (ui: UIStateType, tree: TreeStateType): ReturnType => {
         const {
             sort,
             ascending,
         } = ui;
 
+        // const sortBy: ((FileType[] | FolderType[])) =>
+        //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
         const currentFolder = tree.currentFolder;
-        const files = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.files);
-        const folders = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.folders);
+        let files = [];
+        let folders = [];
+        if (typeof currentFolder.files !== 'undefined') {
+            files = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.files);
+        }
+        if (typeof currentFolder.folder !== 'undefined') {
+            folders = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.folders);
+        }
 
         return {
             files,

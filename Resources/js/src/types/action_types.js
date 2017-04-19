@@ -100,7 +100,7 @@ export type ActionChangeSortingType = {
 };
 
 export type PayloadChangeSortingType = {
-    sort: 'name' | 'size_bytes' | 'create_ts',
+    sort: SortEnumType,
 };
 
 // dismiss error

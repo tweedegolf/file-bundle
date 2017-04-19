@@ -1,3 +1,4 @@
+// @flow
 /**
  * @file       List that shows all files and folders in the current folder. All
  *             items are shown as a row. See the files file.react.js and
@@ -11,12 +12,15 @@ import Folder, { folderShape } from '../components/folder.react';
 import * as Actions from '../actions';
 import currentFolderSelector from '../reducers/current_folder_selector';
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: StateType) => {
     const {
         files,
         folders,
         currentFolderId,
     } = currentFolderSelector(state);
+
+    // and here we have the problem!
+    const f:FileType = files[0];
 
     return {
         // tree props
