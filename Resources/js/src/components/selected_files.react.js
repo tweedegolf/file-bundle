@@ -2,7 +2,8 @@
  * @file       Component shows the currently selected files. This component only
  *             renders in Filepicker mode.
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { fileShape } from '../components/file.react';
 
 export default class SelectedFiles extends React.Component {

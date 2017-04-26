@@ -71,6 +71,7 @@
     "filesize": "3.3.0",
     "font-awesome": "4.6.3",
     "gm": "1.23.0",
+    "prop-types": "15.5.8",
     "ramda": "0.23.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",

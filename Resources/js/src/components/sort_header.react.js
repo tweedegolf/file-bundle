@@ -5,7 +5,8 @@
  *             sorted by that column. Clicking again on the currently selected
  *             column will reverse the order.
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const columns = {
     name: 'name',

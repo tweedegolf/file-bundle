@@ -4,7 +4,8 @@
  *             items are shown as a row. See the files file.react.js and
  *             folder.react.js
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
 import File, { fileShape } from '../components/file.react';

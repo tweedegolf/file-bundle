@@ -62,9 +62,12 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
     resolve: (payload: PayloadFolderOpenedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(tree.filesById);
+    let tmp1 = R.clone(tree.filesById);
     const tmp2 = R.clone(tree.foldersById);
-    if (tmp1 === null || tmp2 === null) {
+    if (tmp1 === null) {
+        tmp1 = {};
+    }
+    if (tmp2 === null) {
         reject(createError(`opening folder with id ${folderId}`, ['invalid state']));
         return;
     }

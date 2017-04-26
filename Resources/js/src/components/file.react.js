@@ -6,7 +6,8 @@
  *             well. If the user clicks the delete button, the component will
  *             render a confirmation popup.
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const icons = {
     pdf: 'file-pdf-o',

@@ -3,7 +3,8 @@
  *             application are child of this component, as such, it ties
  *             together the application.
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import R from 'ramda';
@@ -72,10 +73,10 @@ export default class Browser extends React.Component {
         previewUrl: PropTypes.string,
         ascending: PropTypes.bool.isRequired,
         expanded: PropTypes.bool.isRequired,
-        currentFolderId: PropTypes.number,
+        currentFolderId: PropTypes.string,
         isAddingFolder: PropTypes.bool.isRequired,
         isUploadingFiles: PropTypes.bool.isRequired,
-        loadingFolderWithId: PropTypes.number,
+        loadingFolderWithId: PropTypes.string,
         numItemsInCurrentFolder: PropTypes.number.isRequired,
         errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
         clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
@@ -83,7 +84,7 @@ export default class Browser extends React.Component {
         options: PropTypes.shape({
             multiple: PropTypes.bool,
             images_only: PropTypes.bool,
-            rootFolderId: PropTypes.number.isRequired,
+            rootFolderId: PropTypes.string.isRequired,
         }).isRequired,
     }
 

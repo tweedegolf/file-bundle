@@ -3,8 +3,8 @@
  *             toolbar contains buttons for cut & paste, for uploading new files
  *             and for creating new folders.
  */
-
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { fileShape } from './file.react';
 

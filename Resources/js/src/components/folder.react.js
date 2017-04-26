@@ -5,8 +5,8 @@
  *             browser will open the folder and a spinner icon is shown. If the
  *             folder is empty, the row will show a delete button as well.
  */
-
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 export const folderShape = {
     create_ts: PropTypes.number,

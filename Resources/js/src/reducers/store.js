@@ -23,7 +23,7 @@ export const getNewStore = (): StoreType<StateType, ActionUnionType> => {
         combinedReducers,
         initialState,
         compose(
-            autoRehydrate(),
+            // autoRehydrate(),
             applyMiddleware(
                 // thunkMiddleware,
                 createLogger({ collapsed: true }),

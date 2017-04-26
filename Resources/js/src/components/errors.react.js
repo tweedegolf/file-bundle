@@ -3,8 +3,8 @@
  *             removed from the list by clicking the cross icon next to the
  *             error message.
  */
-
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import R from 'ramda';
 import * as ErrorTypes from '../util/constants';
 
