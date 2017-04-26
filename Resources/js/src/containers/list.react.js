@@ -1,4 +1,4 @@
-// @flow
+// @flowoff
 /**
  * @file       List that shows all files and folders in the current folder. All
  *             items are shown as a row. See the files file.react.js and

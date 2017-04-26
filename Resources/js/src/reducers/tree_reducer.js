@@ -15,29 +15,13 @@
  *
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
-const fakeFolder: FolderType = {
-    id: -1,
-    name: 'fake',
-    files_count: 0,
-    folders_count: 0,
-    parent: null,
-};
-const fakeFile: FileType = {
-    id: -1,
-    name: 'fake',
-    create_ts: new Date().getTime(),
-    created: new Date().toDateString(),
-    type: 'fake',
-    size: '0 kB',
-    size_bytes: 0,
-};
 
 export const treeInitialState: TreeStateType = {
-    currentFolder: fakeFolder,
-    rootFolderId: -1,
+    currentFolder: null,
+    rootFolderId: '-1',
     parentFolder: null,
-    filesById: { [fakeFile.id]: fakeFile },
-    foldersById: { [fakeFolder.id]: fakeFolder },
+    filesById: null,
+    foldersById: null,
     errors: [],
 };
 

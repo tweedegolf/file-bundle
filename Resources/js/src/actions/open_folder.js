@@ -15,12 +15,29 @@ import { getUID } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
+const createError = (data: string, messages: string[]): PayloadErrorType => {
+    const errors = [{
+        id: getUID(),
+        data,
+        type: ERROR_OPENING_FOLDER,
+        messages,
+    }];
+    return { errors };
+};
+
 // optimistic update
-const fromCache = (folderId: number): PayloadFolderOpenedType | null => {
-    const tree = store.getState().tree;
-    const filesById: FilesByIdType = R.clone(tree.filesById);
-    const foldersById: FoldersByIdType = R.clone(tree.foldersById);
-    const rootFolderId: number = tree.rootFolderId;
+const fromCache = (folderId: string): PayloadFolderOpenedType | null => {
+    const tree: TreeStateType = store.getState().tree;
+    const rootFolderId: string = tree.rootFolderId;
+    const tmp1 = R.clone(tree.filesById);
+    const tmp2 = R.clone(tree.foldersById);
+
+    // state has not been fully initialized yet
+    if (tmp1 === null || tmp2 === null) {
+        return null;
+    }
+    const filesById: FilesByIdType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
 
     // folder not in cache
     if (foldersById[folderId] === null || typeof foldersById[folderId].files === 'undefined') {
@@ -41,25 +58,19 @@ const fromCache = (folderId: number): PayloadFolderOpenedType | null => {
     };
 };
 
-const createError = (currentFolder: null | FolderType,
-    messages: Array<string>): PayloadErrorType => {
-    const data: string = currentFolder === null ? 'no name' : currentFolder.name;
-    const errors = [{
-        id: getUID(),
-        data,
-        type: ERROR_OPENING_FOLDER,
-        messages,
-    }];
-    return { errors };
-};
-
-const loadFolder = (folderId: number, checkRootFolder: boolean,
+const loadFolder = (folderId: string, checkRootFolder: boolean,
     resolve: (payload: PayloadFolderOpenedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const filesById: FilesByIdType = R.clone(tree.filesById);
-    const foldersById: FoldersByIdType = R.clone(tree.foldersById);
-    const rootFolderId: number = tree.rootFolderId;
+    const tmp1 = R.clone(tree.filesById);
+    const tmp2 = R.clone(tree.foldersById);
+    if (tmp1 === null || tmp2 === null) {
+        reject(createError(`opening folder with id ${folderId}`, ['invalid state']));
+        return;
+    }
+    const rootFolderId: string = tree.rootFolderId;
+    const filesById: FilesByIdType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
 
     const currentFolder: FolderType = foldersById[folderId];
     let parentFolder: null | FolderType = null;
@@ -105,12 +116,12 @@ const loadFolder = (folderId: number, checkRootFolder: boolean,
             });
         },
         (messages: Array<string>) => {
-            reject(createError(currentFolder, messages));
+            reject(createError(currentFolder.name, messages));
         },
     );
 };
 
-export default (data: { id: number, checkRootFolder?: boolean, forceLoad?: boolean }) => {
+export default (data: { id: string, checkRootFolder?: boolean, forceLoad?: boolean }) => {
     const { id, checkRootFolder = false, forceLoad = false } = data;
     dispatch({
         type: OPEN_FOLDER,

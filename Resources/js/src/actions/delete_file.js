@@ -8,9 +8,7 @@ import { getUID } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-const createError = (messages: Array<string>,
-    file: null | FileType = null): { errors: ErrorType[] } => {
-    const data = file !== null ? file.name : 'no name';
+const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
     const errors = [{
         id: getUID(),
         type: Constants.ERROR_DELETING_FILE,
@@ -20,13 +18,22 @@ const createError = (messages: Array<string>,
     return { errors };
 };
 
-const deleteFile = (fileId: number,
+const deleteFile = (fileId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree = store.getState().tree;
-    const currentFolder = R.clone(tree.currentFolder);
-    const filesById = R.clone(tree.filesById);
-    const foldersById = R.clone(tree.foldersById);
+    const tree: TreeStateType = store.getState().tree;
+    const tmp1 = R.clone(tree.currentFolder);
+    const tmp2 = R.clone(tree.filesById);
+    const tmp3 = R.clone(tree.foldersById);
+
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+        reject(createError(`file with id ${fileId}`, ['invalid state']));
+        return;
+    }
+
+    const currentFolder: FolderType = tmp1;
+    const filesById: FilesByIdType = tmp2;
+    const foldersById: FoldersByIdType = tmp3;
 
     api.deleteFile(fileId,
         () => {
@@ -44,16 +51,17 @@ const deleteFile = (fileId: number,
                     foldersById,
                 });
             } else {
-                reject(createError(['current folder has no files array'], file));
+                reject(createError(file.name, ['current folder has no files array']));
             }
         },
         (messages: Array<string>) => {
-            reject(createError(messages, filesById[fileId]));
+            const f = filesById[fileId];
+            reject(createError(f === null ? 'no name' : f.name, messages));
         },
     );
 };
 
-export default (fileId: number) => {
+export default (fileId: string) => {
     const a: ActionDeleteType = {
         type: Constants.DELETE_FILE,
         payload: { id: fileId },

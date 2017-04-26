@@ -8,12 +8,29 @@ import { getUID } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
+const createError = (data: string, messages: string[]): PayloadErrorType => {
+    const errors = [{
+        id: getUID(),
+        data,
+        type: Constants.ERROR_ADDING_FOLDER,
+        messages,
+    }];
+    return { errors };
+};
+
 const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree = store.getState().tree;
-    const currentFolder = R.clone(tree.currentFolder);
-    const foldersById = R.clone(tree.foldersById);
+    const tree: TreeStateType = store.getState().tree;
+    const tmp1 = R.clone(tree.currentFolder);
+    const tmp2 = R.clone(tree.foldersById);
+    if (tmp1 === null || tmp2 === null) {
+        reject(createError(folderName, ['invalid state']));
+        return;
+    }
+
+    const currentFolder: FolderType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
 
     api.addFolder(folderName, currentFolder.id,
         (folders: Array<FolderType>, errorMessages: Array<string>) => {
@@ -45,13 +62,7 @@ const addFolder = (folderName: string,
             resolve(payload);
         },
         (messages: Array<string>) => {
-            const errors = [{
-                id: getUID(),
-                data: folderName,
-                type: Constants.ERROR_ADDING_FOLDER,
-                messages,
-            }];
-            reject({ errors });
+            reject(createError(folderName, messages));
         },
     );
 };

@@ -8,34 +8,46 @@ import { getUID } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-const createError = (message: string, data: string): ErrorType => ({
+const createError = (data: string, messages: string[]): ErrorType => ({
     id: getUID(),
     type: Constants.ERROR_UPLOADING_FILE,
     data,
-    messages: [message],
+    messages,
 });
 
 const uploadFiles = (files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree = store.getState().tree;
-    const currentFolder = R.clone(tree.currentFolder);
-    const filesById = R.clone(tree.filesById);
-    const foldersById = R.clone(tree.foldersById);
+    const tree: TreeStateType = store.getState().tree;
+    const tmp1 = R.clone(tree.currentFolder);
+    const tmp2 = R.clone(tree.filesById);
+    const tmp3 = R.clone(tree.foldersById);
+
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+        reject({ errors: [createError('uploading files', ['invalid state'])] });
+        return;
+    }
+    const currentFolder: FolderType = tmp1;
+    const filesById: FilesByIdType = tmp2;
+    const foldersById: FoldersByIdType = tmp3;
 
     api.upload(files, currentFolder.id,
         (rejected: { [id: string]: string }, newFiles: FileType[]) => {
             R.forEach((f: FileType) => {
                 const f1: FileType = { ...f, new: true };
-                currentFolder.files.push(f1);
+                if (typeof currentFolder.files !== 'undefined') {
+                    currentFolder.files.push(f1);
+                }
                 filesById[f1.id] = f1;
             }, newFiles);
 
-            currentFolder.file_count = R.length(currentFolder.files);
+            if (typeof currentFolder.files !== 'undefined') {
+                currentFolder.file_count = R.length(currentFolder.files);
+            }
             foldersById[currentFolder.id] = currentFolder;
 
             const errors = R.map((key: string): ErrorType =>
-                createError(rejected[key], key), R.keys(rejected));
+                createError(key, [rejected[key]]), R.keys(rejected));
 
             resolve({
                 currentFolder,
@@ -47,7 +59,7 @@ const uploadFiles = (files: Array<File>,
         (error: string) => {
             // console.log(error)
             const errors = R.map((file: File): ErrorType =>
-                createError(file.name, error), files);
+                createError(file.name, [error]), files);
             reject({ errors });
         },
     );

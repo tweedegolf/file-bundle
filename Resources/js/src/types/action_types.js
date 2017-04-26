@@ -19,7 +19,7 @@ export type ActionInitType = {
 
 export type PayloadInitType = {
     selected: Array<FileType>,
-    rootFolderId: number,
+    rootFolderId: string,
     foldersById : FoldersByIdType,
 };
 
@@ -27,7 +27,7 @@ export type PayloadInitType = {
 export type ActionOpenFolderType = {
     type: 'OPEN_FOLDER',
     payload: {
-        id: number,
+        id: string,
     },
 };
 
@@ -110,7 +110,7 @@ export type ActionDismissErrorType = {
 };
 
 export type PayloadDismissErrorType = {
-    id: number,
+    id: string,
 };
 
 // errors
@@ -144,7 +144,7 @@ export type ActionDeleteType = {
 };
 
 export type PayloadDeleteType = {
-    id: number | null,
+    id: string | null,
 };
 
 

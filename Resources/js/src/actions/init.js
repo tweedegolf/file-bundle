@@ -9,7 +9,7 @@ const dispatch: Dispatch = store.dispatch;
 
 export default (options: OptionsType) => {
     persistStore(store, {}, () => {
-        const rootFolderId: number = options.rootFolderId;
+        const rootFolderId: string = options.rootFolderId;
         const rootFolder: FolderType = {
             id: rootFolderId,
             name: '..',

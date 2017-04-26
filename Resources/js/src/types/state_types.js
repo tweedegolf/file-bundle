@@ -3,11 +3,11 @@ import type { Store, Dispatch } from 'redux';
 
 // state
 export type TreeStateType = {
-    currentFolder: FolderType,
-    rootFolderId: number,
+    currentFolder: null | FolderType,
+    rootFolderId: string,
     parentFolder: null | FolderType,
-    filesById: FilesByIdType,
-    foldersById: FoldersByIdType,
+    filesById: null | FilesByIdType,
+    foldersById: null | FoldersByIdType,
     errors: Array<ErrorType>
 };
 
@@ -15,17 +15,17 @@ export type UIStateType = {
     sort: string,
     ascending: boolean,
     expanded: boolean,
-    previewUrl: string | null,
-    deleteFileWithId: number | null,
-    deleteFolderWithId: number | null,
-    hover: number,
+    previewUrl: null | string,
+    deleteFileWithId: null | string,
+    deleteFolderWithId: null | string,
+    hover: null | number,
     errors: Array<ErrorType>,
-    loadingFolderWithId: number,
-    deletingFileWithId: number | null,
-    deletingFolderWithId: number | null,
+    loadingFolderWithId: null | string,
+    deletingFileWithId: null | string,
+    deletingFolderWithId: null | string,
     isAddingFolder: boolean,
     isUploadingFiles: boolean,
-    scrollPosition: number | null,
+    scrollPosition: null | number,
     selected: Array<FileType>,
     clipboard: Array<FileType>,
     multiple: boolean,
@@ -45,17 +45,17 @@ export type DispatchType = Dispatch;
 
 
 // data
-export type FoldersByIdType = { [id: number]: FolderType };
-export type FilesByIdType = { [id: number]: FileType };
+export type FoldersByIdType = { [id: string]: FolderType };
+export type FilesByIdType = { [id: string]: FileType };
 
 export type FolderType = {
-    id: number,
+    id: string,
     name: string,
     create_ts?: number,
     created?: string,
     file_count?: number,
     folder_count?: number,
-    parent: null | number,
+    parent: null | string,
     type?: string,
     size?: string,
     size_bytes?: number,
@@ -65,10 +65,10 @@ export type FolderType = {
 };
 
 export type FileType = {
+    id: string,
+    name: string,
     create_ts: number,
     created: string,
-    id: number,
-    name: string,
     type: string,
     size: string,
     size_bytes: number,
@@ -86,7 +86,7 @@ export type ErrorType = {
 
 // options passed via HTML element's data-options attribute
 export type OptionsType = {
-    rootFolderId: number,
+    rootFolderId: string,
     selected?: Array<FileType>,
     multiple?: boolean,
 };

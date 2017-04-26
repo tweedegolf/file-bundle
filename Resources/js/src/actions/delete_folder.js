@@ -8,13 +8,31 @@ import { getUID } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-const deleteFolder = (folderId: number,
+const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
+    const errors = [{
+        id: getUID(),
+        type: Constants.ERROR_DELETING_FOLDER,
+        data,
+        messages,
+    }];
+    return { errors };
+};
+
+const deleteFolder = (folderId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree = store.getState().tree;
-    const currentFolder = R.clone(tree.currentFolder);
-    const filesById = R.clone(tree.filesById);
-    const foldersById = R.clone(tree.foldersById);
+    const tree: TreeStateType = store.getState().tree;
+    const tmp1 = R.clone(tree.currentFolder);
+    const tmp2 = R.clone(tree.filesById);
+    const tmp3 = R.clone(tree.foldersById);
+
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+        reject(createError(`folder with id ${folderId}`, ['invalid state']));
+        return;
+    }
+    const currentFolder: FolderType = tmp1;
+    const filesById: FilesByIdType = tmp2;
+    const foldersById: FoldersByIdType = tmp3;
 
     api.deleteFolder(folderId,
         () => {
@@ -42,18 +60,12 @@ const deleteFolder = (folderId: number,
         },
         (messages: Array<string>) => {
             const folder = foldersById[folderId];
-            const errors = [{
-                id: getUID(),
-                data: folder.name,
-                type: Constants.ERROR_DELETING_FOLDER,
-                messages,
-            }];
-            reject({ errors });
+            reject(createError(folder.name, messages));
         },
     );
 };
 
-export default (folderId: number) => {
+export default (folderId: string) => {
     const a: ActionDeleteType = {
         type: Constants.DELETE_FOLDER,
         payload: { id: folderId },

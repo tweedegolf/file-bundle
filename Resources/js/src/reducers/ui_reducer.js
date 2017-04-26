@@ -74,9 +74,9 @@ export const uiInitialState: UIStateType = {
     previewUrl: null,
     deleteFileWithId: null,
     deleteFolderWithId: null,
-    hover: -1,
+    hover: null,
     errors: [],
-    loadingFolderWithId: -1,
+    loadingFolderWithId: null,
     deletingFileWithId: null,
     deletingFolderWithId: null,
     isAddingFolder: false,
@@ -235,7 +235,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'FOLDER_OPENED') {
         return {
             ...state,
-            loadingFolderWithId: -1,
+            loadingFolderWithId: null,
         };
 
     /**
@@ -244,7 +244,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'ERROR_OPENING_FOLDER') {
         return {
             ...state,
-            loadingFolderWithId: -1,
+            loadingFolderWithId: null,
             errors: [...state.errors, ...action.payload.errors],
         };
 
@@ -356,6 +356,9 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      *                               current folder
      */
     } else if (action.type === 'SET_HOVER') {
+        if (state.hover === null) {
+            return state;
+        }
         const {
             diff = 0,
             max = state.hover,

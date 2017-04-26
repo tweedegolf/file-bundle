@@ -1,5 +1,5 @@
-/* eslint no-param-reassignment: 0 */
 // @flow
+/* eslint no-param-reassignment: 0 */
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -9,30 +9,53 @@ import { getUID } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
+const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
+    const errors = [{
+        id: getUID(),
+        type: Constants.ERROR_MOVING_FILES,
+        data,
+        messages,
+    }];
+    return { errors };
+};
+
 const moveFiles = (
     resolve: (payload: PayloadFilesMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const ui = store.getState().ui;
-    const tree = store.getState().tree;
-    const currentFolder = R.clone(tree.currentFolder);
-    const filesById = R.clone(tree.filesById);
-    const foldersById = R.clone(tree.foldersById);
+    const ui: UIStateType = store.getState().ui;
+    const tree: TreeStateType = store.getState().tree;
 
-    const files = ui.clipboard;
-    const fileIds = R.map((f: FileType): number => f.id, files);
+    const tmp1 = R.clone(tree.currentFolder);
+    const tmp2 = R.clone(tree.filesById);
+    const tmp3 = R.clone(tree.foldersById);
+
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+        reject(createError('moving files', ['invalid state']));
+        return;
+    }
+    const currentFolder: FolderType = tmp1;
+    const filesById: FilesByIdType = tmp2;
+    const foldersById: FoldersByIdType = tmp3;
+
+    const files: FileType[] = ui.clipboard;
+    const fileIds: string[] = R.map((f: FileType): string => f.id, files);
 
     api.paste(fileIds, currentFolder.id,
         () => {
             R.forEach((f: FileType) => {
                 filesById[f.id] = f;
-                currentFolder.files.push(R.merge(f, { new: true }));
+                if (typeof currentFolder.files !== 'undefined') {
+                    currentFolder.files.push(R.merge(f, { new: true }));
+                }
             }, files);
-            currentFolder.file_count = R.length(currentFolder.files);
+            if (typeof currentFolder.files !== 'undefined') {
+                currentFolder.file_count = R.length(currentFolder.files);
+            }
             foldersById[currentFolder.id] = currentFolder;
 
             R.forEach((folder: FolderType) => {
                 if (folder.id !== currentFolder.id) {
-                    R.forEach((fileId: number) => {
+                    R.forEach((fileId: string) => {
                         if (typeof folder.files !== 'undefined') {
                             // deliberately re-assign property though it is ugly
                             folder.files = R.reject((file: FileType): boolean =>
