@@ -8,7 +8,7 @@ export type TreeStateType = {
     parentFolder: null | FolderType,
     filesById: null | FilesByIdType,
     foldersById: null | FoldersByIdType,
-    errors: Array<ErrorType>
+    errors: Array<ErrorType>,
 };
 
 export type UIStateType = {

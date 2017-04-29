@@ -19,9 +19,9 @@ const uploadFiles = (files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(tree.currentFolder);
-    const tmp2 = R.clone(tree.filesById);
-    const tmp3 = R.clone(tree.foldersById);
+    const tmp1: null | FolderType = R.clone(tree.currentFolder);
+    const tmp2: null | FilesByIdType = R.clone(tree.filesById);
+    const tmp3: null | FoldersByIdType = R.clone(tree.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
         reject({ errors: [createError('uploading files', ['invalid state'])] });
@@ -32,7 +32,7 @@ const uploadFiles = (files: Array<File>,
     const foldersById: FoldersByIdType = tmp3;
 
     api.upload(files, currentFolder.id,
-        (rejected: { [id: string]: string }, newFiles: FileType[]) => {
+        (newFiles: FileType[], rejected: { [id: string]: string }) => {
             R.forEach((f: FileType) => {
                 const f1: FileType = { ...f, new: true };
                 if (typeof currentFolder.files !== 'undefined') {
@@ -56,10 +56,10 @@ const uploadFiles = (files: Array<File>,
                 errors,
             });
         },
-        (error: string) => {
+        (errorMessages: string[]) => {
             // console.log(error)
             const errors = R.map((file: File): ErrorType =>
-                createError(file.name, [error]), files);
+                createError(file.name, errorMessages), files);
             reject({ errors });
         },
     );

@@ -22,9 +22,9 @@ const deleteFile = (fileId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(tree.currentFolder);
-    const tmp2 = R.clone(tree.filesById);
-    const tmp3 = R.clone(tree.foldersById);
+    const tmp1: null | FolderType = { ...tree.currentFolder };
+    const tmp2: null | FilesByIdType = { ...tree.filesById };
+    const tmp3: null | FoldersByIdType = { ...tree.foldersById };
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
         reject(createError(`file with id ${fileId}`, ['invalid state']));
@@ -55,8 +55,9 @@ const deleteFile = (fileId: string,
             }
         },
         (messages: Array<string>) => {
-            const f = filesById[fileId];
-            reject(createError(f === null ? 'no name' : f.name, messages));
+            const f: null | FileType = filesById[fileId];
+            const n: string = f === null ? 'no name' : f.name;
+            reject(createError(n, messages));
         },
     );
 };

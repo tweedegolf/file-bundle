@@ -57,7 +57,6 @@ export type ActionFolderAddedType = {
 export type PayloadFolderAddedType = {
     currentFolder: FolderType,
     foldersById: FoldersByIdType,
-    errors: Array<ErrorType>,
 };
 
 

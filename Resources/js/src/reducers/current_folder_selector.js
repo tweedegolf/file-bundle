@@ -1,24 +1,15 @@
-// @flowoff
+// @flow
 import R from 'ramda';
 import { createSelector } from 'reselect';
 
-type ItemType = {
-    key: string,
-    isTrashed: boolean,
-};
-
-// type ItemType = FileType | FolderType;
-
-// type FuncType = (key: string, array: ItemType[]) => ItemType[];
-
 type ReturnType = {
-    rootFolderId: null | number,
-    currentFolderId: number,
-    // folders: FolderType[],
-    // files: FileType[],
-    folders: ItemType[],
-    files: ItemType[],
+    rootFolderId: null | string,
+    currentFolderId: string,
+    folders: FolderType[],
+    files: FileType[],
 };
+
+type ItemType = FolderType | FileType;
 
 const getUI = (state: StateType): UIStateType => state.ui;
 const getTree = (state: StateType): TreeStateType => state.tree;
@@ -43,8 +34,18 @@ export default createSelector(
         //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
         const currentFolder = tree.currentFolder;
-        let files = [];
-        let folders = [];
+
+        if (currentFolder === null) {
+            console.error('no currentFolder, this should not happen!');
+            return {
+                files: [],
+                folders: [],
+                currentFolderId: '',
+                rootFolderId: '',
+            };
+        }
+        let files: FileType[] = [];
+        let folders: FolderType[] = [];
         if (typeof currentFolder.files !== 'undefined') {
             files = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.files);
         }

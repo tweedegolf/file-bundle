@@ -1,27 +1,57 @@
-// @flowoff
+// @flow
 /**
  * @file       List that shows all files and folders in the current folder. All
  *             items are shown as a row. See the files file.react.js and
  *             folder.react.js
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
-import File, { fileShape } from '../components/file.react';
-import Folder, { folderShape } from '../components/folder.react';
+import FileComponent from '../components/file.react';
+import FolderComponent from '../components/folder.react';
 import * as Actions from '../actions';
 import currentFolderSelector from '../reducers/current_folder_selector';
 
-const mapStateToProps = (state: StateType) => {
+type PassedPropsType = {
+    selectFile: () => void,
+    browser: boolean,
+    imagesOnly: boolean,
+};
+
+type PropsType = {
+    files: FileType[],
+    folders: FolderType[],
+    selected: FileType[],
+    clipboard: FileType[],
+    ascending: boolean,
+    isUploadingFiles: boolean,
+    hover: null | number,
+    currentFolderId: null | string,
+    loadingFolderWithId: null | string,
+    deletingFileWithId: null | string,
+    deletingFolderWithId: null | string,
+    deleteFileWithId: null | string,
+    deleteFolderWithId: null | string,
+    parentFolder: null | FolderType,
+};
+
+type DefaultPropsType = {
+    currentFolderId: null,
+    loadingFolderWithId: null,
+    deletingFileWithId: null,
+    deletingFolderWithId: null,
+    deleteFileWithId: null,
+    deleteFolderWithId: null,
+    parentFolder: null,
+};
+
+const mapStateToProps = (state: StateType): PropsType => {
     const {
         files,
         folders,
         currentFolderId,
     } = currentFolderSelector(state);
-
-    // and here we have the problem!
-    const f:FileType = files[0];
 
     return {
         // tree props
@@ -33,7 +63,7 @@ const mapStateToProps = (state: StateType) => {
         // ui props
         sort: state.ui.sort,
         ascending: state.ui.ascending,
-        preview: state.ui.preview,
+        preview: state.ui.previewUrl,
         expanded: state.ui.expanded,
         hover: state.ui.hover,
         selected: state.ui.selected,
@@ -48,26 +78,15 @@ const mapStateToProps = (state: StateType) => {
     };
 };
 
-@connect(mapStateToProps)
-export default class List extends React.Component {
+type AllPropsType = PassedPropsType & PropsType;
+type ListStateType = {};
 
-    static propTypes = {
-        currentFolderId: PropTypes.number,
-        files: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        folders: PropTypes.arrayOf(PropTypes.shape(folderShape)).isRequired,
-        selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        browser: PropTypes.bool.isRequired,
-        imagesOnly: PropTypes.bool.isRequired,
-        ascending: PropTypes.bool.isRequired,
-        loadingFolderWithId: PropTypes.number,
-        deleteFileWithId: PropTypes.number,
-        deleteFolderWithId: PropTypes.number,
-        isUploadingFiles: PropTypes.bool.isRequired,
-        hover: PropTypes.number.isRequired,
-        parentFolder: PropTypes.shape(folderShape),
-        selectFile: PropTypes.func.isRequired,
-    }
+@connect(mapStateToProps)
+// export default class List extends React.Component {
+export default class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType> {
+    props: AllPropsType
+    state: ListStateType
+    openFolder: (folderId: string) => void
 
     static defaultProps = {
         currentFolderId: null,
@@ -81,7 +100,7 @@ export default class List extends React.Component {
 
     constructor() {
         super();
-        this.openFolder = (folderId) => {
+        this.openFolder = (folderId: string) => {
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
                 return;
             }
@@ -89,22 +108,22 @@ export default class List extends React.Component {
         };
     }
 
-    render() {
+    render(): ?React$Element<*> {
         if (R.isNil(this.props.currentFolderId)) {
-            return false;
+            return null;
         }
 
         // TODO: reverse i!
         let i = this.props.folders.length + this.props.files.length;
 
         // sorted file listing
-        let files = R.map((file) => {
+        let files = R.map((file: FileType): null | FileComponent[] => {
             // hide non-images when the images only option is passed to the form
             if (!this.props.browser && this.props.imagesOnly && !file.thumb) {
                 return null;
             }
 
-            return (<File
+            return (<FileComponent
               key={`file-${file.id}`}
               file={file}
               hovering={this.props.hover === (i -= 1)}
@@ -120,7 +139,7 @@ export default class List extends React.Component {
         }, this.props.files);
 
         // sorted folder listing
-        let folders = R.map(folder => (<Folder
+        let folders = R.map((folder: FolderType): null | FolderComponent[] => (<FolderComponent
           hovering={this.props.hover === (i -= 1)}
           key={`folder-${folder.id}`}
           backToParent={false}
@@ -140,8 +159,8 @@ export default class List extends React.Component {
 
         // show parent directory button
         let backToParent = null;
-        if (R.isNil(this.props.parentFolder) === false) {
-            backToParent = (<Folder
+        if (this.props.parentFolder !== null) {
+            backToParent = (<FolderComponent
               key={`folder-${this.props.parentFolder.name}`}
               backToParent={true}
               folder={this.props.parentFolder}

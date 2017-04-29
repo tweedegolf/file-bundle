@@ -81,7 +81,7 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
         parentFolder = foldersById[currentFolder.parent];
     }
 
-    let rfCheck;
+    let rfCheck = '';
     if (checkRootFolder === true) {
         rfCheck = rootFolderId;
     }

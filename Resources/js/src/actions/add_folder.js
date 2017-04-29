@@ -33,7 +33,7 @@ const addFolder = (folderName: string,
     const foldersById: FoldersByIdType = tmp2;
 
     api.addFolder(folderName, currentFolder.id,
-        (folders: Array<FolderType>, errorMessages: Array<string>) => {
+        (folders: Array<FolderType>) => {
             folders.forEach((f: FolderType) => {
                 foldersById[f.id] = f;
                 if (typeof currentFolder.folders !== 'undefined') {
@@ -44,20 +44,9 @@ const addFolder = (folderName: string,
             currentFolder.folder_count = R.length(folders);
             foldersById[currentFolder.id] = currentFolder;
 
-            let errors = [];
-            if (errorMessages.length > 0) {
-                errors = [{
-                    id: getUID(),
-                    data: folderName,
-                    type: Constants.ERROR_ADDING_FOLDER,
-                    messages: errorMessages,
-                }];
-            }
             const payload: PayloadFolderAddedType = {
                 currentFolder,
                 foldersById,
-                errors,
-                //errors: [{id: 7777, type: 'generic', messages: ['oh my, this is an error!']}]
             };
             resolve(payload);
         },
