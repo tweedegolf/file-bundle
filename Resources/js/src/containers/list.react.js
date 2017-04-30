@@ -46,6 +46,9 @@ type DefaultPropsType = {
     parentFolder: null,
 };
 
+type AllPropsType = PassedPropsType & PropsType;
+type ListStateType = {};
+
 const mapStateToProps = (state: StateType): PropsType => {
     const {
         files,
@@ -78,12 +81,8 @@ const mapStateToProps = (state: StateType): PropsType => {
     };
 };
 
-type AllPropsType = PassedPropsType & PropsType;
-type ListStateType = {};
-
-@connect(mapStateToProps)
 // export default class List extends React.Component {
-export default class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType> {
+class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType> {
     props: AllPropsType
     state: ListStateType
     openFolder: (folderId: string) => void
@@ -184,3 +183,5 @@ export default class List extends React.Component<DefaultPropsType, AllPropsType
         </tbody>);
     }
 }
+
+export default connect(mapStateToProps)(List);

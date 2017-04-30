@@ -1,10 +1,10 @@
+// @flow
 /**
  * @file       Main component, or container. All other React components in this
  *             application are child of this component, as such, it ties
  *             together the application.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import R from 'ramda';
@@ -14,9 +14,42 @@ import SelectedFiles from '../components/selected_files.react';
 import SortHeader from '../components/sort_header.react';
 import Toolbar from '../components/toolbar.react';
 import Preview from '../components/preview.react';
-import Errors, { errorShape } from '../components/errors.react';
+import Errors from '../components/errors.react';
 import * as Actions from '../actions';
-import { fileShape } from '../components/file.react';
+
+type PassedPropsType = {
+    browser: boolean,
+    options: OptionsType,
+};
+
+type PropsType = {
+    multiple: boolean,
+    imagesOnly: boolean,
+    scrollPosition: null | number,
+    sort: string,
+    previewUrl: null | string,
+    ascending: boolean,
+    expanded: boolean,
+    currentFolderId: string,
+    isAddingFolder: boolean,
+    isUploadingFiles: boolean,
+    loadingFolderWithId: null | string,
+    numItemsInCurrentFolder: number,
+    errors: ErrorType[],
+    clipboard: FileType[],
+    selected: FileType[],
+};
+
+type DefaultPropsType = {
+    previewUrl: null,
+    // sort: null,
+    scrollPosition: null,
+    loadingFolderWithId: null,
+    currentFolderId: null,
+};
+
+type AllPropsType = PassedPropsType & PropsType;
+type BrowserStateType = {};
 
 const columnHeaders = {
     name: 'Naam',
@@ -24,7 +57,7 @@ const columnHeaders = {
     create_ts: 'Aangemaakt',
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: StateType): PropsType => {
     const {
         sort,
         ascending,
@@ -33,7 +66,8 @@ const mapStateToProps = (state) => {
     const [currentFolderId, numItemsInCurrentFolder] = R.cond([
         [R.isNil, R.always([null, 0])],
         [R.isEmpty, R.always([null, 0])],
-        [R.T, cf => [cf.id, R.length(cf.folders) + R.length(cf.files)]],
+        [R.T, (cf: FolderType): [string, number] =>
+            [cf.id, R.length(cf.folders) + R.length(cf.files)]],
     ])(state.tree.currentFolder);
 
     return {
@@ -58,36 +92,9 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = dispatch => ({ dispatch });
+const mapDispatchToProps = (dispatch: DispatchType): {dispatch: () => void} => ({ dispatch });
 
-// Use the @connect decorator to make the state available as properties
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Browser extends React.Component {
-
-    static propTypes = {
-        browser: PropTypes.bool.isRequired,
-        multiple: PropTypes.bool.isRequired,
-        imagesOnly: PropTypes.bool.isRequired,
-        scrollPosition: PropTypes.number,
-        sort: PropTypes.string,
-        previewUrl: PropTypes.string,
-        ascending: PropTypes.bool.isRequired,
-        expanded: PropTypes.bool.isRequired,
-        currentFolderId: PropTypes.string,
-        isAddingFolder: PropTypes.bool.isRequired,
-        isUploadingFiles: PropTypes.bool.isRequired,
-        loadingFolderWithId: PropTypes.string,
-        numItemsInCurrentFolder: PropTypes.number.isRequired,
-        errors: PropTypes.arrayOf(PropTypes.shape(errorShape)).isRequired,
-        clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        options: PropTypes.shape({
-            multiple: PropTypes.bool,
-            images_only: PropTypes.bool,
-            rootFolderId: PropTypes.string.isRequired,
-        }).isRequired,
-    }
-
+class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserStateType> {
     static defaultProps = {
         previewUrl: null,
         sort: null,
@@ -95,12 +102,17 @@ export default class Browser extends React.Component {
         loadingFolderWithId: null,
         currentFolderId: null,
     }
+    containerRef: HTMLElement
+    onKeyDown: (event: Event) => void
+    props: AllPropsType
+    uploadFiles: (event: SyntheticEvent | DataTransfer) => void
+    selectFile: (id: string) => void
+    state: BrowserStateType
 
-    constructor(props) {
-        super(props);
-
+    constructor() {
+        super();
         // select files and folders using the arrow up and -down key of your keyboard
-        this.onKeyDown = (event) => {
+        this.onKeyDown = (event: Event) => {
             event.stopPropagation();
             if (event.keyCode === 38) {
                 Actions.setHover(-1, this.props.numItemsInCurrentFolder);
@@ -110,20 +122,23 @@ export default class Browser extends React.Component {
         };
 
         // upload files by drag and drop or file dialog
-        this.uploadFiles = (event) => {
+        this.uploadFiles = (event: SyntheticEvent | DataTransfer) => {
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
                 return;
             }
-            if (R.isNil(event.files) === false) {
+            if (event instanceof DataTransfer) {
                 Actions.uploadFiles(event.files);
             } else {
-                Actions.uploadFiles(Array.from(event.target.files));
+                const target = event.target;
+                if (target instanceof HTMLInputElement) {
+                    Actions.uploadFiles(Array.from(target.files));
+                }
             }
         };
 
         // files can be selected by clicking the checkbox in front of the filename
         // in the filelist
-        this.selectFile = (file) => {
+        this.selectFile = (id: string) => {
             /**
              * User has already clicked on the 'cut' button so she can't select files
              * anymore until she pastes or cancels.
@@ -133,8 +148,8 @@ export default class Browser extends React.Component {
             }
 
             Actions.selectFile({
-                file,
-                multiple: this.multiple,
+                id,
+                multiple: this.props.multiple,
                 browser: this.props.browser,
             });
         };
@@ -178,12 +193,12 @@ export default class Browser extends React.Component {
         }
     }
 
-    render() {
+    render(): ?React$Element<*> {
         if (R.isNil(this.props.currentFolderId)) {
             return <div>initializing...</div>;
         }
 
-        const headers = R.map(([column, name]) =>
+        const headers = R.map(([column, name]: [string, string]): SortHeader =>
             <SortHeader
               key={column}
               sortBy={Actions.changeSorting}
@@ -261,7 +276,7 @@ export default class Browser extends React.Component {
                           errors={this.props.errors}
                           onDismiss={Actions.dismissError}
                         />
-                        <div ref={(div) => { this.containerRef = div; }} className="table-container">
+                        <div ref={(div: HTMLElement) => { this.containerRef = div; }} className="table-container">
                             <table className="table table-condensed">
                                 <thead>
                                     <tr>
@@ -286,3 +301,5 @@ export default class Browser extends React.Component {
         );
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Browser);

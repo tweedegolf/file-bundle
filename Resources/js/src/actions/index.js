@@ -30,7 +30,7 @@ const dispatch: Dispatch = getStore().dispatch;
  *
  * @param {SelectFileArg} data Argument passed.
  */
-export const selectFile = (data: { browser: boolean, multiple: boolean, id: number }) => {
+export const selectFile = (data: { browser: boolean, multiple: boolean, id: string }) => {
     dispatch({
         type: Constants.SELECT_FILE,
         payload: { ...data },
@@ -146,7 +146,7 @@ export const setHover = (diff: number, max: number) => {
  * @param      {number}  scroll  The position of the list in pixels measured
  *                               from the top.
  */
-export const setScrollPosition = (scroll: number) => {
+export const setScrollPosition = (scroll: null | number) => {
     dispatch({
         type: Constants.SET_SCROLL_POSITION,
         payload: { scroll },

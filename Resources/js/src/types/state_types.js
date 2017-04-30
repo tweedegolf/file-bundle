@@ -3,38 +3,38 @@ import type { Store, Dispatch } from 'redux';
 
 // state
 export type TreeStateType = {
-    currentFolder: null | FolderType,
-    rootFolderId: string,
-    parentFolder: null | FolderType,
-    filesById: null | FilesByIdType,
-    foldersById: null | FoldersByIdType,
-    errors: Array<ErrorType>,
+    +currentFolder: null | FolderType,
+    +rootFolderId: string,
+    +parentFolder: null | FolderType,
+    +filesById: null | FilesByIdType,
+    +foldersById: null | FoldersByIdType,
+    +errors: Array<ErrorType>,
 };
 
 export type UIStateType = {
-    sort: string,
-    ascending: boolean,
-    expanded: boolean,
-    previewUrl: null | string,
-    deleteFileWithId: null | string,
-    deleteFolderWithId: null | string,
-    hover: null | number,
-    errors: Array<ErrorType>,
-    loadingFolderWithId: null | string,
-    deletingFileWithId: null | string,
-    deletingFolderWithId: null | string,
-    isAddingFolder: boolean,
-    isUploadingFiles: boolean,
-    scrollPosition: null | number,
-    selected: Array<FileType>,
-    clipboard: Array<FileType>,
-    multiple: boolean,
-    imagesOnly: boolean
+    +sort: string,
+    +ascending: boolean,
+    +expanded: boolean,
+    +previewUrl: null | string,
+    +deleteFileWithId: null | string,
+    +deleteFolderWithId: null | string,
+    +hover: null | number,
+    +errors: Array<ErrorType>,
+    +loadingFolderWithId: null | string,
+    +deletingFileWithId: null | string,
+    +deletingFolderWithId: null | string,
+    +isAddingFolder: boolean,
+    +isUploadingFiles: boolean,
+    +scrollPosition: null | number,
+    +selected: Array<FileType>,
+    +clipboard: Array<FileType>,
+    +multiple: boolean,
+    +imagesOnly: boolean
 };
 
 export type StateType = {
-    tree: TreeStateType,
-    ui: UIStateType,
+    +tree: TreeStateType,
+    +ui: UIStateType,
 };
 
 
