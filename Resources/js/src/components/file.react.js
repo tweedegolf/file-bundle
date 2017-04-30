@@ -1,3 +1,4 @@
+// @flow
 /**
  * @file       Component that renders a file in the filelist. It consists of a row
  *             that shows the name, type, creation date of the file. In case the
@@ -7,7 +8,6 @@
  *             render a confirmation popup.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 
 const icons = {
     pdf: 'file-pdf-o',
@@ -19,28 +19,29 @@ const icons = {
     xlsx: 'file-excel-o',
 };
 
-export const fileShape = {
-    create_ts: PropTypes.number.isRequired,
-    created: PropTypes.string.isRequired,
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    original: PropTypes.string.isRequired,
-    thumb: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    size: PropTypes.string.isRequired,
-    size_bytes: PropTypes.number.isRequired,
+type PropsType = {
+    file: FileType,
+    confirmDelete: (id: null | string) => void,
+    showPreview: (id: string) => void,
+    selectFile: (file: FileType) => void,
+    deleteFile: (id: string) => void,
+    clipboard: FileType[],
+    selected: FileType[],
+    hovering: boolean,
+    browser: boolean,
+    deleteFileWithId: null | string,
 };
 
-const File = (props) => {
+const File = (props: PropsType): React$Element<*> => {
     const file = props.file;
     let checked = false;
     if (props.clipboard.length > 0) {
-        const index = props.clipboard.find(f => f.id === file.id);
+        const index = props.clipboard.find((f: FileType): boolean => f.id === file.id);
         checked = index !== 'undefined';
     }
     let selected = false;
     if (props.selected.length > 0) {
-        const index = typeof props.selected.find(f => f.id === file.id);
+        const index = typeof props.selected.find((f: FileType): boolean => f.id === file.id);
         selected = index !== 'undefined';
     }
     // console.log(file.name, selected)
@@ -58,7 +59,7 @@ const File = (props) => {
             <button
               type="button"
               className="btn btn-sm btn-primary"
-              onClick={(e) => {
+              onClick={(e: SyntheticEvent) => {
                   e.stopPropagation();
                   props.confirmDelete(null);
               }}
@@ -70,7 +71,7 @@ const File = (props) => {
             <button
               type="button"
               className="btn btn-sm btn-danger"
-              onClick={(e) => {
+              onClick={(e: SyntheticEvent) => {
                   e.stopPropagation();
                   props.deleteFile(file.id);
               }}
@@ -83,7 +84,7 @@ const File = (props) => {
         btnDelete = (<button
           type="button"
           className="btn btn-sm btn-danger"
-          onClick={(e) => {
+          onClick={(e: SyntheticEvent) => {
               e.stopPropagation();
               props.confirmDelete(file.id);
           }}
@@ -100,7 +101,7 @@ const File = (props) => {
                   title="Download"
                   download={file.name}
                   href={file.original}
-                  onClick={e => e.stopPropagation()}
+                  onClick={(e: SyntheticEvent): void => e.stopPropagation()}
                 >
                     <span className="fa fa-download" />
                 </a>);
@@ -133,9 +134,12 @@ const File = (props) => {
     if (file.thumb) {
         const p = {
             src: file.thumb,
-            onClick: (e) => {
-                e.stopPropagation();
-                props.showPreview(file.original);
+            onClick: (e: SyntheticEvent) => {
+                if (typeof file.original !== 'undefined') {
+                    const original: string = file.original;
+                    e.stopPropagation();
+                    props.showPreview(original);
+                }
             },
         };
         preview = <img alt={file.name} {...p} />;
@@ -169,19 +173,6 @@ const File = (props) => {
             </td>
         </tr>
     );
-};
-
-File.propTypes = {
-    file: PropTypes.shape(fileShape).isRequired,
-    confirmDelete: PropTypes.func.isRequired,
-    showPreview: PropTypes.func.isRequired,
-    selectFile: PropTypes.func.isRequired,
-    deleteFile: PropTypes.func.isRequired,
-    clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-    selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-    hovering: PropTypes.bool.isRequired,
-    browser: PropTypes.bool.isRequired,
-    deleteFileWithId: PropTypes.number,
 };
 
 File.defaultProps = {

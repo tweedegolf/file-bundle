@@ -1,33 +1,41 @@
+// @flow
 /**
  * @file       Component shows the currently selected files. This component only
  *             renders in Filepicker mode.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { fileShape } from '../components/file.react';
 
-export default class SelectedFiles extends React.Component {
+type PropsType = {
+    clipboard: FileType[],
+    selected: FileType[],
+    multiple: boolean,
+    browser: boolean,
+    selectFile: (id: string) => void,
+    showPreview: (id: null | string) => void,
+};
 
-    static propTypes = {
-        clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        multiple: PropTypes.bool.isRequired,
-        browser: PropTypes.bool.isRequired,
-        selectFile: PropTypes.func.isRequired,
-        showPreview: PropTypes.func.isRequired,
-    }
+type DefaultPropsType = {};
+type SelectedFilesStateType = {};
 
-    render() {
+// export default class SelectedFiles extends React.Component<EmptyType, PropsType, EmptyType> {
+export default class SelectedFiles extends
+    React.Component<DefaultPropsType, PropsType, SelectedFilesStateType> {
+    props: PropsType
+    state: SelectedFilesStateType
+    static defaultProps = {}
+
+    render(): null | React$Element<*> {
         if (this.props.browser === true || this.props.selected.length === 0) {
-            return false;
+            return null;
         }
 
         let files = [];
-        this.props.selected.forEach((file) => {
+        this.props.selected.forEach((file: FileType) => {
             const id = file.id;
             let preview = <span className="fa fa-file" />;
             if (file.thumb) {
-                const p = { onClick: () => { this.props.showPreview(file.original); } };
+                const original = typeof file.original === 'undefined' ? null : file.original;
+                const p = { onClick: () => { this.props.showPreview(original); } };
                 preview = (<img
                   src={file.thumb}
                   alt={file.name}

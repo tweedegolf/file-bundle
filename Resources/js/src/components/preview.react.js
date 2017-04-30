@@ -1,15 +1,19 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import R from 'ramda';
 import { showPreview } from '../actions';
 
-const Preview = (props) => {
-    if (R.isNil(props.url)) {
+type PropsType = {
+    url: null | string,
+};
+
+const Preview = (props: PropsType): null | React$Element<*> => {
+    if (props.url === null) {
         return null;
     }
     const p = {
         className: 'preview-image',
-        onClick: (e) => {
+        onClick: (e: SyntheticEvent) => {
             e.stopPropagation();
             showPreview(null);
         },
@@ -19,9 +23,6 @@ const Preview = (props) => {
     </div>);
 };
 
-Preview.propTypes = {
-    url: PropTypes.string,
-};
 
 Preview.defaultProps = {
     url: null,

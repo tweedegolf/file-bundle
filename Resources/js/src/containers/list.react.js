@@ -8,8 +8,8 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
-import FileComponent from '../components/file.react';
-import FolderComponent from '../components/folder.react';
+import File from '../components/file.react';
+import Folder from '../components/folder.react';
 import * as Actions from '../actions';
 import currentFolderSelector from '../reducers/current_folder_selector';
 
@@ -116,13 +116,13 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         let i = this.props.folders.length + this.props.files.length;
 
         // sorted file listing
-        let files = R.map((file: FileType): null | FileComponent[] => {
+        let files = R.map((file: FileType): null | React$Element<*> => {
             // hide non-images when the images only option is passed to the form
             if (!this.props.browser && this.props.imagesOnly && !file.thumb) {
                 return null;
             }
 
-            return (<FileComponent
+            return (<File
               key={`file-${file.id}`}
               file={file}
               hovering={this.props.hover === (i -= 1)}
@@ -138,7 +138,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         }, this.props.files);
 
         // sorted folder listing
-        let folders = R.map((folder: FolderType): null | FolderComponent[] => (<FolderComponent
+        let folders = R.map((folder: FolderType): React$Element<*> => (<Folder
           hovering={this.props.hover === (i -= 1)}
           key={`folder-${folder.id}`}
           backToParent={false}
@@ -159,7 +159,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         // show parent directory button
         let backToParent = null;
         if (this.props.parentFolder !== null) {
-            backToParent = (<FolderComponent
+            backToParent = (<Folder
               key={`folder-${this.props.parentFolder.name}`}
               backToParent={true}
               folder={this.props.parentFolder}

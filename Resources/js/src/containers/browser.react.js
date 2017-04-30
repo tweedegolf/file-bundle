@@ -22,6 +22,10 @@ type PassedPropsType = {
     options: OptionsType,
 };
 
+type OtherPropsType = {
+    children: React$Element<*>,
+};
+
 type PropsType = {
     multiple: boolean,
     imagesOnly: boolean,
@@ -46,10 +50,17 @@ type DefaultPropsType = {
     scrollPosition: null,
     loadingFolderWithId: null,
     currentFolderId: null,
+    children: null,
 };
 
-type AllPropsType = PassedPropsType & PropsType;
+type AllPropsType = PassedPropsType & PropsType & OtherPropsType;
 type BrowserStateType = {};
+
+// type DivConfigType = {
+//     type: ReactClass<Config>;
+//     props: $PropsOf<Config>;
+//     key: ?string;
+// };
 
 const columnHeaders = {
     name: 'Naam',
@@ -101,6 +112,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         scrollPosition: null,
         loadingFolderWithId: null,
         currentFolderId: null,
+        children: null,
     }
     containerRef: HTMLElement
     onKeyDown: (event: Event) => void
@@ -193,7 +205,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         }
     }
 
-    render(): ?React$Element<*> {
+    // render() {
+    // render(): ?React$Element<*> {
+    render(): ?React$Element<any> {
         if (R.isNil(this.props.currentFolderId)) {
             return <div>initializing...</div>;
         }

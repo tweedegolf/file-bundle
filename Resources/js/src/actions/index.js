@@ -75,7 +75,7 @@ export const changeSorting = (sort: boolean) => {
  *
  * @param      {number}  error_id  The unique identifier of the error.
  */
-export const dismissError = (id: number) => {
+export const dismissError = (id: string) => {
     dispatch({
         type: Constants.DISMISS_ERROR,
         payload: { id },
@@ -88,7 +88,7 @@ export const dismissError = (id: number) => {
  *
  * @param      {string}  image_url  The url of the full size image.
  */
-export const showPreview = (imageUrl: string) => {
+export const showPreview = (imageUrl: null | string) => {
     dispatch({
         type: Constants.SHOW_PREVIEW,
         payload: { imageUrl },
@@ -103,14 +103,14 @@ export const showPreview = (imageUrl: string) => {
  * @param      {number}  id      The id of the file will be deleted after
  *                               confirmation
  */
-export const confirmDeleteFile = (id: number) => {
+export const confirmDeleteFile = (id: null | string) => {
     dispatch({
         type: Constants.CONFIRM_DELETE_FILE,
         payload: { id },
     });
 };
 
-export const confirmDeleteFolder = (id: number) => {
+export const confirmDeleteFolder = (id: null | string) => {
     dispatch({
         type: Constants.CONFIRM_DELETE_FOLDER,
         payload: { id },

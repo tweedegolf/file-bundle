@@ -1,3 +1,4 @@
+// @flow
 /**
  * @file       Component that shows a folder in the filelist. It consist of a
  *             row containing a folder icon, the name, creation date, number of
@@ -6,36 +7,47 @@
  *             folder is empty, the row will show a delete button as well.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 
-export const folderShape = {
-    create_ts: PropTypes.number,
-    created: PropTypes.string,
-    file_count: PropTypes.number.isRequired,
-    folder_count: PropTypes.number.isRequired,
-    id: PropTypes.number,
-    name: PropTypes.string.isRequired,
-    parent: PropTypes.number,
-    type: PropTypes.string,
-    size: PropTypes.string,
-    size_bytes: PropTypes.number,
+type PropsType = {
+    folder: FolderType,
+    onOpenFolder: (id: string) => void,
+    backToParent: boolean,
+    loading?: string,
+    hovering?: boolean,
+    deleteFolder?: (id: string) => void,
+    confirmDelete?: (id: null | string) => void,
+    deleteFolderWithId?: null | string,
 };
 
-const Folder = (props) => {
+// const Folder = ({
+//         folder,
+//         onOpenFolder,
+//         backToParent,
+//         loading,
+//         hovering,
+//         deleteFolder,
+//         confirmDelete,
+//         deleteFolderWithId = null,
+//     }: PropsType): React$Element<*> => {
+const Folder = (props: PropsType): React$Element<*> => {
     const folder = props.folder;
     const className = `folder${folder.new ? ' success' : ''}${props.hovering ? ' selected' : ''}`;
 
     let confirm = null;
     let btnDelete = null;
 
-    if (props.deleteFolderWithId === folder.id) {
+    if (props.deleteFolderWithId === folder.id &&
+        typeof props.confirmDelete !== 'undefined' &&
+        typeof props.deleteFolder !== 'undefined') {
+        const confirmDelete = props.confirmDelete;
+        const deleteFolder = props.deleteFolder;
         confirm = (<div className="confirm">
             <button
               type="button"
               className="btn btn-sm btn-primary"
-              onClick={(e) => {
+              onClick={(e: SyntheticEvent) => {
                   e.stopPropagation();
-                  props.confirmDelete(null);
+                  confirmDelete(null);
               }}
             >
                 <span className="text-label">Annuleren</span>
@@ -45,22 +57,23 @@ const Folder = (props) => {
             <button
               type="button"
               className="btn btn-sm btn-danger"
-              onClick={(e) => {
+              onClick={(e: SyntheticEvent) => {
                   e.stopPropagation();
-                  props.deleteFolder(folder.id);
+                  deleteFolder(folder.id);
               }}
             >
                 <span className="text-label">Definitief verwijderen</span>
                 <span className="fa fa-trash-o" />
             </button>
         </div>);
-    } else if (props.backToParent === false) {
+    } else if (props.backToParent === false && typeof props.confirmDelete !== 'undefined') {
+        const confirmDelete = props.confirmDelete;
         btnDelete = (<button
           type="button"
           className="btn btn-sm btn-danger"
-          onClick={(e) => {
+          onClick={(e: SyntheticEvent) => {
               e.stopPropagation();
-              props.confirmDelete(folder.id);
+              confirmDelete(folder.id);
           }}
         >
             <span className="fa fa-trash-o" />
@@ -78,7 +91,7 @@ const Folder = (props) => {
     }
 
     let fileCount = null;
-    if (folder.file_count > 0) {
+    if (typeof folder.file_count !== 'undefined' && folder.file_count > 0) {
         fileCount = (<span>
             {folder.file_count}
             <span className="fa fa-file-o" />
@@ -86,7 +99,7 @@ const Folder = (props) => {
     }
 
     let folderCount = null;
-    if (folder.folder_count > 0) {
+    if (typeof folder.folder_count !== 'undefined' && folder.folder_count > 0) {
         folderCount = (<span>
             {folder.folder_count}
             <span className="fa fa-folder-o" />
@@ -113,17 +126,6 @@ const Folder = (props) => {
             <td className="buttons">{btnDelete}</td>
         </tr>
     );
-};
-
-Folder.propTypes = {
-    folder: PropTypes.shape(folderShape).isRequired,
-    hovering: PropTypes.bool,
-    onOpenFolder: PropTypes.func.isRequired,
-    loading: PropTypes.number,
-    backToParent: PropTypes.bool.isRequired,
-    deleteFolder: PropTypes.func,
-    confirmDelete: PropTypes.func,
-    deleteFolderWithId: PropTypes.number,
 };
 
 Folder.defaultProps = {
