@@ -118,7 +118,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
     onKeyDown: (event: Event) => void
     props: AllPropsType
     uploadFiles: (event: SyntheticEvent | DataTransfer) => void
-    selectFile: (id: string) => void
+    selectFile: (file: FileType) => void
     state: BrowserStateType
 
     constructor() {
@@ -135,7 +135,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
 
         // upload files by drag and drop or file dialog
         this.uploadFiles = (event: SyntheticEvent | DataTransfer) => {
-            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
+            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
                 return;
             }
             if (event instanceof DataTransfer) {
@@ -150,7 +150,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
 
         // files can be selected by clicking the checkbox in front of the filename
         // in the filelist
-        this.selectFile = (id: string) => {
+        this.selectFile = (file: FileType) => {
             /**
              * User has already clicked on the 'cut' button so she can't select files
              * anymore until she pastes or cancels.
@@ -160,7 +160,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             }
 
             Actions.selectFile({
-                id,
+                file,
                 multiple: this.props.multiple,
                 browser: this.props.browser,
             });

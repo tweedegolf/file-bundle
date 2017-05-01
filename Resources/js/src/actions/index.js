@@ -30,7 +30,7 @@ const dispatch: Dispatch = getStore().dispatch;
  *
  * @param {SelectFileArg} data Argument passed.
  */
-export const selectFile = (data: { browser: boolean, multiple: boolean, id: string }) => {
+export const selectFile = (data: { browser: boolean, multiple: boolean, file: FileType }) => {
     dispatch({
         type: Constants.SELECT_FILE,
         payload: { ...data },

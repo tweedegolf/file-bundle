@@ -15,10 +15,10 @@ export default {
 */
 export default {
     files: {
-        100: {
+        10: {
             create_ts: 1470914525,
             created: '11-08-2016 13:22',
-            id: 1,
+            id: 10,
             name: 'DodgerBlue.jpg',
             original: '/media/57ac5fdd4f51a_DodgerBlue.jpg',
             thumb: '/media/thumb/57ac5fdd4f51a_DodgerBlue.jpg',
@@ -26,10 +26,10 @@ export default {
             size: '2 kB',
             size_bytes: 2086,
         },
-        101: {
+        11: {
             create_ts: 1491402237100,
             created: '05-04-2017 16:23',
-            id: 101,
+            id: 11,
             name: 'Olive.jpg',
             original: '/media/57ac5fdd3cf12_Olive.jpg',
             thumb: '/media/thumb/15b3e80249e_57ac5fdd3cf12_Olive.jpg',
@@ -37,10 +37,10 @@ export default {
             size: '2.09 kB',
             size_bytes: 2087,
         },
-        102: {
+        12: {
             create_ts: 1470914525,
             created: '11-08-2016 13:22',
-            id: 2,
+            id: 12,
             name: 'RosyBrown.jpg',
             original: '/media/57ac5fdd5a124_RosyBrown.jpg',
             thumb: '/media/thumb/57ac5fdd5a124_RosyBrown.jpg',
@@ -48,10 +48,10 @@ export default {
             size: '2.09 kB',
             size_bytes: 2087,
         },
-        103: {
+        13: {
             create_ts: 1491402237102,
             created: '05-04-2017 16:23',
-            id: 103,
+            id: 13,
             name: '57ac5fdd56af0_PeachPuff.jpg',
             original: '/media/15b3e8024a5_57ac5fdd56af0_PeachPuff.jpg',
             thumb: '/media/thumb/15b3e8024a5_57ac5fdd56af0_PeachPuff.jpg',
@@ -59,10 +59,10 @@ export default {
             size: '2.09 kB',
             size_bytes: 2086,
         },
-        104: {
+        14: {
             create_ts: 1491402237102,
             created: '05-04-2017 16:23',
-            id: 104,
+            id: 14,
             name: '57ac5fdd60a47_Ivory.jpg',
             original: '/media/15b3e8024a6_57ac5fdd60a47_Ivory.jpg',
             thumb: '/media/thumb/15b3e8024a6_57ac5fdd60a47_Ivory.jpg',
@@ -70,10 +70,10 @@ export default {
             size: '2.09 kB',
             size_bytes: 2087,
         },
-        105: {
+        15: {
             create_ts: 1491402237102,
             created: '05-04-2017 16:23',
-            id: 105,
+            id: 15,
             name: '57ac5fdd534fa_Peru.jpg',
             original: '/media/15b3e8024a6_57ac5fdd534fa_Peru.jpg',
             thumb: '/media/thumb/15b3e8024a6_57ac5fdd534fa_Peru.jpg',
@@ -119,15 +119,15 @@ export default {
     },
     tree: {
         0: {
-            files: [101, 102],
+            files: [11, 12],
             folders: [1],
         },
         1: {
-            files: [103],
+            files: [13],
             folders: [2],
         },
         2: {
-            files: [104],
+            files: [14],
             folders: [],
         },
     },
