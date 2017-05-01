@@ -1,3 +1,4 @@
+// @flow
 /**
  * @file       Component renders a header at the top of the filelist; this
  *             toolbar displays the column names 'name', 'size' and 'creation
@@ -6,7 +7,6 @@
  *             column will reverse the order.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 
 const columns = {
     name: 'name',
@@ -14,7 +14,15 @@ const columns = {
     create_ts: 'date',
 };
 
-const SortHeader = (props) => {
+type PropsType = {
+    column: string,
+    sort: string,
+    name: string,
+    ascending: boolean,
+    sortBy: (sort: string) => void,
+};
+
+const SortHeader = (props: PropsType): React$Element<*> => {
     let sortClass = null;
 
     if (props.sort === props.column) {
@@ -32,14 +40,6 @@ const SortHeader = (props) => {
         {props.name}
         <span className={sortClass} />
     </th>);
-};
-
-SortHeader.propTypes = {
-    column: PropTypes.string.isRequired,
-    sort: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    ascending: PropTypes.bool.isRequired,
-    sortBy: PropTypes.func.isRequired,
 };
 
 export default SortHeader;

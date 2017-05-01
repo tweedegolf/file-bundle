@@ -4,6 +4,7 @@
  *             renders in Filepicker mode.
  */
 import React from 'react';
+import R from 'ramda';
 
 type PropsType = {
     clipboard: FileType[],
@@ -29,8 +30,7 @@ export default class SelectedFiles extends
             return null;
         }
 
-        let files = [];
-        this.props.selected.forEach((file: FileType) => {
+        let files = R.map((file: FileType): React$Element<*> => {
             const id = file.id;
             let preview = <span className="fa fa-file" />;
             if (file.thumb) {
@@ -42,15 +42,17 @@ export default class SelectedFiles extends
                   {...p}
                 />);
             }
-
-            const p = { onClick: () => { this.selectFile(id); } };
-            files.push(<div key={id} className="btn btn-default" {...p}>
+            let p = {};
+            if (typeof this.props.selectFile !== 'undefined') {
+                p = { onClick: () => { this.props.selectFile(id); } };
+            }
+            return (<div key={id} className="btn btn-default" {...p}>
                 {preview}
                 <span className="name">{file.name}</span>
                 <span className="remove">&times;</span>
                 <input type="hidden" name={file.name} value={id} />
             </div>);
-        });
+        }, this.props.selected);
 
         if (files.length === 0) {
             files = <span className="none-selected">Geen bestand(en) geselecteerd.</span>;

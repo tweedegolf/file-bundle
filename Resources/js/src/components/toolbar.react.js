@@ -1,35 +1,49 @@
+// @flow
 /**
  * @file       Component renders a toolbar at the top of the filebrowser. This
  *             toolbar contains buttons for cut & paste, for uploading new files
  *             and for creating new folders.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { fileShape } from './file.react';
 
-export default class Toolbar extends React.Component {
+type PropsType = {
+    onAddFolder: (folderName: string) => void,
+    uploadFiles: (fileList: global.FileList) => void,
+    onCancel: () => void,
+    onPaste: () => void,
+    onCut: () => void,
+    isUploadingFiles: boolean,
+    isAddingFolder: boolean,
+    browser: boolean,
+    selected: FileType[],
+    clipboard: FileType[],
+    loadingFolderWithId?: null | string,
+};
 
-    static propTypes = {
-        onAddFolder: PropTypes.func.isRequired,
-        uploadFiles: PropTypes.func.isRequired,
-        onCancel: PropTypes.func.isRequired,
-        onPaste: PropTypes.func.isRequired,
-        onCut: PropTypes.func.isRequired,
-        isUploadingFiles: PropTypes.bool.isRequired,
-        loadingFolderWithId: PropTypes.number,
-        isAddingFolder: PropTypes.bool.isRequired,
-        browser: PropTypes.bool.isRequired,
-        selected: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-        clipboard: PropTypes.arrayOf(PropTypes.shape(fileShape)).isRequired,
-    }
+type DefaultPropsType = {
+    loadingFolderWithId: null | string
+};
+type ToolbarStateType = {
+    showForm: boolean
+};
 
+export default class Toolbar
+    extends React.Component<DefaultPropsType, PropsType, ToolbarStateType> {
+    props: PropsType
+    state: ToolbarStateType
     static defaultProps = {
         loadingFolderWithId: null,
     }
+    buttonAdd: HTMLButtonElement
+    buttonSave: HTMLButtonElement
+    folderName: HTMLInputElement
+    onShowForm: () => void
+    onAddFolder: () => void
+    onKeyPress: (e: SyntheticEvent) => void
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
         this.state = {
             showForm: false,
         };
@@ -42,10 +56,13 @@ export default class Toolbar extends React.Component {
             }
         };
 
-        this.onKeyPress = (e) => {
+        this.onKeyPress = (e: SyntheticEvent) => {
             if (e.which === 13) {
-                e.preventDefault();
-                this.onAddFolder();
+                const name = this.folderName.value;
+                if (name !== '') {
+                    e.preventDefault();
+                    this.props.onAddFolder(name);
+                }
             }
         };
 
@@ -69,7 +86,7 @@ export default class Toolbar extends React.Component {
 */
     }
 
-    render() {
+    render(): React$Element<*> {
         const loader = this.props.isUploadingFiles ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
         const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.showForm });
         let actions = null;
@@ -114,7 +131,7 @@ export default class Toolbar extends React.Component {
                 {actions}
                 <button
                   type="button"
-                  ref={(btn) => { this.buttonAdd = btn; }}
+                  ref={(btn: HTMLButtonElement) => { this.buttonAdd = btn; }}
                   className={newFolderClass}
                   onClick={this.onShowForm}
                   disabled={this.props.isAddingFolder}
@@ -126,14 +143,14 @@ export default class Toolbar extends React.Component {
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
                     <input
                       className="form-control input-sm"
-                      ref={(input) => { this.folderName = input; }}
+                      ref={(input: HTMLInputElement) => { this.folderName = input; }}
                       type="text"
                       placeholder="Mapnaam"
                       onKeyPress={this.onKeyPress}
                     />
                     <button
                       type="button"
-                      ref={(btn) => { this.buttonSave = btn; }}
+                      ref={(btn: HTMLButtonElement) => { this.buttonSave = btn; }}
                       className="btn btn-sm btn-success pull-right"
                       onClick={this.onAddFolder}
                     >

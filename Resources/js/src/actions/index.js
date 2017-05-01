@@ -62,7 +62,7 @@ export const cancelCutAndPasteFiles = () => {
  *                               current sorting column, the sorting order will
  *                               be reversed.
  */
-export const changeSorting = (sort: boolean) => {
+export const changeSorting = (sort: string) => {
     dispatch({
         type: Constants.CHANGE_SORTING,
         payload: { sort },
