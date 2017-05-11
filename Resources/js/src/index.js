@@ -2,10 +2,12 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 import R from 'ramda';
 import Browser from './containers/browser.react';
 import { getStore } from './reducers/store';
+import i18n from './util/i18n';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const getOptions = (element: HTMLElement): OptionsType | null => R.cond([
@@ -17,12 +19,13 @@ const getOptions = (element: HTMLElement): OptionsType | null => R.cond([
 // note that there can only be one of these
 const browser: HTMLElement | null = document.getElementById('tg_file_browser');
 if (browser !== null) {
-    ReactDOM.render(<Provider store={store} >
-        <Browser
-          browser={true}
-          options={getOptions(browser)}
-        />
-    </Provider>, browser);
+    ReactDOM.render(<I18nextProvider i18n={i18n}>
+        <Provider store={store} >
+            <Browser
+              browser={true}
+              options={getOptions(browser)}
+            />
+        </Provider></I18nextProvider>, browser);
 }
 
 

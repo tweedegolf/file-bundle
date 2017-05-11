@@ -19,6 +19,7 @@ app.use((req, res, next) => {
 app.use('/', express.static('Resources/js/test/server'));
 app.use('/media/', express.static('Resources/js/test/server/media'));
 app.use('/assets/', express.static('Resources/js/test/server/build/assets'));
+app.use('/locales/', express.static('Resources/locales'));
 
 // bodyparser middleware so the client can post JSON
 app.use(bodyParser.json());

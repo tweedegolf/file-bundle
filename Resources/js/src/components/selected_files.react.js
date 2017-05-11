@@ -11,7 +11,7 @@ type PropsType = {
     selected: FileType[],
     multiple: boolean,
     browser: boolean,
-    selectFile: (id: string) => void,
+    selectFile: (id: null | string) => void,
     showPreview: (id: null | string) => void,
 };
 

@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import R from 'ramda';
 import classNames from 'classnames';
+import { translate } from 'react-i18next';
 import List from '../containers/list.react';
 import SelectedFiles from '../components/selected_files.react';
 import SortHeader from '../components/sort_header.react';
@@ -20,6 +21,7 @@ import * as Actions from '../actions';
 type PassedPropsType = {
     browser: boolean,
     options: OptionsType,
+    t: (string) => string,
 };
 
 type OtherPropsType = {
@@ -62,11 +64,12 @@ type BrowserStateType = {};
 //     key: ?string;
 // };
 
-const columnHeaders = {
-    name: 'Naam',
-    size_bytes: 'Grootte',
-    create_ts: 'Aangemaakt',
-};
+type ColumnHeadersType = { name: string, size_bytes: string, create_ts: string };
+const getColumnHeaders = (t: (string) => string): ColumnHeadersType => ({
+    name: t('columns.name'),
+    size_bytes: t('columns.size'),
+    create_ts: t('columns.date'),
+});
 
 const mapStateToProps = (state: StateType): PropsType => {
     const {
@@ -220,7 +223,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
               ascending={this.props.ascending}
               column={column}
               name={name}
-            />, R.toPairs(columnHeaders));
+            />, R.toPairs(getColumnHeaders(this.props.t)));
 
         const toolbar = (<Toolbar
           selected={this.props.selected}
@@ -316,4 +319,4 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Browser);
+export default connect(mapStateToProps, mapDispatchToProps)(translate('common', { wait: false })(Browser));
