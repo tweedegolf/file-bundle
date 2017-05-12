@@ -8,6 +8,7 @@
  *             render a confirmation popup.
  */
 import React from 'react';
+import { translate } from 'react-i18next';
 
 const icons = {
     pdf: 'file-pdf-o',
@@ -30,6 +31,7 @@ type PropsType = {
     hovering: boolean,
     browser: boolean,
     deleteFileWithId: null | string,
+    t: (string) => string,
 };
 
 const File = (props: PropsType): React$Element<*> => {
@@ -64,7 +66,7 @@ const File = (props: PropsType): React$Element<*> => {
                   props.confirmDelete(null);
               }}
             >
-                <span className="text-label">Annuleren</span>
+                <span className="text-label">{props.t('removeFile.cancel')}</span>
                 <span className="fa fa-times" />
             </button>
 
@@ -76,7 +78,7 @@ const File = (props: PropsType): React$Element<*> => {
                   props.deleteFile(file.id);
               }}
             >
-                <span className="text-label">Definitief verwijderen</span>
+                <span className="text-label">{props.t('removeFile.remove')}</span>
                 <span className="fa fa-trash-o" />
             </button>
         </div>);
@@ -179,4 +181,4 @@ File.defaultProps = {
     deleteFileWithId: null,
 };
 
-export default File;
+export default translate('common')(File);

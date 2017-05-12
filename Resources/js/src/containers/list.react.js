@@ -170,7 +170,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             />);
         }
 
-        const loadingList = this.props.loadingFolderWithId === -1 ? 'loaded' : 'loading';
+        const loadingList = this.props.loadingFolderWithId === null ? 'loaded' : 'loading';
 
         let loadingMessage = null;
         if (loadingList === 'loading') {

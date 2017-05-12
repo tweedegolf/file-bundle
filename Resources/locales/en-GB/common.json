@@ -13,7 +13,7 @@
     "folderName": "Folder name",
     "save": "Save"
   },
-  "file": {
+  "removeFile": {
     "cancel": "Cancel",
     "remove": "Remove permanently"
   },

@@ -5,17 +5,17 @@
     "date": "Erstellt"
   },
   "toolbar": {
-    "cut": "Knippen",
-    "paste": "Plakken",
-    "cancel": "Annuleren",
+    "cut": "Ausschneiden",
+    "paste": "Einsetzen",
+    "cancel": "Annullieren",
     "upload": "Upload",
-    "createFolder": "Nieuwe map",
-    "folderName": "Mapnaam",
+    "createFolder": "Neue Mappe",
+    "folderName": "Mappe Name",
     "save": "Speicheren"
   },
-  "file": {
-    "cancel": "Annuleren",
-    "remove": "Definitief verwijderen"
+  "removeFile": {
+    "cancel": "Annullieren",
+    "remove": "Definitiv entfernen"
   },
   "errors": {
   },

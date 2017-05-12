@@ -25,6 +25,7 @@ if (browser !== null) {
         language = options.language;
     }
     // language = 'nl-NL';
+    language = 'de-DE';
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
             <Provider store={store} >
