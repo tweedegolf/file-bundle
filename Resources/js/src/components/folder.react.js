@@ -11,6 +11,7 @@ import React from 'react';
 type PropsType = {
     folder: FolderType,
     onOpenFolder: (id: string) => void,
+    onRenameFolder: (id: string, newName: string) => void,
     backToParent: boolean,
     loading?: string,
     hovering?: boolean,
@@ -112,11 +113,26 @@ const Folder = (props: PropsType): React$Element<*> => {
         },
         className,
     };
+    const p2 = {
+        onClick: (e: SyntheticEvent) => {
+            e.stopPropagation();
+            props.onRenameFolder(folder.id, `piet-${Date.now()}`);
+        },
+        onMouseOver: (e: SyntheticEvent) => {
+            e.stopPropagation();
+            // props.onRenameFolder(folder.id);
+        },
+        onMouseOut: (e: SyntheticEvent) => {
+            e.stopPropagation();
+            // props.onRenameFolder(folder.id);
+        },
+        className,
+    };
     return (
         <tr {...p}>
             <td className="select" />
             <td className="preview">{icon}</td>
-            <td className="name">{folder.name}</td>
+            <td className="name" {...p2}>{folder.name}</td>
             <td className="size">
                 {folderCount}
                 {fileCount}

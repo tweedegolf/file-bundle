@@ -84,6 +84,24 @@ const addFolder = (name, parentId) => {
 };
 
 
+const renameFolder = (folderId, newName) => {
+    // fake error
+    if (newName === 'errorfolder') {
+        return {
+            error: 'Could not create folder "errorfolder"',
+        };
+    }
+
+    const folder = { ...data.folders[folderId] };
+    folder.name = newName;
+
+    // store the new folder with the new name in the database
+    data.folders[folder.id] = folder;
+
+    return { folder };
+};
+
+
 /**
  * Deletes a folder in the database
  *
@@ -260,6 +278,7 @@ const emptyRecycleBin = () => {
 export default{
     getFolder,
     addFolder,
+    renameFolder,
     deleteFolder,
     addFiles,
     moveFiles,

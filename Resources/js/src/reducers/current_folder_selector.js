@@ -49,7 +49,7 @@ export default createSelector(
         if (typeof currentFolder.files !== 'undefined') {
             files = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.files);
         }
-        if (typeof currentFolder.folder !== 'undefined') {
+        if (typeof currentFolder.folders !== 'undefined') {
             folders = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.folders);
         }
 

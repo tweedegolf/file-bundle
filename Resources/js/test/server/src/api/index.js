@@ -35,6 +35,21 @@ const addFolder = (req, res) => {
 };
 
 
+const renameFolder = (req, res) => {
+    const folderId = getIdFromUrl(req.url);
+    console.log(`[API] renaming folder ${folderId} to "${req.body.name}"`);
+
+    const data = database.renameFolder(folderId, req.body.name);
+    if (typeof data.error !== 'undefined') {
+        res.setHeader('Content-Type', 'text/plain');
+        res.status(500).send(data.error);
+    } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
+    }
+};
+
+
 const deleteFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
     console.log(`[API] deleting folder ${folderId}`);
@@ -105,6 +120,7 @@ const closeServer = (req, res) => {
 export default{
     getFolder,
     addFolder,
+    renameFolder,
     deleteFolder,
     uploadFiles,
     moveFiles,

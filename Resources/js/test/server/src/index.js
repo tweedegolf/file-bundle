@@ -36,6 +36,7 @@ app.post('/admin/file/upload*', api.uploadFiles);
 app.post('/admin/file/move*', api.moveFiles);
 app.post('/admin/file/create/folder*', api.addFolder);
 app.post('/admin/file/delete/folder/*', api.deleteFolder);
+app.post('/admin/file/rename/folder/*', api.renameFolder);
 app.post('/admin/file/delete/*', api.deleteFile);
 app.get('/admin/file/purge', api.emptyRecycleBin);
 app.get('/close', api.closeServer);

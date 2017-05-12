@@ -72,6 +72,13 @@ export const tree = (state: TreeStateType = treeInitialState,
             currentFolder: action.payload.currentFolder,
         };
 
+    case 'FOLDER_RENAMED':
+        return {
+            ...state,
+            foldersById: action.payload.foldersById,
+            currentFolder: action.payload.currentFolder,
+        };
+
     /**
      * A newly uploaded file has been added to the current folder: currentFolder
      * needs to be updated as well as the files array containing all files in

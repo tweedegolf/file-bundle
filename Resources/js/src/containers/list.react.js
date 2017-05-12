@@ -88,6 +88,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
     props: AllPropsType
     state: ListStateType
     openFolder: (folderId: string) => void
+    renameFolder: (folderId: string, newName: string) => void
 
     static defaultProps = {
         currentFolderId: null,
@@ -102,10 +103,16 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
     constructor() {
         super();
         this.openFolder = (folderId: string) => {
-            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== -1) {
+            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
                 return;
             }
             Actions.openFolder({ id: folderId });
+        };
+        this.renameFolder = (folderId: string, newName: string) => {
+            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
+                return;
+            }
+            Actions.renameFolder(folderId, newName);
         };
     }
 
@@ -113,7 +120,6 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         if (R.isNil(this.props.currentFolderId)) {
             return null;
         }
-
         // TODO: reverse i!
         let i = this.props.folders.length + this.props.files.length;
 
@@ -147,6 +153,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
           folder={folder}
           deleteFolder={Actions.deleteFolder}
           onOpenFolder={this.openFolder}
+          onRenameFolder={this.renameFolder}
           confirmDelete={Actions.confirmDeleteFolder}
           deleteFolderWithId={this.props.deleteFolderWithId}
           loadingFolderWithId={this.props.loadingFolderWithId}
@@ -167,6 +174,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
               folder={this.props.parentFolder}
               loadingFolderWithId={this.props.loadingFolderWithId}
               onOpenFolder={this.openFolder}
+              onRenameFolder={this.renameFolder}
             />);
         }
 

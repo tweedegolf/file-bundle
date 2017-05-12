@@ -56,6 +56,7 @@ type ResponseType = {
     body: {
         errors: { [id: string]: string },
         new_folders: FolderType[],
+        folder: FolderType,
         uploads: FileType[],
         folders: FolderType[],
         files: FileType[],
@@ -155,6 +156,24 @@ const addFolder = (
     });
 };
 
+const renameFolder = (
+    folderId: string,
+    newName: string,
+    onSuccess: (FolderType) => void,
+    onError: (string[]) => void) => {
+    const url = `${server}/admin/file/rename/folder/${folderId}`;
+    const req = request.post(url).type('form');
+    req.send({ name: newName });
+    req.end((err: ErrorType, res: ResponseType) => {
+        if (err) {
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess(res.body.folder);
+        }
+    });
+};
+
+
 /**
  * Delete a folder, folder has to be emptied first
  *
@@ -241,6 +260,7 @@ export default {
     deleteFile,
     paste,
     addFolder,
+    renameFolder,
     deleteFolder,
     upload,
     openFolder,

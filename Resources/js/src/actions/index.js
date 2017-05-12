@@ -1,15 +1,15 @@
 // @flow
 import * as Constants from '../util/constants';
 import { getStore } from '../reducers/store';
-import openFolder from './open_folder';
-import pasteFiles from './paste_files';
 
 export { default as init } from './init';
 export { default as addFolder } from './add_folder';
+export { default as openFolder } from './open_folder';
+export { default as renameFolder } from './rename_folder';
 export { default as deleteFile } from './delete_file';
 export { default as deleteFolder } from './delete_folder';
 export { default as uploadFiles } from './upload_files';
-export { openFolder, pasteFiles };
+export { default as pasteFiles } from './paste_files';
 
 const dispatch: Dispatch = getStore().dispatch;
 

@@ -44,6 +44,23 @@ export type PayloadFolderOpenedType = {
     filesById: FilesByIdType,
 };
 
+// rename folder
+export type ActionRenameFolderType = {
+    type: 'RENAME_FOLDER',
+    payload: {
+        id: string,
+    },
+};
+
+export type ActionFolderRenamedType = {
+    type: 'FOLDER_RENAMED',
+    payload: PayloadFolderRenamedType,
+};
+
+export type PayloadFolderRenamedType = {
+    foldersById: FoldersByIdType,
+};
+
 
 // add folder
 export type ActionAddFolderType = {
