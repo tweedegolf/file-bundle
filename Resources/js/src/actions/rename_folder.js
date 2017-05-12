@@ -2,14 +2,12 @@
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
-// import * as Constants from '../util/constants';
 import {
     RENAME_FOLDER,
     FOLDER_RENAMED,
     ERROR_RENAMING_FOLDER,
 
 } from '../util/constants';
-// import actions from '../util/actions';
 import { getUID } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
@@ -25,22 +23,19 @@ const createError = (data: string, messages: string[]): PayloadErrorType => {
     return { errors };
 };
 
-export default (folderId: string, newName: string) => {
-    dispatch({
-        type: RENAME_FOLDER,
-        payload: { id: folderId },
-    });
-
+const renameFolder = (folderId: string,
+    newName: string,
+    resolve: (payload: PayloadFolderRenamedType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
     const foldersById = { ...tree.foldersById };
+    const tmp: null | FolderType = R.clone(tree.currentFolder);
 
-    const tmp1: null | FolderType = R.clone(tree.currentFolder);
-
-    if (tmp1 === null) {
-        // reject({ errors: [createError('uploading files', ['invalid state'])] });
+    if (tmp === null) {
+        reject({ errors: [createError(`renaming file with id "${folderId}" to ${newName}`, ['invalid state'])] });
         return;
     }
-    const currentFolder: FolderType = tmp1;
+    const currentFolder: FolderType = tmp;
 
     api.renameFolder(
         folderId,
@@ -48,7 +43,7 @@ export default (folderId: string, newName: string) => {
         (folder: FolderType) => {
             foldersById[folder.id] = folder;
             if (typeof currentFolder.folders !== 'undefined') {
-                const cloneFolders = R.map((f: FolderType): FolderType => {
+                const clone = R.map((f: FolderType): FolderType => {
                     if (f.id === folderId) {
                         return {
                             ...f,
@@ -57,7 +52,7 @@ export default (folderId: string, newName: string) => {
                     }
                     return f;
                 }, currentFolder.folders);
-                currentFolder.folders = cloneFolders;
+                currentFolder.folders = clone;
             }
 
             const a: ActionFolderRenamedType = {
@@ -69,12 +64,35 @@ export default (folderId: string, newName: string) => {
             };
             dispatch(a);
         },
+        (errorMessages: string[]) => {
+            reject(createError(newName, errorMessages));
+        },
+    );
+};
+
+export default (folderId: string, newName: string) => {
+    const a: ActionRenameFolderType = {
+        type: RENAME_FOLDER,
+        payload: { id: folderId },
+    };
+    dispatch(a);
+
+    renameFolder(
+        folderId,
+        newName,
+        (payload: PayloadFolderRenamedType) => {
+            const a1: ActionFolderRenamedType = {
+                type: FOLDER_RENAMED,
+                payload,
+            };
+            dispatch(a1);
+        },
         (payload: PayloadErrorType) => {
-            const a: ActionErrorType = {
+            const a1: ActionErrorType = {
                 type: ERROR_RENAMING_FOLDER,
                 payload,
             };
-            dispatch(a);
+            dispatch(a1);
         },
     );
 };

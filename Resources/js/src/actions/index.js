@@ -117,6 +117,13 @@ export const confirmDeleteFolder = (id: null | string) => {
     });
 };
 
+export const confirmRenameFolder = (id: null | string) => {
+    dispatch({
+        type: Constants.CONFIRM_RENAME_FOLDER,
+        payload: { id },
+    });
+};
+
 
 /**
  * User selects a file by using the arrow keys of the keyboard.

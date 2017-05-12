@@ -74,14 +74,16 @@ export const uiInitialState: UIStateType = {
     previewUrl: null,
     deleteFileWithId: null,
     deleteFolderWithId: null,
-    hover: null,
-    errors: [],
-    loadingFolderWithId: null,
+    renameFolderWithId: null,
     deletingFileWithId: null,
+    loadingFolderWithId: null,
     deletingFolderWithId: null,
+    renamingFolderWithId: null,
     isAddingFolder: false,
     isUploadingFiles: false,
     scrollPosition: null,
+    hover: null,
+    errors: [],
     selected: [],
     clipboard: [],
     multiple: true,
@@ -112,6 +114,22 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             isAddingFolder: true,
+        };
+    } else if (action.type === 'CONFIRM_RENAME_FOLDER') {
+        return {
+            ...state,
+            renameFolderWithId: action.payload.id,
+        };
+    } else if (action.type === 'RENAME_FOLDER') {
+        return {
+            ...state,
+            renamingFolderWithId: action.payload.id,
+        };
+    } else if (action.type === 'FOLDER_RENAMED') {
+        return {
+            ...state,
+            renameFolderWithId: null,
+            renamingFolderWithId: null,
         };
 
     /**
@@ -156,7 +174,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
 
 
     /**
-     * User really wants to delete the file, show progress indicator during API call
+     * User really has confirmed to delete the file, show progress indicator during API call
      */
     } else if (action.type === 'DELETE_FILE') {
         return {

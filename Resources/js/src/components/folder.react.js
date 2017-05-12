@@ -10,14 +10,16 @@ import React from 'react';
 
 type PropsType = {
     folder: FolderType,
-    onOpenFolder: (id: string) => void,
-    onRenameFolder: (id: string, newName: string) => void,
+    openFolder: (id: string) => void,
+    confirmRenameFolder: (id: string) => void,
+    renameFolder: (id: string, newName: string) => void,
     backToParent: boolean,
     loading?: string,
     hovering?: boolean,
     deleteFolder?: (id: string) => void,
     confirmDelete?: (id: null | string) => void,
     deleteFolderWithId?: null | string,
+    renameFolderWithId?: null | string,
 };
 
 // const Folder = ({
@@ -31,8 +33,11 @@ type PropsType = {
 //         deleteFolderWithId = null,
 //     }: PropsType): React$Element<*> => {
 const Folder = (props: PropsType): React$Element<*> => {
+    // console.log(props);
     const folder = props.folder;
     const className = `folder${folder.new ? ' success' : ''}${props.hovering ? ' selected' : ''}`;
+    const confirmRenameFolder = props.confirmRenameFolder;
+    const renameFolder = props.renameFolder;
 
     let confirm = null;
     let btnDelete = null;
@@ -109,30 +114,42 @@ const Folder = (props: PropsType): React$Element<*> => {
 
     const p = {
         onClick: () => {
-            props.onOpenFolder(folder.id);
+            props.openFolder(folder.id);
         },
         className,
     };
+
     const p2 = {
         onClick: (e: SyntheticEvent) => {
             e.stopPropagation();
-            props.onRenameFolder(folder.id, `piet-${Date.now()}`);
+            confirmRenameFolder(folder.id);
         },
-        onMouseOver: (e: SyntheticEvent) => {
-            e.stopPropagation();
-            // props.onRenameFolder(folder.id);
-        },
-        onMouseOut: (e: SyntheticEvent) => {
-            e.stopPropagation();
-            // props.onRenameFolder(folder.id);
-        },
-        className,
     };
+    let folderNameTD = <td className="name" {...p2}>{folder.name}</td>;
+
+    if (props.renameFolderWithId === folder.id) {
+        const p3 = {
+            onClick: (e: SyntheticEvent) => {
+                e.stopPropagation();
+                renameFolder(folder.id, `piet-${Date.now()}`);
+            },
+            onMouseOver: (e: SyntheticEvent) => {
+                e.stopPropagation();
+                // props.onRenameFolder(folder.id);
+            },
+            onMouseOut: (e: SyntheticEvent) => {
+                e.stopPropagation();
+                // props.onRenameFolder(folder.id);
+            },
+            className,
+        };
+        folderNameTD = <td className="name" {...p3}>{`${folder.name} EDIT`}</td>;
+    }
     return (
         <tr {...p}>
             <td className="select" />
             <td className="preview">{icon}</td>
-            <td className="name" {...p2}>{folder.name}</td>
+            {folderNameTD}
             <td className="size">
                 {folderCount}
                 {fileCount}
@@ -150,6 +167,7 @@ Folder.defaultProps = {
     deleteFolder: null,
     confirmDelete: null,
     deleteFolderWithId: null,
+    renameFolderWithId: null,
 };
 
 export default Folder;

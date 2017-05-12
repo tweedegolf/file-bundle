@@ -52,6 +52,13 @@ export type ActionRenameFolderType = {
     },
 };
 
+export type ActionConfirmRenameFolderType = {
+    type: 'CONFIRM_RENAME_FOLDER',
+    payload: {
+        id: string,
+    },
+};
+
 export type ActionFolderRenamedType = {
     type: 'FOLDER_RENAMED',
     payload: PayloadFolderRenamedType,
@@ -140,6 +147,7 @@ type errorTypes =
     | 'ERROR_UPLOADING_FILE'
     | 'ERROR_OPENING_FOLDER'
     | 'ERROR_MOVING_FILES'
+    | 'ERROR_RENAMING_FOLDER'
 ;
 export type ActionErrorType = {
     type: errorTypes;

@@ -31,10 +31,12 @@ type PropsType = {
     hover: null | number,
     currentFolderId: null | string,
     loadingFolderWithId: null | string,
-    deletingFileWithId: null | string,
-    deletingFolderWithId: null | string,
     deleteFileWithId: null | string,
+    deletingFileWithId: null | string,
     deleteFolderWithId: null | string,
+    deletingFolderWithId: null | string,
+    renameFolderWithId: null | string,
+    renamingFolderWithId: null | string,
     parentFolder: null | FolderType,
 };
 
@@ -44,6 +46,7 @@ type DefaultPropsType = {
     deletingFileWithId: null,
     deletingFolderWithId: null,
     deleteFileWithId: null,
+    renameFolderWithId: null,
     deleteFolderWithId: null,
     parentFolder: null,
 };
@@ -78,6 +81,8 @@ const mapStateToProps = (state: StateType): PropsType => {
         deletingFileWithId: state.ui.deletingFileWithId, // null or number
         deleteFolderWithId: state.ui.deleteFolderWithId, // null or number
         deletingFolderWithId: state.ui.deletingFolderWithId, // null or number
+        renameFolderWithId: state.ui.renameFolderWithId, // null or number
+        renamingFolderWithId: state.ui.renamingFolderWithId, // null or number
         isAddingFolder: state.ui.isAddingFolder, // true or false
         isUploadingFiles: state.ui.isUploadingFiles, // true or false
     };
@@ -88,6 +93,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
     props: AllPropsType
     state: ListStateType
     openFolder: (folderId: string) => void
+    confirmRenameFolder: (folderId: string) => void
     renameFolder: (folderId: string, newName: string) => void
 
     static defaultProps = {
@@ -97,6 +103,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         deletingFolderWithId: null,
         deleteFileWithId: null,
         deleteFolderWithId: null,
+        renameFolderWithId: null,
         parentFolder: null,
     }
 
@@ -113,6 +120,12 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
                 return;
             }
             Actions.renameFolder(folderId, newName);
+        };
+        this.confirmRenameFolder = (folderId: string) => {
+            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
+                return;
+            }
+            Actions.confirmRenameFolder(folderId);
         };
     }
 
@@ -152,11 +165,13 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
           backToParent={false}
           folder={folder}
           deleteFolder={Actions.deleteFolder}
-          onOpenFolder={this.openFolder}
-          onRenameFolder={this.renameFolder}
+          openFolder={this.openFolder}
+          renameFolder={this.renameFolder}
+          confirmRenameFolder={this.confirmRenameFolder}
           confirmDelete={Actions.confirmDeleteFolder}
           deleteFolderWithId={this.props.deleteFolderWithId}
           loadingFolderWithId={this.props.loadingFolderWithId}
+          renameFolderWithId={this.props.renameFolderWithId}
         />), this.props.folders);
 
         // reverse listings when the sort direction is reversed
@@ -173,8 +188,9 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
               backToParent={true}
               folder={this.props.parentFolder}
               loadingFolderWithId={this.props.loadingFolderWithId}
-              onOpenFolder={this.openFolder}
-              onRenameFolder={this.renameFolder}
+              openFolder={this.openFolder}
+              renameFolder={this.renameFolder}
+              confirmRenameFolder={this.confirmRenameFolder}
             />);
         }
 
