@@ -39,10 +39,12 @@ const init = (options: OptionsType) => {
     };
     dispatch(action);
 */
+
     dispatch({
         type: INIT,
         payload: {
             selected: options.selected || [],
+            language: options.language,
             rootFolderId,
             foldersById,
         },

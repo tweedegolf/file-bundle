@@ -5,6 +5,7 @@
  *             and for creating new folders.
  */
 import React from 'react';
+import { translate } from 'react-i18next';
 import classNames from 'classnames';
 
 type PropsType = {
@@ -19,6 +20,7 @@ type PropsType = {
     selected: FileType[],
     clipboard: FileType[],
     loadingFolderWithId?: null | string,
+    t: (string) => string,
 };
 
 type DefaultPropsType = {
@@ -28,7 +30,7 @@ type ToolbarStateType = {
     showForm: boolean
 };
 
-export default class Toolbar
+class Toolbar
     extends React.Component<DefaultPropsType, PropsType, ToolbarStateType> {
     props: PropsType
     state: ToolbarStateType
@@ -101,7 +103,7 @@ export default class Toolbar
                   onClick={this.props.onCut}
                 >
                     <span className="fa fa-cut" />
-                    <span className="text-label">Knippen</span>
+                    <span className="text-label">{this.props.t('toolbar.cut')}</span>
                     {this.props.selected.length > 0 ? ` (${this.props.selected.length})` : null}
                 </button>
                 <button
@@ -111,7 +113,7 @@ export default class Toolbar
                   onClick={this.props.onPaste}
                 >
                     <span className="fa fa-paste" />
-                    <span className="text-label">Plakken</span>
+                    <span className="text-label">{this.props.t('toolbar.paste')}</span>
                     {this.props.clipboard.length > 0 ? ` (${this.props.clipboard.length})` : null}
                 </button>
                 <button
@@ -121,7 +123,7 @@ export default class Toolbar
                   onClick={this.props.onCancel}
                 >
                     <span className="fa fa-times-circle-o" />
-                    <span className="text-label">Annuleren</span>
+                    <span className="text-label">{this.props.t('toolbar.cancel')}</span>
                 </button>
             </div>);
         }
@@ -137,7 +139,7 @@ export default class Toolbar
                   disabled={this.props.isAddingFolder}
                 >
                     <span className="fa fa-folder-o" />
-                    <span className="text-label">Nieuwe map</span>
+                    <span className="text-label">{this.props.t('toolbar.createFolder')}</span>
                     {this.props.isAddingFolder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
                 </button>
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
@@ -145,7 +147,7 @@ export default class Toolbar
                       className="form-control input-sm"
                       ref={(input: HTMLInputElement) => { this.folderName = input; }}
                       type="text"
-                      placeholder="Mapnaam"
+                      placeholder={this.props.t('toolbar.folderName')}
                       onKeyPress={this.onKeyPress}
                     />
                     <button
@@ -155,7 +157,7 @@ export default class Toolbar
                       onClick={this.onAddFolder}
                     >
                         <span className="fa fa-save" />
-                        <span className="text-label">Opslaan</span>
+                        <span className="text-label">{this.props.t('toolbar.save')}</span>
                     </button>
                 </div>
                 <span
@@ -163,7 +165,7 @@ export default class Toolbar
                   disabled={this.props.isUploadingFiles}
                 >
                     <span className="fa fa-arrow-circle-o-up" />
-                    <span className="text-label">Upload</span>
+                    <span className="text-label">{this.props.t('toolbar.upload')}</span>
                     {loader}
                     <input
                       // id="upload_files"
@@ -177,3 +179,6 @@ export default class Toolbar
         );
     }
 }
+
+export default translate('common')(Toolbar);
+

@@ -1,20 +1,22 @@
 import i18n from 'i18next';
 import XHR from 'i18next-xhr-backend';
 // import Cache from 'i18next-localstorage-cache';
-import LanguageDetector from 'i18next-browser-languagedetector';
+// import LanguageDetector from 'i18next-browser-languagedetector';
 
 i18n
-  .use(XHR)
-  // .use(Cache)
-  .use(LanguageDetector)
+    .use(XHR)
+//   .use(Cache)
+//   .use(LanguageDetector)
   .init({
-      fallbackLng: 'en',
+      fallbackLng: 'en-GB',
 
-      // have a common namespace used around the full app
+    //   have a common namespace used around the full app
       ns: ['common'],
       defaultNS: 'common',
 
       debug: true,
+
+      wait: false,
 
       // cache: {
       //   enabled: true

@@ -19,6 +19,7 @@ export type ActionInitType = {
 
 export type PayloadInitType = {
     selected: Array<FileType>,
+    language: string,
     rootFolderId: string,
     foldersById : FoldersByIdType,
 };

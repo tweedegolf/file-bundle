@@ -7,6 +7,7 @@
  *             column will reverse the order.
  */
 import React from 'react';
+import { translate } from 'react-i18next';
 
 const columns = {
     name: 'name',
@@ -14,32 +15,35 @@ const columns = {
     create_ts: 'date',
 };
 
+const getColumnHeader = (columnId: string, t: (string) => string): string =>
+    t(`columns.${columns[columnId]}`);
+
 type PropsType = {
-    column: string,
+    columnId: string,
     sort: string,
-    name: string,
     ascending: boolean,
     sortBy: (sort: string) => void,
+    t: (string) => string, // translate function
 };
 
 const SortHeader = (props: PropsType): React$Element<*> => {
     let sortClass = null;
 
-    if (props.sort === props.column) {
+    if (props.sort === props.columnId) {
         sortClass = props.ascending ? 'fa fa-sort-down' : 'fa fa-sort-up';
     }
 
     const p = {
         onClick: () => {
-            props.sortBy(props.column);
+            props.sortBy(props.columnId);
         },
-        className: `sort ${columns[props.column]}`,
+        className: `sort ${columns[props.columnId]}`,
     };
 
     return (<th {...p}>
-        {props.name}
+        {getColumnHeader(props.columnId, props.t)}
         <span className={sortClass} />
     </th>);
 };
 
-export default SortHeader;
+export default translate('common')(SortHeader);

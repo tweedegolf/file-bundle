@@ -1,0 +1,23 @@
+{
+  "columns": {
+    "name": "Name",
+    "size": "Size",
+    "date": "Created"
+  },
+  "toolbar": {
+    "cut": "Cut",
+    "paste": "Paste",
+    "cancel": "Cancel",
+    "upload": "Upload",
+    "createFolder": "New folder",
+    "folderName": "Folder name",
+    "save": "Save"
+  },
+  "file": {
+    "cancel": "Cancel",
+    "remove": "Remove permanently"
+  },
+  "errors": {
+  },
+  "loading": "loading..."
+}

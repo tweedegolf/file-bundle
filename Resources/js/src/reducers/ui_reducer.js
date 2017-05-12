@@ -85,6 +85,7 @@ export const uiInitialState: UIStateType = {
     selected: [],
     clipboard: [],
     multiple: true,
+    language: 'en-GB',
     imagesOnly: false,
 };
 
@@ -98,11 +99,16 @@ export const uiInitialState: UIStateType = {
  */
 export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     ): UIStateType => {
+    if (action.type === 'INIT') {
+        return {
+            ...state,
+            language: action.payload.language,
+        };
     /**
      * User has added a folder, we can show a progress indicator while we make
      * an API call to the server
      */
-    if (action.type === 'ADD_FOLDER') {
+    } else if (action.type === 'ADD_FOLDER') {
         return {
             ...state,
             isAddingFolder: true,

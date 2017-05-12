@@ -29,6 +29,7 @@ export type UIStateType = {
     selected: Array<FileType>,
     clipboard: Array<FileType>,
     multiple: boolean,
+    language: string,
     imagesOnly: boolean
 };
 
@@ -86,6 +87,7 @@ export type ErrorType = {
 
 // options passed via HTML element's data-options attribute
 export type OptionsType = {
+    language: string,
     rootFolderId: string,
     selected?: Array<FileType>,
     multiple?: boolean,

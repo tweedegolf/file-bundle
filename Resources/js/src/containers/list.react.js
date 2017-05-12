@@ -8,6 +8,7 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import R from 'ramda';
 import { connect } from 'react-redux';
+import { translate } from 'react-i18next';
 import File from '../components/file.react';
 import Folder from '../components/folder.react';
 import * as Actions from '../actions';
@@ -17,6 +18,7 @@ type PassedPropsType = {
     selectFile: () => void,
     browser: boolean,
     imagesOnly: boolean,
+    t: (string) => string,
 };
 
 type PropsType = {
@@ -172,7 +174,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
 
         let loadingMessage = null;
         if (loadingList === 'loading') {
-            loadingMessage = <tr><td>{'loading...'}</td></tr>;
+            loadingMessage = <tr><td>{this.props.t('loading')}</td></tr>;
         }
 
         return (<tbody className={loadingList}>
@@ -184,4 +186,4 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
     }
 }
 
-export default connect(mapStateToProps)(List);
+export default translate('common')(connect(mapStateToProps)(List));

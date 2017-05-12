@@ -1,0 +1,23 @@
+{
+  "columns": {
+    "name": "Name",
+    "size": "Größe",
+    "date": "Erstellt"
+  },
+  "toolbar": {
+    "cut": "Knippen",
+    "paste": "Plakken",
+    "cancel": "Annuleren",
+    "upload": "Upload",
+    "createFolder": "Nieuwe map",
+    "folderName": "Mapnaam",
+    "save": "Speicheren"
+  },
+  "file": {
+    "cancel": "Annuleren",
+    "remove": "Definitief verwijderen"
+  },
+  "errors": {
+  },
+  "loading": "laden..."
+}

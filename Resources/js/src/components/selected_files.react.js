@@ -11,7 +11,7 @@ type PropsType = {
     selected: FileType[],
     multiple: boolean,
     browser: boolean,
-    selectFile: (id: null | string) => void,
+    selectFile: (file: FileType) => void,
     showPreview: (id: null | string) => void,
 };
 
@@ -31,7 +31,6 @@ export default class SelectedFiles extends
         }
 
         let files = R.map((file: FileType): React$Element<*> => {
-            const id = file.id;
             let preview = <span className="fa fa-file" />;
             if (file.thumb) {
                 const original = typeof file.original === 'undefined' ? null : file.original;
@@ -44,13 +43,13 @@ export default class SelectedFiles extends
             }
             let p = {};
             if (typeof this.props.selectFile !== 'undefined') {
-                p = { onClick: () => { this.props.selectFile(id); } };
+                p = { onClick: () => { this.props.selectFile(file); } };
             }
-            return (<div key={id} className="btn btn-default" {...p}>
+            return (<div key={file.id} className="btn btn-default" {...p}>
                 {preview}
                 <span className="name">{file.name}</span>
                 <span className="remove">&times;</span>
-                <input type="hidden" name={file.name} value={id} />
+                <input type="hidden" name={file.name} value={file.id} />
             </div>);
         }, this.props.selected);
 

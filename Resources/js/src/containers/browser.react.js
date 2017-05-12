@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import R from 'ramda';
 import classNames from 'classnames';
-import { translate } from 'react-i18next';
 import List from '../containers/list.react';
 import SelectedFiles from '../components/selected_files.react';
 import SortHeader from '../components/sort_header.react';
@@ -21,7 +20,6 @@ import * as Actions from '../actions';
 type PassedPropsType = {
     browser: boolean,
     options: OptionsType,
-    t: (string) => string,
 };
 
 type OtherPropsType = {
@@ -64,12 +62,7 @@ type BrowserStateType = {};
 //     key: ?string;
 // };
 
-type ColumnHeadersType = { name: string, size_bytes: string, create_ts: string };
-const getColumnHeaders = (t: (string) => string): ColumnHeadersType => ({
-    name: t('columns.name'),
-    size_bytes: t('columns.size'),
-    create_ts: t('columns.date'),
-});
+const columnHeaderIds: [string, string, string] = ['name', 'size_bytes', 'create_ts'];
 
 const mapStateToProps = (state: StateType): PropsType => {
     const {
@@ -215,15 +208,14 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             return <div>initializing...</div>;
         }
 
-        const headers = R.map(([column, name]: [string, string]): SortHeader =>
+        const headers = R.map((columnId: string): SortHeader =>
             <SortHeader
-              key={column}
+              key={columnId}
               sortBy={Actions.changeSorting}
               sort={this.props.sort}
               ascending={this.props.ascending}
-              column={column}
-              name={name}
-            />, R.toPairs(getColumnHeaders(this.props.t)));
+              columnId={columnId}
+            />, columnHeaderIds);
 
         const toolbar = (<Toolbar
           selected={this.props.selected}
@@ -319,4 +311,4 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate('common', { wait: false })(Browser));
+export default connect(mapStateToProps, mapDispatchToProps)(Browser);
