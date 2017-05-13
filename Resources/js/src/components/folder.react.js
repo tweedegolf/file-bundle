@@ -32,33 +32,40 @@ type FolderStateType = {
 class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateType> {
     static defaultProps = {}
 
-    constructor() {
-        super();
-        this.state = { showForm: false };
-    }
+    // constructor() {
+    //     super();
+    //     this.state = { showForm: false };
+    // }
 
     state: FolderStateType
+    componentDidUpdate() {
+        if (this.props.renameFolderWithId === this.props.folder.id) {
+            this.folderName.value = this.props.folder.name;
+            this.folderName.focus();
+            this.folderName.select();
+        }
+    }
+
     onKeyUp = (e: SyntheticEvent) => {
         // <enter> submits new name
         if (e.which === 13) {
             const name = this.folderName.value;
             if (name !== '') {
                 e.preventDefault();
-                this.setState({ showForm: false });
+                // this.setState({ showForm: false });
                 this.props.renameFolder(this.props.folder.id, name);
             }
         // <escape> cancels rename
         } else if (e.keyCode === 27) {
             e.preventDefault();
-            // this.props.confirmRenameFolder(null);
-            this.setState({ showForm: false });
+            this.props.confirmRenameFolder(null);
+            // this.setState({ showForm: false });
         }
     };
     folderName: HTMLInputElement
     props: PropsType
 
     render(): React$Element<*> {
-        // console.log(props);
         let confirm = null;
         let btnDelete = null;
 
@@ -146,24 +153,23 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             onClick: (e: SyntheticEvent) => {
                 e.stopPropagation();
                 if (this.props.renameFolderWithId !== folder.id) {
-                    // this.props.confirmRenameFolder(folder.id);
-                    this.setState({ showForm: true }, () => {
-                        this.folderName.value = folder.name;
-                        this.folderName.focus();
-                        this.folderName.select();
-                    });
+                    this.props.confirmRenameFolder(folder.id);
+                    // this.setState({ showForm: true }, () => {
+                    //     this.folderName.value = folder.name;
+                    //     this.folderName.focus();
+                    //     this.folderName.select();
+                    // });
                 }
             },
         };
-        // const showInput: boolean = this.props.renameFolderWithId === folder.id;
-        const show: boolean = this.state.showForm;
+        const show: boolean = this.props.renameFolderWithId === folder.id;
+        // const show: boolean = this.state.showForm;
         const folderNameTD = (<td className="name" {...p2}>
             <span className={`${show ? 'hide' : ''}`}>{folder.name}</span>
             <input
               className={`form-control input-sm ${show ? '' : 'hide'}`}
               ref={(input: HTMLInputElement) => { this.folderName = input; }}
               type="text"
-              // placeholder={folder.name}
               onKeyUp={this.onKeyUp}
             />
         </td>);
