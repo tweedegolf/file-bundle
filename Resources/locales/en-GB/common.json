@@ -13,9 +13,9 @@
     "folderName": "Folder name",
     "save": "Save"
   },
-  "removeFile": {
+  "remove": {
     "cancel": "Cancel",
-    "remove": "Remove permanently"
+    "permanently": "Remove permanently"
   },
   "errors": {
   },

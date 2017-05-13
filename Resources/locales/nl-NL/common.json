@@ -13,9 +13,9 @@
     "folderName": "Mapnaam",
     "save": "Opslaan"
   },
-  "removeFile": {
+  "remove": {
     "cancel": "Annuleren",
-    "remove": "Definitief verwijderen"
+    "permanently": "Definitief verwijderen"
   },
   "errors": {
   },

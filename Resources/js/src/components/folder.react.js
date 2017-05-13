@@ -7,11 +7,12 @@
  *             folder is empty, the row will show a delete button as well.
  */
 import React from 'react';
+import { translate } from 'react-i18next';
 
 type PropsType = {
     folder: FolderType,
     openFolder: (id: string) => void,
-    confirmRenameFolder: (id: string) => void,
+    confirmRenameFolder: (id: null | string) => void,
     renameFolder: (id: string, newName: string) => void,
     backToParent: boolean,
     loading?: string,
@@ -20,146 +21,169 @@ type PropsType = {
     confirmDelete?: (id: null | string) => void,
     deleteFolderWithId?: null | string,
     renameFolderWithId?: null | string,
+    t: (string) => string,
 };
 
-// const Folder = ({
-//         folder,
-//         onOpenFolder,
-//         backToParent,
-//         loading,
-//         hovering,
-//         deleteFolder,
-//         confirmDelete,
-//         deleteFolderWithId = null,
-//     }: PropsType): React$Element<*> => {
-const Folder = (props: PropsType): React$Element<*> => {
-    // console.log(props);
-    const folder = props.folder;
-    const className = `folder${folder.new ? ' success' : ''}${props.hovering ? ' selected' : ''}`;
-    const confirmRenameFolder = props.confirmRenameFolder;
-    const renameFolder = props.renameFolder;
+type DefaultPropsType = {};
+type FolderStateType = {
+    showForm: boolean
+};
 
-    let confirm = null;
-    let btnDelete = null;
+class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateType> {
+    static defaultProps = {}
 
-    if (props.deleteFolderWithId === folder.id &&
-        typeof props.confirmDelete !== 'undefined' &&
-        typeof props.deleteFolder !== 'undefined') {
-        const confirmDelete = props.confirmDelete;
-        const deleteFolder = props.deleteFolder;
-        confirm = (<div className="confirm">
-            <button
-              type="button"
-              className="btn btn-sm btn-primary"
-              onClick={(e: SyntheticEvent) => {
-                  e.stopPropagation();
-                  confirmDelete(null);
-              }}
-            >
-                <span className="text-label">Annuleren</span>
-                <span className="fa fa-times" />
-            </button>
+    constructor() {
+        super();
+        this.state = { showForm: false };
+    }
 
-            <button
+    state: FolderStateType
+    onKeyUp = (e: SyntheticEvent) => {
+        // <enter> submits new name
+        if (e.which === 13) {
+            const name = this.folderName.value;
+            if (name !== '') {
+                e.preventDefault();
+                this.setState({ showForm: false });
+                this.props.renameFolder(this.props.folder.id, name);
+            }
+        // <escape> cancels rename
+        } else if (e.keyCode === 27) {
+            e.preventDefault();
+            // this.props.confirmRenameFolder(null);
+            this.setState({ showForm: false });
+        }
+    };
+    folderName: HTMLInputElement
+    props: PropsType
+
+    render(): React$Element<*> {
+        // console.log(props);
+        let confirm = null;
+        let btnDelete = null;
+
+        const folder = this.props.folder;
+        const className = `folder${folder.new ? ' success' : ''}${this.props.hovering ? ' selected' : ''}`;
+
+        if (this.props.deleteFolderWithId === folder.id &&
+            typeof this.props.confirmDelete !== 'undefined' &&
+            typeof this.props.deleteFolder !== 'undefined') {
+            const confirmDelete = this.props.confirmDelete;
+            const deleteFolder = this.props.deleteFolder;
+            confirm = (<div className="confirm">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  onClick={(e: SyntheticEvent) => {
+                      e.stopPropagation();
+                      confirmDelete(null);
+                  }}
+                >
+                    <span className="text-label">{this.props.t('remove.cancel')}</span>
+                    <span className="fa fa-times" />
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger"
+                  onClick={(e: SyntheticEvent) => {
+                      e.stopPropagation();
+                      deleteFolder(folder.id);
+                  }}
+                >
+                    <span className="text-label">{this.props.t('remove.permanently')}</span>
+                    <span className="fa fa-trash-o" />
+                </button>
+            </div>);
+        } else if (this.props.backToParent === false && typeof this.props.confirmDelete !== 'undefined') {
+            const confirmDelete = this.props.confirmDelete;
+            btnDelete = (<button
               type="button"
               className="btn btn-sm btn-danger"
               onClick={(e: SyntheticEvent) => {
                   e.stopPropagation();
-                  deleteFolder(folder.id);
+                  confirmDelete(folder.id);
               }}
             >
-                <span className="text-label">Definitief verwijderen</span>
                 <span className="fa fa-trash-o" />
-            </button>
-        </div>);
-    } else if (props.backToParent === false && typeof props.confirmDelete !== 'undefined') {
-        const confirmDelete = props.confirmDelete;
-        btnDelete = (<button
-          type="button"
-          className="btn btn-sm btn-danger"
-          onClick={(e: SyntheticEvent) => {
-              e.stopPropagation();
-              confirmDelete(folder.id);
-          }}
-        >
-            <span className="fa fa-trash-o" />
-        </button>);
-    }
+            </button>);
+        }
 
-    let icon = <span className="fa fa-folder" />;
-    if (props.loading && props.loading === folder.id) {
-        icon = <span className="fa fa-circle-o-notch fa-spin" />;
-    }
+        let icon = <span className="fa fa-folder" />;
+        if (this.props.loading && this.props.loading === folder.id) {
+            icon = <span className="fa fa-circle-o-notch fa-spin" />;
+        }
 
-    if (props.backToParent === true) {
-        icon = <span className="fa fa-chevron-up" />;
-        // className = 'folder muted'
-    }
+        if (this.props.backToParent === true) {
+            icon = <span className="fa fa-chevron-up" />;
+            // className = 'folder muted'
+        }
 
-    let fileCount = null;
-    if (typeof folder.file_count !== 'undefined' && folder.file_count > 0) {
-        fileCount = (<span>
-            {folder.file_count}
-            <span className="fa fa-file-o" />
-        </span>);
-    }
+        let fileCount = null;
+        if (typeof folder.file_count !== 'undefined' && folder.file_count > 0) {
+            fileCount = (<span>
+                {folder.file_count}
+                <span className="fa fa-file-o" />
+            </span>);
+        }
 
-    let folderCount = null;
-    if (typeof folder.folder_count !== 'undefined' && folder.folder_count > 0) {
-        folderCount = (<span>
-            {folder.folder_count}
-            <span className="fa fa-folder-o" />
-        </span>);
-    }
+        let folderCount = null;
+        if (typeof folder.folder_count !== 'undefined' && folder.folder_count > 0) {
+            folderCount = (<span>
+                {folder.folder_count}
+                <span className="fa fa-folder-o" />
+            </span>);
+        }
 
-    const p = {
-        onClick: () => {
-            props.openFolder(folder.id);
-        },
-        className,
-    };
-
-    const p2 = {
-        onClick: (e: SyntheticEvent) => {
-            e.stopPropagation();
-            confirmRenameFolder(folder.id);
-        },
-    };
-    let folderNameTD = <td className="name" {...p2}>{folder.name}</td>;
-
-    if (props.renameFolderWithId === folder.id) {
-        const p3 = {
-            onClick: (e: SyntheticEvent) => {
-                e.stopPropagation();
-                renameFolder(folder.id, `piet-${Date.now()}`);
-            },
-            onMouseOver: (e: SyntheticEvent) => {
-                e.stopPropagation();
-                // props.onRenameFolder(folder.id);
-            },
-            onMouseOut: (e: SyntheticEvent) => {
-                e.stopPropagation();
-                // props.onRenameFolder(folder.id);
+        const p = {
+            onClick: () => {
+                this.props.openFolder(folder.id);
             },
             className,
         };
-        folderNameTD = <td className="name" {...p3}>{`${folder.name} EDIT`}</td>;
+
+        const p2 = {
+            onClick: (e: SyntheticEvent) => {
+                e.stopPropagation();
+                if (this.props.renameFolderWithId !== folder.id) {
+                    // this.props.confirmRenameFolder(folder.id);
+                    this.setState({ showForm: true }, () => {
+                        this.folderName.value = folder.name;
+                        this.folderName.focus();
+                        this.folderName.select();
+                    });
+                }
+            },
+        };
+        // const showInput: boolean = this.props.renameFolderWithId === folder.id;
+        const show: boolean = this.state.showForm;
+        const folderNameTD = (<td className="name" {...p2}>
+            <span className={`${show ? 'hide' : ''}`}>{folder.name}</span>
+            <input
+              className={`form-control input-sm ${show ? '' : 'hide'}`}
+              ref={(input: HTMLInputElement) => { this.folderName = input; }}
+              type="text"
+              // placeholder={folder.name}
+              onKeyUp={this.onKeyUp}
+            />
+        </td>);
+
+        return (
+            <tr {...p}>
+                <td className="select" />
+                <td className="preview">{icon}</td>
+                {folderNameTD}
+                <td className="size">
+                    {folderCount}
+                    {fileCount}
+                    {confirm}
+                </td>
+                <td className="date">{folder.created}</td>
+                <td className="buttons">{btnDelete}</td>
+            </tr>
+        );
     }
-    return (
-        <tr {...p}>
-            <td className="select" />
-            <td className="preview">{icon}</td>
-            {folderNameTD}
-            <td className="size">
-                {folderCount}
-                {fileCount}
-                {confirm}
-            </td>
-            <td className="date">{folder.created}</td>
-            <td className="buttons">{btnDelete}</td>
-        </tr>
-    );
-};
+}
 
 Folder.defaultProps = {
     hovering: null,
@@ -170,4 +194,4 @@ Folder.defaultProps = {
     renameFolderWithId: null,
 };
 
-export default Folder;
+export default translate('common')(Folder);

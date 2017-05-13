@@ -32,17 +32,9 @@ type ToolbarStateType = {
 
 class Toolbar
     extends React.Component<DefaultPropsType, PropsType, ToolbarStateType> {
-    props: PropsType
-    state: ToolbarStateType
     static defaultProps = {
         loadingFolderWithId: null,
     }
-    buttonAdd: HTMLButtonElement
-    buttonSave: HTMLButtonElement
-    folderName: HTMLInputElement
-    onShowForm: () => void
-    onAddFolder: () => void
-    onKeyPress: (e: SyntheticEvent) => void
 
     constructor() {
         super();
@@ -87,6 +79,15 @@ class Toolbar
         });
 */
     }
+
+    state: ToolbarStateType
+    onKeyPress: (e: SyntheticEvent) => void
+    onShowForm: () => void
+    onAddFolder: () => void
+    buttonAdd: HTMLButtonElement
+    buttonSave: HTMLButtonElement
+    folderName: HTMLInputElement
+    props: PropsType
 
     render(): React$Element<*> {
         const loader = this.props.isUploadingFiles ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
