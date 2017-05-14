@@ -44,6 +44,7 @@ type PropsType = {
     errors: ErrorType[],
     clipboard: FileType[],
     selected: FileType[],
+    showingRecycleBin: boolean,
 };
 
 type DefaultPropsType = {
@@ -100,6 +101,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         imagesOnly: state.ui.imagesOnly,
         allowUpload: state.ui.allowUpload,
         allowNewFolder: state.ui.allowNewFolder,
+        showingRecycleBin: state.ui.showingRecycleBin,
     };
 };
 
@@ -236,8 +238,11 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           onCancel={Actions.cancelCutAndPasteFiles}
           uploadFiles={this.uploadFiles}
           onAddFolder={Actions.addFolder}
+          showRecycleBin={Actions.showRecycleBin}
+          hideRecycleBin={Actions.hideRecycleBin}
           isUploadingFiles={this.props.isUploadingFiles}
           loadingFolderWithId={this.props.loadingFolderWithId}
+          showingRecycleBin={this.props.showingRecycleBin}
         />);
 
         const selected = (<SelectedFiles

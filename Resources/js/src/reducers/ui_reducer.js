@@ -93,6 +93,7 @@ export const uiInitialState: UIStateType = {
     allowUpload: false,
     allowDelete: false,
     allowEdit: false,
+    showingRecycleBin: false,
 };
 
 /**
@@ -534,6 +535,16 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             ...state,
             clipboard: [],
             selected: [],
+        };
+    } else if (action.type === 'SHOW_RECYCLE_BIN') {
+        return {
+            ...state,
+            showingRecycleBin: true,
+        };
+    } else if (action.type === 'HIDE_RECYCLE_BIN') {
+        return {
+            ...state,
+            showingRecycleBin: false,
         };
     }
     return state;

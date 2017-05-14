@@ -71,20 +71,38 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
     props: PropsType
 
     render(): React$Element<*> {
-        let confirm = null;
-        let btnDelete = null;
+        let confirmPane = null;
+        let buttonDelete = null;
 
         const folder = this.props.folder;
-        const className = `folder${folder.new ? ' success' : ''}${this.props.hovering ? ' selected' : ''}`;
+        const className = `folder ${folder.new ? 'success' : ''} ${this.props.hovering ? 'selected' : ''}`;
 
-        if (this.props.deleteFolderWithId === folder.id &&
+        // first the user clicks on the delete button
+        if (this.props.backToParent === false &&
+            typeof this.props.confirmDelete !== 'undefined' &&
+            this.props.allowDelete === true
+        ) {
+            const confirmDelete = this.props.confirmDelete;
+            buttonDelete = (<button
+              type="button"
+              className="btn btn-sm btn-danger"
+              onClick={(e: SyntheticEvent) => {
+                  e.stopPropagation();
+                  confirmDelete(folder.id);
+              }}
+            >
+                <span className="fa fa-trash-o" />
+            </button>);
+
+        // then the user needs to confirm or cancel the deletion of the folder
+        } else if (this.props.deleteFolderWithId === folder.id &&
             typeof this.props.confirmDelete !== 'undefined' &&
             typeof this.props.deleteFolder !== 'undefined' &&
             this.props.allowDelete === true
         ) {
             const confirmDelete = this.props.confirmDelete;
             const deleteFolder = this.props.deleteFolder;
-            confirm = (<div className="confirm">
+            confirmPane = (<div className="confirm">
                 <button
                   type="button"
                   className="btn btn-sm btn-primary"
@@ -109,22 +127,6 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                     <span className="fa fa-trash-o" />
                 </button>
             </div>);
-        } else if (
-                this.props.backToParent === false &&
-                typeof this.props.confirmDelete !== 'undefined' &&
-                this.allowDelete === true
-            ) {
-            const confirmDelete = this.props.confirmDelete;
-            btnDelete = (<button
-              type="button"
-              className="btn btn-sm btn-danger"
-              onClick={(e: SyntheticEvent) => {
-                  e.stopPropagation();
-                  confirmDelete(folder.id);
-              }}
-            >
-                <span className="fa fa-trash-o" />
-            </button>);
         }
 
         let icon = <span className="fa fa-folder" />;
@@ -193,10 +195,10 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 <td className="size">
                     {folderCount}
                     {fileCount}
-                    {confirm}
+                    {confirmPane}
                 </td>
                 <td className="date">{folder.created}</td>
-                <td className="buttons">{btnDelete}</td>
+                <td className="buttons">{buttonDelete}</td>
             </tr>
         );
     }

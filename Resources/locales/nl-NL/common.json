@@ -11,7 +11,8 @@
     "upload": "Upload",
     "createFolder": "Nieuwe map",
     "folderName": "Mapnaam",
-    "save": "Opslaan"
+    "save": "Opslaan",
+    "back": "Terug"
   },
   "remove": {
     "cancel": "Annuleren",

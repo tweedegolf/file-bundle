@@ -17,6 +17,8 @@ const getTree = (state: StateType): TreeStateType => state.tree;
 // const resetNew = array => R.map(f => ({ ...f, new: false }), array);
 const filterTrashed = (array: ItemType[]): ItemType[] =>
     R.filter((f: ItemType): boolean => (f.isTrashed !== true), array);
+const filterTrashedInverted = (array: ItemType[]): ItemType[] =>
+    R.filter((f: ItemType): boolean => (f.isTrashed === true), array);
 const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
     R.sort(R.ascend(R.prop(key)), array);
 const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] =>
@@ -28,6 +30,7 @@ export default createSelector(
         const {
             sort,
             ascending,
+            showingRecycleBin,
         } = ui;
 
         // const sortBy: ((FileType[] | FolderType[])) =>
@@ -46,11 +49,13 @@ export default createSelector(
         }
         let files: FileType[] = [];
         let folders: FolderType[] = [];
+        const sortFunc = R.curry(sortBy)(sort);
+        const filterFunc = showingRecycleBin ? filterTrashedInverted : filterTrashed;
         if (typeof currentFolder.files !== 'undefined') {
-            files = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.files);
+            files = R.compose(sortFunc, filterFunc)(currentFolder.files);
         }
         if (typeof currentFolder.folders !== 'undefined') {
-            folders = R.compose(R.curry(sortBy)(sort), filterTrashed)(currentFolder.folders);
+            folders = R.compose(sortFunc, filterFunc)(currentFolder.folders);
         }
 
         return {

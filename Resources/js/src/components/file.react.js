@@ -33,6 +33,7 @@ type PropsType = {
     hovering: boolean,
     browser: boolean,
     deleteFileWithId: null | string,
+    showingRecycleBin: boolean,
     t: (string) => string,
 };
 
@@ -68,7 +69,7 @@ const File = (props: PropsType): React$Element<*> => {
                   props.confirmDelete(null);
               }}
             >
-                <span className="text-label">{props.t('removeFile.cancel')}</span>
+                <span className="text-label">{props.t('remove.cancel')}</span>
                 <span className="fa fa-times" />
             </button>
 
@@ -80,11 +81,15 @@ const File = (props: PropsType): React$Element<*> => {
                   props.deleteFile(file.id);
               }}
             >
-                <span className="text-label">{props.t('removeFile.remove')}</span>
+                <span className="text-label">{props.t('remove.permanently')}</span>
                 <span className="fa fa-trash-o" />
             </button>
         </div>);
-    } else if (props.selected.length + props.clipboard.length === 0 && props.allowDelete === true) {
+    } else if (
+        props.selected.length + props.clipboard.length === 0 &&
+        props.allowDelete === true &&
+        props.showingRecycleBin === false
+    ) {
         btnDelete = (<button
           type="button"
           className="btn btn-sm btn-danger"
@@ -98,7 +103,7 @@ const File = (props: PropsType): React$Element<*> => {
     }
 
     if (props.browser === true) {
-        if (props.deleteFileWithId !== file.id) {
+        if (props.deleteFileWithId !== file.id && props.showingRecycleBin === false) {
             btnDownload =
                 (<a
                   className="btn btn-sm btn-primary"

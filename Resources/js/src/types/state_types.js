@@ -37,6 +37,7 @@ export type UIStateType = {
     allowUpload: boolean,
     allowDelete: boolean,
     allowEdit: boolean, // rename and cut & paste
+    showingRecycleBin: boolean,
 };
 
 export type StateType = {

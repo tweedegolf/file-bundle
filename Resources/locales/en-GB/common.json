@@ -11,7 +11,8 @@
     "upload": "Upload",
     "createFolder": "New folder",
     "folderName": "Folder name",
-    "save": "Save"
+    "save": "Save",
+    "back": "Back"
   },
   "remove": {
     "cancel": "Cancel",

@@ -173,3 +173,15 @@ export const expandBrowser = () => {
         type: Constants.EXPAND_BROWSER,
     });
 };
+
+export const showRecycleBin = () => {
+    dispatch({
+        type: Constants.SHOW_RECYCLE_BIN,
+    });
+};
+
+export const hideRecycleBin = () => {
+    dispatch({
+        type: Constants.HIDE_RECYCLE_BIN,
+    });
+};

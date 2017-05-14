@@ -40,6 +40,7 @@ type PropsType = {
     renameFolderWithId: null | string,
     renamingFolderWithId: null | string,
     parentFolder: null | FolderType,
+    showingRecycleBin: boolean,
 };
 
 type DefaultPropsType = {
@@ -88,8 +89,9 @@ const mapStateToProps = (state: StateType): PropsType => {
         deletingFolderWithId: state.ui.deletingFolderWithId, // null or number
         renameFolderWithId: state.ui.renameFolderWithId, // null or number
         renamingFolderWithId: state.ui.renamingFolderWithId, // null or number
-        isAddingFolder: state.ui.isAddingFolder, // true or false
-        isUploadingFiles: state.ui.isUploadingFiles, // true or false
+        isAddingFolder: state.ui.isAddingFolder,
+        isUploadingFiles: state.ui.isUploadingFiles,
+        showingRecycleBin: state.ui.showingRecycleBin,
     };
 };
 
@@ -165,6 +167,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
               deleteFileWithId={this.props.deleteFileWithId}
               allowEdit={this.props.allowEdit}
               allowDelete={this.props.allowDelete}
+              showingRecycleBin={this.props.showingRecycleBin}
             />);
         }, this.props.files);
 

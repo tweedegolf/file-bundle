@@ -11,7 +11,8 @@
     "upload": "Upload",
     "createFolder": "Neue Mappe",
     "folderName": "Mappe Name",
-    "save": "Speicheren"
+    "save": "Speicheren",
+    "back": "Zurück"
   },
   "remove": {
     "cancel": "Annullieren",
