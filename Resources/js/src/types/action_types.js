@@ -18,10 +18,15 @@ export type ActionInitType = {
 };
 
 export type PayloadInitType = {
-    selected: Array<FileType>,
-    language: string,
     rootFolderId: string,
     foldersById : FoldersByIdType,
+    selected: Array<FileType>,
+    language: string,
+    imagesOnly: boolean,
+    allowNewFolder: boolean,
+    allowUpload: boolean,
+    allowDelete: boolean,
+    allowEdit: boolean,
 };
 
 // open folder

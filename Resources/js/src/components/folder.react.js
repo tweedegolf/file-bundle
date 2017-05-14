@@ -11,6 +11,7 @@ import { translate } from 'react-i18next';
 
 type PropsType = {
     folder: FolderType,
+    allowDelete?: boolean,
     openFolder: (id: string) => void,
     confirmRenameFolder: (id: null | string) => void,
     renameFolder: (id: string, newName: string) => void,
@@ -24,13 +25,17 @@ type PropsType = {
     t: (string) => string,
 };
 
-type DefaultPropsType = {};
+type DefaultPropsType = {
+    allowDelete: boolean,
+};
 type FolderStateType = {
     showForm: boolean
 };
 
 class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateType> {
-    static defaultProps = {}
+    static defaultProps = {
+        allowDelete: true,
+    }
 
     // constructor() {
     //     super();
@@ -74,7 +79,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
 
         if (this.props.deleteFolderWithId === folder.id &&
             typeof this.props.confirmDelete !== 'undefined' &&
-            typeof this.props.deleteFolder !== 'undefined') {
+            typeof this.props.deleteFolder !== 'undefined' &&
+            this.props.allowDelete === true
+        ) {
             const confirmDelete = this.props.confirmDelete;
             const deleteFolder = this.props.deleteFolder;
             confirm = (<div className="confirm">
@@ -102,7 +109,11 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                     <span className="fa fa-trash-o" />
                 </button>
             </div>);
-        } else if (this.props.backToParent === false && typeof this.props.confirmDelete !== 'undefined') {
+        } else if (
+                this.props.backToParent === false &&
+                typeof this.props.confirmDelete !== 'undefined' &&
+                this.allowDelete === true
+            ) {
             const confirmDelete = this.props.confirmDelete;
             btnDelete = (<button
               type="button"
@@ -194,6 +205,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
 Folder.defaultProps = {
     hovering: null,
     loading: null,
+    allowDelete: true,
     deleteFolder: null,
     confirmDelete: null,
     deleteFolderWithId: null,

@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import gm from 'gm';
 import database from '../database';
-import { cleanup, getIdFromUrl, createFileDescription } from '../util';
+import { cleanup, getIdFromUrl, createFileDescription, isImage } from '../util';
 
 // compile the path to the directory where files will be saved
 const mediaDir = process.argv[1].replace('src/index.js', 'media');
@@ -102,10 +102,10 @@ export function uploadFiles(req, res) {
                 sessionUploads.push(saveTo);
                 // add the unique filename to the paths array; this will be used to create
                 // thumbnails of images after all files have been uploaded
-                if (mimetype.indexOf('image') === 0) {
+                if (isImage(mimetype)) {
                     paths.push(uniqueName);
                 }
-                console.log(filename, mimetype);
+                // console.log(filename, mimetype);
 
                 // create a file description object and add it to the uploads array;
                 // this array will be sent back to the client
@@ -123,22 +123,19 @@ export function uploadFiles(req, res) {
 
         req.busboy.on('finish', () => {
             const promises = paths.map(filePath => createThumbPromise(filePath));
-            Promise.all(promises).then(
-        (values) => {
-            // values are error messages that were yielded while creating thumbnails
-            values.forEach((value) => {
-                if (typeof value !== 'undefined') {
-                    errors[value[0]] = [value[1]];
-                }
+            Promise.all(promises).then((values) => {
+                // values are error messages that were yielded while creating thumbnails
+                values.forEach((value) => {
+                    if (typeof value !== 'undefined') {
+                        errors[value[0]] = [value[1]];
+                    }
+                });
+                // store the file description object in the database
+                database.addFiles(uploads, folderId);
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify({ uploads, errors }));
             });
-            // store the file description object in the database
-            database.addFiles(uploads, folderId);
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify({ uploads, errors }));
-        },
-      );
         });
-
         req.pipe(req.busboy);
     }
 }

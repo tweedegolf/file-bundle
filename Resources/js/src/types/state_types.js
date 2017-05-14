@@ -30,9 +30,13 @@ export type UIStateType = {
     scrollPosition: null | number,
     selected: Array<FileType>,
     clipboard: Array<FileType>,
-    multiple: boolean,
     language: string,
-    imagesOnly: boolean
+    multiple: boolean,
+    imagesOnly: boolean,
+    allowNewFolder: boolean,
+    allowUpload: boolean,
+    allowDelete: boolean,
+    allowEdit: boolean, // rename and cut & paste
 };
 
 export type StateType = {
@@ -75,8 +79,8 @@ export type FileType = {
     type: string,
     size: string,
     size_bytes: number,
-    original?: string,
-    thumb?: string,
+    original: string,
+    thumb: null | string,
     isTrashed?: boolean,
 };
 
@@ -93,6 +97,11 @@ export type OptionsType = {
     rootFolderId: string,
     selected?: Array<FileType>,
     multiple?: boolean,
+    imagesOnly?: boolean,
+    allowNewFolder?: boolean,
+    allowUpload?: boolean,
+    allowDelete?: boolean,
+    allowEdit?: boolean, // rename and cut & paste
 };
 
 export type SortEnumType = 'name' | 'size_bytes' | 'create_ts';

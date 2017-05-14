@@ -33,7 +33,8 @@ if (browser !== null) {
                   browser={true}
                   options={options}
                 />
-            </Provider></I18nextProvider>, browser);
+            </Provider>
+        </I18nextProvider>, browser);
     });
 }
 
@@ -42,10 +43,21 @@ if (browser !== null) {
 // note there can be multiple file selectors in a single form
 const pickers: HTMLElement[] = Array.from(document.getElementsByClassName('tg_file_picker'));
 R.forEach((element: HTMLElement) => {
-    ReactDOM.render(<Provider store={store} >
-        <Browser
-          browser={false}
-          options={getOptions(element)}
-        />
-    </Provider>, element);
+    const options = getOptions(element);
+    let language;
+    if (options !== null) {
+        language = options.language;
+    }
+    // language = 'nl-NL';
+    // language = 'de-DE';
+    i18n.changeLanguage(language, () => {
+        ReactDOM.render(<I18nextProvider i18n={i18n}>
+            <Provider store={store} >
+                <Browser
+                  browser={false}
+                  options={options}
+                />
+            </Provider>
+        </I18nextProvider>, element);
+    });
 }, pickers);

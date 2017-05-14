@@ -29,6 +29,8 @@ type OtherPropsType = {
 type PropsType = {
     multiple: boolean,
     imagesOnly: boolean,
+    allowUpload: boolean,
+    allowNewFolder: boolean,
     scrollPosition: null | number,
     sort: string,
     previewUrl: null | string,
@@ -96,6 +98,8 @@ const mapStateToProps = (state: StateType): PropsType => {
         errors: state.ui.errors,
         multiple: state.ui.multiple,
         imagesOnly: state.ui.imagesOnly,
+        allowUpload: state.ui.allowUpload,
+        allowNewFolder: state.ui.allowNewFolder,
     };
 };
 
@@ -110,12 +114,6 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         currentFolderId: null,
         children: null,
     }
-    containerRef: HTMLElement
-    onKeyDown: (event: Event) => void
-    props: AllPropsType
-    uploadFiles: (event: SyntheticEvent | DataTransfer) => void
-    selectFile: (file: FileType) => void
-    state: BrowserStateType
 
     constructor() {
         super();
@@ -163,6 +161,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         };
     }
 
+    state: BrowserStateType
+
     componentDidMount() {
         // Filepicker mode: the selected files can be set in the dataset of the HTML
         // element.
@@ -201,6 +201,12 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         }
     }
 
+    onKeyDown: (event: Event) => void
+    containerRef: HTMLElement
+    props: AllPropsType
+    uploadFiles: (event: SyntheticEvent | DataTransfer) => void
+    selectFile: (file: FileType) => void
+
     // render() {
     // render(): ?React$Element<*> {
     render(): ?React$Element<any> {
@@ -218,6 +224,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             />, columnHeaderIds);
 
         const toolbar = (<Toolbar
+          allowUpload={this.props.allowUpload}
+          allowNewFolder={this.props.allowNewFolder}
           selected={this.props.selected}
           clipboard={this.props.clipboard}
           currentFolderId={this.props.currentFolderId}
@@ -299,7 +307,6 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                   // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
                                   selectFile={this.selectFile}
                                   browser={this.props.browser}
-                                  imagesOnly={this.props.imagesOnly}
                                 />
                             </table>
                         </div>

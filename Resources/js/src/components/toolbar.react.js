@@ -9,6 +9,8 @@ import { translate } from 'react-i18next';
 import classNames from 'classnames';
 
 type PropsType = {
+    allowUpload: boolean,
+    allowNewFolder: boolean,
     onAddFolder: (folderName: string) => void,
     uploadFiles: (fileList: global.FileList) => void,
     onCancel: () => void,
@@ -93,6 +95,36 @@ class Toolbar
         const loader = this.props.isUploadingFiles ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
         const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.showForm });
         let actions = null;
+        let buttonUpload = null;
+        let buttonCreateFolder = null;
+        if (this.props.allowUpload === true) {
+            buttonUpload = (<span
+              className="btn btn-sm btn-default btn-file pull-right"
+              disabled={this.props.isUploadingFiles}
+            >
+                <span className="fa fa-arrow-circle-o-up" />
+                <span className="text-label">{this.props.t('toolbar.upload')}</span>
+                {loader}
+                <input
+                  type="file"
+                  multiple="multiple"
+                  onChange={this.props.uploadFiles}
+                />
+            </span>);
+        }
+        if (this.props.allowNewFolder === true) {
+            buttonCreateFolder = (<button
+              type="button"
+              ref={(btn: HTMLButtonElement) => { this.buttonAdd = btn; }}
+              className={newFolderClass}
+              onClick={this.onShowForm}
+              disabled={this.props.isAddingFolder}
+            >
+                <span className="fa fa-folder-o" />
+                <span className="text-label">{this.props.t('toolbar.createFolder')}</span>
+                {this.props.isAddingFolder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
+            </button>);
+        }
 
         if (this.props.browser) {
             actions = (<div className="pull-left">
@@ -132,17 +164,7 @@ class Toolbar
         return (
             <div className="toolbar">
                 {actions}
-                <button
-                  type="button"
-                  ref={(btn: HTMLButtonElement) => { this.buttonAdd = btn; }}
-                  className={newFolderClass}
-                  onClick={this.onShowForm}
-                  disabled={this.props.isAddingFolder}
-                >
-                    <span className="fa fa-folder-o" />
-                    <span className="text-label">{this.props.t('toolbar.createFolder')}</span>
-                    {this.props.isAddingFolder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
-                </button>
+                {buttonCreateFolder}
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
                     <input
                       className="form-control input-sm"
@@ -161,21 +183,7 @@ class Toolbar
                         <span className="text-label">{this.props.t('toolbar.save')}</span>
                     </button>
                 </div>
-                <span
-                  className="btn btn-sm btn-default btn-file pull-right"
-                  disabled={this.props.isUploadingFiles}
-                >
-                    <span className="fa fa-arrow-circle-o-up" />
-                    <span className="text-label">{this.props.t('toolbar.upload')}</span>
-                    {loader}
-                    <input
-                      // id="upload_files"
-                      // name="upload_files"
-                      type="file"
-                      multiple="multiple"
-                      onChange={this.props.uploadFiles}
-                    />
-                </span>
+                {buttonUpload}
             </div>
         );
     }

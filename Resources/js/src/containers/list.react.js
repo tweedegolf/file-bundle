@@ -17,7 +17,6 @@ import currentFolderSelector from '../reducers/current_folder_selector';
 type PassedPropsType = {
     selectFile: () => void,
     browser: boolean,
-    imagesOnly: boolean,
     t: (string) => string,
 };
 
@@ -26,6 +25,9 @@ type PropsType = {
     folders: FolderType[],
     selected: FileType[],
     clipboard: FileType[],
+    allowEdit: boolean,
+    allowDelete: boolean,
+    imagesOnly: boolean,
     ascending: boolean,
     isUploadingFiles: boolean,
     hover: null | number,
@@ -76,6 +78,9 @@ const mapStateToProps = (state: StateType): PropsType => {
         hover: state.ui.hover,
         selected: state.ui.selected,
         clipboard: state.ui.clipboard,
+        allowEdit: state.ui.allowEdit,
+        allowDelete: state.ui.allowDelete,
+        imagesOnly: state.ui.imagesOnly,
         loadingFolderWithId: state.ui.loadingFolderWithId, // null or number
         deleteFileWithId: state.ui.deleteFileWithId, // null or number
         deletingFileWithId: state.ui.deletingFileWithId, // null or number
@@ -90,12 +95,6 @@ const mapStateToProps = (state: StateType): PropsType => {
 
 // export default class List extends React.Component {
 class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType> {
-    props: AllPropsType
-    state: ListStateType
-    openFolder: (folderId: string) => void
-    confirmRenameFolder: (folderId: string) => void
-    renameFolder: (folderId: string, newName: string) => void
-
     static defaultProps = {
         currentFolderId: null,
         loadingFolderWithId: null,
@@ -116,18 +115,24 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             Actions.openFolder({ id: folderId });
         };
         this.renameFolder = (folderId: string, newName: string) => {
-            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
-                return;
-            }
             Actions.renameFolder(folderId, newName);
         };
         this.confirmRenameFolder = (folderId: string) => {
-            if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
+            if (this.props.isUploadingFiles === true ||
+                this.props.loadingFolderWithId !== null ||
+                this.props.allowEdit === false
+            ) {
                 return;
             }
             Actions.confirmRenameFolder(folderId);
         };
     }
+
+    state: ListStateType
+    props: AllPropsType
+    confirmRenameFolder: (folderId: string) => void
+    openFolder: (folderId: string) => void
+    renameFolder: (folderId: string, newName: string) => void
 
     render(): ?React$Element<*> {
         if (R.isNil(this.props.currentFolderId)) {
@@ -138,8 +143,11 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
 
         // sorted file listing
         let files = R.map((file: FileType): null | React$Element<*> => {
-            // hide non-images when the images only option is passed to the form
-            if (!this.props.browser && this.props.imagesOnly && !file.thumb) {
+            // hide non-images in filepicker mode when the imagesOnly option is
+            // set to true and passed to the form
+            if (this.props.browser === false && // filepicker mode
+                this.props.imagesOnly === true &&
+                file.thumb === null) {          // only image file types have a thumb
                 return null;
             }
 
@@ -155,6 +163,8 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
               clipboard={this.props.clipboard}
               browser={this.props.browser}
               deleteFileWithId={this.props.deleteFileWithId}
+              allowEdit={this.props.allowEdit}
+              allowDelete={this.props.allowDelete}
             />);
         }, this.props.files);
 
@@ -164,6 +174,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
           key={`folder-${folder.id}`}
           backToParent={false}
           folder={folder}
+          allowDelete={this.props.allowDelete}
           deleteFolder={Actions.deleteFolder}
           openFolder={this.openFolder}
           renameFolder={this.renameFolder}

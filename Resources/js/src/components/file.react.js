@@ -22,6 +22,8 @@ const icons = {
 
 type PropsType = {
     file: FileType,
+    allowEdit: boolean,
+    allowDelete: boolean,
     confirmDelete: (id: null | string) => void,
     showPreview: (id: string) => void,
     selectFile: (file: FileType) => void,
@@ -82,7 +84,7 @@ const File = (props: PropsType): React$Element<*> => {
                 <span className="fa fa-trash-o" />
             </button>
         </div>);
-    } else if (props.selected.length + props.clipboard.length === 0) {
+    } else if (props.selected.length + props.clipboard.length === 0 && props.allowDelete === true) {
         btnDelete = (<button
           type="button"
           className="btn btn-sm btn-danger"
@@ -95,7 +97,7 @@ const File = (props: PropsType): React$Element<*> => {
         </button>);
     }
 
-    if (props.browser) {
+    if (props.browser === true) {
         if (props.deleteFileWithId !== file.id) {
             btnDownload =
                 (<a
@@ -108,8 +110,9 @@ const File = (props: PropsType): React$Element<*> => {
                     <span className="fa fa-download" />
                 </a>);
         }
-
-        checkbox = <input type="checkbox" checked={selected} readOnly />;
+        if (props.allowEdit) {
+            checkbox = <input type="checkbox" checked={selected} readOnly />;
+        }
         actions = (<div className="actions">
             {btnDelete}
             {btnDownload}
@@ -133,7 +136,7 @@ const File = (props: PropsType): React$Element<*> => {
         className += ' success';
     }
 
-    if (file.thumb) {
+    if (file.thumb !== null) {
         const p = {
             src: file.thumb,
             onClick: (e: SyntheticEvent) => {

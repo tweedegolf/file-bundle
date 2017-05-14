@@ -26,29 +26,30 @@ const init = (options: OptionsType) => {
         foldersById = { ...foldersById, [rootFolderId]: rootFolder };
     }
 
+    const {
+        imagesOnly = false,
+        allowNewFolder = true,
+        allowUpload = true,
+        allowDelete = true,
+        allowEdit = true,
+    } = options;
+
     const noCache = rootFolderId !== tree.rootFolderId;
-    // console.log(noCache, rootFolderId, store.getState().tree.rootFolderId);
-/*
-        const action: ActionInitType = {
+    const action: ActionInitType = {
         type: INIT,
         payload: {
             selected: options.selected || [],
+            language: options.language,
+            imagesOnly,
+            allowNewFolder,
+            allowUpload,
+            allowDelete,
+            allowEdit,
             rootFolderId,
             foldersById,
         },
     };
     dispatch(action);
-*/
-
-    dispatch({
-        type: INIT,
-        payload: {
-            selected: options.selected || [],
-            language: options.language,
-            rootFolderId,
-            foldersById,
-        },
-    });
 
     let currentFolderId: string = rootFolderId;
     if (tree.currentFolder !== null) {

@@ -1,0 +1,313 @@
+
+.tg_file_picker {
+
+  .collapse-button {
+    width: 100px;
+    margin: 0.5em 0 0 0;
+    background-color: #eee;
+    height: 20px;
+    line-height: 15px;
+  }
+
+  .expand-button {
+    background-color: #eee;
+    .fa {
+      margin-left: 0.5em;
+    }
+  }
+
+  .file-picker-selection {
+    min-height: 42px;
+
+    .btn {
+      margin: 0 4px 4px 0;
+      padding: 6px 26px 6px 6px;
+      position: relative;
+      height: 38px;
+      background-color: lighten($brand-primary, 50%);
+      .remove {
+        font-size: 26px;
+        line-height: 26px;
+        position: absolute;
+        top: 4px;
+        right: 6px;
+      }
+      .fa {
+        margin-right: 4px;
+      }
+      img {
+        margin-right: 8px;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+      .fa {
+        font-size: 24px;
+        width: 24px;
+        vertical-align: middle;
+      }
+      .name {
+        line-height: 23px
+      }
+    }
+
+    .none-selected {
+      line-height: 42px;
+      color: $gray-light;
+    }
+  }
+}
+
+.file-browser {
+  border: 1px solid #a9a9a9;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+
+  .toolbar {
+    background-color: $gray-lighter;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    height: 41px;
+
+    .btn {
+      .fa {
+        margin-right: 5px;
+        &.fa-spin {
+          margin-left: 5px;
+        }
+      }
+     margin-right: 5px;
+    }
+
+    .btn-file {
+      position: relative;
+      overflow: hidden;
+      input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+      }
+    }
+  }
+
+  .alert {
+    transition: all 2s;
+    padding: 0.5em 2.5em 0.5em 0.5em;
+    margin: 0.5em;
+    strong {
+      display: inline-block;
+      padding: 0 0.5em;
+    }
+    .close {
+      outline: none;
+    }
+  }
+
+  table {
+    margin: 0;
+
+    thead {
+      display: block;
+      padding-right: 16px;
+
+      th {
+        border-bottom: none;
+      }
+    }
+
+    tbody {
+      display: block;
+      max-height: 350px;
+      overflow-y: auto;
+      border-top: 2px solid #ddd;
+
+      tr {
+        &.cutable, &.selectable {
+          cursor: pointer;
+          &:hover {
+            background-color: lighten($brand-primary, 45%);
+          }
+        }
+        &.folder {
+          background-color: #fafafa;
+          cursor: pointer;
+          &:hover {
+            background-color: lighten($brand-primary, 45%);
+          }
+        }
+        &.cut, &.selected {
+          background-color: lighten($brand-primary, 50%);
+          &.selected {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  &.fullpage {
+    table {
+      thead {
+        padding-right: 0;
+      }
+    }
+  }
+
+  tr {
+    display: table;
+    position: relative;
+    width: 100%;
+
+    &:nth-of-type(even) {
+      background-color: #fdfdfd;
+    }
+
+    td, th {
+      vertical-align: middle;
+
+      &.sort {
+        cursor: pointer;
+        user-select: none;
+        &:hover {
+          color: $brand-primary;
+        }
+        .fa {
+          padding-left: 5px;
+        }
+      }
+
+      &.size {
+        .fa {
+          margin: 0 4px;
+          &:before {
+            color: #666;
+            font-size: 12px;
+          }
+        }
+      }
+
+      .actions {
+        .confirm {
+          width: 250px;
+          text-align: right;
+          button {
+            margin: 0 0.5em;
+            .fa {
+              margin-left: 0.5em;
+            }
+          }
+        }
+      }
+      &:nth-child(1) {
+        width: 35px;
+      }
+      &:nth-child(2) {
+        width: 45px;
+        padding: 4px 0 0 0;
+
+        .fa {
+          font-size: 23px;
+          vertical-align: bottom;
+          &.fa-chevron-up {
+            position: relative;
+            bottom: 2px;
+          }
+        }
+
+        img {
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+      &:nth-child(3) {
+        width: calc(100% - 330px);
+        max-width: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      &:nth-child(4) {
+        width: 85px;
+      }
+      &:nth-child(5) {
+        width: 145px;
+      }
+      &:nth-child(6) {
+        width: 55px;
+      }
+    }
+  }
+}
+
+#tg_file_browser {
+  .file-browser {
+    table {
+      tbody {
+        max-height: calc(100vh - 165px);
+      }
+    }
+  }
+}
+
+#tg_file_browser, .tg_file_picker {
+  .preview-image {
+    position: fixed;
+    z-index: 10000;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    & > div {
+      position: absolute;
+      width: 80vw;
+      height: 80vh;
+      left: 50%;
+      top: 50%;
+      margin-top: -40vh;
+      margin-left: -40vw;
+      background: no-repeat center center / contain;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  #tg_file_browser {
+    .file-browser {
+      table {
+        td, th {
+          .btn {
+            .text-label {
+              display: none;
+            }
+            .fa {
+              margin: 0;
+            }
+          }
+          &:nth-child(4), &:nth-child(5) {
+            display: none;
+          }
+          .actions {
+            .confirm {
+              width: auto;
+              button {
+                margin: 0;
+                .fa {
+                  margin: 0;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

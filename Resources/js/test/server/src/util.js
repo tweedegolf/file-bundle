@@ -48,6 +48,13 @@ export const formatDate = (millis, format = 'dMy') => {
     }
 };
 
+export const isImage = (mimetype: string) => (
+    mimetype.indexOf('image') === 0 ||
+    mimetype.indexOf('jpg') !== -1 ||
+    mimetype.indexOf('jpeg') !== -1 ||
+    mimetype.indexOf('gif') !== -1 ||
+    mimetype.indexOf('png') !== -1
+);
 
 /**
  * Function that calls a cleanup function after the node process shuts down or
@@ -128,7 +135,7 @@ export const createFileDescription = (data) => {
         id: fileId,
         name,
         original: `/media/${uniqueName}`,
-        thumb: `/media/thumb/${uniqueName}`,
+        thumb: isImage(mimetype) ? `/media/thumb/${uniqueName}` : null,
         type: mimetype.replace('image/', ''),
         size: filesize(size_bytes, { base: 10 }),
         size_bytes,

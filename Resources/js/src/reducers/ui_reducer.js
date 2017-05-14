@@ -89,6 +89,10 @@ export const uiInitialState: UIStateType = {
     multiple: true,
     language: 'en-GB',
     imagesOnly: false,
+    allowNewFolder: false,
+    allowUpload: false,
+    allowDelete: false,
+    allowEdit: false,
 };
 
 /**
@@ -105,6 +109,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             language: action.payload.language,
+            imagesOnly: action.payload.imagesOnly,
+            allowNewFolder: action.payload.allowNewFolder,
+            allowUpload: action.payload.allowUpload,
+            allowDelete: action.payload.allowDelete,
+            allowEdit: action.payload.allowEdit,
         };
     /**
      * User has added a folder, we can show a progress indicator while we make
