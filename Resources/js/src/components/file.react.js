@@ -55,12 +55,12 @@ const File = (props: PropsType): React$Element<*> => {
 
     let checkbox = null;
     let actions = null;
-    let confirm = null;
-    let btnDelete = null;
-    let btnDownload = null;
+    let confirmPane = null;
+    let buttonDelete = null;
+    let buttonDownload = null;
 
     if (props.deleteFileWithId === file.id) {
-        confirm = (<div className="confirm">
+        confirmPane = (<div className="confirm">
             <button
               type="button"
               className="btn btn-sm btn-primary"
@@ -90,7 +90,7 @@ const File = (props: PropsType): React$Element<*> => {
         props.allowDelete === true &&
         props.showingRecycleBin === false
     ) {
-        btnDelete = (<button
+        buttonDelete = (<button
           type="button"
           className="btn btn-sm btn-danger"
           onClick={(e: SyntheticEvent) => {
@@ -104,7 +104,7 @@ const File = (props: PropsType): React$Element<*> => {
 
     if (props.browser === true) {
         if (props.deleteFileWithId !== file.id && props.showingRecycleBin === false) {
-            btnDownload =
+            buttonDownload =
                 (<a
                   className="btn btn-sm btn-primary"
                   title="Download"
@@ -119,9 +119,9 @@ const File = (props: PropsType): React$Element<*> => {
             checkbox = <input type="checkbox" checked={selected} readOnly />;
         }
         actions = (<div className="actions">
-            {btnDelete}
-            {btnDownload}
-            {confirm}
+            {buttonDelete}
+            {buttonDownload}
+            {confirmPane}
         </div>);
     } else {
         checkbox = <span className={selected ? 'fa fa-check-square-o' : 'fa fa-square-o'} />;
@@ -137,7 +137,7 @@ const File = (props: PropsType): React$Element<*> => {
         className += ' danger';
     }
 
-    if (file.new) {
+    if (file.isNew === true) {
         className += ' success';
     }
 

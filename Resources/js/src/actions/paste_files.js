@@ -45,7 +45,7 @@ const moveFiles = (
             R.forEach((f: FileType) => {
                 filesById[f.id] = f;
                 if (typeof currentFolder.files !== 'undefined') {
-                    currentFolder.files.push(R.merge(f, { new: true }));
+                    currentFolder.files.push(R.merge(f, { isNew: true }));
                 }
             }, files);
             if (typeof currentFolder.files !== 'undefined') {

@@ -20,6 +20,7 @@ export type ActionInitType = {
 export type PayloadInitType = {
     rootFolderId: string,
     foldersById : FoldersByIdType,
+    filesById : FilesByIdType,
     selected: Array<FileType>,
     language: string,
     imagesOnly: boolean,
@@ -43,8 +44,7 @@ export type ActionFolderOpenedType = {
 };
 
 export type PayloadFolderOpenedType = {
-    parentFolder: null | FolderType,
-    currentFolder: FolderType,
+    currentFolderId: string,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
 };
@@ -85,7 +85,6 @@ export type ActionFolderAddedType = {
 };
 
 export type PayloadFolderAddedType = {
-    currentFolder: FolderType,
     foldersById: FoldersByIdType,
 };
 
@@ -104,7 +103,6 @@ export type ActionUploadDoneType = {
 };
 
 export type PayloadUploadDoneType = {
-    currentFolder: FolderType,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
     errors: ErrorType[],

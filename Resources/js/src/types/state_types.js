@@ -3,9 +3,8 @@ import type { Store, Dispatch } from 'redux';
 
 // state
 export type TreeStateType = {
-    currentFolder: null | FolderType,
+    currentFolderId: string,
     rootFolderId: string,
-    parentFolder: null | FolderType,
     filesById: null | FilesByIdType,
     foldersById: null | FoldersByIdType,
     errors: Array<ErrorType>,
@@ -67,8 +66,9 @@ export type FolderType = {
     type?: string,
     size?: string,
     size_bytes?: number,
-    files?: Array<FileType>,
-    folders?: Array<FolderType>,
+    fileIds?: string[],
+    folderIds?: string[],
+    isNew?: boolean,
     isTrashed?: boolean,
 };
 
@@ -82,6 +82,7 @@ export type FileType = {
     size_bytes: number,
     original: string,
     thumb: null | string,
+    isNew?: boolean,
     isTrashed?: boolean,
 };
 

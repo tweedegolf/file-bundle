@@ -19,38 +19,37 @@ const uploadFiles = (files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const tmp1: null | FolderType = R.clone(tree.currentFolder);
-    const tmp2: null | FilesByIdType = R.clone(tree.filesById);
-    const tmp3: null | FoldersByIdType = R.clone(tree.foldersById);
+    const tmp1: null | FilesByIdType = R.clone(tree.filesById);
+    const tmp2: null | FoldersByIdType = R.clone(tree.foldersById);
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+    if (tmp1 === null || tmp2 === null) {
         reject({ errors: [createError('uploading files', ['invalid state'])] });
         return;
     }
-    const currentFolder: FolderType = tmp1;
-    const filesById: FilesByIdType = tmp2;
-    const foldersById: FoldersByIdType = tmp3;
+    const filesById: FilesByIdType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
+    const currentFolderId: string = tree.currentFolderId;
+    const currentFolder: FolderType = foldersById[currentFolderId];
 
     api.upload(files, currentFolder.id,
         (newFiles: FileType[], rejected: { [id: string]: string }) => {
             R.forEach((f: FileType) => {
-                const f1: FileType = { ...f, new: true };
-                if (typeof currentFolder.files !== 'undefined') {
-                    currentFolder.files.push(f1);
+                const f1: FileType = { ...f, isNew: true };
+                if (typeof currentFolder.fileIds !== 'undefined') {
+                    currentFolder.fileIds.push(f1.id);
                 }
                 filesById[f1.id] = f1;
             }, newFiles);
 
-            if (typeof currentFolder.files !== 'undefined') {
-                currentFolder.file_count = R.length(currentFolder.files);
+            if (typeof currentFolder.fileIds !== 'undefined') {
+                currentFolder.file_count = R.length(currentFolder.fileIds);
             }
-            foldersById[currentFolder.id] = currentFolder;
+            foldersById[currentFolderId] = currentFolder;
 
             const errors = R.map((key: string): ErrorType =>
                 createError(key, [rejected[key]]), R.keys(rejected));
 
             resolve({
-                currentFolder,
                 foldersById,
                 filesById,
                 errors,

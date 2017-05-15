@@ -22,30 +22,28 @@ const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(tree.currentFolder);
-    const tmp2 = R.clone(tree.foldersById);
+    const tmp1 = R.clone(tree.foldersById);
+    const tmp2 = tree.currentFolderId;
     if (tmp1 === null || tmp2 === null) {
         reject(createError(folderName, ['invalid state']));
         return;
     }
+    const foldersById: FoldersByIdType = tmp1;
+    const currentFolderId: string = tmp2;
+    const currentFolder: FolderType = foldersById[currentFolderId];
 
-    const currentFolder: FolderType = tmp1;
-    const foldersById: FoldersByIdType = tmp2;
-
-    api.addFolder(folderName, currentFolder.id,
+    api.addFolder(folderName, currentFolderId,
         (folders: Array<FolderType>) => {
             folders.forEach((f: FolderType) => {
-                foldersById[f.id] = f;
-                if (typeof currentFolder.folders !== 'undefined') {
-                    currentFolder.folders.push(R.merge(f, { new: true }));
-                }
+                foldersById[f.id] = R.merge(f, { isNew: true });
             });
-
-            currentFolder.folder_count = R.length(folders);
-            foldersById[currentFolder.id] = currentFolder;
+            const newFolderIds = R.map((f: FolderType): string => f.id, folders);
+            if (typeof currentFolder.folderIds !== 'undefined') {
+                currentFolder.folderIds.push(...newFolderIds);
+            }
+            foldersById[currentFolderId] = currentFolder;
 
             const payload: PayloadFolderAddedType = {
-                currentFolder,
                 foldersById,
             };
             resolve(payload);

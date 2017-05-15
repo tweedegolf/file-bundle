@@ -18,6 +18,35 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
     return { errors };
 };
 
+/*
+type SetTrashFlagType = {
+    folder: FolderType,
+    filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
+};
+const recursivelySetTrashFlag = (data: SetTrashFlagType): SetTrashFlagType => {
+    const {
+        folder,
+        filesById,
+    } = data;
+
+    folder.isTrashed = true;
+
+    if (typeof folder.files !== 'undefined') {
+        folder.files = R.map((f: FileType): FileType =>
+            ({ ...f, isTrashed: true }), folder.files);
+        R.forEach((f: FileType) => { filesById[f.id] = f; }, folder.files);
+    }
+
+    if (typeof folder.folders !== 'undefined') {
+        folder.folders = R.map((f: FolderType): FolderType =>
+            ({ ...f, isTrashed: true }), folder.folders);
+
+        R.forEach((f: FolderType) => { foldersById[f.id] = f; }, folder.folders);
+    }
+};
+*/
+
 const deleteFolder = (folderId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
@@ -37,12 +66,7 @@ const deleteFolder = (folderId: string,
     api.deleteFolder(folderId,
         () => {
             const folder = foldersById[folderId];
-            if (typeof folder.files !== 'undefined') {
-                folder.files = R.map((f: FileType): FileType =>
-                    ({ ...f, isTrashed: true }), folder.files);
-                R.forEach((f: FileType) => { filesById[f.id] = f; }, folder.files);
-                folder.isTrashed = true;
-            }
+            folder.isTrashed = true;
 
             if (typeof currentFolder.folders !== 'undefined') {
                 const folders: FolderType[] = currentFolder.folders;

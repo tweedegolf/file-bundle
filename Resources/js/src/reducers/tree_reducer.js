@@ -17,9 +17,8 @@
  */
 
 export const treeInitialState: TreeStateType = {
-    currentFolder: null,
+    currentFolderId: '-1',
     rootFolderId: '-1',
-    parentFolder: null,
     filesById: null,
     foldersById: null,
     errors: [],
@@ -31,8 +30,15 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'INIT':
         return {
             ...state,
+            filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
             rootFolderId: action.payload.rootFolderId,
+        };
+
+    case 'OPEN_FOLDER':
+        return {
+            ...state,
+            currentFolderId: action.payload.id,
         };
     /**
      * Contents of a folder has been loaded from the server or from cache
@@ -41,8 +47,6 @@ export const tree = (state: TreeStateType = treeInitialState,
         return {
             ...state,
             filesById: action.payload.filesById,
-            parentFolder: action.payload.parentFolder,
-            currentFolder: action.payload.currentFolder,
             foldersById: action.payload.foldersById,
         };
 
@@ -56,7 +60,6 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
-            currentFolder: action.payload.currentFolder,
         };
 
     /**
@@ -69,14 +72,12 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
-            currentFolder: action.payload.currentFolder,
         };
 
     case 'FOLDER_RENAMED':
         return {
             ...state,
             foldersById: action.payload.foldersById,
-            currentFolder: action.payload.currentFolder,
         };
 
     /**
@@ -89,7 +90,6 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
-            currentFolder: action.payload.currentFolder,
             errors: action.payload.errors,
         };
 
@@ -101,7 +101,6 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'FOLDER_ADDED':
         return {
             ...state,
-            currentFolder: action.payload.currentFolder,
             foldersById: action.payload.foldersById,
         };
 
@@ -112,7 +111,6 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'FILES_MOVED':
         return {
             ...state,
-            currentFolder: action.payload.currentFolder,
             foldersById: action.payload.foldersById,
             filesById: action.payload.filesById,
         };

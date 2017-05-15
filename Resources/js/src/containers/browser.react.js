@@ -73,12 +73,16 @@ const mapStateToProps = (state: StateType): PropsType => {
         ascending,
     } = state.ui;
 
+    let currentFolder = null;
+    if (state.tree.foldersById !== null) {
+        currentFolder = state.tree.foldersById[state.tree.currentFolderId];
+    }
     const [currentFolderId, numItemsInCurrentFolder] = R.cond([
         [R.isNil, R.always([null, 0])],
         [R.isEmpty, R.always([null, 0])],
         [R.T, (cf: FolderType): [string, number] =>
-            [cf.id, R.length(cf.folders) + R.length(cf.files)]],
-    ])(state.tree.currentFolder);
+            [cf.id, R.length(cf.folderIds) + R.length(cf.fileIds)]],
+    ])(currentFolder);
 
     return {
         // tree props

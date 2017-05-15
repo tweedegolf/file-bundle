@@ -8,6 +8,7 @@
  */
 import React from 'react';
 import { translate } from 'react-i18next';
+import classNames from 'classnames';
 
 type PropsType = {
     folder: FolderType,
@@ -73,29 +74,13 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
     render(): React$Element<*> {
         let confirmPane = null;
         let buttonDelete = null;
-
         const folder = this.props.folder;
-        const className = `folder ${folder.new ? 'success' : ''} ${this.props.hovering ? 'selected' : ''}`;
+        const className = classNames('folder',
+            { success: folder.isNew === true },
+            { selected: this.props.hovering });
 
-        // first the user clicks on the delete button
-        if (this.props.backToParent === false &&
-            typeof this.props.confirmDelete !== 'undefined' &&
-            this.props.allowDelete === true
-        ) {
-            const confirmDelete = this.props.confirmDelete;
-            buttonDelete = (<button
-              type="button"
-              className="btn btn-sm btn-danger"
-              onClick={(e: SyntheticEvent) => {
-                  e.stopPropagation();
-                  confirmDelete(folder.id);
-              }}
-            >
-                <span className="fa fa-trash-o" />
-            </button>);
-
-        // then the user needs to confirm or cancel the deletion of the folder
-        } else if (this.props.deleteFolderWithId === folder.id &&
+        // user has clicked the delete button; show the confirm pane
+        if (this.props.deleteFolderWithId === folder.id &&
             typeof this.props.confirmDelete !== 'undefined' &&
             typeof this.props.deleteFolder !== 'undefined' &&
             this.props.allowDelete === true
@@ -127,6 +112,22 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                     <span className="fa fa-trash-o" />
                 </button>
             </div>);
+        // no delete action has started yet: show the delete button
+        } else if (this.props.backToParent === false &&
+            typeof this.props.confirmDelete !== 'undefined' &&
+            this.props.allowDelete === true
+        ) {
+            const confirmDelete = this.props.confirmDelete;
+            buttonDelete = (<button
+              type="button"
+              className="btn btn-sm btn-danger"
+              onClick={(e: SyntheticEvent) => {
+                  e.stopPropagation();
+                  confirmDelete(folder.id);
+              }}
+            >
+                <span className="fa fa-trash-o" />
+            </button>);
         }
 
         let icon = <span className="fa fa-folder" />;

@@ -39,10 +39,10 @@ const deleteFile = (fileId: string,
         () => {
             const file = filesById[fileId];
             file.isTrashed = true;
-            if (typeof currentFolder.files !== 'undefined') {
+            if (typeof currentFolder.fileIds !== 'undefined') {
                 const files = currentFolder.files;
                 const index = R.findIndex(R.propEq('id', fileId))(files);
-                currentFolder.files = R.update(index, file, files);
+                currentFolder.fileIds = R.update(index, file, files);
                 currentFolder.file_count = R.length(currentFolder.files);
                 foldersById[currentFolder.id] = currentFolder;
                 resolve({

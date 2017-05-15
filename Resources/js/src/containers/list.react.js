@@ -62,6 +62,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         files,
         folders,
         currentFolderId,
+        parentFolder,
     } = currentFolderSelector(state);
 
     return {
@@ -69,7 +70,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         files,
         folders,
         currentFolderId,
-        parentFolder: state.tree.parentFolder,
+        parentFolder,
 
         // ui props
         sort: state.ui.sort,

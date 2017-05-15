@@ -25,6 +25,10 @@ const init = (options: OptionsType) => {
     if (R.isNil(foldersById[rootFolderId])) {
         foldersById = { ...foldersById, [rootFolderId]: rootFolder };
     }
+    let filesById = tree.filesById;
+    if (filesById === null) {
+        filesById = {};
+    }
 
     const {
         imagesOnly = false,
@@ -47,13 +51,14 @@ const init = (options: OptionsType) => {
             allowEdit,
             rootFolderId,
             foldersById,
+            filesById,
         },
     };
     dispatch(action);
 
     let currentFolderId: string = rootFolderId;
-    if (tree.currentFolder !== null) {
-        currentFolderId = tree.currentFolder.id;
+    if (tree.currentFolderId !== '-1') {
+        currentFolderId = tree.currentFolderId;
     }
 
     if (noCache === true) {
