@@ -17,8 +17,8 @@
  */
 
 export const treeInitialState: TreeStateType = {
-    currentFolderId: '-1',
-    rootFolderId: '-1',
+    currentFolderId: null,
+    rootFolderId: null,
     filesById: null,
     foldersById: null,
     errors: [],

@@ -30,7 +30,7 @@ const addFolder = (folderName: string,
     }
     const foldersById: FoldersByIdType = tmp1;
     const currentFolderId: string = tmp2;
-    const currentFolder: FolderType = foldersById[currentFolderId];
+    const currentFolder: FolderType = R.clone(foldersById[currentFolderId]);
 
     api.addFolder(folderName, currentFolderId,
         (folders: Array<FolderType>) => {
@@ -62,8 +62,7 @@ export default (folderName: string) => {
     addFolder(
         folderName,
         (payload: PayloadFolderAddedType) => {
-            // const a: ActionFolderAddedType = {
-            const a = {
+            const a: ActionFolderAddedType = {
                 type: Constants.FOLDER_ADDED,
                 payload,
             };
@@ -71,7 +70,6 @@ export default (folderName: string) => {
         },
         (payload: PayloadErrorType) => {
             const a: ActionErrorType = {
-            // const a = {
                 type: Constants.ERROR_ADDING_FOLDER,
                 payload,
             };

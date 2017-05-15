@@ -57,7 +57,7 @@ const init = (options: OptionsType) => {
     dispatch(action);
 
     let currentFolderId: string = rootFolderId;
-    if (tree.currentFolderId !== '-1') {
+    if (tree.currentFolderId !== null) {
         currentFolderId = tree.currentFolderId;
     }
 

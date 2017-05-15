@@ -22,7 +22,7 @@ const deleteFile = (fileId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const tmp1: null | FolderType = { ...tree.currentFolder };
+    const tmp1: null | string = tree.currentFolderId;
     const tmp2: null | FilesByIdType = { ...tree.filesById };
     const tmp3: null | FoldersByIdType = { ...tree.foldersById };
 
@@ -31,22 +31,21 @@ const deleteFile = (fileId: string,
         return;
     }
 
-    const currentFolder: FolderType = tmp1;
     const filesById: FilesByIdType = tmp2;
     const foldersById: FoldersByIdType = tmp3;
+    const currentFolder: FolderType = R.clone(foldersById[tmp1]);
 
     api.deleteFile(fileId,
         () => {
             const file = filesById[fileId];
             file.isTrashed = true;
             if (typeof currentFolder.fileIds !== 'undefined') {
-                const files = currentFolder.files;
-                const index = R.findIndex(R.propEq('id', fileId))(files);
-                currentFolder.fileIds = R.update(index, file, files);
-                currentFolder.file_count = R.length(currentFolder.files);
+                const fileIds = currentFolder.fileIds;
+                const index = R.findIndex(R.propEq('id', fileId))(fileIds);
+                currentFolder.fileIds = R.update(index, file, fileIds);
+                currentFolder.file_count = R.length(currentFolder.fileIds);
                 foldersById[currentFolder.id] = currentFolder;
                 resolve({
-                    currentFolder,
                     filesById,
                     foldersById,
                 });
@@ -77,10 +76,6 @@ export default (fileId: string) => {
                 payload,
             };
             dispatch(a1);
-            // dispatch({
-            //     type: Constants.FILE_DELETED,
-            //     payload,
-            // });
         },
         (payload: PayloadErrorType) => {
             const a1: ActionErrorType = {

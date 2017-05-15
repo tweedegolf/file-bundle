@@ -25,7 +25,7 @@ const moveFiles = (
     const ui: UIStateType = store.getState().ui;
     const tree: TreeStateType = store.getState().tree;
 
-    const tmp1 = R.clone(tree.currentFolder);
+    const tmp1 = tree.currentFolderId;
     const tmp2 = R.clone(tree.filesById);
     const tmp3 = R.clone(tree.foldersById);
 
@@ -33,41 +33,43 @@ const moveFiles = (
         reject(createError('moving files', ['invalid state']));
         return;
     }
-    const currentFolder: FolderType = tmp1;
     const filesById: FilesByIdType = tmp2;
     const foldersById: FoldersByIdType = tmp3;
+    const currentFolder: FolderType = R.clone(foldersById[tmp1]);
 
     const files: FileType[] = ui.clipboard;
     const fileIds: string[] = R.map((f: FileType): string => f.id, files);
 
     api.paste(fileIds, currentFolder.id,
         () => {
+            // add files to current folder
             R.forEach((f: FileType) => {
                 filesById[f.id] = f;
-                if (typeof currentFolder.files !== 'undefined') {
-                    currentFolder.files.push(R.merge(f, { isNew: true }));
+                if (typeof currentFolder.fileIds !== 'undefined') {
+                    currentFolder.fileIds.push(f.id);
                 }
             }, files);
-            if (typeof currentFolder.files !== 'undefined') {
-                currentFolder.file_count = R.length(currentFolder.files);
+            if (typeof currentFolder.fileIds !== 'undefined') {
+                currentFolder.file_count = R.length(currentFolder.fileIds);
             }
             foldersById[currentFolder.id] = currentFolder;
 
+            // remove files from original location
             R.forEach((folder: FolderType) => {
+                console.log(folder);
                 if (folder.id !== currentFolder.id) {
-                    R.forEach((fileId: string) => {
-                        if (typeof folder.files !== 'undefined') {
+                    R.forEach((fileId1: string) => {
+                        if (typeof folder.fileIds !== 'undefined') {
                             // deliberately re-assign property though it is ugly
-                            folder.files = R.reject((file: FileType): boolean =>
-                                file.id === fileId, folder.files);
-                            folder.file_count = R.length(folder.files);
+                            folder.fileIds = R.reject((fileId2: string): boolean =>
+                                fileId1 === fileId2, folder.fileIds);
+                            folder.file_count = R.length(folder.fileIds);
                         }
                     }, fileIds);
                 }
             }, R.values(foldersById));
 
             resolve({
-                currentFolder,
                 foldersById,
                 filesById,
             });

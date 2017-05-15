@@ -2,14 +2,12 @@
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
-// import * as Constants from '../util/constants';
 import {
     OPEN_FOLDER,
     FOLDER_OPENED,
     ERROR_OPENING_FOLDER,
 
 } from '../util/constants';
-// import actions from '../util/actions';
 import { getUID } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
@@ -54,22 +52,22 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
     resolve: (payload: PayloadFolderOpenedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    let tmp1 = R.clone(tree.filesById);
+    const tmp1 = R.clone(tree.filesById);
     const tmp2 = R.clone(tree.foldersById);
-    if (tmp1 === null) {
-        tmp1 = {};
-    }
-    if (tmp2 === null) {
+    const tmp3 = tree.rootFolderId;
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
         reject(createError(`opening folder with id ${folderId}`, ['invalid state']));
         return;
     }
-    const rootFolderId: string = tree.rootFolderId;
     const filesById: FilesByIdType = tmp1;
     const foldersById: FoldersByIdType = tmp2;
-    const currentFolder: FolderType = foldersById[folderId];
+    const rootFolderId: string = tmp3;
+    const currentFolder: FolderType = R.clone(foldersById[folderId]);
     currentFolder.fileIds = [];
     currentFolder.folderIds = [];
 
+    // check if the current user is allowed to open this folder
+    // -> happens only during initialization
     let rfCheck = '';
     if (checkRootFolder === true) {
         rfCheck = rootFolderId;
@@ -92,6 +90,8 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
                     currentFolder.fileIds.push(f.id);
                 }
             }, files);
+
+            foldersById[currentFolder.id] = currentFolder;
 
             resolve({
                 currentFolderId: folderId,
@@ -122,11 +122,11 @@ export default (data: { id: string, checkRootFolder?: boolean, forceLoad?: boole
             };
             dispatch(a);
         }
+        return;
     }
 
     // setTimeout(() => {
     // }, 1000);
-
     loadFolder(
         id,
         checkRootFolder,

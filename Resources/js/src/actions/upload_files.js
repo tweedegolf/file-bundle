@@ -21,14 +21,15 @@ const uploadFiles = (files: Array<File>,
     const tree: TreeStateType = store.getState().tree;
     const tmp1: null | FilesByIdType = R.clone(tree.filesById);
     const tmp2: null | FoldersByIdType = R.clone(tree.foldersById);
+    const tmp3: null | string = tree.currentFolderId;
 
-    if (tmp1 === null || tmp2 === null) {
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
         reject({ errors: [createError('uploading files', ['invalid state'])] });
         return;
     }
     const filesById: FilesByIdType = tmp1;
     const foldersById: FoldersByIdType = tmp2;
-    const currentFolderId: string = tree.currentFolderId;
+    const currentFolderId: string = tmp3;
     const currentFolder: FolderType = foldersById[currentFolderId];
 
     api.upload(files, currentFolder.id,

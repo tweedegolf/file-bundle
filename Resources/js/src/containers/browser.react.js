@@ -74,7 +74,7 @@ const mapStateToProps = (state: StateType): PropsType => {
     } = state.ui;
 
     let currentFolder = null;
-    if (state.tree.foldersById !== null) {
+    if (state.tree.foldersById !== null && state.tree.currentFolderId !== null) {
         currentFolder = state.tree.foldersById[state.tree.currentFolderId];
     }
     const [currentFolderId, numItemsInCurrentFolder] = R.cond([

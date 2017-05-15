@@ -1,6 +1,8 @@
 // @flow
 import R from 'ramda';
 import { createSelector } from 'reselect';
+import { getUID } from '../util/util';
+import { ERROR_OPENING_FOLDER } from '../util/constants';
 
 type ReturnType = {
     rootFolderId: null | string,
@@ -8,12 +10,23 @@ type ReturnType = {
     parentFolder: null | FolderType,
     folders: FolderType[],
     files: FileType[],
+    errors: ErrorType[],
 };
 
 type ItemType = FolderType | FileType;
 
 const getUI = (state: StateType): UIStateType => state.ui;
 const getTree = (state: StateType): TreeStateType => state.tree;
+
+const createError = (data: string, messages: string[]): ErrorType[] => {
+    const errors = [{
+        id: getUID(),
+        data,
+        type: ERROR_OPENING_FOLDER,
+        messages,
+    }];
+    return errors;
+};
 
 // const resetNew = array => R.map(f => ({ ...f, isNew: false }), array);
 const filterTrashed = (array: ItemType[]): ItemType[] =>
@@ -40,44 +53,42 @@ export default createSelector(
         } = tree;
 
         if (filesById === null || foldersById === null || currentFolderId === null) {
-            console.error('invalid state');
             return {
                 currentFolderId: '-1',
                 rootFolderId: '-1',
                 parentFolder: null,
                 folders: [],
                 files: [],
+                errors: createError('error opening folder', ['invalid state']),
             };
         }
         // const sortBy: ((FileType[] | FolderType[])) =>
         //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
-        const currentFolder = foldersById[currentFolderId];
+        const currentFolder: FolderType = foldersById[currentFolderId];
 
         let files: FileType[] = R.map((fileId: string): FileType =>
             filesById[fileId], currentFolder.fileIds || []);
         let folders: FolderType[] = R.map((folderId: string): FolderType =>
             foldersById[folderId], currentFolder.folderIds || []);
+
         const sortFunc = R.curry(sortBy)(sort);
         const filterFunc = showingRecycleBin ? filterTrashedInverted : filterTrashed;
-        if (typeof currentFolder.files !== 'undefined') {
-            files = R.compose(sortFunc, filterFunc)(currentFolder.fileIds);
-        }
-        if (typeof currentFolder.folders !== 'undefined') {
-            folders = R.compose(sortFunc, filterFunc)(currentFolder.folderIds);
-        }
+
+        files = R.compose(sortFunc, filterFunc)(files);
+        folders = R.compose(sortFunc, filterFunc)(folders);
 
         let parentFolder = null;
         if (currentFolder.parent !== null) {
             parentFolder = foldersById[currentFolder.parent];
         }
-
         return {
             files,
             folders,
             parentFolder,
             currentFolderId: currentFolder.id,
             rootFolderId: tree.rootFolderId,
+            errors: [],
         };
     },
 );

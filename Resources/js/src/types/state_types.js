@@ -3,8 +3,8 @@ import type { Store, Dispatch } from 'redux';
 
 // state
 export type TreeStateType = {
-    currentFolderId: string,
-    rootFolderId: string,
+    currentFolderId: null | string,
+    rootFolderId: null | string,
     filesById: null | FilesByIdType,
     foldersById: null | FoldersByIdType,
     errors: Array<ErrorType>,

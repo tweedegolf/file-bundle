@@ -18,66 +18,43 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
     return { errors };
 };
 
-/*
-type SetTrashFlagType = {
-    folder: FolderType,
-    filesById: FilesByIdType,
-    foldersById: FoldersByIdType,
-};
-const recursivelySetTrashFlag = (data: SetTrashFlagType): SetTrashFlagType => {
-    const {
-        folder,
-        filesById,
-    } = data;
-
-    folder.isTrashed = true;
-
-    if (typeof folder.files !== 'undefined') {
-        folder.files = R.map((f: FileType): FileType =>
-            ({ ...f, isTrashed: true }), folder.files);
-        R.forEach((f: FileType) => { filesById[f.id] = f; }, folder.files);
-    }
-
-    if (typeof folder.folders !== 'undefined') {
-        folder.folders = R.map((f: FolderType): FolderType =>
-            ({ ...f, isTrashed: true }), folder.folders);
-
-        R.forEach((f: FolderType) => { foldersById[f.id] = f; }, folder.folders);
-    }
-};
-*/
-
 const deleteFolder = (folderId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(tree.currentFolder);
-    const tmp2 = R.clone(tree.filesById);
-    const tmp3 = R.clone(tree.foldersById);
+    const tmp1 = R.clone(tree.filesById);
+    const tmp2 = R.clone(tree.foldersById);
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+    if (tmp1 === null || tmp2 === null) {
         reject(createError(`folder with id ${folderId}`, ['invalid state']));
         return;
     }
-    const currentFolder: FolderType = tmp1;
-    const filesById: FilesByIdType = tmp2;
-    const foldersById: FoldersByIdType = tmp3;
+    const filesById: FilesByIdType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
 
     api.deleteFolder(folderId,
         () => {
             const folder = foldersById[folderId];
             folder.isTrashed = true;
+            console.log(folder);
 
-            if (typeof currentFolder.folders !== 'undefined') {
-                const folders: FolderType[] = currentFolder.folders;
-                const index = R.findIndex(R.propEq('id', folderId))(folders);
-                currentFolder.folders = R.update(index, folder, folders);
-                currentFolder.folder_count = R.length(folders);
-                foldersById[currentFolder.id] = currentFolder;
+            if (typeof folder.folderIds !== 'undefined') {
+                R.forEach((id: string) => {
+                    const f: FolderType = foldersById[id];
+                    console.log('deleting folder', f);
+                    foldersById[id] = R.merge(f, { isTrashed: true });
+                }, folder.folderIds);
+            }
+
+            if (typeof folder.fileIds !== 'undefined') {
+                R.forEach((id: string) => {
+                    const f: FileType = filesById[id];
+                    console.log('deleting file', f);
+                    filesById[id] = R.merge(f, { isTrashed: true });
+                }, folder.fileIds);
             }
 
             resolve({
-                currentFolder,
                 filesById,
                 foldersById,
             });

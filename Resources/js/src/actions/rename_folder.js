@@ -28,38 +28,23 @@ const renameFolder = (folderId: string,
     resolve: (payload: PayloadFolderRenamedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const tree: TreeStateType = store.getState().tree;
-    const foldersById = { ...tree.foldersById };
-    const tmp: null | FolderType = R.clone(tree.currentFolder);
+    const tmp1 = tree.foldersById;
 
-    if (tmp === null) {
+    if (tmp1 === null) {
         reject({ errors: [createError(`renaming file with id "${folderId}" to ${newName}`, ['invalid state'])] });
         return;
     }
-    const currentFolder: FolderType = tmp;
+    const foldersById: FoldersByIdType = tmp1;
 
     api.renameFolder(
         folderId,
         newName,
         (folder: FolderType) => {
             foldersById[folder.id] = folder;
-            if (typeof currentFolder.folders !== 'undefined') {
-                const clone = R.map((f: FolderType): FolderType => {
-                    if (f.id === folderId) {
-                        return {
-                            ...f,
-                            name: newName,
-                        };
-                    }
-                    return f;
-                }, currentFolder.folders);
-                currentFolder.folders = clone;
-            }
-
             const a: ActionFolderRenamedType = {
                 type: FOLDER_RENAMED,
                 payload: {
                     foldersById,
-                    currentFolder,
                 },
             };
             dispatch(a);

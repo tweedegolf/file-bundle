@@ -115,7 +115,6 @@ export type ActionFilesMovedType = {
 };
 
 export type PayloadFilesMovedType = {
-    currentFolder: FolderType,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
 };
@@ -185,7 +184,6 @@ export type ActionDeletedType = {
 };
 
 export type PayloadDeletedType = {
-    currentFolder: FolderType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
 };
