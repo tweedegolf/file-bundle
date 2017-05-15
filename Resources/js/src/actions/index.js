@@ -9,7 +9,7 @@ export { default as renameFolder } from './rename_folder';
 export { default as deleteFile } from './delete_file';
 export { default as deleteFolder } from './delete_folder';
 export { default as uploadFiles } from './upload_files';
-export { default as pasteFiles } from './paste_files';
+export { default as pasteFiles } from './paste_items';
 
 const dispatch: Dispatch = getStore().dispatch;
 
@@ -30,10 +30,17 @@ const dispatch: Dispatch = getStore().dispatch;
  *
  * @param {SelectFileArg} data Argument passed.
  */
-export const selectFile = (data: { browser: boolean, multiple: boolean, file: FileType }) => {
+export const selectFile = (id: string) => {
     dispatch({
         type: Constants.SELECT_FILE,
-        payload: { ...data },
+        payload: { id },
+    });
+};
+
+export const selectFolder = (id: string) => {
+    dispatch({
+        type: Constants.SELECT_FOLDER,
+        payload: { id },
     });
 };
 

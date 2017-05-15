@@ -37,8 +37,9 @@ const moveFiles = (
     const foldersById: FoldersByIdType = tmp3;
     const currentFolder: FolderType = R.clone(foldersById[tmp1]);
 
-    const files: FileType[] = ui.clipboard;
-    const fileIds: string[] = R.map((f: FileType): string => f.id, files);
+    const files: FileType[] = R.map((id: string): FileType => filesById[id], ui.clipboard);
+    console.log(files, ui.clipboard);
+    const fileIds: string[] = ui.clipboard;
 
     api.paste(fileIds, currentFolder.id,
         () => {

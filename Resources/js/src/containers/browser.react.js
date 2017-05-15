@@ -42,8 +42,8 @@ type PropsType = {
     loadingFolderWithId: null | string,
     numItemsInCurrentFolder: number,
     errors: ErrorType[],
-    clipboard: FileType[],
-    selected: FileType[],
+    clipboard: string[],
+    selected: string[],
     showingRecycleBin: boolean,
 };
 
@@ -147,24 +147,6 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                 }
             }
         };
-
-        // files can be selected by clicking the checkbox in front of the filename
-        // in the filelist
-        this.selectFile = (file: FileType) => {
-            /**
-             * User has already clicked on the 'cut' button so she can't select files
-             * anymore until she pastes or cancels.
-             */
-            if (this.props.clipboard.length > 0) {
-                return;
-            }
-
-            Actions.selectFile({
-                file,
-                multiple: this.props.multiple,
-                browser: this.props.browser,
-            });
-        };
     }
 
     state: BrowserStateType
@@ -173,7 +155,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // Filepicker mode: the selected files can be set in the dataset of the HTML
         // element.
         if (this.props.browser === false) {
-            Actions.init(this.props.options);
+            Actions.init(this.props.options, this.props.browser);
         }
 
         // Browser mode: by default, the browser is not expanded, therefor we have
@@ -183,7 +165,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown, false);
             Actions.expandBrowser();
-            Actions.init(this.props.options);
+            Actions.init(this.props.options, this.props.browser);
         }
     }
 
@@ -211,7 +193,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
     containerRef: HTMLElement
     props: AllPropsType
     uploadFiles: (event: SyntheticEvent | DataTransfer) => void
-    selectFile: (file: FileType) => void
+    selectFile: (file: string) => void
 
     // render() {
     // render(): ?React$Element<*> {
@@ -254,7 +236,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           multiple={this.props.multiple}
           selected={this.props.selected}
           clipboard={this.props.clipboard}
-          selectFile={this.selectFile}
+          selectFile={Actions.selectFile}
           showPreview={Actions.showPreview}
         />);
 
@@ -314,7 +296,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                 </thead>
                                 <List
                                   // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
-                                  selectFile={this.selectFile}
+                                  selectFile={Actions.selectFile}
                                   browser={this.props.browser}
                                 />
                             </table>

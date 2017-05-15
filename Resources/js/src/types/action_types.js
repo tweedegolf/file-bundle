@@ -23,6 +23,8 @@ export type PayloadInitType = {
     filesById : FilesByIdType,
     selected: Array<FileType>,
     language: string,
+    multiple: boolean,
+    browser: boolean,
     imagesOnly: boolean,
     allowNewFolder: boolean,
     allowUpload: boolean,

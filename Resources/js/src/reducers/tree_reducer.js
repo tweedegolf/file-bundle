@@ -24,6 +24,7 @@ export const treeInitialState: TreeStateType = {
     filesById: null,
     foldersById: null,
     errors: [],
+    tree: null,
 };
 
 export const tree = (state: TreeStateType = treeInitialState,

@@ -7,11 +7,11 @@ import React from 'react';
 import R from 'ramda';
 
 type PropsType = {
-    clipboard: FileType[],
-    selected: FileType[],
+    clipboard: string[],
+    selected: string[],
     multiple: boolean,
     browser: boolean,
-    selectFile: (file: FileType) => void,
+    selectFile: (file: string) => void,
     showPreview: (id: null | string) => void,
 };
 
@@ -43,7 +43,7 @@ export default class SelectedFiles extends
             }
             let p = {};
             if (typeof this.props.selectFile !== 'undefined') {
-                p = { onClick: () => { this.props.selectFile(file); } };
+                p = { onClick: () => { this.props.selectFile(file.id); } };
             }
             return (<div key={file.id} className="btn btn-default" {...p}>
                 {preview}

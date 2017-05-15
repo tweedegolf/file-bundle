@@ -26,10 +26,10 @@ type PropsType = {
     allowDelete: boolean,
     confirmDelete: (id: null | string) => void,
     showPreview: (id: string) => void,
-    selectFile: (file: FileType) => void,
+    selectFile: (fileId: string) => void,
     deleteFile: (id: string) => void,
-    clipboard: FileType[],
-    selected: FileType[],
+    clipboard: string[],
+    selected: string[],
     hovering: boolean,
     browser: boolean,
     deleteFileWithId: null | string,
@@ -41,12 +41,12 @@ const File = (props: PropsType): React$Element<*> => {
     const file = props.file;
     let checked = false;
     if (props.clipboard.length > 0) {
-        const index = props.clipboard.find((f: FileType): boolean => f.id === file.id);
+        const index = props.clipboard.find((fileId: string): boolean => file.id === fileId);
         checked = index !== 'undefined';
     }
     let selected = false;
     if (props.selected.length > 0) {
-        const index = typeof props.selected.find((f: FileType): boolean => f.id === file.id);
+        const index = typeof props.selected.find((fileId: string): boolean => file.id === fileId);
         selected = index !== 'undefined';
     }
     // console.log(file.name, selected)
@@ -158,7 +158,9 @@ const File = (props: PropsType): React$Element<*> => {
     const p = {
         className,
         onClick: () => {
-            props.selectFile(file);
+            if (props.clipboard.length === 0) {
+                props.selectFile(file.id);
+            }
         },
     };
     return (

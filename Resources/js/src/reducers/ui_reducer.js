@@ -111,6 +111,8 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             ...state,
             language: action.payload.language,
             imagesOnly: action.payload.imagesOnly,
+            multiple: action.payload.multiple,
+            browser: action.payload.browser,
             allowNewFolder: action.payload.allowNewFolder,
             allowUpload: action.payload.allowUpload,
             allowDelete: action.payload.allowDelete,
@@ -445,27 +447,23 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      *                                  files selected
      */
     } else if (action.type === 'SELECT_FILE') {
-        const {
-            file,
-            browser,
-            multiple,
-        } = action.payload;
+        const fileId = action.payload.id;
 
-        if (typeof file === 'undefined' || file === null) {
+        if (typeof fileId === 'undefined' || fileId === null) {
             return state;
         }
 
         let selected = [...state.selected];
-        const index = selected.findIndex((f: FileType): boolean => f.id === file.id);
+        const index = selected.findIndex((id: string): boolean => id === fileId);
 
-        if (browser === false && multiple === false) {
+        if (state.browser === false && state.multiple === false) {
             if (index === -1) {
-                selected = [file];
+                selected = [fileId];
             } else {
                 selected = [];
             }
         } else if (index === -1) {
-            selected.push(file);
+            selected.push(fileId);
         } else {
             selected.splice(index, 1);
         }

@@ -8,7 +8,7 @@ import { openFolder } from '../actions';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
 
-const init = (options: OptionsType) => {
+const init = (options: OptionsType, browser: boolean) => {
     const rootFolderId: string = options.rootFolderId;
     const rootFolder: FolderType = {
         id: rootFolderId,
@@ -42,7 +42,9 @@ const init = (options: OptionsType) => {
     const action: ActionInitType = {
         type: INIT,
         payload: {
+            browser,
             selected: options.selected || [],
+            multiple: options.multiple || true,
             language: options.language,
             imagesOnly,
             allowNewFolder,
@@ -68,7 +70,7 @@ const init = (options: OptionsType) => {
     }
 };
 
-export default (options: OptionsType) => {
-    init(options);
+export default (options: OptionsType, browser: boolean) => {
+    init(options, browser);
     // persistStore(store, {}, options => init(options));
 };
