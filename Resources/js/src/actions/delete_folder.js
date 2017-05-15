@@ -18,6 +18,27 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
     return { errors };
 };
 
+const setTrashedFlag = (folder: FolderType,
+    foldersById: FoldersByIdType,
+    filesById: FilesByIdType) => {
+    foldersById[folder.id] = R.merge(folder, { isTrashed: true });
+
+    if (typeof folder.fileIds !== 'undefined') {
+        R.forEach((id: string) => {
+            const file = filesById[id];
+            filesById[id] = R.merge(file, { isTrashed: true });
+        }, folder.fileIds);
+    }
+
+    if (typeof folder.folderIds !== 'undefined') {
+        R.forEach((id: string) => {
+            const folder2 = foldersById[id];
+            setTrashedFlag(folder2, foldersById, filesById);
+        }, folder.folderIds);
+    }
+};
+
+
 const deleteFolder = (folderId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
@@ -35,25 +56,7 @@ const deleteFolder = (folderId: string,
     api.deleteFolder(folderId,
         () => {
             const folder = foldersById[folderId];
-            folder.isTrashed = true;
-            console.log(folder);
-
-            if (typeof folder.folderIds !== 'undefined') {
-                R.forEach((id: string) => {
-                    const f: FolderType = foldersById[id];
-                    console.log('deleting folder', f);
-                    foldersById[id] = R.merge(f, { isTrashed: true });
-                }, folder.folderIds);
-            }
-
-            if (typeof folder.fileIds !== 'undefined') {
-                R.forEach((id: string) => {
-                    const f: FileType = filesById[id];
-                    console.log('deleting file', f);
-                    filesById[id] = R.merge(f, { isTrashed: true });
-                }, folder.fileIds);
-            }
-
+            setTrashedFlag(folder, foldersById, filesById);
             resolve({
                 filesById,
                 foldersById,

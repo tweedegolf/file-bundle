@@ -108,22 +108,27 @@ const renameFolder = (folderId, newName) => {
  * @param      {number}  folderId  The id of the folder to be deleted
  * @return     {Object}  Returns a no-error object, or a fake error message
  */
-const deleteFolder = (folderId) => {
+const deleteFolder = (deletedFolderId) => {
     // test error
-    if (folderId === 1000) {
+    if (deletedFolderId === 1000) {
         return {
             error: 'Folder could not be deleted',
         };
     }
 
-    const folders = R.append(data.folders[folderId], data.tree[folderId].folders);
-    R.forEach((folder) => {
-        data.folders[folder.id] = { ...folder, isTrashed: true };
-        const files = data.tree[folderId].files;
+    const folderIds = [deletedFolderId, ...data.tree[deletedFolderId].folders];
+    // console.log(folderIds);
+    R.forEach((folderId) => {
+        const folder = data.folders[folderId];
+        console.log(folder.name);
+        data.folders[folderId] = { ...folder, isTrashed: true };
+        const fileIds = data.tree[folderId].files;
         R.forEach((fileId) => {
-            data.files[fileId] = { ...data.files[fileId], isTrashed: true };
-        }, files);
-    }, folders);
+            const file = data.files[fileId];
+            console.log(file.name);
+            data.files[fileId] = { ...file, isTrashed: true };
+        }, fileIds);
+    }, folderIds);
 
     return {
         error: false,

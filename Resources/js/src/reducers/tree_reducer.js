@@ -16,6 +16,8 @@
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
 
+// import R from 'ramda';
+
 export const treeInitialState: TreeStateType = {
     currentFolderId: null,
     rootFolderId: null,
@@ -44,6 +46,7 @@ export const tree = (state: TreeStateType = treeInitialState,
      * Contents of a folder has been loaded from the server or from cache
      */
     case 'FOLDER_OPENED':
+        // console.log(R.clone(action.payload.foldersById));
         return {
             ...state,
             filesById: action.payload.filesById,

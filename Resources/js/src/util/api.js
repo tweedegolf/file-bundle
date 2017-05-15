@@ -50,6 +50,11 @@ type ErrorType = {
     message: string,
 };
 
+type DataType = {
+    filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
+};
+
 type ResponseType = {
     text: string,
     error: ErrorType,
@@ -60,6 +65,7 @@ type ResponseType = {
         uploads: FileType[],
         folders: FolderType[],
         files: FileType[],
+        data: DataType,
     },
 };
 
@@ -182,7 +188,10 @@ const renameFolder = (
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const deleteFolder = (folderId: string, onSuccess: () => void, onError: (string[]) => void) => {
+const deleteFolder = (
+    folderId: string,
+    onSuccess: () => void,
+    onError: (string[]) => void) => {
     const url = `${server}/admin/file/delete/folder/${folderId}`;
     const req = request.post(url).type('form');
     req.end((err: ErrorType, res: ResponseType) => {
@@ -191,6 +200,7 @@ const deleteFolder = (folderId: string, onSuccess: () => void, onError: (string[
             onError([res.text, res.error.message, err.toString()]);
         } else {
             // console.log(res.body.data);
+            // onSuccess(res.body.data);
             onSuccess();
         }
     });
