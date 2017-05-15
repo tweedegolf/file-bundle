@@ -14,6 +14,7 @@ type PropsType = {
     folder: FolderType,
     allowDelete?: boolean,
     openFolder: (id: string) => void,
+    selectFolder: (id: string) => void,
     confirmRenameFolder: (id: null | string) => void,
     renameFolder: (id: string, newName: string) => void,
     backToParent: boolean,

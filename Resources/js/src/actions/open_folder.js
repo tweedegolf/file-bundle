@@ -114,7 +114,7 @@ export default (data: { id: string, checkRootFolder?: boolean, forceLoad?: boole
 
     if (forceLoad === false || checkRootFolder !== false) {
         const payload: PayloadFolderOpenedType | null = fromCache(id);
-        console.log('cache', payload);
+        // console.log('cache', payload);
         if (payload !== null) {
             const a: ActionFolderOpenedType = {
                 type: FOLDER_OPENED,

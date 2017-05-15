@@ -231,6 +231,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           showingRecycleBin={this.props.showingRecycleBin}
         />);
 
+        // selected files for filepicker mode
         const selected = (<SelectedFiles
           browser={this.props.browser}
           multiple={this.props.multiple}
@@ -296,7 +297,6 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                 </thead>
                                 <List
                                   // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
-                                  selectFile={Actions.selectFile}
                                   browser={this.props.browser}
                                 />
                             </table>

@@ -15,7 +15,6 @@ import * as Actions from '../actions';
 import currentFolderSelector from '../reducers/current_folder_selector';
 
 type PassedPropsType = {
-    selectFile: () => void,
     browser: boolean,
     t: (string) => string,
 };
@@ -158,7 +157,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
               key={`file-${file.id}`}
               file={file}
               hovering={this.props.hover === (i -= 1)}
-              selectFile={this.props.selectFile}
+              selectFile={Actions.selectFile}
               deleteFile={Actions.deleteFile}
               showPreview={Actions.showPreview}
               confirmDelete={Actions.confirmDeleteFile}
@@ -179,6 +178,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
           backToParent={false}
           folder={folder}
           allowDelete={this.props.allowDelete}
+          selectFolder={Actions.selectFolder}
           deleteFolder={Actions.deleteFolder}
           openFolder={this.openFolder}
           renameFolder={this.renameFolder}
