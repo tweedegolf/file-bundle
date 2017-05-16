@@ -19,8 +19,6 @@
 // import R from 'ramda';
 
 export const treeInitialState: TreeStateType = {
-    currentFolderId: null,
-    rootFolderId: null,
     filesById: null,
     foldersById: null,
     errors: [],
@@ -36,14 +34,8 @@ export const tree = (state: TreeStateType = treeInitialState,
             tree: action.payload.tree,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
-            rootFolderId: action.payload.rootFolderId,
         };
 
-    case 'OPEN_FOLDER':
-        return {
-            ...state,
-            currentFolderId: action.payload.id,
-        };
     /**
      * Contents of a folder has been loaded from the server or from cache
      */
@@ -95,9 +87,10 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'UPLOAD_DONE':
         return {
             ...state,
-            filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
+            filesById: action.payload.filesById,
             errors: action.payload.errors,
+            tree: action.payload.tree,
         };
 
     /**
@@ -108,8 +101,8 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'FOLDER_ADDED':
         return {
             ...state,
-            tree: action.payload.tree,
             foldersById: action.payload.foldersById,
+            tree: action.payload.tree,
         };
 
     /**

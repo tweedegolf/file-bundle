@@ -21,8 +21,9 @@ const createError = (data: string, messages: string[]): PayloadErrorType => {
 const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const treeState: TreeStateType = store.getState().tree;
-    const tmp1 = treeState.currentFolderId;
+    const state = store.getState();
+    const treeState: TreeStateType = state.tree;
+    const tmp1 = state.ui.currentFolderId;
     const tmp2 = R.clone(treeState.foldersById);
     if (tmp1 === null || tmp2 === null) {
         reject(createError(folderName, ['invalid state']));

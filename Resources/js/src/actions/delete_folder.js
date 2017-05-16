@@ -21,8 +21,9 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
 const deleteFolder = (folderId: string, purge: boolean,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const treeState: TreeStateType = store.getState().tree;
-    const tmp1 = treeState.currentFolderId;
+    const state = store.getState();
+    const treeState: TreeStateType = state.tree;
+    const tmp1 = state.ui.currentFolderId;
     const tmp2 = R.clone(treeState.filesById);
     const tmp3 = R.clone(treeState.foldersById);
 

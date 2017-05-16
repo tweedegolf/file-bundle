@@ -17,8 +17,6 @@ export type ClipboardType = {
 
 // state
 export type TreeStateType = {
-    currentFolderId: null | string,
-    rootFolderId: null | string,
     filesById: null | FilesByIdType,
     foldersById: null | FoldersByIdType,
     errors: Array<ErrorType>,
@@ -26,6 +24,9 @@ export type TreeStateType = {
 };
 
 export type UIStateType = {
+    currentFolderId: null | string,
+    currentFolderIdTmp: null | string,
+    rootFolderId: null | string,
     sort: string,
     ascending: boolean,
     expanded: boolean,

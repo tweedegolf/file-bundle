@@ -68,6 +68,9 @@
  *                                              folder
  */
 export const uiInitialState: UIStateType = {
+    currentFolderId: null,
+    currentFolderIdTmp: null,
+    rootFolderId: null,
     sort: 'create_ts',
     ascending: false,
     expanded: false,
@@ -117,6 +120,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             allowUpload: action.payload.allowUpload,
             allowDelete: action.payload.allowDelete,
             allowEdit: action.payload.allowEdit,
+            rootFolderId: action.payload.rootFolderId,
         };
     /**
      * User has added a folder, we can show a progress indicator while we make
@@ -260,6 +264,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'OPEN_FOLDER') {
         return {
             ...state,
+            currentFolderId: action.payload.id,
             loadingFolderWithId: action.payload.id,
         };
 
@@ -571,11 +576,13 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             showingRecycleBin: true,
+            currentFolderIdTmp: state.currentFolderId,
         };
     } else if (action.type === 'HIDE_RECYCLE_BIN') {
         return {
             ...state,
             showingRecycleBin: false,
+            currentFolderId: state.currentFolderIdTmp,
         };
     }
     return state;

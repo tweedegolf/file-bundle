@@ -23,9 +23,9 @@ const moveFiles = (
     resolve: (payload: PayloadFilesMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const ui: UIStateType = store.getState().ui;
-    const treeState: TreeStateType = store.getState().tree;
-
-    const tmp1 = treeState.currentFolderId;
+    const state = store.getState();
+    const treeState: TreeStateType = state.tree;
+    const tmp1 = state.ui.currentFolderId;
     const tmp2 = R.clone(treeState.filesById);
     const tmp3 = R.clone(treeState.foldersById);
 

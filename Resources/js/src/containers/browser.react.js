@@ -83,7 +83,7 @@ const mapStateToProps = (state: StateType): PropsType => {
             }
             return [id, R.length(cf.folderIds) + R.length(cf.fileIds)];
         }],
-    ])(state.tree.currentFolderId);
+    ])(state.ui.currentFolderId);
 
     return {
         // tree props

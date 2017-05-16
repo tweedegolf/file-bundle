@@ -1,5 +1,5 @@
 // @flow
-import R from 'ramda';
+// import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {

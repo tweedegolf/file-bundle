@@ -110,6 +110,7 @@ export type ActionUploadDoneType = {
 export type PayloadUploadDoneType = {
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
+    tree: TreeType,
     errors: ErrorType[],
 };
 

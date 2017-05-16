@@ -18,33 +18,31 @@ const createError = (data: string, messages: string[]): ErrorType => ({
 const uploadFiles = (files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree: TreeStateType = store.getState().tree;
-    const tmp1: null | FilesByIdType = R.clone(tree.filesById);
-    const tmp2: null | FoldersByIdType = R.clone(tree.foldersById);
-    const tmp3: null | string = tree.currentFolderId;
+    const state = store.getState();
+    const treeState: TreeStateType = state.tree;
+    const tmp1 = state.ui.currentFolderId;
+    const tmp2 = R.clone(treeState.filesById);
+    const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
         reject({ errors: [createError('uploading files', ['invalid state'])] });
         return;
     }
-    const filesById: FilesByIdType = tmp1;
-    const foldersById: FoldersByIdType = tmp2;
-    const currentFolderId: string = tmp3;
+    const currentFolderId: string = tmp1;
+    const filesById: FilesByIdType = tmp2;
+    const foldersById: FoldersByIdType = tmp3;
     const currentFolder: FolderType = foldersById[currentFolderId];
+    const tree: TreeType = treeState.tree;
 
     api.upload(files, currentFolder.id,
         (newFiles: FileType[], rejected: { [id: string]: string }) => {
             R.forEach((f: FileType) => {
                 const f1: FileType = { ...f, isNew: true };
-                if (typeof currentFolder.fileIds !== 'undefined') {
-                    currentFolder.fileIds.push(f1.id);
-                }
                 filesById[f1.id] = f1;
+                tree[currentFolderId].fileIds.push(f.id);
             }, newFiles);
 
-            if (typeof currentFolder.fileIds !== 'undefined') {
-                currentFolder.file_count = R.length(currentFolder.fileIds);
-            }
+            currentFolder.file_count = R.length(tree[currentFolderId].fileIds);
             foldersById[currentFolderId] = currentFolder;
 
             const errors = R.map((key: string): ErrorType =>
@@ -54,6 +52,7 @@ const uploadFiles = (files: Array<File>,
                 foldersById,
                 filesById,
                 errors,
+                tree,
             });
         },
         (errorMessages: string[]) => {

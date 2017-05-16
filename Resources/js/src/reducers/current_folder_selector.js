@@ -44,17 +44,19 @@ export default createSelector(
         const {
             sort,
             ascending,
+            rootFolderId,
+            currentFolderId,
             showingRecycleBin,
         } = uiState;
         const {
             tree,
             filesById,
             foldersById,
-            rootFolderId,
-            currentFolderId,
         } = treeState;
 
-        if (tree === null || filesById === null || foldersById === null || currentFolderId === null) {
+        if (tree === null || filesById === null ||
+            foldersById === null || currentFolderId === null
+        ) {
             return {
                 currentFolderId: '-1',
                 rootFolderId: '-1',

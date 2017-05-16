@@ -17,7 +17,9 @@ const init = (options: OptionsType, browser: boolean) => {
         folder_count: 0,
         parent: null,
     };
-    const treeState: TreeStateType = store.getState().tree;
+    const state = store.getState();
+    const uiState = state.ui;
+    const treeState = state.tree;
     let foldersById = treeState.foldersById;
     if (foldersById === null) {
         foldersById = {};
@@ -38,7 +40,7 @@ const init = (options: OptionsType, browser: boolean) => {
         allowEdit = true,
     } = options;
 
-    const noCache = rootFolderId !== treeState.rootFolderId;
+    const noCache = rootFolderId !== uiState.rootFolderId;
     const action: ActionInitType = {
         type: INIT,
         payload: {
@@ -60,8 +62,8 @@ const init = (options: OptionsType, browser: boolean) => {
     dispatch(action);
 
     let currentFolderId: string = rootFolderId;
-    if (treeState.currentFolderId !== null) {
-        currentFolderId = treeState.currentFolderId;
+    if (uiState.currentFolderId !== null) {
+        currentFolderId = uiState.currentFolderId;
     }
 
     if (noCache === true) {
