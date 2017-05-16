@@ -41,10 +41,10 @@ const File = (props: PropsType): React$Element<*> => {
     const file = props.file;
     const clipboardFileIds = props.clipboard.fileIds;
     const selectedFileIds = props.selected.fileIds;
-    let isChecked = false;
+    let onClipboard = false;
     if (clipboardFileIds.length > 0) {
         const index = clipboardFileIds.find((fileId: string): boolean => file.id === fileId);
-        isChecked = index !== 'undefined';
+        onClipboard = index !== 'undefined';
     }
     let isSelected = false;
     if (selectedFileIds.length > 0) {
@@ -131,8 +131,8 @@ const File = (props: PropsType): React$Element<*> => {
     }
 
     if (clipboardFileIds.length > 0) {
-        checkbox = <span className={isChecked ? 'fa fa-thumb-tack' : ''} />;
-        className = isChecked ? 'cut' : '';
+        checkbox = <span className={onClipboard ? 'fa fa-thumb-tack' : ''} />;
+        className = onClipboard ? 'cut' : '';
     }
 
     if (props.deleteFileWithId === file.id) {

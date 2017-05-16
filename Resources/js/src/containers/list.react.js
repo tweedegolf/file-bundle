@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import File from '../components/file.react';
 import Folder from '../components/folder.react';
+import ParentFolder from '../components/parent_folder.react';
 import * as Actions from '../actions';
 import currentFolderSelector from '../reducers/current_folder_selector';
 
@@ -175,11 +176,14 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         let folders = R.map((folder: FolderType): React$Element<*> => (<Folder
           hovering={this.props.hover === (i -= 1)}
           key={`folder-${folder.id}`}
-          backToParent={false}
           folder={folder}
+          allowEdit={this.props.allowEdit}
           allowDelete={this.props.allowDelete}
           selectFolder={Actions.selectFolder}
           deleteFolder={Actions.deleteFolder}
+          selected={this.props.selected}
+          clipboard={this.props.clipboard}
+          browser={this.props.browser}
           openFolder={this.openFolder}
           renameFolder={this.renameFolder}
           confirmRenameFolder={this.confirmRenameFolder}
@@ -195,17 +199,13 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             files = files.reverse();
         }
 
-        // show parent directory button
+        // show button that leads back to parent directory
         let backToParent = null;
         if (this.props.parentFolder !== null) {
-            backToParent = (<Folder
+            backToParent = (<ParentFolder
               key={`folder-${this.props.parentFolder.name}`}
-              backToParent={true}
               folder={this.props.parentFolder}
-              loadingFolderWithId={this.props.loadingFolderWithId}
               openFolder={this.openFolder}
-              renameFolder={this.renameFolder}
-              confirmRenameFolder={this.confirmRenameFolder}
             />);
         }
 
