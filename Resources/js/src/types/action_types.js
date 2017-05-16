@@ -122,6 +122,7 @@ export type ActionFilesMovedType = {
 export type PayloadFilesMovedType = {
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
+    tree: TreeType,
 };
 
 // change sorting
@@ -191,6 +192,7 @@ export type ActionDeletedType = {
 export type PayloadDeletedType = {
     tree: TreeType,
     filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
 };
 
 /*

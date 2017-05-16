@@ -18,31 +18,42 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
     return { errors };
 };
 
-const deleteFile = (fileId: string,
+const deleteFile = (fileId: string, purge: boolean = false,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const treeState: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(treeState.filesById);
-    const tmp2 = treeState.currentFolderId;
+    const tmp1 = treeState.currentFolderId;
+    const tmp2 = R.clone(treeState.filesById);
+    const tmp3 = R.clone(treeState.foldersById);
 
-    if (tmp1 === null || tmp2 === null) {
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
         reject(createError(`file with id ${fileId}`, ['invalid state']));
         return;
     }
 
-    const filesById: FilesByIdType = tmp1;
-    const currentFolderId: string = tmp2;
+    const currentFolderId: string = tmp1;
+    const filesById: FilesByIdType = tmp2;
+    const foldersById: FoldersByIdType = tmp3;
     const tree: TreeType = R.clone(treeState.tree);
 
-    api.deleteFile(fileId,
+    api.deleteFile(fileId, purge,
         () => {
-            const file = filesById[fileId];
-            filesById[fileId] = R.merge(file, { isTrashed: true });
-            const fileIds = tree[currentFolderId].fileIds;
-            tree[currentFolderId].fileIds = R.without([file.id], fileIds);
+            if (purge === true) {
+                const fileIds = tree[currentFolderId].fileIds;
+                tree[currentFolderId].fileIds = R.without([fileId], fileIds);
+                delete filesById[fileId];
+            } else {
+                const file = filesById[fileId];
+                filesById[fileId] = R.merge(file, { isTrashed: true });
+            }
+            const currentFolder: FolderType = foldersById[currentFolderId];
+            currentFolder.file_count = R.length(tree[currentFolderId].fileIds);
+            foldersById[currentFolderId] = currentFolder;
+
             resolve({
                 tree,
                 filesById,
+                foldersById,
             });
         },
         (messages: Array<string>) => {
@@ -53,7 +64,7 @@ const deleteFile = (fileId: string,
     );
 };
 
-export default (fileId: string) => {
+export default (fileId: string, purge: boolean = false) => {
     const a: ActionDeleteType = {
         type: Constants.DELETE_FILE,
         payload: { id: fileId },
@@ -62,6 +73,7 @@ export default (fileId: string) => {
 
     deleteFile(
         fileId,
+        purge,
         (payload: PayloadDeletedType) => {
             const a1: ActionDeletedType = {
                 type: Constants.FILE_DELETED,

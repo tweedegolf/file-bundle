@@ -76,6 +76,7 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'FOLDER_DELETED':
         return {
             ...state,
+            tree: action.payload.tree,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
         };
@@ -120,6 +121,7 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             foldersById: action.payload.foldersById,
             filesById: action.payload.filesById,
+            tree: action.payload.tree,
         };
 
     default:

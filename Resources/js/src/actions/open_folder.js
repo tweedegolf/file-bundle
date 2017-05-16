@@ -58,8 +58,9 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
     const tmp1 = R.clone(treeState.filesById);
     const tmp2 = R.clone(treeState.foldersById);
     const tmp3 = treeState.rootFolderId;
+    const tmp4 = treeState.currentFolderId;
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+    if (tmp1 === null || tmp2 === null || tmp3 === null || tmp4 === null) {
         reject(createError(`opening folder with id ${folderId}`, ['invalid state']));
         return;
     }
@@ -67,6 +68,7 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
     const foldersById: FoldersByIdType = tmp2;
     const rootFolderId: string = tmp3;
     const tree: TreeType = R.clone(treeState.tree);
+    const currentFolder: FolderType = foldersById[tmp4];
 
     if (typeof tree[folderId] === 'undefined') {
         tree[folderId] = {
@@ -95,6 +97,10 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
                 filesById[f.id] = f;
                 tree[folderId].fileIds.push(f.id);
             }, files);
+
+            currentFolder.file_count = R.length(files);
+            currentFolder.folder_count = R.length(folders);
+            foldersById[currentFolder.id] = currentFolder;
 
             resolve({
                 currentFolderId: folderId,

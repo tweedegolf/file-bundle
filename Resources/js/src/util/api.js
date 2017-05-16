@@ -94,8 +94,14 @@ if (typeof port !== 'undefined' && port !== null && port !== 80 && port !== 8080
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const deleteFile = (fileId: string, onSuccess: () => void, onError: (string[]) => void) => {
-    const req = request.post(`/admin/file/delete/${fileId}`);
+const deleteFile = (fileId: string,
+    purge: boolean,
+    onSuccess: () => void,
+    onError: (string[]) => void) => {
+    const url = purge ?
+        `${server}/admin/file/purge/${fileId}` :
+        `${server}/admin/file/delete/${fileId}`;
+    const req = request.post(url);
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
@@ -190,9 +196,12 @@ const renameFolder = (
  */
 const deleteFolder = (
     folderId: string,
+    purge: boolean,
     onSuccess: () => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/delete/folder/${folderId}`;
+    const url = purge ?
+        `${server}/admin/file/purge/folder/${folderId}` :
+        `${server}/admin/file/delete/folder/${folderId}`;
     const req = request.post(url).type('form');
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {

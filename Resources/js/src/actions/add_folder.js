@@ -22,15 +22,15 @@ const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const treeState: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(treeState.foldersById);
-    const tmp2 = treeState.currentFolderId;
+    const tmp1 = treeState.currentFolderId;
+    const tmp2 = R.clone(treeState.foldersById);
     if (tmp1 === null || tmp2 === null) {
         reject(createError(folderName, ['invalid state']));
         return;
     }
+    const currentFolderId: string = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
     const tree: TreeType = R.clone(treeState.tree);
-    const foldersById: FoldersByIdType = tmp1;
-    const currentFolderId: string = tmp2;
 
     api.addFolder(folderName, currentFolderId,
         (folders: Array<FolderType>) => {
@@ -39,6 +39,9 @@ const addFolder = (folderName: string,
             });
             const newFolderIds = R.map((f: FolderType): string => f.id, folders);
             tree[currentFolderId].folderIds.push(...newFolderIds);
+            const currentFolder = foldersById[currentFolderId];
+            currentFolder.folder_count = R.length(tree[currentFolderId].folderIds);
+            foldersById[currentFolderId] = currentFolder;
 
             const payload: PayloadFolderAddedType = {
                 foldersById,
