@@ -84,8 +84,8 @@ export const uiInitialState: UIStateType = {
     scrollPosition: null,
     hover: null,
     errors: [],
-    selected: [],
-    clipboard: [],
+    selected: { fileIds: [], folderIds: [] },
+    clipboard: { fileIds: [], folderIds: [] },
     multiple: true,
     language: 'en-GB',
     imagesOnly: false,
@@ -453,24 +453,26 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             return state;
         }
 
-        let selected = [...state.selected];
-        const index = selected.findIndex((id: string): boolean => id === fileId);
-
+        let fileIds: string[] = [...state.selected.fileIds];
+        const index = fileIds.findIndex((id: string): boolean => id === fileId);
         if (state.browser === false && state.multiple === false) {
             if (index === -1) {
-                selected = [fileId];
+                fileIds = [fileId];
             } else {
-                selected = [];
+                fileIds = [];
             }
         } else if (index === -1) {
-            selected.push(fileId);
+            fileIds.push(fileId);
         } else {
-            selected.splice(index, 1);
+            fileIds.splice(index, 1);
         }
 
         return {
             ...state,
-            selected,
+            selected: {
+                ...state.selected,
+                fileIds,
+            },
         };
 
     /**
@@ -497,8 +499,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'CUT_FILES') {
         return {
             ...state,
-            clipboard: [...state.selected],
-            selected: [],
+            clipboard: { ...state.selected },
+            selected: {
+                fileIds: [],
+                folderIds: [],
+            },
         };
 
     /**
@@ -508,8 +513,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'CANCEL_CUT_AND_PASTE_FILES') {
         return {
             ...state,
-            clipboard: [],
-            selected: [...state.clipboard],
+            clipboard: {
+                fileIds: [],
+                folderIds: [],
+            },
+            selected: { ...state.clipboard },
         };
 
     /**
@@ -520,8 +528,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'ERROR_MOVING_FILES') {
         return {
             ...state,
-            clipboard: [],
-            selected: [...state.clipboard],
+            clipboard: {
+                fileIds: [],
+                folderIds: [],
+            },
+            selected: { ...state.clipboard },
         };
 
     /**
@@ -531,8 +542,14 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'FILES_MOVED') {
         return {
             ...state,
-            clipboard: [],
-            selected: [],
+            clipboard: {
+                fileIds: [],
+                folderIds: [],
+            },
+            selected: {
+                fileIds: [],
+                folderIds: [],
+            },
         };
     } else if (action.type === 'SHOW_RECYCLE_BIN') {
         return {

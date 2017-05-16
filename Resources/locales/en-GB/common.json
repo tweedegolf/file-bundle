@@ -20,5 +20,6 @@
   },
   "errors": {
   },
-  "loading": "loading..."
+  "loading": "loading...",
+  "noFilesSelected": "No selected file(s)"
 }

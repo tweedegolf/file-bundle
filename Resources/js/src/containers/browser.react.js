@@ -42,8 +42,8 @@ type PropsType = {
     loadingFolderWithId: null | string,
     numItemsInCurrentFolder: number,
     errors: ErrorType[],
-    clipboard: string[],
-    selected: string[],
+    clipboard: ClipboardType,
+    selected: ClipboardType,
     showingRecycleBin: boolean,
 };
 

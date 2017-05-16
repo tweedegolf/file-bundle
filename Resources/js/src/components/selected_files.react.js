@@ -5,28 +5,30 @@
  */
 import React from 'react';
 import R from 'ramda';
+import { translate } from 'react-i18next';
 
 type PropsType = {
-    clipboard: string[],
-    selected: string[],
+    clipboard: ClipboardType,
+    selected: ClipboardType,
     multiple: boolean,
     browser: boolean,
     selectFile: (file: string) => void,
     showPreview: (id: null | string) => void,
+    t: (string) => string,
 };
 
 type DefaultPropsType = {};
 type SelectedFilesStateType = {};
 
 // export default class SelectedFiles extends React.Component<EmptyType, PropsType, EmptyType> {
-export default class SelectedFiles extends
+class SelectedFiles extends
     React.Component<DefaultPropsType, PropsType, SelectedFilesStateType> {
     props: PropsType
     state: SelectedFilesStateType
     static defaultProps = {}
 
     render(): null | React$Element<*> {
-        if (this.props.browser === true || this.props.selected.length === 0) {
+        if (this.props.browser === true || this.props.selected.fileIds.length === 0) {
             return null;
         }
 
@@ -51,10 +53,10 @@ export default class SelectedFiles extends
                 <span className="remove">&times;</span>
                 <input type="hidden" name={file.name} value={file.id} />
             </div>);
-        }, this.props.selected);
+        }, this.props.selected.fileIds);
 
         if (files.length === 0) {
-            files = <span className="none-selected">Geen bestand(en) geselecteerd.</span>;
+            files = <span className="none-selected">{this.props.t('common.noFilesSelected')}</span>;
         }
 
         return (
@@ -64,3 +66,5 @@ export default class SelectedFiles extends
         );
     }
 }
+
+export default translate('common')(SelectedFiles);

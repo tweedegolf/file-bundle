@@ -22,8 +22,8 @@ type PassedPropsType = {
 type PropsType = {
     files: FileType[],
     folders: FolderType[],
-    selected: string[],
-    clipboard: string[],
+    selected: ClipboardType,
+    clipboard: ClipboardType,
     allowEdit: boolean,
     allowDelete: boolean,
     imagesOnly: boolean,

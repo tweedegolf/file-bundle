@@ -8,6 +8,11 @@ export type TreeType = {
     },
 };
 
+export type ClipboardType = {
+    fileIds: string[],
+    folderIds: string[],
+};
+
 // state
 export type TreeStateType = {
     currentFolderId: null | string,
@@ -35,8 +40,8 @@ export type UIStateType = {
     isAddingFolder: boolean,
     isUploadingFiles: boolean,
     scrollPosition: null | number,
-    selected: string[],
-    clipboard: string[],
+    selected: ClipboardType,
+    clipboard: ClipboardType,
     language: string,
     multiple: boolean,
     imagesOnly: boolean,

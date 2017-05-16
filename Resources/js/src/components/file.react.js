@@ -28,8 +28,8 @@ type PropsType = {
     showPreview: (id: string) => void,
     selectFile: (fileId: string) => void,
     deleteFile: (id: string) => void,
-    clipboard: string[],
-    selected: string[],
+    clipboard: ClipboardType,
+    selected: ClipboardType,
     hovering: boolean,
     browser: boolean,
     deleteFileWithId: null | string,
@@ -39,15 +39,17 @@ type PropsType = {
 
 const File = (props: PropsType): React$Element<*> => {
     const file = props.file;
-    let checked = false;
-    if (props.clipboard.length > 0) {
-        const index = props.clipboard.find((fileId: string): boolean => file.id === fileId);
-        checked = index !== 'undefined';
+    const clipboardFileIds = props.clipboard.fileIds;
+    const selectedFileIds = props.selected.fileIds;
+    let isChecked = false;
+    if (clipboardFileIds.length > 0) {
+        const index = clipboardFileIds.find((fileId: string): boolean => file.id === fileId);
+        isChecked = index !== 'undefined';
     }
-    let selected = false;
-    if (props.selected.length > 0) {
-        const index = typeof props.selected.find((fileId: string): boolean => file.id === fileId);
-        selected = index !== 'undefined';
+    let isSelected = false;
+    if (selectedFileIds.length > 0) {
+        const index = typeof selectedFileIds.find((fileId: string): boolean => file.id === fileId);
+        isSelected = index !== 'undefined';
     }
     // console.log(file.name, selected)
     let className = `cutable${props.hovering ? ' selected' : ''}`;
@@ -86,7 +88,7 @@ const File = (props: PropsType): React$Element<*> => {
             </button>
         </div>);
     } else if (
-        props.selected.length + props.clipboard.length === 0 &&
+        selectedFileIds.length + clipboardFileIds.length === 0 &&
         props.allowDelete === true &&
         props.showingRecycleBin === false
     ) {
@@ -116,7 +118,7 @@ const File = (props: PropsType): React$Element<*> => {
                 </a>);
         }
         if (props.allowEdit) {
-            checkbox = <input type="checkbox" checked={selected} readOnly />;
+            checkbox = <input type="checkbox" checked={isSelected} readOnly />;
         }
         actions = (<div className="actions">
             {buttonDelete}
@@ -124,13 +126,13 @@ const File = (props: PropsType): React$Element<*> => {
             {confirmPane}
         </div>);
     } else {
-        checkbox = <span className={selected ? 'fa fa-check-square-o' : 'fa fa-square-o'} />;
-        className = selected ? 'selected' : 'selectable';
+        checkbox = <span className={isSelected ? 'fa fa-check-square-o' : 'fa fa-square-o'} />;
+        className = isSelected ? 'selected' : 'selectable';
     }
 
-    if (props.clipboard.length > 0) {
-        checkbox = <span className={checked ? 'fa fa-thumb-tack' : ''} />;
-        className = checked ? 'cut' : '';
+    if (clipboardFileIds.length > 0) {
+        checkbox = <span className={isChecked ? 'fa fa-thumb-tack' : ''} />;
+        className = isChecked ? 'cut' : '';
     }
 
     if (props.deleteFileWithId === file.id) {
@@ -158,7 +160,7 @@ const File = (props: PropsType): React$Element<*> => {
     const p = {
         className,
         onClick: () => {
-            if (props.clipboard.length === 0) {
+            if (clipboardFileIds.length === 0) {
                 props.selectFile(file.id);
             }
         },

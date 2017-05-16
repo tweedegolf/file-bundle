@@ -20,5 +20,6 @@
   },
   "errors": {
   },
-  "loading": "laden..."
+  "loading": "laden...",
+  "noFilesSelected": "Keine Bestände selectiert"
 }
