@@ -47,7 +47,7 @@ const moveFiles = (
 
     api.paste(fileIds, currentFolder.id,
         () => {
-            // add files to current folder
+            // add files and folders to current folder
             R.forEach((f: FileType) => {
                 filesById[f.id] = f;
                 if (typeof currentFolder.fileIds !== 'undefined') {
@@ -57,9 +57,18 @@ const moveFiles = (
             if (typeof currentFolder.fileIds !== 'undefined') {
                 currentFolder.file_count = R.length(currentFolder.fileIds);
             }
+            R.forEach((f: FolderType) => {
+                foldersById[f.id] = f;
+                if (typeof currentFolder.folderIds !== 'undefined') {
+                    currentFolder.folderIds.push(f.id);
+                }
+            }, folders);
+            if (typeof currentFolder.folderIds !== 'undefined') {
+                currentFolder.folder_count = R.length(currentFolder.folderIds);
+            }
             foldersById[currentFolder.id] = currentFolder;
 
-            // remove files from original location
+            // remove files and folders from original location
             R.forEach((folder: FolderType) => {
                 console.log(folder);
                 if (folder.id !== currentFolder.id) {
@@ -71,6 +80,14 @@ const moveFiles = (
                             folder.file_count = R.length(folder.fileIds);
                         }
                     }, fileIds);
+                    R.forEach((folderId1: string) => {
+                        if (typeof folder.folderIds !== 'undefined') {
+                            // deliberately re-assign property though it is ugly
+                            folder.folderIds = R.reject((folderId2: string): boolean =>
+                                folderId1 === folderId2, folder.folderIds);
+                            folder.folder_count = R.length(folder.folderIds);
+                        }
+                    }, folderIds);
                 }
             }, R.values(foldersById));
 

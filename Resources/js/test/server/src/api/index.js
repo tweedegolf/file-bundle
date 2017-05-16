@@ -108,6 +108,13 @@ const emptyRecycleBin = (req, res) => {
     }
 };
 
+const getData = (req, res) => {
+    console.log('[API] get data');
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send(database.getData());
+};
+
 
 const closeServer = (req, res) => {
     console.log('[API] closing server');
@@ -127,4 +134,5 @@ export default{
     deleteFile,
     closeServer,
     emptyRecycleBin,
+    getData,
 };

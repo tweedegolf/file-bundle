@@ -279,7 +279,6 @@ const emptyRecycleBin = () => {
     };
 };
 
-
 export default{
     getFolder,
     addFolder,
@@ -289,4 +288,5 @@ export default{
     moveFiles,
     deleteFile,
     emptyRecycleBin,
+    getData: () => data,
 };

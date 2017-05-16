@@ -21,8 +21,8 @@ type PropsType = {
     isUploadingFiles: boolean,
     isAddingFolder: boolean,
     browser: boolean,
-    selected: FileType[],
-    clipboard: FileType[],
+    selected: ClipboardType,
+    clipboard: ClipboardType,
     loadingFolderWithId?: null | string,
     t: (string) => string,
     showingRecycleBin: boolean,
@@ -101,6 +101,10 @@ class Toolbar
     render(): React$Element<*> {
         const loader = this.props.isUploadingFiles ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
         const newFolderClass = classNames('btn btn-sm btn-default pull-right', { hide: this.state.showForm });
+        const numItemsSelected = this.props.selected.fileIds.length +
+            this.props.selected.folderIds.length;
+        const numItemsOnClipboard = this.props.clipboard.fileIds.length +
+            this.props.clipboard.folderIds.length;
         let buttonRecycleBin;
         let actions = null;
         let buttonUpload = null;
@@ -158,28 +162,28 @@ class Toolbar
                     <button
                       type="button"
                       className="btn btn-sm btn-default"
-                      disabled={this.props.selected.length === 0}
+                      disabled={numItemsSelected === 0}
                       // files that are currently in selected will be moved to the clipboard
                       onClick={this.props.onCut}
                     >
                         <span className="fa fa-cut" />
                         <span className="text-label">{this.props.t('toolbar.cut')}</span>
-                        {this.props.selected.length > 0 ? ` (${this.props.selected.length})` : null}
+                        {numItemsSelected > 0 ? ` (${numItemsSelected})` : null}
                     </button>
                     <button
                       type="button"
                       className="btn btn-sm btn-default"
-                      disabled={this.props.clipboard.length === 0}
+                      disabled={numItemsOnClipboard === 0}
                       onClick={this.props.onPaste}
                     >
                         <span className="fa fa-paste" />
                         <span className="text-label">{this.props.t('toolbar.paste')}</span>
-                        {this.props.clipboard.length > 0 ? ` (${this.props.clipboard.length})` : null}
+                        {numItemsOnClipboard > 0 ? ` (${numItemsOnClipboard})` : null}
                     </button>
                     <button
                       type="button"
                       className="btn btn-sm btn-default"
-                      disabled={this.props.clipboard.length + this.props.selected.length === 0}
+                      disabled={numItemsOnClipboard + numItemsSelected === 0}
                       onClick={this.props.onCancel}
                     >
                         <span className="fa fa-times-circle-o" />

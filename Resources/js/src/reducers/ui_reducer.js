@@ -446,23 +446,39 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * @param      {boolean}  multiple  Whether it is allowed to have multiple
      *                                  files selected
      */
-    } else if (action.type === 'SELECT_FILE') {
-        const fileId = action.payload.id;
+    } else if (action.type === 'SELECT_FILE' || action.type === 'SELECT_FOLDER') {
+        const itemId = action.payload.id;
+        const isFolder = action.type === 'SELECT_FOLDER';
 
-        if (typeof fileId === 'undefined' || fileId === null) {
+        if (typeof itemId === 'undefined' || itemId === null) {
             return state;
         }
 
-        let fileIds: string[] = [...state.selected.fileIds];
-        const index = fileIds.findIndex((id: string): boolean => id === fileId);
+        const itemIds: string[] = isFolder ?
+            [...state.selected.folderIds] : [...state.selected.fileIds];
+        const index = itemIds.findIndex((id: string): boolean => id === itemId);
+        let fileIds = [...state.selected.fileIds];
+        let folderIds = [...state.selected.folderIds];
         if (state.browser === false && state.multiple === false) {
             if (index === -1) {
-                fileIds = [fileId];
+                if (isFolder) {
+                    folderIds = [itemId];
+                } else {
+                    fileIds = [itemId];
+                }
+            } else if (isFolder) {
+                folderIds = [];
             } else {
                 fileIds = [];
             }
         } else if (index === -1) {
-            fileIds.push(fileId);
+            if (isFolder) {
+                folderIds.push(itemId);
+            } else {
+                fileIds.push(itemId);
+            }
+        } else if (isFolder) {
+            folderIds.splice(index, 1);
         } else {
             fileIds.splice(index, 1);
         }
@@ -470,7 +486,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             selected: {
-                ...state.selected,
+                folderIds,
                 fileIds,
             },
         };
@@ -496,7 +512,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * selected files are moved from the selected array to the clipboard array of
      * the state.
      */
-    } else if (action.type === 'CUT_FILES') {
+    } else if (action.type === 'CUT_ITEMS') {
         return {
             ...state,
             clipboard: { ...state.selected },

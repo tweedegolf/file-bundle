@@ -154,7 +154,7 @@ export const SELECT_FILE: 'SELECT_FILE' = 'SELECT_FILE';
  *
  * @type       {string}
  */
-export const CUT_FILES: 'CUT_FILES' = 'CUT_FILES';
+export const CUT_ITEMS: 'CUT_ITEMS' = 'CUT_ITEMS';
 
 /**
  * Cut and paste action is being cancelled, processed by:

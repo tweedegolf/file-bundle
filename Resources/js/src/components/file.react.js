@@ -7,6 +7,7 @@
  *             well. If the user clicks the delete button, the component will
  *             render a confirmation popup.
  */
+import R from 'ramda';
 import React from 'react';
 import { translate } from 'react-i18next';
 
@@ -43,13 +44,13 @@ const File = (props: PropsType): React$Element<*> => {
     const selectedFileIds = props.selected.fileIds;
     let onClipboard = false;
     if (clipboardFileIds.length > 0) {
-        const index = clipboardFileIds.find((fileId: string): boolean => file.id === fileId);
-        onClipboard = index !== 'undefined';
+        const index = R.find((fileId: string): boolean => file.id === fileId, clipboardFileIds);
+        onClipboard = R.isNil(index) === false;
     }
     let isSelected = false;
     if (selectedFileIds.length > 0) {
-        const index = typeof selectedFileIds.find((fileId: string): boolean => file.id === fileId);
-        isSelected = index !== 'undefined';
+        const index = R.find((fileId: string): boolean => file.id === fileId, selectedFileIds);
+        isSelected = R.isNil(index) === false;
     }
     // console.log(file.name, selected)
     let className = `cutable${props.hovering ? ' selected' : ''}`;
@@ -130,7 +131,7 @@ const File = (props: PropsType): React$Element<*> => {
         className = isSelected ? 'selected' : 'selectable';
     }
 
-    if (clipboardFileIds.length > 0) {
+    if (clipboardFileIds.length + props.clipboard.folderIds.length > 0) {
         checkbox = <span className={onClipboard ? 'fa fa-thumb-tack' : ''} />;
         className = onClipboard ? 'cut' : '';
     }

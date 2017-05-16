@@ -49,7 +49,7 @@ export const selectFolder = (id: string) => {
  */
 export const cutFiles = () => {
     dispatch({
-        type: Constants.CUT_FILES,
+        type: Constants.CUT_ITEMS,
     });
 };
 

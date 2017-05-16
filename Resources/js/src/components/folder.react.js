@@ -6,6 +6,7 @@
  *             browser will open the folder and a spinner icon is shown. If the
  *             folder is empty, the row will show a delete button as well.
  */
+import R from 'ramda';
 import React from 'react';
 import { translate } from 'react-i18next';
 import classNames from 'classnames';
@@ -63,7 +64,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
 
     render(): React$Element<*> {
         const folder = this.props.folder;
-        const className = classNames('folder',
+        let className = classNames('folder',
             { success: folder.isNew === true },
             { selected: this.props.hovering },
             { 'fa fa-circle-o-notch fa-spin': this.props.loading === folder.id },
@@ -78,22 +79,27 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         if (this.props.browser === true) {
             const clipboardFolderIds = this.props.clipboard.folderIds;
             const selectedFolderIds = this.props.selected.folderIds;
+
             let onClipboard = false;
             if (clipboardFolderIds.length > 0) {
-                const index = clipboardFolderIds.find((folderId: string): boolean => folder.id === folderId);
-                onClipboard = index !== 'undefined';
-            }
-            let isSelected = false;
-            if (selectedFolderIds.length > 0) {
-                const index = typeof selectedFolderIds.find((folderId: string): boolean => folder.id === folderId);
-                isSelected = index !== 'undefined';
+                const index = R.find((folderId: string): boolean =>
+                    folder.id === folderId, clipboardFolderIds);
+                onClipboard = R.isNil(index) === false;
             }
 
+            let isSelected = false;
+            if (selectedFolderIds.length > 0) {
+                const index = R.find((folderId: string): boolean =>
+                    folder.id === folderId, selectedFolderIds);
+                isSelected = R.isNil(index) === false;
+            }
             if (this.props.allowEdit) {
                 checkbox = <input type="checkbox" checked={isSelected} readOnly />;
-                if (clipboardFolderIds.length > 0) {
+                if (clipboardFolderIds.length + this.props.clipboard.fileIds.length > 0) {
                     checkbox = <span className={onClipboard ? 'fa fa-thumb-tack' : ''} />;
-                    // className = onClipboard ? 'cut' : '';
+                    if (onClipboard) {
+                        className += ' cut';
+                    }
                 } else {
                     p1 = {
                         onClick: (e: SyntheticEvent) => {

@@ -39,6 +39,7 @@ app.post('/admin/file/delete/folder/*', api.deleteFolder);
 app.post('/admin/file/rename/folder/*', api.renameFolder);
 app.post('/admin/file/delete/*', api.deleteFile);
 app.get('/admin/file/purge', api.emptyRecycleBin);
+app.get('/data', api.getData);
 app.get('/close', api.closeServer);
 
 const port = process.env.PORT || 5050;

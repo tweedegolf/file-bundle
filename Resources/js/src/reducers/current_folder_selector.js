@@ -72,6 +72,9 @@ export default createSelector(
         let folders: FolderType[] = R.map((folderId: string): FolderType =>
             foldersById[folderId], currentFolder.folderIds || []);
 
+        // console.log('files', files);
+        // console.log('folders', folders);
+
         const sortFunc = R.curry(sortBy)(sort);
         const filterFunc = showingRecycleBin ? filterTrashedInverted : filterTrashed;
 
