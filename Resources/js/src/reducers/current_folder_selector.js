@@ -40,19 +40,21 @@ const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] =>
 
 export default createSelector(
     [getUI, getTree],
-    (ui: UIStateType, tree: TreeStateType): ReturnType => {
+    (uiState: UIStateType, treeState: TreeStateType): ReturnType => {
         const {
             sort,
             ascending,
             showingRecycleBin,
-        } = ui;
+        } = uiState;
         const {
-            currentFolderId,
+            tree,
             filesById,
             foldersById,
-        } = tree;
+            rootFolderId,
+            currentFolderId,
+        } = treeState;
 
-        if (filesById === null || foldersById === null || currentFolderId === null) {
+        if (tree === null || filesById === null || foldersById === null || currentFolderId === null) {
             return {
                 currentFolderId: '-1',
                 rootFolderId: '-1',
@@ -65,12 +67,11 @@ export default createSelector(
         // const sortBy: ((FileType[] | FolderType[])) =>
         //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
-        const currentFolder: FolderType = foldersById[currentFolderId];
 
         let files: FileType[] = R.map((fileId: string): FileType =>
-            filesById[fileId], currentFolder.fileIds || []);
+            filesById[fileId], tree[currentFolderId].fileIds);
         let folders: FolderType[] = R.map((folderId: string): FolderType =>
-            foldersById[folderId], currentFolder.folderIds || []);
+            foldersById[folderId], tree[currentFolderId].folderIds);
 
         // console.log('files', files);
         // console.log('folders', folders);
@@ -81,6 +82,7 @@ export default createSelector(
         files = R.compose(sortFunc, filterFunc)(files);
         folders = R.compose(sortFunc, filterFunc)(folders);
 
+        const currentFolder: FolderType = foldersById[currentFolderId];
         let parentFolder = null;
         if (currentFolder.parent !== null) {
             parentFolder = foldersById[currentFolder.parent];
@@ -90,7 +92,7 @@ export default createSelector(
             folders,
             parentFolder,
             currentFolderId: currentFolder.id,
-            rootFolderId: tree.rootFolderId,
+            rootFolderId,
             errors: [],
         };
     },

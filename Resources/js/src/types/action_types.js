@@ -19,8 +19,9 @@ export type ActionInitType = {
 
 export type PayloadInitType = {
     rootFolderId: string,
-    foldersById : FoldersByIdType,
-    filesById : FilesByIdType,
+    foldersById: FoldersByIdType,
+    filesById: FilesByIdType,
+    tree: TreeType,
     selected: Array<FileType>,
     language: string,
     multiple: boolean,
@@ -49,6 +50,7 @@ export type PayloadFolderOpenedType = {
     currentFolderId: string,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
+    tree: TreeType,
 };
 
 // rename folder
@@ -87,6 +89,7 @@ export type ActionFolderAddedType = {
 };
 
 export type PayloadFolderAddedType = {
+    tree: TreeType,
     foldersById: FoldersByIdType,
 };
 
@@ -186,8 +189,8 @@ export type ActionDeletedType = {
 };
 
 export type PayloadDeletedType = {
+    tree: TreeType,
     filesById: FilesByIdType,
-    foldersById: FoldersByIdType,
 };
 
 /*

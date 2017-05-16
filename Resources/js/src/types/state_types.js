@@ -1,11 +1,13 @@
 /* eslint no-use-before-define: 0 */
 import type { Store, Dispatch } from 'redux';
 
+export type TreeFolderType = {
+    fileIds: string[],
+    folderIds: string[],
+};
+
 export type TreeType = {
-    [id: string]: {
-        fileIds: string[],
-        folderIds: string[],
-    },
+    [id: string]: TreeFolderType,
 };
 
 export type ClipboardType = {
@@ -20,7 +22,7 @@ export type TreeStateType = {
     filesById: null | FilesByIdType,
     foldersById: null | FoldersByIdType,
     errors: Array<ErrorType>,
-    tree: null | TreeType,
+    tree: {} | TreeType,
 };
 
 export type UIStateType = {
@@ -79,8 +81,6 @@ export type FolderType = {
     type?: string,
     size?: string,
     size_bytes?: number,
-    fileIds?: string[],
-    folderIds?: string[],
     isNew?: boolean,
     isTrashed?: boolean,
 };

@@ -21,37 +21,29 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
 const deleteFile = (fileId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree: TreeStateType = store.getState().tree;
-    const tmp1: null | string = tree.currentFolderId;
-    const tmp2: null | FilesByIdType = { ...tree.filesById };
-    const tmp3: null | FoldersByIdType = { ...tree.foldersById };
+    const treeState: TreeStateType = store.getState().tree;
+    const tmp1 = R.clone(treeState.filesById);
+    const tmp2 = treeState.currentFolderId;
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+    if (tmp1 === null || tmp2 === null) {
         reject(createError(`file with id ${fileId}`, ['invalid state']));
         return;
     }
 
-    const filesById: FilesByIdType = tmp2;
-    const foldersById: FoldersByIdType = tmp3;
-    const currentFolder: FolderType = R.clone(foldersById[tmp1]);
+    const filesById: FilesByIdType = tmp1;
+    const currentFolderId: string = tmp2;
+    const tree: TreeType = R.clone(treeState.tree);
 
     api.deleteFile(fileId,
         () => {
             const file = filesById[fileId];
-            file.isTrashed = true;
-            if (typeof currentFolder.fileIds !== 'undefined') {
-                const fileIds = currentFolder.fileIds;
-                const index = R.findIndex(R.propEq('id', fileId))(fileIds);
-                currentFolder.fileIds = R.update(index, file, fileIds);
-                currentFolder.file_count = R.length(currentFolder.fileIds);
-                foldersById[currentFolder.id] = currentFolder;
-                resolve({
-                    filesById,
-                    foldersById,
-                });
-            } else {
-                reject(createError(file.name, ['current folder has no files array']));
-            }
+            filesById[fileId] = R.merge(file, { isTrashed: true });
+            const fileIds = tree[currentFolderId].fileIds;
+            tree[currentFolderId].fileIds = R.without([file.id], fileIds);
+            resolve({
+                tree,
+                filesById,
+            });
         },
         (messages: Array<string>) => {
             const f: null | FileType = filesById[fileId];

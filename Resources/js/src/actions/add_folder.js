@@ -21,16 +21,16 @@ const createError = (data: string, messages: string[]): PayloadErrorType => {
 const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const tree: TreeStateType = store.getState().tree;
-    const tmp1 = R.clone(tree.foldersById);
-    const tmp2 = tree.currentFolderId;
+    const treeState: TreeStateType = store.getState().tree;
+    const tmp1 = R.clone(treeState.foldersById);
+    const tmp2 = treeState.currentFolderId;
     if (tmp1 === null || tmp2 === null) {
         reject(createError(folderName, ['invalid state']));
         return;
     }
+    const tree: TreeType = R.clone(treeState.tree);
     const foldersById: FoldersByIdType = tmp1;
     const currentFolderId: string = tmp2;
-    const currentFolder: FolderType = R.clone(foldersById[currentFolderId]);
 
     api.addFolder(folderName, currentFolderId,
         (folders: Array<FolderType>) => {
@@ -38,13 +38,11 @@ const addFolder = (folderName: string,
                 foldersById[f.id] = R.merge(f, { isNew: true });
             });
             const newFolderIds = R.map((f: FolderType): string => f.id, folders);
-            if (typeof currentFolder.folderIds !== 'undefined') {
-                currentFolder.folderIds.push(...newFolderIds);
-            }
-            foldersById[currentFolderId] = currentFolder;
+            tree[currentFolderId].folderIds.push(...newFolderIds);
 
             const payload: PayloadFolderAddedType = {
                 foldersById,
+                tree,
             };
             resolve(payload);
         },

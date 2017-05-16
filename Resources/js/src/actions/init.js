@@ -17,15 +17,15 @@ const init = (options: OptionsType, browser: boolean) => {
         folder_count: 0,
         parent: null,
     };
-    const tree: TreeStateType = store.getState().tree;
-    let foldersById = tree.foldersById;
+    const treeState: TreeStateType = store.getState().tree;
+    let foldersById = treeState.foldersById;
     if (foldersById === null) {
         foldersById = {};
     }
     if (R.isNil(foldersById[rootFolderId])) {
         foldersById = { ...foldersById, [rootFolderId]: rootFolder };
     }
-    let filesById = tree.filesById;
+    let filesById = treeState.filesById;
     if (filesById === null) {
         filesById = {};
     }
@@ -38,7 +38,7 @@ const init = (options: OptionsType, browser: boolean) => {
         allowEdit = true,
     } = options;
 
-    const noCache = rootFolderId !== tree.rootFolderId;
+    const noCache = rootFolderId !== treeState.rootFolderId;
     const action: ActionInitType = {
         type: INIT,
         payload: {
@@ -54,13 +54,14 @@ const init = (options: OptionsType, browser: boolean) => {
             rootFolderId,
             foldersById,
             filesById,
+            tree: treeState.tree,
         },
     };
     dispatch(action);
 
     let currentFolderId: string = rootFolderId;
-    if (tree.currentFolderId !== null) {
-        currentFolderId = tree.currentFolderId;
+    if (treeState.currentFolderId !== null) {
+        currentFolderId = treeState.currentFolderId;
     }
 
     if (noCache === true) {

@@ -24,7 +24,7 @@ export const treeInitialState: TreeStateType = {
     filesById: null,
     foldersById: null,
     errors: [],
-    tree: null,
+    tree: {},
 };
 
 export const tree = (state: TreeStateType = treeInitialState,
@@ -33,6 +33,7 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'INIT':
         return {
             ...state,
+            tree: action.payload.tree,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
             rootFolderId: action.payload.rootFolderId,
@@ -50,6 +51,7 @@ export const tree = (state: TreeStateType = treeInitialState,
         // console.log(R.clone(action.payload.foldersById));
         return {
             ...state,
+            tree: action.payload.tree,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
         };
@@ -62,8 +64,8 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'FILE_DELETED':
         return {
             ...state,
+            tree: action.payload.tree,
             filesById: action.payload.filesById,
-            foldersById: action.payload.foldersById,
         };
 
     /**
@@ -105,6 +107,7 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'FOLDER_ADDED':
         return {
             ...state,
+            tree: action.payload.tree,
             foldersById: action.payload.foldersById,
         };
 
