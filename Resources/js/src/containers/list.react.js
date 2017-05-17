@@ -191,6 +191,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
           deleteFolderWithId={this.props.deleteFolderWithId}
           loadingFolderWithId={this.props.loadingFolderWithId}
           renameFolderWithId={this.props.renameFolderWithId}
+          showingRecycleBin={this.props.showingRecycleBin}
         />), this.props.folders);
 
         // reverse listings when the sort direction is reversed

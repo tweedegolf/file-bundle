@@ -6,11 +6,11 @@ import database from '../database';
 import { getIdFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
 
-const getFolder = (req, res) => {
+const openFolder = (req, res) => {
     const parentId = getIdFromUrl(req.url);
     console.log(`[API] getting contents of folder ${parentId}`);
 
-    const data = database.getFolder(parentId);
+    const data = database.openFolder(parentId);
     if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
@@ -125,7 +125,7 @@ const closeServer = (req, res) => {
 
 
 export default{
-    getFolder,
+    openFolder,
     addFolder,
     renameFolder,
     deleteFolder,

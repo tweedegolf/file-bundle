@@ -16,7 +16,7 @@ import { createFolderDescription } from '../util';
  *                       all subfolders in this folder. In some cases a critical
  *                       error is simulated; this returns a fake error message.
  */
-const getFolder = (folderId) => {
+const openFolder = (folderId) => {
     // fake and real errors
     // console.log(folderId);
     const folderData = data.tree[folderId];
@@ -245,6 +245,21 @@ const deleteFile = (fileId) => {
     const file = R.clone(data.files[fileId]);
     file.isTrashed = true;
     data.files[fileId] = file;
+
+    const inFolder = R.filter((folderId) => {
+        const index = R.findIndex(id =>
+            id === fileId, data.tree[folderId].files);
+        return index !== -1;
+    }, R.keys(data.tree));
+
+    if (R.length(inFolder) > 0) {
+        const folderId = inFolder[0];
+        // const fileIds = data.tree[folderId].files;
+        // data.tree[folderId].files = R.without([fileId], fileIds);
+        const fileCount = data.folders[folderId].file_count;
+        data.folders[folderId].file_count = fileCount - 1;
+    }
+
     return {
         error: false,
     };
@@ -280,7 +295,7 @@ const emptyRecycleBin = () => {
 };
 
 export default{
-    getFolder,
+    openFolder,
     addFolder,
     renameFolder,
     deleteFolder,

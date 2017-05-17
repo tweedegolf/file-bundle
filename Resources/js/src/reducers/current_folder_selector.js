@@ -66,6 +66,10 @@ export default createSelector(
         files = R.compose(sortFunc, filterFunc)(files);
         folders = R.compose(sortFunc, filterFunc)(folders);
 
+        if (showingRecycleBin === true) {
+            console.log(files, folders);
+        }
+
         const currentFolder: FolderType = foldersById[currentFolderId];
         let parentFolder = null;
         if (currentFolder.parent !== null) {

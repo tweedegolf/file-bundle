@@ -29,5 +29,9 @@ export default {
             files: [],
             folders: [1],
         },
+        1: {
+            files: [],
+            folders: [],
+        },
     },
 };
