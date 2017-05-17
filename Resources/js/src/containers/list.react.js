@@ -31,7 +31,6 @@ type PropsType = {
     ascending: boolean,
     isUploadingFiles: boolean,
     hover: null | number,
-    currentFolderId: null | string,
     loadingFolderWithId: null | string,
     deleteFileWithId: null | string,
     deletingFileWithId: null | string,
@@ -44,7 +43,6 @@ type PropsType = {
 };
 
 type DefaultPropsType = {
-    currentFolderId: null,
     loadingFolderWithId: null,
     deletingFileWithId: null,
     deletingFolderWithId: null,
@@ -61,7 +59,6 @@ const mapStateToProps = (state: StateType): PropsType => {
     const {
         files,
         folders,
-        currentFolderId,
         parentFolder,
     } = currentFolderSelector(state);
 
@@ -69,7 +66,6 @@ const mapStateToProps = (state: StateType): PropsType => {
         // tree props
         files,
         folders,
-        currentFolderId,
         parentFolder,
 
         // ui props
@@ -99,7 +95,6 @@ const mapStateToProps = (state: StateType): PropsType => {
 // export default class List extends React.Component {
 class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType> {
     static defaultProps = {
-        currentFolderId: null,
         loadingFolderWithId: null,
         deletingFileWithId: null,
         deletingFolderWithId: null,
@@ -138,9 +133,6 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
     renameFolder: (folderId: string, newName: string) => void
 
     render(): ?React$Element<*> {
-        if (R.isNil(this.props.currentFolderId)) {
-            return null;
-        }
         // TODO: reverse i!
         let i = this.props.folders.length + this.props.files.length;
 

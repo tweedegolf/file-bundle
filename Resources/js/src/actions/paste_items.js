@@ -37,7 +37,7 @@ const moveFiles = (
     const filesById: FilesByIdType = tmp2;
     const foldersById: FoldersByIdType = tmp3;
     const currentFolder: FolderType = foldersById[currentFolderId];
-    let tree: TreeType = R.clone(treeState.tree);
+    const tree: TreeType = R.clone(treeState.tree);
 
     const fileIds: string[] = ui.clipboard.fileIds;
     const folderIds: string[] = ui.clipboard.folderIds;
@@ -58,9 +58,16 @@ const moveFiles = (
             foldersById[currentFolderId] = currentFolder;
 
             // remove files and folders from original location
-            const filtered = R.map((key: string, treeFolder: TreeFolderType): [string, string[]] =>
-                [key, R.without(fileIds, treeFolder.fileIds)], R.toPairs(tree));
-            tree = R.fromPairs(filtered);
+            const filtered = R.map(([key, treeFolder]: [string, TreeFolderType]): [string, string[], string[]] =>
+                [key, R.without(fileIds, treeFolder.fileIds), R.without(folderIds, treeFolder.folderIds)], R.toPairs(tree));
+
+            // todo:
+            // 1 filter target folder
+            // 2 check test server
+            R.forEach(([key, idsFile, idsFolder]: [string, string[], string[]]) => {
+                tree[key].fileIds = idsFile;
+                tree[key].folderIds = idsFolder;
+            }, filtered);
 
             resolve({
                 foldersById,

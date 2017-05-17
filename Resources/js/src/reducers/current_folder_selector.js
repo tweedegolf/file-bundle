@@ -10,7 +10,6 @@ import {
 
 type ReturnType = {
     rootFolderId: null | string,
-    currentFolderId: string,
     parentFolder: null | FolderType,
     folders: FolderType[],
     files: FileType[],
@@ -45,41 +44,42 @@ export default createSelector(
                 folders: [],
                 rootFolderId: null,
                 parentFolder: null,
-                currentFolderId: '-1',
             };
         }
         // const sortBy: ((FileType[] | FolderType[])) =>
         //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
-
-        let files: FileType[] = R.map((fileId: string): FileType =>
-            filesById[fileId], tree[currentFolderId].fileIds);
-        let folders: FolderType[] = R.map((folderId: string): FolderType =>
-            foldersById[folderId], tree[currentFolderId].folderIds);
-
-        // console.log('files', files);
-        // console.log('folders', folders);
-
         const sortFunc = R.curry(sortBy)(sort);
-        const filterFunc = showingRecycleBin ? filterTrashedInverted : filterTrashed;
 
-        files = R.compose(sortFunc, filterFunc)(files);
-        folders = R.compose(sortFunc, filterFunc)(folders);
+        let parentFolder = null;
+        let currentFolder = null;
+        let files: FileType[] = [];
+        let folders: FolderType[] = [];
 
         if (showingRecycleBin === true) {
+            // todo:
+            // 1. get all files and folders that have the isTrashed flag set to true
+            // 2. set parentfolder to null or to the folder we were in when we clicked the recycle bin button
             console.log(files, folders);
+        } else {
+            files = R.map((fileId: string): FileType =>
+                filesById[fileId], tree[currentFolderId].fileIds);
+            files = R.compose(sortFunc, filterTrashed)(files);
+
+            folders = R.map((folderId: string): FolderType =>
+                foldersById[folderId], tree[currentFolderId].folderIds);
+            folders = R.compose(sortFunc, filterTrashed)(folders);
+
+            currentFolder = foldersById[currentFolderId];
+            if (currentFolder.parent !== null) {
+                parentFolder = foldersById[currentFolder.parent];
+            }
         }
 
-        const currentFolder: FolderType = foldersById[currentFolderId];
-        let parentFolder = null;
-        if (currentFolder.parent !== null) {
-            parentFolder = foldersById[currentFolder.parent];
-        }
         return {
             files,
             folders,
             parentFolder,
-            currentFolderId: currentFolder.id,
             rootFolderId,
         };
     },
