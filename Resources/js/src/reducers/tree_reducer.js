@@ -58,6 +58,7 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             tree: action.payload.tree,
             filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
         };
 
     /**

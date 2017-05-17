@@ -8,7 +8,11 @@ import {
     ERROR_OPENING_FOLDER,
 
 } from '../util/constants';
-import { getUID } from '../util/util';
+import {
+    getUID,
+    getFileCount,
+    getFolderCount,
+} from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
@@ -99,8 +103,8 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
                 tree[folderId].fileIds.push(f.id);
             }, files);
 
-            currentFolder.file_count = R.length(files);
-            currentFolder.folder_count = R.length(folders);
+            currentFolder.file_count = getFileCount(tree[folderId].fileIds, filesById);
+            currentFolder.folder_count = getFolderCount(tree[folderId].folderIds, foldersById);
             foldersById[currentFolder.id] = currentFolder;
 
             resolve({

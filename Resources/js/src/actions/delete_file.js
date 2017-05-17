@@ -3,7 +3,7 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID } from '../util/util';
+import { getUID, getFileCount } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
@@ -48,7 +48,7 @@ const deleteFile = (fileId: string, purge: boolean = false,
                 filesById[fileId] = R.merge(file, { isTrashed: true });
             }
             const currentFolder: FolderType = foldersById[currentFolderId];
-            currentFolder.file_count = R.length(tree[currentFolderId].fileIds);
+            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
             foldersById[currentFolderId] = currentFolder;
 
             resolve({
