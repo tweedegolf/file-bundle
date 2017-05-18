@@ -45,6 +45,7 @@ type PropsType = {
     clipboard: ClipboardType,
     selected: ClipboardType,
     showingRecycleBin: boolean,
+    currentFolderName: string,
 };
 
 type DefaultPropsType = {
@@ -85,6 +86,18 @@ const mapStateToProps = (state: StateType): PropsType => {
         }],
     ])(state.ui.currentFolderId);
 
+    let currentFolderName = '';
+    if (currentFolderId !== null && state.tree.foldersById !== null) {
+        const currentFolder = state.tree.foldersById[currentFolderId];
+        if (state.ui.showingRecycleBin === true) {
+            currentFolderName = 'recycle bin';
+        } else if (currentFolder.name === '..') {
+            currentFolderName = 'root';
+        } else {
+            currentFolderName = currentFolder.name;
+        }
+    }
+
     return {
         // tree props
         numItemsInCurrentFolder,
@@ -107,6 +120,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         allowUpload: state.ui.allowUpload,
         allowNewFolder: state.ui.allowNewFolder,
         showingRecycleBin: state.ui.showingRecycleBin,
+        currentFolderName,
     };
 };
 
@@ -230,6 +244,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           isUploadingFiles={this.props.isUploadingFiles}
           loadingFolderWithId={this.props.loadingFolderWithId}
           showingRecycleBin={this.props.showingRecycleBin}
+          currentFolderName={this.props.currentFolderName}
         />);
 
         // selected files for filepicker mode

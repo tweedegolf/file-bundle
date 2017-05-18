@@ -40,9 +40,13 @@ const deleteFolder = (folderId: string, purge: boolean,
         folderId,
         purge,
         () => {
-            const folderIds = R.concat([folderId], tree[folderId].folderIds);
-            const fileIds = R.reduce((acc: string[], id: string): string[] =>
-                R.concat(acc, tree[id].fileIds), [], folderIds);
+            let fileIds = [];
+            let folderIds = [];
+            if (typeof tree[folderId] !== 'undefined') {
+                folderIds = R.concat([folderId], tree[folderId].folderIds);
+                fileIds = R.reduce((acc: string[], id: string): string[] =>
+                    R.concat(acc, tree[id].fileIds), [], folderIds);
+            }
 
             if (purge === true) {
                 R.forEach((id: string) => {
@@ -54,20 +58,30 @@ const deleteFolder = (folderId: string, purge: boolean,
                     delete filesById[id];
                 }, fileIds);
             } else {
-                R.forEach((id: string) => {
-                    const f = foldersById[id];
-                    foldersById[id] = R.merge(f, { isTrashed: true });
-                }, folderIds);
+                // R.forEach((id: string) => {
+                //     const f = foldersById[id];
+                //     foldersById[id] = R.merge(f, { isTrashed: true });
+                // }, folderIds);
 
-                R.forEach((id: string) => {
-                    const f = filesById[id];
-                    filesById[id] = R.merge(f, { isTrashed: true });
-                }, fileIds);
+                // R.forEach((id: string) => {
+                //     const f = filesById[id];
+                //     filesById[id] = R.merge(f, { isTrashed: true });
+                // }, fileIds);
             }
 
-            const currentFolder = foldersById[currentFolderId];
-            currentFolder.file_count = R.length(tree[currentFolderId].fileIds);
-            currentFolder.folder_count = R.length(tree[currentFolderId].folderIds);
+            const currentFolder: FolderType = foldersById[currentFolderId];
+            if (typeof currentFolder.file_count !== 'undefined') {
+                currentFolder.file_count -= R.length(tree[currentFolderId].fileIds);
+            }
+            if (typeof currentFolder.folder_count !== 'undefined') {
+                currentFolder.folder_count -= R.length(tree[currentFolderId].folderIds);
+            }
+            foldersById[currentFolderId] = currentFolder;
+
+            const deletedFolder = foldersById[folderId];
+            deletedFolder.parent = 'bin';
+            deletedFolder.isTrashed = true;
+            foldersById[folderId] = deletedFolder;
 
             resolve({
                 tree,

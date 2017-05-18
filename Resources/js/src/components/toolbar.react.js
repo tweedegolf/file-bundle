@@ -26,6 +26,7 @@ type PropsType = {
     loadingFolderWithId?: null | string,
     t: (string) => string,
     showingRecycleBin: boolean,
+    currentFolderName: string,
 };
 
 type DefaultPropsType = {
@@ -196,6 +197,7 @@ class Toolbar
         return (
             <div className="toolbar">
                 {actions}
+                <span className="text-label">{this.props.currentFolderName}</span>
                 {buttonRecycleBin}
                 {buttonCreateFolder}
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>

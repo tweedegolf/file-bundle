@@ -3,17 +3,43 @@
     "folders": {
         "0": {
             "file_count": 0,
-            "folder_count": 2,
+            "folder_count": 1,
             "id": "0",
             "type": "folder"
         },
         "1": {
             "create_ts": 1470914525,
             "created": "11-08-2016 13:22",
-            "file_count": 1,
-            "folder_count": 0,
+            "file_count": 0,
+            "folder_count": 1,
             "id": "1",
-            "name": "colors",
+            "name": "folder 1",
+            "parent": 0,
+            "size": "",
+            "size_bytes": 0,
+            "type": "folder",
+            "isTrashed": false
+        },
+        "2": {
+            "create_ts": 1470914525,
+            "created": "11-08-2016 13:22",
+            "file_count": 0,
+            "folder_count": 1,
+            "id": "2",
+            "name": "folder 2",
+            "parent": 0,
+            "size": "",
+            "size_bytes": 0,
+            "type": "folder",
+            "isTrashed": false
+        },
+        "3": {
+            "create_ts": 1470914525,
+            "created": "11-08-2016 13:22",
+            "file_count": 0,
+            "folder_count": 0,
+            "id": "3",
+            "name": "folder 3",
             "parent": 0,
             "size": "",
             "size_bytes": 0,
@@ -29,6 +55,18 @@
             ]
         },
         "1": {
+            "files": [],
+            "folders": [
+                "2"
+            ]
+        },
+        "2": {
+            "files": [],
+            "folders": [
+                "3"
+            ]
+        },
+        "3": {
             "files": [],
             "folders": []
         }

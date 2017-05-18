@@ -72,7 +72,6 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
     const filesById: FilesByIdType = tmp2;
     const foldersById: FoldersByIdType = tmp3;
     const tree: TreeType = R.clone(treeState.tree);
-    const parentFolderId: string = state.ui.parentFolderId;
     const currentFolder = foldersById[folderId];
 
     if (typeof tree[folderId] === 'undefined') {
@@ -94,7 +93,7 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
         rfCheck,
         (folders: Array<FolderType>, files: Array<FileType>) => {
             R.forEach((f: FolderType) => {
-                foldersById[f.id] = f;
+                foldersById[f.id] = R.merge(f, { parent: folderId });
                 tree[folderId].folderIds.push(f.id);
             }, folders);
 
@@ -105,7 +104,6 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
 
             currentFolder.file_count = getFileCount(tree[folderId].fileIds, filesById);
             currentFolder.folder_count = getFolderCount(tree[folderId].folderIds, foldersById);
-            currentFolder.parent = parentFolderId;
             foldersById[currentFolder.id] = currentFolder;
 
             resolve({

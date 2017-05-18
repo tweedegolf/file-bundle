@@ -22,6 +22,7 @@ type PropsType = {
     selectFolder: (id: string) => void,
     confirmRenameFolder: (id: null | string) => void,
     renameFolder: (id: string, newName: string) => void,
+    showingRecycleBin: boolean,
     loading?: string,
     hovering?: boolean,
     deleteFolder: (id: string) => void,
@@ -165,24 +166,26 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 </button>);
             }
 
-            const p2 = {
-                onClick: (e: SyntheticEvent) => {
-                    e.stopPropagation();
-                    if (this.props.renameFolderWithId !== folder.id) {
-                        this.props.confirmRenameFolder(folder.id);
-                    }
-                },
-            };
-            const show: boolean = this.props.renameFolderWithId === folder.id;
-            folderNameTD = (<td className="name" {...p2}>
-                <span className={`${show ? 'hide' : ''}`}>{folder.name}</span>
-                <input
-                  className={`form-control input-sm ${show ? '' : 'hide'}`}
-                  ref={(input: HTMLInputElement) => { this.folderName = input; }}
-                  type="text"
-                  onKeyUp={this.onKeyUp}
-                />
-            </td>);
+            if (this.props.showingRecycleBin === false) {
+                const p2 = {
+                    onClick: (e: SyntheticEvent) => {
+                        e.stopPropagation();
+                        if (this.props.renameFolderWithId !== folder.id) {
+                            this.props.confirmRenameFolder(folder.id);
+                        }
+                    },
+                };
+                const show: boolean = this.props.renameFolderWithId === folder.id;
+                folderNameTD = (<td className="name" {...p2}>
+                    <span className={`${show ? 'hide' : ''}`}>{folder.name}</span>
+                    <input
+                      className={`form-control input-sm ${show ? '' : 'hide'}`}
+                      ref={(input: HTMLInputElement) => { this.folderName = input; }}
+                      type="text"
+                      onKeyUp={this.onKeyUp}
+                    />
+                </td>);
+            }
         }
 
         let fileCount = null;

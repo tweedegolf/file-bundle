@@ -68,7 +68,6 @@
  *                                              folder
  */
 export const uiInitialState: UIStateType = {
-    parentFolderId: null,
     currentFolderId: null,
     currentFolderIdTmp: null,
     rootFolderId: null,
@@ -265,7 +264,6 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'OPEN_FOLDER') {
         return {
             ...state,
-            parentFolderId: state.currentFolderId,
             currentFolderId: action.payload.id,
             loadingFolderWithId: action.payload.id,
         };

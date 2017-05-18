@@ -51,16 +51,26 @@ export default createSelector(
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
         const sortFunc = R.curry(sortBy)(sort);
 
+        const currentFolder = foldersById[currentFolderId];
         let parentFolder = null;
-        let currentFolder = null;
         let files: FileType[] = [];
         let folders: FolderType[] = [];
 
         if (showingRecycleBin === true) {
-            // todo:
-            // 1. get all files and folders that have the isTrashed flag set to true
-            // 2. set parentfolder to null or to the folder we were in when we clicked the recycle bin button
-            console.log(files, folders);
+            files = R.map((file: FileType): null | FileType => {
+                if (file.isTrashed === true) {
+                    return file;
+                }
+                return null;
+            }, R.values(filesById));
+            files = R.reject(R.isNil, files);
+            folders = R.map((folder: FolderType): null | FolderType => {
+                if (folder.isTrashed === true) {
+                    return folder;
+                }
+                return null;
+            }, R.values(foldersById));
+            folders = R.reject(R.isNil, folders);
         } else {
             files = R.map((fileId: string): FileType =>
                 filesById[fileId], tree[currentFolderId].fileIds);
@@ -70,10 +80,10 @@ export default createSelector(
                 foldersById[folderId], tree[currentFolderId].folderIds);
             folders = R.compose(sortFunc, filterTrashed)(folders);
 
-            currentFolder = foldersById[currentFolderId];
             if (currentFolder.parent !== null) {
                 parentFolder = foldersById[currentFolder.parent];
             }
+            // console.log('parent', parentFolder, currentFolder.parent);
         }
 
         return {
