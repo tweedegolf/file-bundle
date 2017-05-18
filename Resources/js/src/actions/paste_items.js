@@ -72,8 +72,6 @@ const moveFiles = (
                 return null;
             }, R.toPairs(tree));
 
-            // todo:
-            // 2 check test server
             R.forEach(([key, idsFile, idsFolder]: [string, string[], string[]]) => {
                 tree[key].fileIds = idsFile;
                 tree[key].folderIds = idsFolder;

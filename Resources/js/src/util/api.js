@@ -130,9 +130,9 @@ const paste = (
     // if no folder_id is specified, the files will be pasted in their original folder ->
     // this yields a React error!
     // console.log('[API]', file_ids, folder_id);
-    const url = `${server}/admin/file/move${folderId ? `/${folderId}` : ''}`;
+    const url = `${server}/admin/file/move/${folderId}`;
     const req = request.post(url).type('form');
-    req.send({ 'files[]': fileIds });
+    req.send({ 'fileIds[]': fileIds, 'folderIds[]': folderIds });
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);

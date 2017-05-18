@@ -2,6 +2,7 @@
  * Ties together all API calls and exports them as an object. For documentation
  * of every individual method see ./api/index.js
  */
+import R from 'ramda';
 import database from '../database';
 import { getIdFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
@@ -83,8 +84,16 @@ const deleteFile = (req, res) => {
 const move = (req, res) => {
     const parentId = getIdFromUrl(req.url);
     console.log(`[API] moving files to folder ${parentId}`);
-
-    const data = database.move(req.body['fileIds[]'], req.body['folderIds[]'], parentId);
+    let fileIds = req.body['fileIds[]'] || [];
+    let folderIds = req.body['folderIds[]'] || [];
+    if ((R.length(fileIds) === 1 || fileIds instanceof Array === false) && R.isNil(fileIds) === false) {
+        fileIds = [fileIds];
+    }
+    if ((R.length(folderIds) === 1 || folderIds instanceof Array === false) && R.isNil(folderIds) === false) {
+        folderIds = [folderIds];
+    }
+    // console.log(fileIds, folderIds);
+    const data = database.move(fileIds, folderIds, parentId);
     if (data.error !== false) {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);

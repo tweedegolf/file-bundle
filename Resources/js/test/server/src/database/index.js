@@ -155,40 +155,6 @@ const addFiles = (files, folderId) => {
     data.folders[folderId].file_count = data.tree[folderId].files.length;
 };
 
-
-/**
- * Utility function that finds files in folders and removes them. Used by
- * moveFiles()
- *
- * @param      {Array<number>}  file_ids           The ids of the files that
- *                                                 will be removed
- * @param      {?number}        exclude_folder_id  The id of the folder whose
- *                                                 contents will not be
- *                                                 affected.
- */
-const removeFilesFromFolders = (fileIds, excludeFolderId) => {
-    Object.keys(data.folders).forEach((folderId) => {
-        if (folderId !== excludeFolderId) {
-            // console.log(`checking folder ${folderId}`)
-            const folder = data.folders[folderId];
-            // array containing ids of all the files in this folder
-            const ids = data.tree[folderId].files;
-            // console.log(` - files in this folder ${ids}`)
-            // filter files
-            fileIds.forEach((id) => {
-                const index = ids.indexOf(id);
-                // console.log(` - filtering ${id} found at index ${index}`)
-                if (index !== -1) {
-                    // console.log(`removing file '${id}'' from folder '${folderId}'`)
-                    data.tree[folderId].files.splice(index, 1);
-                    folder.file_count -= 1;
-                }
-            });
-        }
-    });
-};
-
-
 /**
  * Moves files from one folder to another. the files can be moved from several
  * different folders but are moved to one single folder
@@ -200,27 +166,34 @@ const removeFilesFromFolders = (fileIds, excludeFolderId) => {
  * @return     {Object}         Returns a no-error object, or a fake error
  *                              message
  */
-const move = (aFileIds, aFolderIds, folderId) => {
+const move = (fileIds, folderIds, folderId) => {
     // test error
     if (folderId === 1000) {
         return {
             error: 'Could not move files to folder with id "1000"',
         };
     }
-    let fileIds;
-    // remove files from their original location
-    if (aFileIds instanceof Array === false) {
-        fileIds = [aFileIds];
-    } else {
-        fileIds = aFileIds;
-    }
-    fileIds = fileIds.map(id => parseInt(id, 10));
-    removeFilesFromFolders(fileIds, folderId);
+
     // add files to the files array of the new folder
     data.tree[folderId].files.push(...fileIds);
-    // update file count
-    data.folders[folderId].file_count += fileIds.length;
-    // console.log('data %j', data)
+    data.tree[folderId].folders.push(...folderIds);
+
+    // remove files and folders from original location
+    const filtered = R.map(([key, treeFolder]) => {
+        if (key !== folderId) {
+            return [key,
+                R.without(fileIds, treeFolder.files),
+                R.without(folderIds, treeFolder.folders),
+            ];
+        }
+        return null;
+    }, R.toPairs(data.tree));
+
+    R.forEach(([key, idsFile, idsFolder]) => {
+        data.tree[key].files = idsFile;
+        data.tree[key].folders = idsFolder;
+    }, R.reject(R.isNil, filtered));
+
     return {
         error: false,
     };

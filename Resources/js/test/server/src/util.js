@@ -132,7 +132,7 @@ export const createFileDescription = (data) => {
     const file = {
         create_ts: createTs,
         created: formatDate(createTs, 'dd-mm-yyyy hh:mm'),
-        id: `e${fileId}`,
+        id: `${fileId}`,
         name,
         original: `/media/${uniqueName}`,
         thumb: isImage(mimetype) ? `/media/thumb/${uniqueName}` : null,
@@ -168,7 +168,7 @@ export function createFolderDescription(data) {
     const file = {
         create_ts: createTs,
         created: formatDate(createTs, 'dd-mm-yyyy hh:mm'),
-        id: `r${folderId}`,
+        id: `${folderId}`,
         name,
         file_count,
         folder_count,
