@@ -80,11 +80,11 @@ const deleteFile = (req, res) => {
 };
 
 
-const moveFiles = (req, res) => {
+const move = (req, res) => {
     const parentId = getIdFromUrl(req.url);
     console.log(`[API] moving files to folder ${parentId}`);
 
-    const data = database.moveFiles(req.body['files[]'], parentId);
+    const data = database.move(req.body['fileIds[]'], req.body['folderIds[]'], parentId);
     if (data.error !== false) {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
@@ -130,7 +130,7 @@ export default{
     renameFolder,
     deleteFolder,
     uploadFiles,
-    moveFiles,
+    move,
     deleteFile,
     closeServer,
     emptyRecycleBin,

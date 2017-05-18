@@ -123,6 +123,7 @@ const deleteFile = (fileId: string,
  */
 const paste = (
     fileIds: string[],
+    folderIds: string[],
     folderId: string,
     onSuccess: () => void,
     onError: (string[]) => void) => {

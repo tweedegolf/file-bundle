@@ -4,7 +4,7 @@
  * data gets altered by the functions below, but all changes are volatile.
  */
 import R from 'ramda';
-import data from './data';
+import data from './data.json';
 import { createFolderDescription } from '../util';
 
 
@@ -200,7 +200,7 @@ const removeFilesFromFolders = (fileIds, excludeFolderId) => {
  * @return     {Object}         Returns a no-error object, or a fake error
  *                              message
  */
-const moveFiles = (aFileIds, folderId) => {
+const move = (aFileIds, aFolderIds, folderId) => {
     // test error
     if (folderId === 1000) {
         return {
@@ -300,7 +300,7 @@ export default{
     renameFolder,
     deleteFolder,
     addFiles,
-    moveFiles,
+    move,
     deleteFile,
     emptyRecycleBin,
     getData: () => data,

@@ -46,7 +46,7 @@ const moveFiles = (
     const fileIds: string[] = ui.clipboard.fileIds;
     const folderIds: string[] = ui.clipboard.folderIds;
 
-    api.paste(fileIds, currentFolderId,
+    api.paste(fileIds, folderIds, currentFolderId,
         () => {
             // add files and folders to current folder
             R.forEach((id: string) => {
