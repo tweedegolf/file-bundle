@@ -7,10 +7,10 @@ import { getIdFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
 
 const openFolder = (req, res) => {
-    const parentId = getIdFromUrl(req.url);
-    console.log(`[API] getting contents of folder ${parentId}`);
+    const folderId = getIdFromUrl(req.url);
+    console.log(`[API] getting contents of folder ${folderId}`);
 
-    const data = database.openFolder(parentId);
+    const data = database.openFolder(folderId);
     if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
@@ -21,10 +21,10 @@ const openFolder = (req, res) => {
 };
 
 const addFolder = (req, res) => {
-    const parentId = getIdFromUrl(req.url);
-    console.log(`[API] adding new folder "${req.body.name}" in folder ${parentId}`);
+    const folderId = getIdFromUrl(req.url);
+    console.log(`[API] adding new folder "${req.body.name}" in folder ${folderId}`);
 
-    const data = database.addFolder(req.body.name, parentId);
+    const data = database.addFolder(req.body.name, folderId);
     if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);

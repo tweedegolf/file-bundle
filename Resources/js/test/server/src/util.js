@@ -99,13 +99,13 @@ export const cleanup = (callback) => {
  * @param      {string}  url     The url to be parsed
  */
 export const getIdFromUrl = (url) => {
-    let id = url.substring(url.lastIndexOf('/') + 1);
+    const id = url.substring(url.lastIndexOf('/') + 1);
 
-    if (isNaN(id) || id === '') {
-        id = null;
-    } else {
-        id = parseInt(id, 10);
-    }
+    // if (isNaN(id) || id === '') {
+    //     id = null;
+    // } else {
+    //     id = parseInt(id, 10);
+    // }
     return id;
 };
 
@@ -132,7 +132,7 @@ export const createFileDescription = (data) => {
     const file = {
         create_ts: createTs,
         created: formatDate(createTs, 'dd-mm-yyyy hh:mm'),
-        id: fileId,
+        id: `e${fileId}`,
         name,
         original: `/media/${uniqueName}`,
         thumb: isImage(mimetype) ? `/media/thumb/${uniqueName}` : null,
@@ -168,7 +168,7 @@ export function createFolderDescription(data) {
     const file = {
         create_ts: createTs,
         created: formatDate(createTs, 'dd-mm-yyyy hh:mm'),
-        id: folderId,
+        id: `r${folderId}`,
         name,
         file_count,
         folder_count,

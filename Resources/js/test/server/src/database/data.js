@@ -3,18 +3,18 @@ export default {
 
     },
     folders: {
-        0: {
+        r0: {
             file_count: 0,
             folder_count: 1,
-            id: 0,
+            id: 'r0',
             type: 'folder',
         },
-        1: {
+        r1: {
             create_ts: 1470914525,
             created: '11-08-2016 13:22',
             file_count: 0,
             folder_count: 0,
-            id: 1,
+            id: 'r1',
             name: 'colors',
             parent: 0,
             size: '',
@@ -25,11 +25,11 @@ export default {
         },
     },
     tree: {
-        0: {
+        r0: {
             files: [],
-            folders: [1],
+            folders: ['r1'],
         },
-        1: {
+        r1: {
             files: [],
             folders: [],
         },

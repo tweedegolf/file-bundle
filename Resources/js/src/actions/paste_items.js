@@ -4,7 +4,11 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID } from '../util/util';
+import {
+    getUID,
+    getFileCount,
+    getFolderCount,
+} from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
@@ -48,26 +52,32 @@ const moveFiles = (
             R.forEach((id: string) => {
                 tree[currentFolderId].fileIds.push(id);
             }, fileIds);
-            currentFolder.file_count = R.length(tree[currentFolderId].fileIds);
+            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
 
             R.forEach((id: string) => {
                 tree[currentFolderId].folderIds.push(id);
             }, folderIds);
-            currentFolder.folder_count = R.length(tree[currentFolderId].folderIds);
+            currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
 
             foldersById[currentFolderId] = currentFolder;
 
             // remove files and folders from original location
-            const filtered = R.map(([key, treeFolder]: [string, TreeFolderType]): [string, string[], string[]] =>
-                [key, R.without(fileIds, treeFolder.fileIds), R.without(folderIds, treeFolder.folderIds)], R.toPairs(tree));
+            const filtered = R.map(([key, treeFolder]: [string, TreeFolderType]): null | [string, string[], string[]] => {
+                if (key !== currentFolderId) {
+                    return [key,
+                        R.without(fileIds, treeFolder.fileIds),
+                        R.without(folderIds, treeFolder.folderIds),
+                    ];
+                }
+                return null;
+            }, R.toPairs(tree));
 
             // todo:
-            // 1 filter target folder
             // 2 check test server
             R.forEach(([key, idsFile, idsFolder]: [string, string[], string[]]) => {
                 tree[key].fileIds = idsFile;
                 tree[key].folderIds = idsFolder;
-            }, filtered);
+            }, R.reject(R.isNil, filtered));
 
             resolve({
                 foldersById,

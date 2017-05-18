@@ -24,6 +24,7 @@ export type TreeStateType = {
 };
 
 export type UIStateType = {
+    parentFolderId: null | string,
     currentFolderId: null | string,
     currentFolderIdTmp: null | string,
     rootFolderId: null | string,

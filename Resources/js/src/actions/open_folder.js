@@ -60,20 +60,20 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
     reject: (payload: PayloadErrorType) => mixed) => {
     const state = store.getState();
     const treeState: TreeStateType = state.tree;
-    const tmp1 = state.ui.currentFolderId;
-    const tmp2 = state.ui.rootFolderId;
-    const tmp3 = R.clone(treeState.filesById);
-    const tmp4 = R.clone(treeState.foldersById);
+    const tmp1 = state.ui.rootFolderId;
+    const tmp2 = R.clone(treeState.filesById);
+    const tmp3 = R.clone(treeState.foldersById);
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null || tmp4 === null) {
+    if (tmp1 === null || tmp2 === null || tmp3 === null) {
         reject(createError(`opening folder with id ${folderId}`, ['invalid state']));
         return;
     }
-    const rootFolderId: string = tmp2;
-    const filesById: FilesByIdType = tmp3;
-    const foldersById: FoldersByIdType = tmp4;
+    const rootFolderId: string = tmp1;
+    const filesById: FilesByIdType = tmp2;
+    const foldersById: FoldersByIdType = tmp3;
     const tree: TreeType = R.clone(treeState.tree);
-    const currentFolder: FolderType = foldersById[tmp1];
+    const parentFolderId: string = state.ui.parentFolderId;
+    const currentFolder = foldersById[folderId];
 
     if (typeof tree[folderId] === 'undefined') {
         tree[folderId] = {
@@ -105,6 +105,7 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
 
             currentFolder.file_count = getFileCount(tree[folderId].fileIds, filesById);
             currentFolder.folder_count = getFolderCount(tree[folderId].folderIds, foldersById);
+            currentFolder.parent = parentFolderId;
             foldersById[currentFolder.id] = currentFolder;
 
             resolve({
