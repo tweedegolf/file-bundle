@@ -18,7 +18,7 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
     return { errors };
 };
 
-const deleteFolder = (folderId: string, purge: boolean,
+const deleteFolder = (folderId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const state = store.getState();
@@ -38,36 +38,29 @@ const deleteFolder = (folderId: string, purge: boolean,
 
     api.deleteFolder(
         folderId,
-        purge,
         () => {
             let fileIds = [];
             let folderIds = [];
             if (typeof tree[folderId] !== 'undefined') {
                 folderIds = R.concat([folderId], tree[folderId].folderIds);
-                fileIds = R.reduce((acc: string[], id: string): string[] =>
-                    R.concat(acc, tree[id].fileIds), [], folderIds);
+                fileIds = R.reduce((acc: string[], id: string): null | string[] => {
+                    if (typeof tree[id] !== 'undefined') {
+                        return R.concat(acc, tree[id].fileIds);
+                    }
+                    return R.concat(acc, [null]);
+                }, [], folderIds);
+                fileIds = R.reject(R.isNil, fileIds);
             }
 
-            if (purge === true) {
-                R.forEach((id: string) => {
-                    delete tree[id];
-                    delete foldersById[id];
-                }, folderIds);
+            R.forEach((id: string) => {
+                const f = foldersById[id];
+                foldersById[id] = R.merge(f, { isTrashed: true });
+            }, folderIds);
 
-                R.forEach((id: string) => {
-                    delete filesById[id];
-                }, fileIds);
-            } else {
-                // R.forEach((id: string) => {
-                //     const f = foldersById[id];
-                //     foldersById[id] = R.merge(f, { isTrashed: true });
-                // }, folderIds);
-
-                // R.forEach((id: string) => {
-                //     const f = filesById[id];
-                //     filesById[id] = R.merge(f, { isTrashed: true });
-                // }, fileIds);
-            }
+            R.forEach((id: string) => {
+                const f = filesById[id];
+                filesById[id] = R.merge(f, { isTrashed: true });
+            }, fileIds);
 
             const currentFolder: FolderType = foldersById[currentFolderId];
             if (typeof currentFolder.file_count !== 'undefined') {
@@ -83,6 +76,13 @@ const deleteFolder = (folderId: string, purge: boolean,
             deletedFolder.isTrashed = true;
             foldersById[folderId] = deletedFolder;
 
+            if (typeof tree.bin !== 'undefined') {
+                tree.bin = {
+                    fileIds: tree.bin.fileIds,
+                    folderIds: [...tree.bin.folderIds, folderId],
+                };
+            }
+
             resolve({
                 tree,
                 filesById,
@@ -96,7 +96,7 @@ const deleteFolder = (folderId: string, purge: boolean,
     );
 };
 
-export default (folderId: string, purge: boolean = false) => {
+export default (folderId: string) => {
     const a: ActionDeleteType = {
         type: Constants.DELETE_FOLDER,
         payload: { id: folderId },
@@ -105,7 +105,6 @@ export default (folderId: string, purge: boolean = false) => {
 
     deleteFolder(
         folderId,
-        purge,
         (payload: PayloadDeletedType) => {
             const a1: ActionDeletedType = {
                 type: Constants.FOLDER_DELETED,

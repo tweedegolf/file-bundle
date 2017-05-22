@@ -18,7 +18,7 @@ const createError = (data: string, messages: string[]): { errors: ErrorType[] } 
     return { errors };
 };
 
-const deleteFile = (fileId: string, purge: boolean = false,
+const deleteFile = (fileId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const state = store.getState();
@@ -37,19 +37,21 @@ const deleteFile = (fileId: string, purge: boolean = false,
     const foldersById: FoldersByIdType = tmp3;
     const tree: TreeType = R.clone(treeState.tree);
 
-    api.deleteFile(fileId, purge,
+    api.deleteFile(fileId,
         () => {
-            if (purge === true) {
-                const fileIds = tree[currentFolderId].fileIds;
-                tree[currentFolderId].fileIds = R.without([fileId], fileIds);
-                delete filesById[fileId];
-            } else {
-                const file = filesById[fileId];
-                filesById[fileId] = R.merge(file, { isTrashed: true });
-            }
+            const file = filesById[fileId];
+            filesById[fileId] = R.merge(file, { isTrashed: true });
+
             const currentFolder: FolderType = foldersById[currentFolderId];
             currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
             foldersById[currentFolderId] = currentFolder;
+
+            if (typeof tree.bin !== 'undefined') {
+                tree.bin = {
+                    fileIds: [...tree.bin.fileIds, fileId],
+                    folderIds: tree.bin.folderIds,
+                };
+            }
 
             resolve({
                 tree,
@@ -65,7 +67,7 @@ const deleteFile = (fileId: string, purge: boolean = false,
     );
 };
 
-export default (fileId: string, purge: boolean = false) => {
+export default (fileId: string) => {
     const a: ActionDeleteType = {
         type: Constants.DELETE_FILE,
         payload: { id: fileId },
@@ -74,7 +76,6 @@ export default (fileId: string, purge: boolean = false) => {
 
     deleteFile(
         fileId,
-        purge,
         (payload: PayloadDeletedType) => {
             const a1: ActionDeletedType = {
                 type: Constants.FILE_DELETED,

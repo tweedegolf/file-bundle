@@ -17,8 +17,7 @@
             "parent": 0,
             "size": "",
             "size_bytes": 0,
-            "type": "folder",
-            "isTrashed": false
+            "type": "folder"
         },
         "2": {
             "create_ts": 1470914525,
@@ -30,8 +29,7 @@
             "parent": 0,
             "size": "",
             "size_bytes": 0,
-            "type": "folder",
-            "isTrashed": false
+            "type": "folder"
         },
         "3": {
             "create_ts": 1470914525,
@@ -43,8 +41,7 @@
             "parent": 0,
             "size": "",
             "size_bytes": 0,
-            "type": "folder",
-            "isTrashed": false
+            "type": "folder"
         }
     },
     "tree": {

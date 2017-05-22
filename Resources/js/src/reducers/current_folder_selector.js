@@ -57,20 +57,28 @@ export default createSelector(
         let folders: FolderType[] = [];
 
         if (showingRecycleBin === true) {
-            files = R.map((file: FileType): null | FileType => {
-                if (file.isTrashed === true) {
-                    return file;
-                }
-                return null;
-            }, R.values(filesById));
-            files = R.reject(R.isNil, files);
-            folders = R.map((folder: FolderType): null | FolderType => {
-                if (folder.isTrashed === true) {
-                    return folder;
-                }
-                return null;
-            }, R.values(foldersById));
-            folders = R.reject(R.isNil, folders);
+            files = R.map();
+        //     files = R.map((file: FileType): null | FileType => {
+        //         if (file.isTrashed === true) {
+        //             return file;
+        //         }
+        //         return null;
+        //     }, R.values(filesById));
+        //     files = R.reject(R.isNil, files);
+        //     folders = R.map((folder: FolderType): null | FolderType => {
+        //         if (folder.isTrashed === true) {
+        //             return folder;
+        //         }
+        //         return null;
+        //     }, R.values(foldersById));
+        //     folders = R.reject(R.isNil, folders);
+            files = R.map((fileId: string): FileType =>
+                filesById[fileId], tree[currentFolderId].fileIds);
+            files = sortFunc(files);
+
+            folders = R.map((folderId: string): FolderType =>
+                foldersById[folderId], tree[currentFolderId].folderIds);
+            folders = sortFunc(folders);
         } else {
             files = R.map((fileId: string): FileType =>
                 filesById[fileId], tree[currentFolderId].fileIds);
