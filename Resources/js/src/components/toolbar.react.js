@@ -15,6 +15,7 @@ type PropsType = {
     uploadFiles: (fileList: global.FileList) => void,
     showRecycleBin: () => void,
     hideRecycleBin: () => void,
+    emptyRecycleBin: () => void,
     onCancel: () => void,
     onPaste: () => void,
     onCut: () => void,
@@ -106,7 +107,8 @@ class Toolbar
             this.props.selected.folderIds.length;
         const numItemsOnClipboard = this.props.clipboard.fileIds.length +
             this.props.clipboard.folderIds.length;
-        let buttonRecycleBin;
+        let buttonRecycleBin = null;
+        let buttonEmptyRecycleBin = null;
         let actions = null;
         let buttonUpload = null;
         let buttonCreateFolder = null;
@@ -119,6 +121,14 @@ class Toolbar
             >
                 <span className="text-label">{this.props.t('toolbar.back')}</span>
             </button>);
+
+            buttonEmptyRecycleBin = (<button
+              type="button"
+              className="btn btn-sm btn-default btn-file pull-right"
+              onClick={this.props.emptyRecycleBin}
+            >
+                <span className="fa fa-remove" >{'purge'}</span>
+            </button>);
         } else {
             buttonRecycleBin = (<button
               type="button"
@@ -128,6 +138,7 @@ class Toolbar
             >
                 <span className="fa fa-trash-o" />
             </button>);
+
 
             if (this.props.allowUpload === true) {
                 buttonUpload = (<span
@@ -199,6 +210,7 @@ class Toolbar
                 {actions}
                 <span className="text-label">{this.props.currentFolderName}</span>
                 {buttonRecycleBin}
+                {buttonEmptyRecycleBin}
                 {buttonCreateFolder}
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
                     <input

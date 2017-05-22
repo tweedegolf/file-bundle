@@ -118,6 +118,14 @@ export const tree = (state: TreeStateType = treeInitialState,
             tree: action.payload.tree,
         };
 
+    case 'RECYCLE_BIN_EMPTIED':
+        return {
+            ...state,
+            tree: action.payload.tree,
+            filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
+        };
+
     default:
         return state;
     }

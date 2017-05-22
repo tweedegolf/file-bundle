@@ -241,6 +241,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           onAddFolder={Actions.addFolder}
           showRecycleBin={Actions.showRecycleBin}
           hideRecycleBin={Actions.hideRecycleBin}
+          emptyRecycleBin={Actions.emptyRecycleBin}
           isUploadingFiles={this.props.isUploadingFiles}
           loadingFolderWithId={this.props.loadingFolderWithId}
           showingRecycleBin={this.props.showingRecycleBin}

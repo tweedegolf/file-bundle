@@ -584,6 +584,12 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             showingRecycleBin: false,
             currentFolderId: state.currentFolderIdTmp,
         };
+    } else if (action.type === 'EMPTY_RECYCLE_BIN') {
+        return {
+            ...state,
+            showingRecycleBin: false,
+            currentFolderId: state.currentFolderIdTmp,
+        };
     }
     return state;
 };

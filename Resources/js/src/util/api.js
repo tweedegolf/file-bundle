@@ -216,6 +216,13 @@ const deleteFolder = (
     });
 };
 
+const emptyRecycleBin = (
+    onSuccess: () => void,
+    onError: (string[]) => void,
+) => {
+
+};
+
 /**
  * Upload new files to folder
  *
@@ -284,4 +291,5 @@ export default {
     deleteFolder,
     upload,
     openFolder,
+    emptyRecycleBin,
 };

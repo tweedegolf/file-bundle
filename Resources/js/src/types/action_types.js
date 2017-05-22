@@ -157,6 +157,7 @@ type errorTypes =
     | 'ERROR_OPENING_FOLDER'
     | 'ERROR_MOVING_FILES'
     | 'ERROR_RENAMING_FOLDER'
+    | 'ERROR_EMPTY_RECYCLE_BIN'
 ;
 export type ActionErrorType = {
     type: errorTypes;
@@ -186,7 +187,8 @@ export type PayloadDeleteType = {
 export type ActionDeletedType = {
     type:
         | 'FOLDER_DELETED'
-        | 'FILE_DELETED',
+        | 'FILE_DELETED'
+        | 'RECYCLE_BIN_EMPTIED',
     payload: PayloadDeletedType
 };
 
@@ -194,6 +196,11 @@ export type PayloadDeletedType = {
     tree: TreeType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
+};
+
+// simple types
+export type ActionSimpleType = {
+    type: 'EMPTY_RECYCLE_BIN',
 };
 
 /*
