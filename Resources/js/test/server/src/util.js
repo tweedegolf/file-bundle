@@ -181,3 +181,5 @@ export function createFolderDescription(data) {
 
     return file;
 }
+
+export const RECYCLE_BIN_ID = '-1';

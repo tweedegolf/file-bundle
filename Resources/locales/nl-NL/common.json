@@ -21,5 +21,6 @@
   "errors": {
   },
   "loading": "laden...",
-  "noFilesSelected": "Geen bestand(en) geselecteerd."
+  "noFilesSelected": "Geen bestand(en) geselecteerd.",
+  "recycleBin": "Prullenbak"
 }

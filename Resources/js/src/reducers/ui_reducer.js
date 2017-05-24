@@ -576,6 +576,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             showingRecycleBin: true,
+            currentFolderId: action.payload.id,
             currentFolderIdTmp: state.currentFolderId,
         };
     } else if (action.type === 'HIDE_RECYCLE_BIN') {
@@ -583,6 +584,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             ...state,
             showingRecycleBin: false,
             currentFolderId: state.currentFolderIdTmp,
+            currentFolderIdTmp: null,
         };
     } else if (action.type === 'EMPTY_RECYCLE_BIN') {
         return {

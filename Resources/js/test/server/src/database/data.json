@@ -1,11 +1,19 @@
 {
     "files": {},
     "folders": {
+        "-1": {
+            "file_count": 0,
+            "folder_count": 1,
+            "id": "0",
+            "type": "folder",
+            "name": "recycle bin"
+        },
         "0": {
             "file_count": 0,
             "folder_count": 1,
             "id": "0",
-            "type": "folder"
+            "type": "folder",
+            "name": ".."
         },
         "1": {
             "create_ts": 1470914525,
@@ -45,6 +53,10 @@
         }
     },
     "tree": {
+        "-1": {
+            "files": [],
+            "folders": []
+        },
         "0": {
             "files": [],
             "folders": [

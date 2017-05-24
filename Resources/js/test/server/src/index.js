@@ -1,3 +1,5 @@
+// @no-flow
+
 /**
  * Entry point of server application; sets up express server and links urls to
  * API calls. Cleanup after the node process shuts down or crashes is handled in

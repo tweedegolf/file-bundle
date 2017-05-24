@@ -21,5 +21,6 @@
   "errors": {
   },
   "loading": "loading...",
-  "noFilesSelected": "No selected file(s)"
+  "noFilesSelected": "No selected file(s)",
+  "recycleBin": "Recycle bin"
 }

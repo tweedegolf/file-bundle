@@ -76,10 +76,10 @@ const deleteFolder = (folderId: string,
             deletedFolder.isTrashed = true;
             foldersById[folderId] = deletedFolder;
 
-            if (typeof tree.bin !== 'undefined') {
-                tree.bin = {
-                    fileIds: tree.bin.fileIds,
-                    folderIds: [...tree.bin.folderIds, folderId],
+            if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
+                tree[Constants.RECYCLE_BIN_ID] = {
+                    fileIds: tree[Constants.RECYCLE_BIN_ID].fileIds,
+                    folderIds: [...tree[Constants.RECYCLE_BIN_ID].folderIds, folderId],
                 };
             }
 

@@ -258,3 +258,5 @@ export const ERROR_EMPTY_RECYCLE_BIN: 'ERROR_EMPTY_RECYCLE_BIN' = 'ERROR_EMPTY_R
 
 export const SELECT_FOLDER: 'SELECT_FOLDER' = 'SELECT_FOLDER';
 
+export const RECYCLE_BIN_ID: string = '-1';
+

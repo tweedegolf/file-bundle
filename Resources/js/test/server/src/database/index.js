@@ -5,7 +5,7 @@
  */
 import R from 'ramda';
 import data from './data.json';
-import { createFolderDescription } from '../util';
+import { createFolderDescription, RECYCLE_BIN_ID } from '../util';
 
 
 /**
@@ -115,17 +115,18 @@ const deleteFolder = (deletedFolderId) => {
             error: 'Folder could not be deleted',
         };
     }
+    data.tree[RECYCLE_BIN_ID].folders.push(deletedFolderId);
 
     const folderIds = [deletedFolderId, ...data.tree[deletedFolderId].folders];
     // console.log(folderIds);
     R.forEach((folderId) => {
         const folder = data.folders[folderId];
-        console.log(folder.name);
+        console.log('delete folder', folder.name);
         data.folders[folderId] = { ...folder, isTrashed: true };
         const fileIds = data.tree[folderId].files;
         R.forEach((fileId) => {
             const file = data.files[fileId];
-            console.log(file.name);
+            console.log('   -', file.name);
             data.files[fileId] = { ...file, isTrashed: true };
         }, fileIds);
     }, folderIds);
@@ -218,6 +219,7 @@ const deleteFile = (fileId) => {
     const file = R.clone(data.files[fileId]);
     file.isTrashed = true;
     data.files[fileId] = file;
+    data.tree[RECYCLE_BIN_ID].files.push(fileId);
 
     const inFolder = R.filter((folderId) => {
         const index = R.findIndex(id =>

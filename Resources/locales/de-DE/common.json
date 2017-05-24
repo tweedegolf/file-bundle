@@ -21,5 +21,6 @@
   "errors": {
   },
   "loading": "laden...",
-  "noFilesSelected": "Keine Bestände selectiert"
+  "noFilesSelected": "Keine Bestände selectiert",
+  "recycleBin": "Abfallkorb"
 }

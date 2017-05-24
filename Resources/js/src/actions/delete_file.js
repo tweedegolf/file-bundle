@@ -46,10 +46,10 @@ const deleteFile = (fileId: string,
             currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
             foldersById[currentFolderId] = currentFolder;
 
-            if (typeof tree.bin !== 'undefined') {
-                tree.bin = {
-                    fileIds: [...tree.bin.fileIds, fileId],
-                    folderIds: tree.bin.folderIds,
+            if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
+                tree[Constants.RECYCLE_BIN_ID] = {
+                    fileIds: [...tree[Constants.RECYCLE_BIN_ID].fileIds, fileId],
+                    folderIds: tree[Constants.RECYCLE_BIN_ID].folderIds,
                 };
             }
 

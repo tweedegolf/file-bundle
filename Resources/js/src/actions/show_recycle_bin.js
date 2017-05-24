@@ -6,7 +6,7 @@ import {
     SHOW_RECYCLE_BIN,
     FOLDER_OPENED,
     ERROR_OPENING_FOLDER,
-
+    RECYCLE_BIN_ID,
 } from '../util/constants';
 import {
     getUID,
@@ -120,12 +120,12 @@ const loadFolder = (folderId: string, checkRootFolder: boolean,
 };
 
 export default () => {
-    const id = 'bin';
+    const id = RECYCLE_BIN_ID;
     const forceLoad = false;
     const checkRootFolder = false;
     dispatch({
         type: SHOW_RECYCLE_BIN,
-        // payload: { id },
+        payload: { id },
     });
 
     if (forceLoad === false) {

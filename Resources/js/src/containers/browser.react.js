@@ -89,13 +89,12 @@ const mapStateToProps = (state: StateType): PropsType => {
     let currentFolderName = '';
     if (currentFolderId !== null && state.tree.foldersById !== null) {
         const currentFolder = state.tree.foldersById[currentFolderId];
-        if (state.ui.showingRecycleBin === true) {
-            currentFolderName = 'recycle bin';
-        } else if (currentFolder.name === '..') {
-            currentFolderName = 'root';
-        } else {
-            currentFolderName = currentFolder.name;
-        }
+        currentFolderName = currentFolder.name;
+        // if (currentFolder.name === '..') {
+        //     currentFolderName = 'root';
+        // } else {
+        //     currentFolderName = currentFolder.name;
+        // }
     }
 
     return {
