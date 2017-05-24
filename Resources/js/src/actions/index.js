@@ -2,13 +2,12 @@
 import * as Constants from '../util/constants';
 import { getStore } from '../reducers/store';
 
+export { openFolder, showRecycleBin } from './load_folder';
 export { default as init } from './init';
 export { default as addFolder } from './add_folder';
-export { default as openFolder } from './open_folder';
 export { default as renameFolder } from './rename_folder';
 export { default as deleteFile } from './delete_file';
 export { default as deleteFolder } from './delete_folder';
-export { default as showRecycleBin } from './show_recycle_bin';
 export { default as emptyRecycleBin } from './empty_recycle_bin';
 export { default as uploadFiles } from './upload_files';
 export { default as pasteFiles } from './paste_items';

@@ -7,6 +7,7 @@ import {
     sortAscendingBy,
     sortDescendingBy,
 } from '../util/util';
+import { RECYCLE_BIN_ID } from '../util/constants';
 
 type ReturnType = {
     rootFolderId: null | string,
@@ -88,10 +89,11 @@ export default createSelector(
                 foldersById[folderId], tree[currentFolderId].folderIds);
             folders = R.compose(sortFunc, filterTrashed)(folders);
 
-            if (currentFolder.parent !== null) {
-                parentFolder = foldersById[currentFolder.parent];
-            }
             // console.log('parent', parentFolder, currentFolder.parent);
+        }
+
+        if (currentFolder.parent !== null && currentFolder.id !== RECYCLE_BIN_ID) {
+            parentFolder = foldersById[currentFolder.parent];
         }
 
         return {
