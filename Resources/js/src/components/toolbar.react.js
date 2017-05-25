@@ -16,6 +16,7 @@ type PropsType = {
     showRecycleBin: () => void,
     hideRecycleBin: () => void,
     emptyRecycleBin: () => void,
+    restoreFromRecycleBin: () => void,
     onCancel: () => void,
     onPaste: () => void,
     onCut: () => void,
@@ -107,6 +108,7 @@ class Toolbar
             this.props.selected.folderIds.length;
         const numItemsOnClipboard = this.props.clipboard.fileIds.length +
             this.props.clipboard.folderIds.length;
+        let buttonCut = null;
         let buttonRecycleBin = null;
         let buttonEmptyRecycleBin = null;
         let buttonRestoreFromRecycleBin = null;
@@ -135,7 +137,7 @@ class Toolbar
             buttonRestoreFromRecycleBin = (<button
               type="button"
               className="btn btn-sm btn-default btn-file pull-right"
-              onClick={this.props.emptyRecycleBin}
+              onClick={this.props.restoreFromRecycleBin}
               disabled={numItemsSelected === 0}
             >
                 <span className="fa fa-recycle" />
@@ -182,8 +184,8 @@ class Toolbar
             }
 
             if (this.props.browser === true) {
-                actions = (<div className="pull-left">
-                    <button
+                if (this.props.showingRecycleBin === false) {
+                    buttonCut = (<button
                       type="button"
                       className="btn btn-sm btn-default"
                       disabled={numItemsSelected === 0}
@@ -193,7 +195,11 @@ class Toolbar
                         <span className="fa fa-cut" />
                         <span className="text-label">{this.props.t('toolbar.cut')}</span>
                         {numItemsSelected > 0 ? ` (${numItemsSelected})` : null}
-                    </button>
+                    </button>);
+                }
+
+                actions = (<div className="pull-left">
+                    {buttonCut}
                     <button
                       type="button"
                       className="btn btn-sm btn-default"

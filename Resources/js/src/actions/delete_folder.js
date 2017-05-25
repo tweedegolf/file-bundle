@@ -8,6 +8,22 @@ import { getUID } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
+const getItemIds = (folderId: string,
+    collectedItemIds: { files: string[], folders: string[] },
+    tree: TreeType,
+) => {
+    const folder: TreeFolderType = tree[folderId];
+    if (typeof folder === 'undefined') {
+        return;
+    }
+    collectedItemIds.files.push(...folder.fileIds);
+    const subFolderIds = folder.folderIds;
+    collectedItemIds.folders.push(folderId, ...subFolderIds);
+    subFolderIds.forEach((id: string) => {
+        getItemIds(id, collectedItemIds, tree);
+    });
+};
+
 const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
     const errors = [{
         id: getUID(),
@@ -39,28 +55,20 @@ const deleteFolder = (folderId: string,
     api.deleteFolder(
         folderId,
         () => {
-            let fileIds = [];
-            let folderIds = [];
-            if (typeof tree[folderId] !== 'undefined') {
-                folderIds = R.concat([folderId], tree[folderId].folderIds);
-                fileIds = R.reduce((acc: string[], id: string): null | string[] => {
-                    if (typeof tree[id] !== 'undefined') {
-                        return R.concat(acc, tree[id].fileIds);
-                    }
-                    return R.concat(acc, [null]);
-                }, [], folderIds);
-                fileIds = R.reject(R.isNil, fileIds);
-            }
+            const collectedItemIds = {
+                files: [],
+                folders: [],
+            };
+            getItemIds(folderId, collectedItemIds, tree);
+            collectedItemIds.files.forEach((id: string) => {
+                const file = filesById[id];
+                filesById[id] = { ...file, isTrashed: true };
+            });
 
-            R.forEach((id: string) => {
-                const f = foldersById[id];
-                foldersById[id] = R.merge(f, { isTrashed: true });
-            }, folderIds);
-
-            R.forEach((id: string) => {
-                const f = filesById[id];
-                filesById[id] = R.merge(f, { isTrashed: true });
-            }, fileIds);
+            collectedItemIds.folders.forEach((id: string) => {
+                const folder = foldersById[id];
+                foldersById[id] = { ...folder, isTrashed: true };
+            });
 
             const currentFolder: FolderType = foldersById[currentFolderId];
             if (typeof currentFolder.file_count !== 'undefined') {
@@ -72,7 +80,7 @@ const deleteFolder = (folderId: string,
             foldersById[currentFolderId] = currentFolder;
 
             const deletedFolder = foldersById[folderId];
-            deletedFolder.parent = 'bin';
+            // deletedFolder.parent = Constants.RECYCLE_BIN_ID;
             deletedFolder.isTrashed = true;
             foldersById[folderId] = deletedFolder;
 

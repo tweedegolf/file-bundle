@@ -7,6 +7,7 @@ import database from '../database';
 import { getIdFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
 
+
 const openFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
     console.log(`[API] getting contents of folder ${folderId}`);
@@ -126,8 +127,8 @@ const emptyRecycleBin = (req, res) => {
 
 const restoreFromRecycleBin = (req, res) => {
     console.log('[API] restore from recycle bin');
-    let fileIds = req.body['fileIds[]'] || [];
-    let folderIds = req.body['folderIds[]'] || [];
+    let fileIds = req.body['fileIds[]'] || req.body.fileIds || [];
+    let folderIds = req.body['folderIds[]'] || req.body.folderIds || [];
     if ((R.length(fileIds) === 1 || fileIds instanceof Array === false) && R.isNil(fileIds) === false) {
         fileIds = [fileIds];
     }

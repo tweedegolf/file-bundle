@@ -41,7 +41,7 @@ app.post('/admin/file/delete/folder/*', api.deleteFolder);
 app.post('/admin/file/rename/folder/*', api.renameFolder);
 app.post('/admin/file/delete/*', api.deleteFile);
 app.get('/admin/file/recycle-bin/empty', api.emptyRecycleBin);
-app.post('/admin/file/recycle-bin/restore/*', api.restoreFromRecycleBin);
+app.post('/admin/file/recycle-bin/restore', api.restoreFromRecycleBin);
 app.get('/data', api.getData);
 app.get('/close', api.closeServer);
 

@@ -592,6 +592,16 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             showingRecycleBin: false,
             currentFolderId: state.currentFolderIdTmp,
         };
+    } else if (action.type === 'RESTORED_FROM_RECYCLE_BIN') {
+        return {
+            ...state,
+            showingRecycleBin: false,
+            currentFolderId: state.currentFolderIdTmp,
+            selected: {
+                fileIds: [],
+                folderIds: [],
+            },
+        };
     }
     return state;
 };

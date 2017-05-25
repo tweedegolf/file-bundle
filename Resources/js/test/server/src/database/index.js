@@ -191,7 +191,7 @@ const deleteFile = (fileId: string): ErrorType | SuccessType => {
     const file: FileType = R.clone(data.files[fileId]);
     file.isTrashed = true;
     data.files[fileId] = file;
-    data.tree[RECYCLE_BIN_ID].files.push(fileId);
+    data.tree[RECYCLE_BIN_ID].fileIds.push(fileId);
 
     // find folderId of folder
     const inFolder = R.filter((folderId: string): boolean => {
@@ -256,28 +256,24 @@ const emptyRecycleBin = (): OpenFolderType => {
     };
 };
 
-const toMap = () => {};
 const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): OpenFolderType => {
-    const collectedFileIds = fileIds;
-    const collectedFolderIds = folderIds;
+    console.log('restore files:', fileIds, 'restore folders:', folderIds);
+    fileIds.forEach((id: string) => {
+        data.files[id].isTrashed = false;
+    });
 
     folderIds.forEach((id: string) => {
-        collectedFolderIds.push(...data.tree[id].folders);
+        data.folders[id].isTrashed = false;
     });
 
-    collectedFolderIds.forEach((id: string) => {
-        collectedFileIds.push(...data.tree[id].files);
-    });
+    const bin = { ...data.tree[RECYCLE_BIN_ID] };
+    data.tree[RECYCLE_BIN_ID] = {
+        fileIds: R.without(fileIds, bin.fileIds),
+        folderIds: R.without(folderIds, bin.folderIds),
+    };
 
-    collectedFileIds.forEach((id: string) => {
-        const file = data.files[id];
-        data.files[id] = { ...file, isTrashed: false };
-    });
-
-    collectedFolderIds.forEach((id: string) => {
-        const folder = data.folders[id];
-        data.folder[id] = { ...folder, isTrashed: false };
-    });
+    // TODO: get all items in folder because the client does not
+    // pass all ids if the folder in the recycle bin hasn't been opened yet!
 
     return {
         files: data.files,

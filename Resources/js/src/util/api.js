@@ -228,10 +228,23 @@ const emptyRecycleBin = (
 };
 
 const restoreFromRecycleBin = (
+    fileIds: string[],
+    folderIds: string[],
     onSuccess: () => void,
-    onError: (string[]) => void,
-) => {
-
+    onError: (string[]) => void) => {
+    const url = `${server}/admin/file/recycle-bin/restore`;
+    const req = request.post(url).type('form');
+    req.send({ fileIds, folderIds });
+    req.end((err: ErrorType, res: ResponseType) => {
+        if (err) {
+            // console.log(err)
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            // console.log(res.body.data);
+            // onSuccess(res.body.data);
+            onSuccess();
+        }
+    });
 };
 
 /**

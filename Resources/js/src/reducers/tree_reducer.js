@@ -126,6 +126,13 @@ export const tree = (state: TreeStateType = treeInitialState,
             foldersById: action.payload.foldersById,
         };
 
+    case 'RESTORED_FROM_RECYCLE_BIN':
+        return {
+            ...state,
+            filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
+        };
+
     default:
         return state;
     }

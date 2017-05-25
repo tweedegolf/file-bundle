@@ -80,6 +80,10 @@ export default createSelector(
             folders = R.map((folderId: string): FolderType =>
                 foldersById[folderId], tree[currentFolderId].folderIds);
             folders = sortFunc(folders);
+
+            if (currentFolder.parent !== null) {
+                parentFolder = foldersById[currentFolder.parent];
+            }
         } else {
             files = R.map((fileId: string): FileType =>
                 filesById[fileId], tree[currentFolderId].fileIds);
@@ -90,11 +94,11 @@ export default createSelector(
             folders = R.compose(sortFunc, filterTrashed)(folders);
 
             // console.log('parent', parentFolder, currentFolder.parent);
+            if (currentFolder.parent !== null) {
+                parentFolder = foldersById[currentFolder.parent];
+            }
         }
 
-        if (currentFolder.parent !== null && currentFolder.id !== RECYCLE_BIN_ID) {
-            parentFolder = foldersById[currentFolder.parent];
-        }
 
         return {
             files,
