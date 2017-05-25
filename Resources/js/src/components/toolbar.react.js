@@ -109,6 +109,7 @@ class Toolbar
             this.props.clipboard.folderIds.length;
         let buttonRecycleBin = null;
         let buttonEmptyRecycleBin = null;
+        let buttonRestoreFromRecycleBin = null;
         let actions = null;
         let buttonUpload = null;
         let buttonCreateFolder = null;
@@ -127,7 +128,18 @@ class Toolbar
               className="btn btn-sm btn-default btn-file pull-right"
               onClick={this.props.emptyRecycleBin}
             >
-                <span className="fa fa-remove" >{'purge'}</span>
+                <span className="fa fa-remove" />
+                <span className="text-label">{this.props.t('toolbar.purge')}</span>
+            </button>);
+
+            buttonRestoreFromRecycleBin = (<button
+              type="button"
+              className="btn btn-sm btn-default btn-file pull-right"
+              onClick={this.props.emptyRecycleBin}
+              disabled={numItemsSelected === 0}
+            >
+                <span className="fa fa-recycle" />
+                <span className="text-label">{this.props.t('toolbar.restore')}</span>
             </button>);
         } else {
             buttonRecycleBin = (<button
@@ -211,6 +223,7 @@ class Toolbar
                 <span className="text-label">{this.props.currentFolderName}</span>
                 {buttonRecycleBin}
                 {buttonEmptyRecycleBin}
+                {buttonRestoreFromRecycleBin}
                 {buttonCreateFolder}
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
                     <input

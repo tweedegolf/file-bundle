@@ -15,7 +15,7 @@ import {
     getFolderCount,
 } from '../util/util';
 
-const DELAY: number = 2000;
+const DELAY: number = 100;
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
@@ -115,12 +115,14 @@ const loadFolder = (folderId: string,
         (folders: Array<FolderType>, files: Array<FileType>) => {
             R.forEach((f: FolderType) => {
                 foldersById[f.id] = R.merge(f, { parent: folderId });
-                tree[folderId].folderIds.push(f.id);
+                const ids = R.uniq([...tree[folderId].folderIds, f.id]);
+                tree[folderId].folderIds = ids;
             }, folders);
 
             R.forEach((f: FileType) => {
                 filesById[f.id] = f;
-                tree[folderId].fileIds.push(f.id);
+                const ids = R.uniq([...tree[folderId].fileIds, f.id]);
+                tree[folderId].fileIds = ids;
             }, files);
 
             currentFolder.file_count = getFileCount(tree[folderId].fileIds, filesById);

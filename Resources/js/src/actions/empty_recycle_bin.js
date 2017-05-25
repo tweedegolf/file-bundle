@@ -52,8 +52,10 @@ const emptyRecycleBin = (
                 delete foldersById[id];
             }, folderIds);
 
+            // clean up tree, this cleans up the recycle bin as well
             R.forEach((id: string) => {
                 tree[id].fileIds = R.without(fileIds, tree[id].fileIds);
+                tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
             }, R.keys(tree));
 
             resolve({

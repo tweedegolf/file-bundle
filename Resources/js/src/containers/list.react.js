@@ -55,12 +55,6 @@ type DefaultPropsType = {
 type AllPropsType = PassedPropsType & PropsType;
 type ListStateType = {};
 
-let index: number = 0;
-const getUID = (id: string): string => {
-    index += 1;
-    return `${id}-${index}`;
-};
-
 const mapStateToProps = (state: StateType): PropsType => {
     const {
         files,
@@ -153,7 +147,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             }
 
             return (<File
-              key={getUID(`file-${file.id}`)}
+              key={`file-${file.id}`}
               file={file}
               hovering={this.props.hover === (i -= 1)}
               selectFile={Actions.selectFile}
@@ -173,7 +167,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         // sorted folder listing
         let folders = R.map((folder: FolderType): React$Element<*> => (<Folder
           hovering={this.props.hover === (i -= 1)}
-          key={getUID(`folder-${folder.id}`)}
+          key={`folder-${folder.id}`}
           folder={folder}
           allowEdit={this.props.allowEdit}
           allowDelete={this.props.allowDelete}
@@ -202,7 +196,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         let backToParent = null;
         if (this.props.parentFolder !== null) {
             backToParent = (<ParentFolder
-              key={getUID(`folder-${this.props.parentFolder.name}`)}
+              key={`folder-${this.props.parentFolder.name}`}
               folder={this.props.parentFolder}
               openFolder={this.openFolder}
             />);

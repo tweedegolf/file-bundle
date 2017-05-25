@@ -101,6 +101,11 @@ const renameFolder = (folderId, newName) => {
     return { folder };
 };
 
+const getFolderIds = (folderId: string, collectedIds: string[]) => {
+    const subIds = data.tree[folderId].folders;
+    collectedIds.push(folderId, ...subIds);
+    subIds.forEach(id => getFolderIds(id, collectedIds));
+};
 
 /**
  * Deletes a folder in the database
@@ -115,18 +120,22 @@ const deleteFolder = (deletedFolderId) => {
             error: 'Folder could not be deleted',
         };
     }
+    const coll: string[] = [];
+    getFolderIds(deletedFolderId, coll);
+    console.log(R.uniq(coll));
+
     data.tree[RECYCLE_BIN_ID].folders.push(deletedFolderId);
 
     const folderIds = [deletedFolderId, ...data.tree[deletedFolderId].folders];
     // console.log(folderIds);
     R.forEach((folderId) => {
         const folder = data.folders[folderId];
-        console.log('delete folder', folder.name);
+        // console.log('delete folder', folder.name);
         data.folders[folderId] = { ...folder, isTrashed: true };
         const fileIds = data.tree[folderId].files;
         R.forEach((fileId) => {
             const file = data.files[fileId];
-            console.log('   -', file.name);
+            // console.log('   -', file.name);
             data.files[fileId] = { ...file, isTrashed: true };
         }, fileIds);
     }, folderIds);
@@ -157,7 +166,7 @@ const addFiles = (files, folderId) => {
 };
 
 /**
- * Moves files from one folder to another. the files can be moved from several
+ * Moves files and folders from one folder to another. the files can be moved from several
  * different folders but are moved to one single folder
  *
  * @param      {Array<number>}  fileIds   The ids of the files that will be
@@ -261,6 +270,40 @@ const emptyRecycleBin = () => {
     data.files = R.compose(reduceToMap, R.filter(f => f.isTrashed !== true))(R.values(data.files));
     data.folders = R.compose(reduceToMap, R.filter(f => f.isTrashed !== true))(R.values(data.folders));
     data.tree = R.compose(R.fromPairs, R.reject(R.isNil), filterDeleted)(R.keys(data.tree));
+    data.tree[RECYCLE_BIN_ID] = {
+        files: [],
+        folders: [],
+    };
+
+    return {
+        error: false,
+        files: data.files,
+        folders: data.folders,
+    };
+};
+
+const toMap = () => {};
+const restoreFromRecycleBin = (fileIds, folderIds) => {
+    const collectedFileIds = fileIds;
+    const collectedFolderIds = folderIds;
+
+    folderIds.forEach((id) => {
+        collectedFolderIds.push(...data.tree[id].folders);
+    });
+
+    collectedFolderIds.forEach((id) => {
+        collectedFileIds.push(...data.tree[id].files);
+    });
+
+    collectedFileIds.forEach((id) => {
+        const file = data.files[id];
+        data.files[id] = { ...file, isTrashed: false };
+    });
+
+    collectedFolderIds.forEach((id) => {
+        const folder = data.folders[id];
+        data.folder[id] = { ...folder, isTrashed: false };
+    });
 
     return {
         error: false,
@@ -278,5 +321,6 @@ export default{
     move,
     deleteFile,
     emptyRecycleBin,
+    restoreFromRecycleBin,
     getData: () => data,
 };

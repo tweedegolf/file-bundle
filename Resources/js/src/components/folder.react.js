@@ -151,7 +151,8 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             } else if (
                 selectedFolderIds.length + clipboardFolderIds.length === 0 &&
                 typeof this.props.confirmDelete !== 'undefined' &&
-                this.props.allowDelete === true
+                this.props.allowDelete === true &&
+                this.props.showingRecycleBin === false
             ) {
                 const confirmDelete = this.props.confirmDelete;
                 buttonDelete = (<button

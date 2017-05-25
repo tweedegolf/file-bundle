@@ -12,7 +12,9 @@
     "createFolder": "Nieuwe map",
     "folderName": "Mapnaam",
     "save": "Opslaan",
-    "back": "Terug"
+    "back": "Terug",
+    "purge": "Prullenbak leegmaken",
+    "restore": "Geselecteerde items terugplaatsen"
   },
   "remove": {
     "cancel": "Annuleren",

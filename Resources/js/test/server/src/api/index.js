@@ -117,6 +117,29 @@ const emptyRecycleBin = (req, res) => {
     }
 };
 
+
+const restoreFromRecycleBin = (req, res) => {
+    console.log('[API] restore from recycle bin');
+    let fileIds = req.body['fileIds[]'] || [];
+    let folderIds = req.body['folderIds[]'] || [];
+    if ((R.length(fileIds) === 1 || fileIds instanceof Array === false) && R.isNil(fileIds) === false) {
+        fileIds = [fileIds];
+    }
+    if ((R.length(folderIds) === 1 || folderIds instanceof Array === false) && R.isNil(folderIds) === false) {
+        folderIds = [folderIds];
+    }
+
+    const data = database.restoreFromRecycleBin(fileIds, folderIds);
+    if (data.error !== false) {
+        res.setHeader('Content-Type', 'text/plain');
+        res.status(500).send(data.error);
+    } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
+    }
+};
+
+
 const getData = (req, res) => {
     console.log('[API] get data');
 
@@ -143,5 +166,6 @@ export default{
     deleteFile,
     closeServer,
     emptyRecycleBin,
+    restoreFromRecycleBin,
     getData,
 };

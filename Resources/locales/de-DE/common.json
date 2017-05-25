@@ -12,7 +12,9 @@
     "createFolder": "Neue Mappe",
     "folderName": "Mappe Name",
     "save": "Speicheren",
-    "back": "Zurück"
+    "back": "Zurück",
+    "purge": "Abfallkorb leeren",
+    "restore": "Ausgewählte Elemente wiederherstellen"
   },
   "remove": {
     "cancel": "Annullieren",
@@ -20,7 +22,7 @@
   },
   "errors": {
   },
-  "loading": "laden...",
+  "loading": "Laden...",
   "noFilesSelected": "Keine Bestände selectiert",
   "recycleBin": "Abfallkorb"
 }

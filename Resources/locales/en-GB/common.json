@@ -12,7 +12,9 @@
     "createFolder": "New folder",
     "folderName": "Folder name",
     "save": "Save",
-    "back": "Back"
+    "back": "Back",
+    "purge": "Empty recycle bin",
+    "restore": "Restore selected items"
   },
   "remove": {
     "cancel": "Cancel",

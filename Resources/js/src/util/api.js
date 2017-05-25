@@ -212,6 +212,23 @@ const deleteFolder = (
 
 const emptyRecycleBin = (
     onSuccess: () => void,
+    onError: (string[]) => void) => {
+    const url = `${server}/admin/file/recycle-bin/empty`;
+    const req = request.get(url);
+    req.end((err: ErrorType, res: ResponseType) => {
+        if (err) {
+            // console.log(err)
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            // console.log(res.body.data);
+            // onSuccess(res.body.data);
+            onSuccess();
+        }
+    });
+};
+
+const restoreFromRecycleBin = (
+    onSuccess: () => void,
     onError: (string[]) => void,
 ) => {
 
@@ -286,4 +303,5 @@ export default {
     upload,
     openFolder,
     emptyRecycleBin,
+    restoreFromRecycleBin,
 };
