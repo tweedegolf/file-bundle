@@ -54,30 +54,30 @@
     },
     "tree": {
         "-1": {
-            "files": [],
-            "folders": []
+            "fileIds": [],
+            "folderIds": []
         },
         "0": {
-            "files": [],
-            "folders": [
+            "fileIds": [],
+            "folderIds": [
                 "1"
             ]
         },
         "1": {
-            "files": [],
-            "folders": [
+            "fileIds": [],
+            "folderIds": [
                 "2"
             ]
         },
         "2": {
-            "files": [],
-            "folders": [
+            "fileIds": [],
+            "folderIds": [
                 "3"
             ]
         },
         "3": {
-            "files": [],
-            "folders": []
+            "fileIds": [],
+            "folderIds": []
         }
     }
 }

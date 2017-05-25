@@ -56,7 +56,7 @@ const deleteFolder = (req, res) => {
     console.log(`[API] deleting folder ${folderId}`);
 
     const data = database.deleteFolder(folderId);
-    if (data.error !== false) {
+    if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
     } else {
@@ -71,7 +71,7 @@ const deleteFile = (req, res) => {
     console.log(`[API] deleting file ${fileId}`);
 
     const data = database.deleteFile(fileId);
-    if (data.error !== false) {
+    if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
     } else {
@@ -86,15 +86,21 @@ const move = (req, res) => {
     console.log(`[API] moving files to folder ${parentId}`);
     let fileIds = req.body['fileIds[]'] || [];
     let folderIds = req.body['folderIds[]'] || [];
-    if ((R.length(fileIds) === 1 || fileIds instanceof Array === false) && R.isNil(fileIds) === false) {
+    if ((R.length(fileIds) === 1 ||
+        fileIds instanceof Array === false) &&
+        R.isNil(fileIds) === false
+    ) {
         fileIds = [fileIds];
     }
-    if ((R.length(folderIds) === 1 || folderIds instanceof Array === false) && R.isNil(folderIds) === false) {
+    if ((R.length(folderIds) === 1 ||
+        folderIds instanceof Array === false) &&
+        R.isNil(folderIds) === false
+    ) {
         folderIds = [folderIds];
     }
     // console.log(fileIds, folderIds);
     const data = database.move(fileIds, folderIds, parentId);
-    if (data.error !== false) {
+    if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
     } else {
@@ -108,7 +114,7 @@ const emptyRecycleBin = (req, res) => {
     console.log('[API] empty recycle bin');
 
     const data = database.emptyRecycleBin();
-    if (data.error !== false) {
+    if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
     } else {
@@ -130,7 +136,7 @@ const restoreFromRecycleBin = (req, res) => {
     }
 
     const data = database.restoreFromRecycleBin(fileIds, folderIds);
-    if (data.error !== false) {
+    if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
     } else {
