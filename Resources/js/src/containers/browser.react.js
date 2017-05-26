@@ -234,14 +234,13 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           isAddingFolder={this.props.isAddingFolder}
           browser={this.props.browser}
           onCut={Actions.cutFiles}
-          onPaste={Actions.pasteFiles}
-          onCancel={Actions.cancelCutAndPasteFiles}
+          onPaste={Actions.moveItems}
+          onCancel={Actions.cancelMoveItems}
           uploadFiles={this.uploadFiles}
           onAddFolder={Actions.addFolder}
           showRecycleBin={Actions.showRecycleBin}
           hideRecycleBin={Actions.hideRecycleBin}
           emptyRecycleBin={Actions.emptyRecycleBin}
-          restoreFromRecycleBin={Actions.restoreFromRecycleBin}
           isUploadingFiles={this.props.isUploadingFiles}
           loadingFolderWithId={this.props.loadingFolderWithId}
           showingRecycleBin={this.props.showingRecycleBin}

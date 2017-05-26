@@ -82,7 +82,7 @@ const deleteFile = (req, res) => {
 };
 
 
-const move = (req, res) => {
+const moveItems = (req, res) => {
     const parentId = getIdFromUrl(req.url);
     console.log(`[API] moving files to folder ${parentId}`);
     let fileIds = req.body['fileIds[]'] || [];
@@ -100,7 +100,7 @@ const move = (req, res) => {
         folderIds = [folderIds];
     }
     // console.log(fileIds, folderIds);
-    const data = database.move(fileIds, folderIds, parentId);
+    const data = database.moveItems(fileIds, folderIds, parentId);
     if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
@@ -169,7 +169,7 @@ export default{
     renameFolder,
     deleteFolder,
     uploadFiles,
-    move,
+    moveItems,
     deleteFile,
     closeServer,
     emptyRecycleBin,

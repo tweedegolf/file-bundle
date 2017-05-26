@@ -162,7 +162,7 @@ export const CUT_ITEMS: 'CUT_ITEMS' = 'CUT_ITEMS';
  *
  * @type       {string}
  */
-export const CANCEL_CUT_AND_PASTE_FILES: 'CANCEL_CUT_AND_PASTE_FILES' = 'CANCEL_CUT_AND_PASTE_FILES';
+export const CANCEL_MOVE_ITEMS: 'CANCEL_CUT_AND_PASTE_FILES' = 'CANCEL_CUT_AND_PASTE_FILES';
 
 /**
  * API call: files are being moved from one folder to another using

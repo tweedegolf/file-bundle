@@ -9,29 +9,11 @@ export { default as renameFolder } from './rename_folder';
 export { default as deleteFile } from './delete_file';
 export { default as deleteFolder } from './delete_folder';
 export { default as emptyRecycleBin } from './empty_recycle_bin';
-export { default as restoreFromRecycleBin } from './restore_from_recycle_bin';
 export { default as uploadFiles } from './upload_files';
-export { default as pasteFiles } from './paste_items';
+export { default as moveItems } from './move_items';
 
 const dispatch: Dispatch = getStore().dispatch;
 
-/**
- * @name       SelectFileArg
- * @type       {Object}
- * @param      {boolean}  browser   If false the tool is in Filepicker mode.
- * @param      {boolean}  multiple  If false, user may only select one file at
- *                                  the time.
- * @param      {number}   id        The id of a file file; if that id is not
- *                                  already stored in the state, the file will
- *                                  be selected. If an id is already stored in
- *                                  the state, the corresponding file will be
- *                                  deselected.
- */
-/**
- * Adds a file id to the selected file ids array in the state.
- *
- * @param {SelectFileArg} data Argument passed.
- */
 export const selectFile = (id: string) => {
     dispatch({
         type: Constants.SELECT_FILE,
@@ -58,9 +40,9 @@ export const cutFiles = () => {
 /**
  * Move files in clipboard array back to the selected array
  */
-export const cancelCutAndPasteFiles = () => {
+export const cancelMoveItems = () => {
     dispatch({
-        type: Constants.CANCEL_CUT_AND_PASTE_FILES,
+        type: Constants.CANCEL_MOVE_ITEMS,
     });
 };
 

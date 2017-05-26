@@ -7,6 +7,7 @@
 import R from 'ramda';
 import data from './data.json';
 import { createFolderDescription, RECYCLE_BIN_ID } from '../util';
+import { getFileCount, getFolderCount } from '../../../../src/util/util';
 
 type ErrorType = {
     error: string,
@@ -24,7 +25,6 @@ type OpenFolderType = {
 
 const openFolder = (folderId: string): ErrorType | OpenFolderType => {
     // fake and real errors
-    // console.log(folderId);
     const folderData: TreeFolderType = data.tree[folderId];
     if (typeof folderData === 'undefined' || folderId === 1000) {
         // folder id 1000 is a test id -> this alway generates an error
@@ -74,13 +74,14 @@ const addFolder = (name: string, parentId: string): ErrorType | AddFolderType =>
 
     // update the parent folder of the new folder
     data.tree[parentId].folderIds.push(folder.id);
-    data.folders[parentId].folder_count = R.length(data.tree[parentId].folderIds);
+    data.folders[parentId].folder_count += 1;
 
     return {
         new_folders: [folder],
         errors: [],
     };
 };
+
 
 const renameFolder = (folderId: string, newName: string): ErrorType | SuccessType => {
     // fake error
@@ -90,17 +91,15 @@ const renameFolder = (folderId: string, newName: string): ErrorType | SuccessTyp
         };
     }
 
-    const folder: FolderType = { ...data.folders[folderId] };
-    folder.name = newName;
-
     // store the new folder with the new name in the database
-    data.folders[folder.id] = folder;
+    const folder: FolderType = data.folders[folderId];
+    data.folders[folder.id] = { ...folder, name: newName };
 
     return { msg: 'ok' };
 };
 
 
-// recurse into all nested sub folders and retreive the ids of all files and folders
+// util function: recurse into all nested sub folders and retrieve the ids of all files and folders
 const getItemIds = (folderId: string, collectedIds: { files: string[], folders: string[] }) => {
     const folder: TreeFolderType = data.tree[folderId];
     collectedIds.files.push(...folder.fileIds);
@@ -123,19 +122,32 @@ const deleteFolder = (deletedFolderId: string): ErrorType | SuccessType => {
         folders: [],
     };
     getItemIds(deletedFolderId, collectedItemIds);
-    // console.log(R.uniq(collect.files), R.uniq(collect.folders));
 
     data.tree[RECYCLE_BIN_ID].folderIds.push(deletedFolderId);
 
-    collectedItemIds.files.forEach((id: string) => {
+    R.uniq(collectedItemIds.files).forEach((id: string) => {
         const file = data.files[id];
         data.files[id] = { ...file, isTrashed: true };
     });
 
-    collectedItemIds.folders.forEach((id: string) => {
+    R.uniq(collectedItemIds.folders).forEach((id: string) => {
         const folder = data.folders[id];
         data.folders[id] = { ...folder, isTrashed: true };
     });
+    // TODO: update file_count and folder_count
+    return {
+        msg: 'ok',
+    };
+};
+
+
+const addFiles = (files: FileType[], folderId: string): SuccessType => {
+    // console.log(files, folderId)
+    files.forEach((file: FileType) => {
+        data.files[file.id] = file;
+        data.tree[folderId].fileIds.push(file.id);
+    });
+    data.folders[folderId].file_count = data.tree[folderId].fileIds.length;
 
     return {
         msg: 'ok',
@@ -143,30 +155,36 @@ const deleteFolder = (deletedFolderId: string): ErrorType | SuccessType => {
 };
 
 
-const addFiles = (files: FileType[], folderId: string) => {
-    // console.log(files, folderId)
-    files.forEach((file: FileType) => {
-        data.files[file.id] = file;
-        data.tree[folderId].fileIds.push(file.id);
-    });
-    data.folders[folderId].file_count = data.tree[folderId].fileIds.length;
-};
-
-
-const move = (fileIds: string[], folderIds: string[], folderId: string): ErrorType | SuccessType => {
+const moveItems = (
+    fileIds: string[],
+    folderIds: string[],
+    targetFolderId: string): ErrorType | SuccessType => {
     // test error
-    if (folderId === 1000) {
+    if (targetFolderId === 1000) {
         return {
             error: 'Could not move files to folder with id "1000"',
         };
     }
 
-    // add files to the files array of the new folder
-    data.tree[folderId].fileIds.push(...fileIds);
-    data.tree[folderId].folderIds.push(...folderIds);
+    // add files and folders to current folder
+    R.forEach((id: string) => {
+        const file = data.files[id];
+        data.files[id] = { ...file, isTrashed: false };
+        data.tree[targetFolderId].fileIds.push(id);
+    }, fileIds);
+    data.folders[targetFolderId].file_count =
+        getFileCount(data.tree[targetFolderId].fileIds, data.files);
+
+    R.forEach((id: string) => {
+        const folder = data.folders[id];
+        data.folders[id] = { ...folder, parent: targetFolderId, isTrashed: false };
+        data.tree[targetFolderId].folderIds.push(id);
+    }, folderIds);
+    data.folders[targetFolderId].folder_count =
+        getFolderCount(data.tree[targetFolderId].folderIds, data.folders);
 
     // remove files and folders from original location
-    const filterTargetFolder = ([id]: [string]): boolean => id !== folderId;
+    const filterTargetFolder = ([id]: [string]): boolean => id !== targetFolderId;
     R.forEach(([key, treeFolder]: [string, TreeFolderType]) => {
         data.tree[key].fileIds = R.without(fileIds, treeFolder.fileIds);
         data.tree[key].folderIds = R.without(folderIds, treeFolder.folderIds);
@@ -187,18 +205,16 @@ const deleteFile = (fileId: string): ErrorType | SuccessType => {
         };
     }
 
-    // delete file from folder object (may be cloning is not necessary)
-    const file: FileType = R.clone(data.files[fileId]);
+    // delete file from folder object
+    const file: FileType = data.files[fileId];
     file.isTrashed = true;
     data.files[fileId] = file;
     data.tree[RECYCLE_BIN_ID].fileIds.push(fileId);
 
     // find folderId of folder
-    const inFolder = R.filter((folderId: string): boolean => {
-        const index = R.findIndex((id: string): boolean =>
-            id === fileId, data.tree[folderId].fileIds);
-        return index !== -1;
-    }, R.keys(data.tree));
+    const checkId = (id: string): boolean => id === fileId;
+    const inFolder = R.filter((folderId: string): boolean =>
+        R.findIndex(checkId, data.tree[folderId].fileIds) !== -1, R.keys(data.tree));
 
     if (R.length(inFolder) > 0) {
         const folderId = inFolder[0];
@@ -256,8 +272,9 @@ const emptyRecycleBin = (): OpenFolderType => {
     };
 };
 
+
 const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): OpenFolderType => {
-    console.log('restore files:', fileIds, 'restore folders:', folderIds);
+    // console.log('restore files:', fileIds, 'restore folders:', folderIds);
     fileIds.forEach((id: string) => {
         data.files[id].isTrashed = false;
     });
@@ -287,7 +304,7 @@ export default{
     renameFolder,
     deleteFolder,
     addFiles,
-    move,
+    moveItems,
     deleteFile,
     emptyRecycleBin,
     restoreFromRecycleBin,

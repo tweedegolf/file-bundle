@@ -16,7 +16,6 @@ type PropsType = {
     showRecycleBin: () => void,
     hideRecycleBin: () => void,
     emptyRecycleBin: () => void,
-    restoreFromRecycleBin: () => void,
     onCancel: () => void,
     onPaste: () => void,
     onCut: () => void,
@@ -108,10 +107,8 @@ class Toolbar
             this.props.selected.folderIds.length;
         const numItemsOnClipboard = this.props.clipboard.fileIds.length +
             this.props.clipboard.folderIds.length;
-        let buttonCut = null;
         let buttonRecycleBin = null;
         let buttonEmptyRecycleBin = null;
-        let buttonRestoreFromRecycleBin = null;
         let actions = null;
         let buttonUpload = null;
         let buttonCreateFolder = null;
@@ -133,16 +130,6 @@ class Toolbar
                 <span className="fa fa-remove" />
                 <span className="text-label">{this.props.t('toolbar.purge')}</span>
             </button>);
-
-            buttonRestoreFromRecycleBin = (<button
-              type="button"
-              className="btn btn-sm btn-default btn-file pull-right"
-              onClick={this.props.restoreFromRecycleBin}
-              disabled={numItemsSelected === 0}
-            >
-                <span className="fa fa-recycle" />
-                <span className="text-label">{this.props.t('toolbar.restore')}</span>
-            </button>);
         } else {
             buttonRecycleBin = (<button
               type="button"
@@ -152,7 +139,6 @@ class Toolbar
             >
                 <span className="fa fa-trash-o" />
             </button>);
-
 
             if (this.props.allowUpload === true) {
                 buttonUpload = (<span
@@ -182,45 +168,41 @@ class Toolbar
                     {this.props.isAddingFolder ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
                 </button>);
             }
+        }
 
-            if (this.props.browser === true) {
-                if (this.props.showingRecycleBin === false) {
-                    buttonCut = (<button
-                      type="button"
-                      className="btn btn-sm btn-default"
-                      disabled={numItemsSelected === 0}
-                      // files that are currently in selected will be moved to the clipboard
-                      onClick={this.props.onCut}
-                    >
-                        <span className="fa fa-cut" />
-                        <span className="text-label">{this.props.t('toolbar.cut')}</span>
-                        {numItemsSelected > 0 ? ` (${numItemsSelected})` : null}
-                    </button>);
-                }
-
-                actions = (<div className="pull-left">
-                    {buttonCut}
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-default"
-                      disabled={numItemsOnClipboard === 0}
-                      onClick={this.props.onPaste}
-                    >
-                        <span className="fa fa-paste" />
-                        <span className="text-label">{this.props.t('toolbar.paste')}</span>
-                        {numItemsOnClipboard > 0 ? ` (${numItemsOnClipboard})` : null}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-default"
-                      disabled={numItemsOnClipboard + numItemsSelected === 0}
-                      onClick={this.props.onCancel}
-                    >
-                        <span className="fa fa-times-circle-o" />
-                        <span className="text-label">{this.props.t('toolbar.cancel')}</span>
-                    </button>
-                </div>);
-            }
+        if (this.props.browser === true) {
+            actions = (<div className="pull-left">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-default"
+                  disabled={numItemsSelected === 0}
+                    // files that are currently in selected will be moved to the clipboard
+                  onClick={this.props.onCut}
+                >
+                    <span className="fa fa-cut" />
+                    <span className="text-label">{this.props.t('toolbar.cut')}</span>
+                    {numItemsSelected > 0 ? ` (${numItemsSelected})` : null}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-default"
+                  disabled={numItemsOnClipboard === 0}
+                  onClick={this.props.onPaste}
+                >
+                    <span className="fa fa-paste" />
+                    <span className="text-label">{this.props.t('toolbar.paste')}</span>
+                    {numItemsOnClipboard > 0 ? ` (${numItemsOnClipboard})` : null}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-default"
+                  disabled={numItemsOnClipboard + numItemsSelected === 0}
+                  onClick={this.props.onCancel}
+                >
+                    <span className="fa fa-times-circle-o" />
+                    <span className="text-label">{this.props.t('toolbar.cancel')}</span>
+                </button>
+            </div>);
         }
 
         return (
@@ -229,7 +211,6 @@ class Toolbar
                 <span className="text-label">{this.props.currentFolderName}</span>
                 {buttonRecycleBin}
                 {buttonEmptyRecycleBin}
-                {buttonRestoreFromRecycleBin}
                 {buttonCreateFolder}
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
                     <input

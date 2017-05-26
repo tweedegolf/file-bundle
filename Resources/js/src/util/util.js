@@ -44,6 +44,25 @@ const getFileCount = (fileIds: string[], filesById: FilesByIdType): number =>
 const getFolderCount = (folderIds: string[], foldersById: FoldersByIdType): number =>
     R.compose(R.length, filterTrashed, getFolders)(folderIds, foldersById);
 
+
+// recurse into sub folders and retrieve the ids of all files and folders
+const getItemIds = (folderId: string,
+    collectedItemIds: { files: string[], folders: string[] },
+    tree: TreeType,
+) => {
+    const folder: TreeFolderType = tree[folderId];
+    if (typeof folder === 'undefined') {
+        return;
+    }
+    collectedItemIds.files.push(...folder.fileIds);
+    const subFolderIds = folder.folderIds;
+    collectedItemIds.folders.push(folderId, ...subFolderIds);
+    subFolderIds.forEach((id: string) => {
+        getItemIds(id, collectedItemIds, tree);
+    });
+};
+
+
 export {
     filterTrashed,
     filterTrashedInverted,
@@ -51,4 +70,5 @@ export {
     sortDescendingBy,
     getFileCount,
     getFolderCount,
+    getItemIds,
 };

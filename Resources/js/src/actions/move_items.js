@@ -46,15 +46,19 @@ const moveFiles = (
     const fileIds: string[] = ui.clipboard.fileIds;
     const folderIds: string[] = ui.clipboard.folderIds;
 
-    api.paste(fileIds, folderIds, currentFolderId,
+    api.moveItems(fileIds, folderIds, currentFolderId,
         () => {
             // add files and folders to current folder
             R.forEach((id: string) => {
+                const file = filesById[id];
+                filesById[id] = { ...file, isTrashed: false };
                 tree[currentFolderId].fileIds.push(id);
             }, fileIds);
             currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
 
             R.forEach((id: string) => {
+                const folder = foldersById[id];
+                foldersById[id] = { ...folder, parent: currentFolderId, isTrashed: false };
                 tree[currentFolderId].folderIds.push(id);
             }, folderIds);
             currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
@@ -62,20 +66,11 @@ const moveFiles = (
             foldersById[currentFolderId] = currentFolder;
 
             // remove files and folders from original location
-            const filtered = R.map(([key, treeFolder]: [string, TreeFolderType]): null | [string, string[], string[]] => {
-                if (key !== currentFolderId) {
-                    return [key,
-                        R.without(fileIds, treeFolder.fileIds),
-                        R.without(folderIds, treeFolder.folderIds),
-                    ];
-                }
-                return null;
-            }, R.toPairs(tree));
-
-            R.forEach(([key, idsFile, idsFolder]: [string, string[], string[]]) => {
-                tree[key].fileIds = idsFile;
-                tree[key].folderIds = idsFolder;
-            }, R.reject(R.isNil, filtered));
+            const removeCurrentFolder = ([key]: [string]): boolean => key !== currentFolderId;
+            R.forEach(([key, treeFolder]: [string, TreeFolderType]) => {
+                tree[key].fileIds = R.without(fileIds, treeFolder.fileIds);
+                tree[key].folderIds = R.without(folderIds, treeFolder.folderIds);
+            }, R.compose(R.filter(removeCurrentFolder), R.toPairs)(tree));
 
             resolve({
                 foldersById,

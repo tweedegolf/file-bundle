@@ -35,7 +35,7 @@ app.use(busboy());
 // app.post('/admin/file/list*', api.getFolder);
 app.get('/admin/file/list*', api.openFolder);
 app.post('/admin/file/upload*', api.uploadFiles);
-app.post('/admin/file/move*', api.move);
+app.post('/admin/file/move*', api.moveItems);
 app.post('/admin/file/create/folder*', api.addFolder);
 app.post('/admin/file/delete/folder/*', api.deleteFolder);
 app.post('/admin/file/rename/folder/*', api.renameFolder);

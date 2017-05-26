@@ -109,7 +109,7 @@ const deleteFile = (fileId: string,
 };
 
 /**
- * Moves a file to another folder
+ * Moves a file or folder to another location
  *
  * @param      {string}    file_ids   The ids of the files that will be moved
  * @param      {number}    folder_id  The id of the folder where the files will
@@ -118,7 +118,7 @@ const deleteFile = (fileId: string,
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const paste = (
+const moveItems = (
     fileIds: string[],
     folderIds: string[],
     folderId: string,
@@ -309,7 +309,7 @@ const openFolder = (
 
 export default {
     deleteFile,
-    paste,
+    moveItems,
     addFolder,
     renameFolder,
     deleteFolder,

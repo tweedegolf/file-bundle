@@ -3,7 +3,7 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID } from '../util/util';
+import { getUID, getFolderCount } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
@@ -41,7 +41,7 @@ const addFolder = (folderName: string,
             const newFolderIds = R.map((f: FolderType): string => f.id, folders);
             tree[currentFolderId].folderIds.push(...newFolderIds);
             const currentFolder = foldersById[currentFolderId];
-            currentFolder.folder_count = R.length(tree[currentFolderId].folderIds);
+            currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
             foldersById[currentFolderId] = currentFolder;
 
             const payload: PayloadFolderAddedType = {
