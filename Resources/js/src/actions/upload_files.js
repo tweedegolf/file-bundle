@@ -39,7 +39,7 @@ const uploadFiles = (files: Array<File>,
             R.forEach((f: FileType) => {
                 const f1: FileType = { ...f, isNew: true };
                 filesById[f1.id] = f1;
-                tree[currentFolderId].fileIds.push(f.id);
+                tree[currentFolderId].fileIds.push(f1.id);
             }, newFiles);
 
             currentFolder.file_count = R.length(tree[currentFolderId].fileIds);

@@ -531,7 +531,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * The user cancels a cut action. The contents of the clipboard array is moved
      * back to the selected array.
      */
-    } else if (action.type === 'CANCEL_CUT_AND_PASTE_FILES') {
+    } else if (action.type === 'CANCEL_MOVE_ITEMS') {
         return {
             ...state,
             clipboard: {
@@ -546,7 +546,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * network or server error. The contents of the clipboard array is moved back
      * to the selected array of the state.
      */
-    } else if (action.type === 'ERROR_MOVING_FILES') {
+    } else if (action.type === 'ERROR_MOVING_ITEMS') {
         return {
             ...state,
             clipboard: {
@@ -560,7 +560,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      * Files are successfully moved to another folder. This action is processed by
      * the tree reducer as well.
      */
-    } else if (action.type === 'FILES_MOVED') {
+    } else if (action.type === 'ITEMS_MOVED') {
         return {
             ...state,
             clipboard: {

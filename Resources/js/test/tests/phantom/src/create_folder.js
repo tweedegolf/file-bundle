@@ -15,7 +15,7 @@ let check; // check if the the new folder has been created succesfully
  *                                  function
  * @property   {Object}    page     The phantomjs WebPage object
  * @property   {string}    name     The name of the to be created folder
- * @property   {functon}   onReady  The function called after the folder's
+ * @property   {function}  onReady  The function called after the folder's
  *                                  contents has been loaded
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.

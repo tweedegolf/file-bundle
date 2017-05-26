@@ -39,7 +39,7 @@ const createErrors = ({ errors, onDismiss }: PropsType): React$Element<*>[] =>
             message = typeof error.data !== 'undefined' ?
                 `Kan de folder "${error.data}" niet openen.` :
                 'Kan de folder niet openen';
-        } else if (error.type === ErrorTypes.ERROR_MOVING_FILES) {
+        } else if (error.type === ErrorTypes.ERROR_MOVING_ITEMS) {
             message = typeof error.data !== 'undefined' ?
                 `Kan de file niet "${error.data}" niet verplaatsen.` :
                 'Kan de file niet verplaatsen';

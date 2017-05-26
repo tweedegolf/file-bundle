@@ -110,7 +110,7 @@ export const tree = (state: TreeStateType = treeInitialState,
      * Files have been cut and pasted from another location to the current
      * folder
      */
-    case 'FILES_MOVED':
+    case 'ITEMS_MOVED':
         return {
             ...state,
             foldersById: action.payload.foldersById,

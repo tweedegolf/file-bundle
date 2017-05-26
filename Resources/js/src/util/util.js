@@ -20,9 +20,11 @@ export function getUUID() {
   // see: http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
 }
 
-type ItemType = {
-    isTrashed?: boolean,
-};
+// type ItemType = {
+//     isTrashed?: boolean,
+// };
+type ItemType = FolderType | FileType;
+
 // const resetNew = array => R.map(f => ({ ...f, isNew: false }), array);
 const filterTrashed = (array: ItemType[]): ItemType[] =>
     R.filter((f: ItemType): boolean => (f.isTrashed !== true), array);
@@ -55,13 +57,20 @@ const getItemIds = (folderId: string,
         return;
     }
     collectedItemIds.files.push(...folder.fileIds);
+    // collectedItemIds.files = R.uniq(collectedItemIds.files);
     const subFolderIds = folder.folderIds;
     collectedItemIds.folders.push(folderId, ...subFolderIds);
+    // collectedItemIds.folders = R.uniq(collectedItemIds.folders);
     subFolderIds.forEach((id: string) => {
         getItemIds(id, collectedItemIds, tree);
     });
 };
 
+
+// type ItemType = FolderType | FileType;
+const reduceToMap = (arr: ItemType[]): {[id: string]: ItemType} =>
+    R.reduce((acc: {[id: string]: ItemType}, item: ItemType): {[id: string]: ItemType} =>
+        ({ ...acc, [item.id]: item }), {}, arr);
 
 export {
     filterTrashed,
@@ -71,4 +80,5 @@ export {
     getFileCount,
     getFolderCount,
     getItemIds,
+    reduceToMap,
 };

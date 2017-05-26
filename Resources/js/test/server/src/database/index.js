@@ -7,7 +7,7 @@
 import R from 'ramda';
 import data from './data.json';
 import { createFolderDescription, RECYCLE_BIN_ID } from '../util';
-import { getFileCount, getFolderCount } from '../../../../src/util/util';
+import { getFileCount, getFolderCount, getItemIds } from '../../../../src/util/util';
 
 type ErrorType = {
     error: string,
@@ -17,15 +17,20 @@ type SuccessType = {
     msg: string,
 };
 
-
 type OpenFolderType = {
     files: FileType[],
     folders: FolderType[],
 };
 
+const {
+    tree,
+    files: filesById,
+    folders: foldersById,
+} = data;
+
 const openFolder = (folderId: string): ErrorType | OpenFolderType => {
     // fake and real errors
-    const folderData: TreeFolderType = data.tree[folderId];
+    const folderData: TreeFolderType = tree[folderId];
     if (typeof folderData === 'undefined' || folderId === 1000) {
         // folder id 1000 is a test id -> this alway generates an error
         if (folderId !== 1000) {
@@ -39,8 +44,8 @@ const openFolder = (folderId: string): ErrorType | OpenFolderType => {
     // map file and folder ids to their corresponding description objects
     const { fileIds, folderIds } = folderData;
     return {
-        files: R.map((id: string): FileType => data.files[id], fileIds),
-        folders: R.map((id: string): FolderType => data.folders[id], folderIds),
+        files: R.map((id: string): FileType => filesById[id], fileIds),
+        folders: R.map((id: string): FolderType => foldersById[id], folderIds),
     };
 };
 
@@ -66,15 +71,15 @@ const addFolder = (name: string, parentId: string): ErrorType | AddFolderType =>
     });
 
     // store the new folder in the database
-    data.folders[folder.id] = folder;
-    data.tree[folder.id] = {
+    foldersById[folder.id] = folder;
+    tree[folder.id] = {
         fileIds: [],
         folderIds: [],
     };
 
     // update the parent folder of the new folder
-    data.tree[parentId].folderIds.push(folder.id);
-    data.folders[parentId].folder_count += 1;
+    tree[parentId].folderIds.push(folder.id);
+    foldersById[parentId].folder_count += 1;
 
     return {
         new_folders: [folder],
@@ -92,23 +97,12 @@ const renameFolder = (folderId: string, newName: string): ErrorType | SuccessTyp
     }
 
     // store the new folder with the new name in the database
-    const folder: FolderType = data.folders[folderId];
-    data.folders[folder.id] = { ...folder, name: newName };
+    const folder: FolderType = foldersById[folderId];
+    foldersById[folder.id] = { ...folder, name: newName };
 
     return { msg: 'ok' };
 };
 
-
-// util function: recurse into all nested sub folders and retrieve the ids of all files and folders
-const getItemIds = (folderId: string, collectedIds: { files: string[], folders: string[] }) => {
-    const folder: TreeFolderType = data.tree[folderId];
-    collectedIds.files.push(...folder.fileIds);
-    const subFolderIds = folder.folderIds;
-    collectedIds.folders.push(folderId, ...subFolderIds);
-    subFolderIds.forEach((id: string) => {
-        getItemIds(id, collectedIds);
-    });
-};
 
 const deleteFolder = (deletedFolderId: string): ErrorType | SuccessType => {
     // test error
@@ -121,18 +115,18 @@ const deleteFolder = (deletedFolderId: string): ErrorType | SuccessType => {
         files: [],
         folders: [],
     };
-    getItemIds(deletedFolderId, collectedItemIds);
+    getItemIds(deletedFolderId, collectedItemIds, tree);
 
-    data.tree[RECYCLE_BIN_ID].folderIds.push(deletedFolderId);
+    tree[RECYCLE_BIN_ID].folderIds.push(deletedFolderId);
 
     R.uniq(collectedItemIds.files).forEach((id: string) => {
-        const file = data.files[id];
-        data.files[id] = { ...file, isTrashed: true };
+        const file = filesById[id];
+        filesById[id] = { ...file, isTrashed: true };
     });
 
     R.uniq(collectedItemIds.folders).forEach((id: string) => {
-        const folder = data.folders[id];
-        data.folders[id] = { ...folder, isTrashed: true };
+        const folder = foldersById[id];
+        foldersById[id] = { ...folder, isTrashed: true };
     });
     // TODO: update file_count and folder_count
     return {
@@ -142,12 +136,12 @@ const deleteFolder = (deletedFolderId: string): ErrorType | SuccessType => {
 
 
 const addFiles = (files: FileType[], folderId: string): SuccessType => {
-    // console.log(files, folderId)
+    // console.log(files, folderId);
     files.forEach((file: FileType) => {
-        data.files[file.id] = file;
-        data.tree[folderId].fileIds.push(file.id);
+        filesById[file.id] = file;
+        tree[folderId].fileIds.push(file.id);
     });
-    data.folders[folderId].file_count = data.tree[folderId].fileIds.length;
+    foldersById[folderId].file_count += files.length;
 
     return {
         msg: 'ok',
@@ -158,37 +152,54 @@ const addFiles = (files: FileType[], folderId: string): SuccessType => {
 const moveItems = (
     fileIds: string[],
     folderIds: string[],
-    targetFolderId: string): ErrorType | SuccessType => {
+    currentFolderId: string): ErrorType | SuccessType => {
     // test error
-    if (targetFolderId === 1000) {
+    if (currentFolderId === 1000) {
         return {
             error: 'Could not move files to folder with id "1000"',
         };
     }
 
-    // add files and folders to current folder
+    const collectedItemIds = {
+        files: [],
+        folders: [],
+    };
+
+    const currentFolder = foldersById[currentFolderId];
+
+    fileIds.forEach((id: string) => {
+        tree[currentFolderId].fileIds.push(id);
+    });
+
+    folderIds.forEach((id: string) => {
+        tree[currentFolderId].folderIds.push(id);
+        getItemIds(id, collectedItemIds, tree);
+    });
+
+    tree[currentFolderId].fileIds = R.uniq(tree[currentFolderId].fileIds);
+    tree[currentFolderId].folderIds = R.uniq(tree[currentFolderId].folderIds);
+
+    // set isTrashed flag to false
     R.forEach((id: string) => {
-        const file = data.files[id];
-        data.files[id] = { ...file, isTrashed: false };
-        data.tree[targetFolderId].fileIds.push(id);
-    }, fileIds);
-    data.folders[targetFolderId].file_count =
-        getFileCount(data.tree[targetFolderId].fileIds, data.files);
+        const file = filesById[id];
+        filesById[id] = { ...file, isTrashed: false };
+    }, [...fileIds, ...R.uniq(collectedItemIds.files)]);
+    currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
 
     R.forEach((id: string) => {
-        const folder = data.folders[id];
-        data.folders[id] = { ...folder, parent: targetFolderId, isTrashed: false };
-        data.tree[targetFolderId].folderIds.push(id);
-    }, folderIds);
-    data.folders[targetFolderId].folder_count =
-        getFolderCount(data.tree[targetFolderId].folderIds, data.folders);
+        const folder = foldersById[id];
+        foldersById[id] = { ...folder, parent: currentFolderId, isTrashed: false };
+    }, [...folderIds, ...R.uniq(collectedItemIds.folders)]);
+    currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
+
+    foldersById[currentFolderId] = currentFolder;
 
     // remove files and folders from original location
-    const filterTargetFolder = ([id]: [string]): boolean => id !== targetFolderId;
+    const removeCurrentFolder = ([key]: [string]): boolean => key !== currentFolderId;
     R.forEach(([key, treeFolder]: [string, TreeFolderType]) => {
-        data.tree[key].fileIds = R.without(fileIds, treeFolder.fileIds);
-        data.tree[key].folderIds = R.without(folderIds, treeFolder.folderIds);
-    }, R.compose(R.filter(filterTargetFolder), R.toPairs)(data.tree));
+        tree[key].fileIds = R.without(fileIds, treeFolder.fileIds);
+        tree[key].folderIds = R.without(folderIds, treeFolder.folderIds);
+    }, R.compose(R.filter(removeCurrentFolder), R.toPairs)(tree));
 
     return {
         msg: 'ok',
@@ -206,20 +217,20 @@ const deleteFile = (fileId: string): ErrorType | SuccessType => {
     }
 
     // delete file from folder object
-    const file: FileType = data.files[fileId];
+    const file: FileType = filesById[fileId];
     file.isTrashed = true;
-    data.files[fileId] = file;
-    data.tree[RECYCLE_BIN_ID].fileIds.push(fileId);
+    filesById[fileId] = file;
+    tree[RECYCLE_BIN_ID].fileIds.push(fileId);
 
     // find folderId of folder
     const checkId = (id: string): boolean => id === fileId;
     const inFolder = R.filter((folderId: string): boolean =>
-        R.findIndex(checkId, data.tree[folderId].fileIds) !== -1, R.keys(data.tree));
+        R.findIndex(checkId, tree[folderId].fileIds) !== -1, R.keys(tree));
 
     if (R.length(inFolder) > 0) {
         const folderId = inFolder[0];
-        const fileCount = data.folders[folderId].file_count;
-        data.folders[folderId].file_count = fileCount - 1;
+        const fileCount = foldersById[folderId].file_count;
+        foldersById[folderId].file_count = fileCount - 1;
     }
 
     return {
@@ -227,74 +238,55 @@ const deleteFile = (fileId: string): ErrorType | SuccessType => {
     };
 };
 
-type ItemType = FolderType | FileType;
-const reduceToMap = (arr: ItemType[]): {[id: string]: ItemType} =>
-    R.reduce((acc: {[id: string]: ItemType}, item: ItemType): {[id: string]: ItemType} =>
-        ({ ...acc, [item.id]: item }), {}, arr);
 
-const filterDeleted = (arr: string[]): null | [string, TreeFolderType] =>
-    R.map((key: string): null | [string, TreeFolderType] => {
-        if (R.isNil(data.folders[key])) {
-            return null;
-        }
-        const item = data.tree[key];
-        const t = {
-            fileIds: R.filter((id: string): boolean =>
-                R.isNil(data.files[id]) === false, item.fileIds),
-            folderIds: R.filter((id: string): boolean =>
-                R.isNil(data.folders[id]) === false, item.folderIds),
-        };
-        return [key, t];
-    }, arr);
+const emptyRecycleBin = (): SuccessType => {
+    const fileIds = R.filter((id: string): boolean =>
+        filesById[id].isTrashed === true, R.keys(filesById));
 
-const emptyRecycleBin = (): OpenFolderType => {
-    // find all files with the isTrashed flag set to 'true' and delete them
-    data.files = R.compose(
-        reduceToMap,
-        R.filter((f: FileType): boolean => f.isTrashed !== true),
-    )(R.values(data.files));
+    const folderIds = R.filter((id: string): boolean =>
+        foldersById[id].isTrashed === true, R.keys(foldersById));
 
-    data.folders = R.compose(
-        reduceToMap,
-        R.filter((f: FolderType): boolean => f.isTrashed !== true),
-    )(R.values(data.folders));
+    R.forEach((id: string) => {
+        delete filesById[id];
+    }, fileIds);
 
-    data.tree = R.compose(R.fromPairs, R.reject(R.isNil), filterDeleted)(R.keys(data.tree));
+    R.forEach((id: string) => {
+        delete tree[id];
+        delete foldersById[id];
+    }, folderIds);
 
-    data.tree[RECYCLE_BIN_ID] = {
-        fileIds: [],
-        folderIds: [],
-    };
+    // clean up tree, this cleans up the recycle bin as well
+    R.forEach((id: string) => {
+        tree[id].fileIds = R.without(fileIds, tree[id].fileIds);
+        tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
+    }, R.keys(tree));
 
     return {
-        files: data.files,
-        folders: data.folders,
+        msg: 'ok',
     };
 };
 
 
-const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): OpenFolderType => {
+const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): SuccessType => {
     // console.log('restore files:', fileIds, 'restore folders:', folderIds);
     fileIds.forEach((id: string) => {
-        data.files[id].isTrashed = false;
+        filesById[id].isTrashed = false;
     });
 
     folderIds.forEach((id: string) => {
-        data.folders[id].isTrashed = false;
+        foldersById[id].isTrashed = false;
     });
 
-    const bin = { ...data.tree[RECYCLE_BIN_ID] };
-    data.tree[RECYCLE_BIN_ID] = {
+    const bin = { ...tree[RECYCLE_BIN_ID] };
+    tree[RECYCLE_BIN_ID] = {
         fileIds: R.without(fileIds, bin.fileIds),
         folderIds: R.without(folderIds, bin.folderIds),
     };
 
     // TODO: get all items in folder because the client does not
     // pass all ids if the folder in the recycle bin hasn't been opened yet!
-
     return {
-        files: data.files,
-        folders: data.folders,
+        msg: 'ok',
     };
 };
 

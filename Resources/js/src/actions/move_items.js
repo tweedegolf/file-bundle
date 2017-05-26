@@ -6,6 +6,7 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import {
     getUID,
+    getItemIds,
     getFileCount,
     getFolderCount,
 } from '../util/util';
@@ -16,7 +17,7 @@ const dispatch: DispatchType = store.dispatch;
 const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
     const errors = [{
         id: getUID(),
-        type: Constants.ERROR_MOVING_FILES,
+        type: Constants.ERROR_MOVING_ITEMS,
         data,
         messages,
     }];
@@ -48,19 +49,34 @@ const moveFiles = (
 
     api.moveItems(fileIds, folderIds, currentFolderId,
         () => {
-            // add files and folders to current folder
+            const collectedItemIds = {
+                files: [],
+                folders: [],
+            };
+
+            fileIds.forEach((id: string) => {
+                tree[currentFolderId].fileIds.push(id);
+            });
+
+            folderIds.forEach((id: string) => {
+                tree[currentFolderId].folderIds.push(id);
+                getItemIds(id, collectedItemIds, tree);
+            });
+
+            tree[currentFolderId].fileIds = R.uniq(tree[currentFolderId].fileIds);
+            tree[currentFolderId].folderIds = R.uniq(tree[currentFolderId].folderIds);
+
+            // set isTrashed flag to false
             R.forEach((id: string) => {
                 const file = filesById[id];
                 filesById[id] = { ...file, isTrashed: false };
-                tree[currentFolderId].fileIds.push(id);
-            }, fileIds);
+            }, [...fileIds, ...R.uniq(collectedItemIds.files)]);
             currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
 
             R.forEach((id: string) => {
                 const folder = foldersById[id];
                 foldersById[id] = { ...folder, parent: currentFolderId, isTrashed: false };
-                tree[currentFolderId].folderIds.push(id);
-            }, folderIds);
+            }, [...folderIds, ...R.uniq(collectedItemIds.folders)]);
             currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
 
             foldersById[currentFolderId] = currentFolder;
@@ -84,7 +100,7 @@ const moveFiles = (
                 return {
                     id: getUID(),
                     data: file.name,
-                    type: Constants.ERROR_MOVING_FILES,
+                    type: Constants.ERROR_MOVING_ITEMS,
                     messages,
                 };
             });
@@ -98,13 +114,13 @@ export default () => {
     moveFiles(
         (payload: PayloadFilesMovedType) => {
             dispatch({
-                type: Constants.FILES_MOVED,
+                type: Constants.ITEMS_MOVED,
                 payload,
             });
         },
         (payload: PayloadErrorType) => {
             const a1: ActionErrorType = {
-                type: Constants.ERROR_MOVING_FILES,
+                type: Constants.ERROR_MOVING_ITEMS,
                 payload,
             };
             dispatch(a1);
