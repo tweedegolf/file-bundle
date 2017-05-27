@@ -66,7 +66,7 @@ type BrowserStateType = {};
 //     key: ?string;
 // };
 
-const columnHeaderIds: [string, string, string] = ['name', 'size_bytes', 'create_ts'];
+const columnHeaderIds: [string, string, string, string] = ['name', 'size_bytes', 'create_ts', 'type'];
 
 const mapStateToProps = (state: StateType): PropsType => {
     const {

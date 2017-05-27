@@ -2,7 +2,8 @@
   "columns": {
     "name": "Name",
     "size": "Größe",
-    "date": "Erstellt"
+    "date": "Erstellt",
+    "type": "Typ"
   },
   "toolbar": {
     "cut": "Ausschneiden",

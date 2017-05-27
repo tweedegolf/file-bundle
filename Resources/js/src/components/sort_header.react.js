@@ -13,6 +13,7 @@ const columns = {
     name: 'name',
     size_bytes: 'size',
     create_ts: 'date',
+    type: 'type',
 };
 
 const getColumnHeader = (columnId: string, t: (string) => string): string =>

@@ -124,8 +124,6 @@ const moveItems = (
     folderId: string,
     onSuccess: () => void,
     onError: (string[]) => void) => {
-    // if no folder_id is specified, the files will be pasted in their original folder ->
-    // this yields a React error!
     // console.log('[API]', file_ids, folder_id);
     const url = `${server}/admin/file/move/${folderId}`;
     const req = request.post(url).type('form');

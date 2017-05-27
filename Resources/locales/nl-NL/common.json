@@ -2,7 +2,8 @@
   "columns": {
     "name": "Naam",
     "size": "Grootte",
-    "date": "Aangemaakt"
+    "date": "Aangemaakt",
+    "type": "Type"
   },
   "toolbar": {
     "cut": "Knippen",

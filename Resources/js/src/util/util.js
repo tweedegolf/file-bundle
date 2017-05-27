@@ -30,10 +30,13 @@ const filterTrashed = (array: ItemType[]): ItemType[] =>
     R.filter((f: ItemType): boolean => (f.isTrashed !== true), array);
 const filterTrashedInverted = (array: ItemType[]): ItemType[] =>
     R.filter((f: ItemType): boolean => (f.isTrashed === true), array);
-const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
-    R.sort(R.ascend(R.prop(key)), array);
-const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] =>
-    R.sort(R.descend(R.prop(key)), array);
+
+const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] => 
+    // const func = R.ascend();
+     R.sortBy(R.prop(key), array);
+const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] => 
+    // const func = R.descend(R.prop(key));
+     R.sortBy(R.prop(key), array);
 
 const getFiles = (ids: string[], filesById: FilesByIdType): FileType[] =>
     R.map((id: string): FileType => filesById[id], ids);

@@ -120,4 +120,4 @@ export type OptionsType = {
     allowEdit?: boolean, // rename and cut & paste
 };
 
-export type SortEnumType = 'name' | 'size_bytes' | 'create_ts';
+export type SortEnumType = 'name' | 'size_bytes' | 'create_ts' | 'type';

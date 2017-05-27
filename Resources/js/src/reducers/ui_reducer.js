@@ -350,7 +350,6 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         if (state.sort === sort) {
             ascending = !ascending;
         }
-
         return {
             ...state,
             ascending,

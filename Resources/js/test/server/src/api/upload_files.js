@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import gm from 'gm';
 import database from '../database';
-import { cleanup, getIdFromUrl, createFileDescription, isImage } from '../util';
+import { cleanup, getIdFromUrl, createFileDescription, isImage, mapMimeType } from '../util';
 
 // compile the path to the directory where files will be saved
 const mediaDir = process.argv[1].replace('src/index.js', 'media');
@@ -113,7 +113,7 @@ export function uploadFiles(req, res) {
                     name: filename,
                     size_bytes: sizeBytes,
                     uniqueName,
-                    mimetype,
+                    mimetype: mapMimeType(mimetype),
                 });
                 uploads.push(fileDescr);
             });

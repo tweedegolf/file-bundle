@@ -3,11 +3,9 @@ import R from 'ramda';
 import { createSelector } from 'reselect';
 import {
     filterTrashed,
-    filterTrashedInverted,
     sortAscendingBy,
     sortDescendingBy,
 } from '../util/util';
-import { RECYCLE_BIN_ID } from '../util/constants';
 
 type ReturnType = {
     rootFolderId: null | string,
@@ -51,54 +49,24 @@ export default createSelector(
         //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
         const sortFunc = R.curry(sortBy)(sort);
+        const filterFunc = showingRecycleBin === true ? (): boolean => true : filterTrashed;
 
         const currentFolder = foldersById[currentFolderId];
         let parentFolder = null;
         let files: FileType[] = [];
         let folders: FolderType[] = [];
 
-        if (showingRecycleBin === true) {
-            files = R.map();
-        //     files = R.map((file: FileType): null | FileType => {
-        //         if (file.isTrashed === true) {
-        //             return file;
-        //         }
-        //         return null;
-        //     }, R.values(filesById));
-        //     files = R.reject(R.isNil, files);
-        //     folders = R.map((folder: FolderType): null | FolderType => {
-        //         if (folder.isTrashed === true) {
-        //             return folder;
-        //         }
-        //         return null;
-        //     }, R.values(foldersById));
-        //     folders = R.reject(R.isNil, folders);
-            files = R.map((fileId: string): FileType =>
-                filesById[fileId], tree[currentFolderId].fileIds);
-            files = sortFunc(files);
+        files = R.map((fileId: string): FileType =>
+            filesById[fileId], tree[currentFolderId].fileIds);
+        files = R.compose(sortFunc, filterFunc)(files);
 
-            folders = R.map((folderId: string): FolderType =>
-                foldersById[folderId], tree[currentFolderId].folderIds);
-            folders = sortFunc(folders);
+        folders = R.map((folderId: string): FolderType =>
+            foldersById[folderId], tree[currentFolderId].folderIds);
+        folders = R.compose(sortFunc, filterFunc)(folders);
 
-            if (currentFolder.parent !== null) {
-                parentFolder = foldersById[currentFolder.parent];
-            }
-        } else {
-            files = R.map((fileId: string): FileType =>
-                filesById[fileId], tree[currentFolderId].fileIds);
-            files = R.compose(sortFunc, filterTrashed)(files);
-
-            folders = R.map((folderId: string): FolderType =>
-                foldersById[folderId], tree[currentFolderId].folderIds);
-            folders = R.compose(sortFunc, filterTrashed)(folders);
-
-            // console.log('parent', parentFolder, currentFolder.parent);
-            if (currentFolder.parent !== null) {
-                parentFolder = foldersById[currentFolder.parent];
-            }
+        if (currentFolder.parent !== null) {
+            parentFolder = foldersById[currentFolder.parent];
         }
-
 
         return {
             files,

@@ -57,6 +57,24 @@ export const isImage = (mimetype: string) => (
     mimetype.indexOf('png') !== -1
 );
 
+export const mapMimeType = (mimetype: string) => {
+    switch (mimetype) {
+    case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+    case 'application/vnd.oasis.opendocument.spreadsheet':
+        return 'xls';
+
+    case 'application/vnd.openxmlformats-officedocument.documentml.text':
+    case 'application/vnd.oasis.opendocument.text':
+        return 'doc';
+
+    case 'application/pdf':
+        return 'pdf';
+
+    default:
+        return mimetype;
+    }
+};
+
 /**
  * Function that calls a cleanup function after the node process shuts down or
  * crashes.

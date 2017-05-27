@@ -2,7 +2,8 @@
   "columns": {
     "name": "Name",
     "size": "Size",
-    "date": "Created"
+    "date": "Created",
+    "type": "Type"
   },
   "toolbar": {
     "cut": "Cut",
