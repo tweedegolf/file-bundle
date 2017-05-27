@@ -33,8 +33,10 @@ const filterTrashedInverted = (array: ItemType[]): ItemType[] =>
 
 const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
     R.sortBy(R.prop(key), array);
+    // R.sortBy(R.ascend(R.prop(key)), array);
 const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] =>
-     R.sortBy(R.prop(key), array);
+    R.sortBy(R.prop(key), array);
+    // R.sortBy(R.descend(R.prop(key)), array);
 /*
 const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
     R.sort((a: ItemType, b: ItemType): number => {

@@ -395,9 +395,9 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      *                               current folder
      */
     } else if (action.type === 'SET_HOVER') {
-        if (state.hover === null) {
-            return state;
-        }
+        // if (state.hover === null) {
+        //     return state;
+        // }
         const {
             diff = 0,
             max = state.hover,
