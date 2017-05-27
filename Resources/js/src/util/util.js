@@ -31,13 +31,47 @@ const filterTrashed = (array: ItemType[]): ItemType[] =>
 const filterTrashedInverted = (array: ItemType[]): ItemType[] =>
     R.filter((f: ItemType): boolean => (f.isTrashed === true), array);
 
-const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] => 
-    // const func = R.ascend();
+const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
+    R.sortBy(R.prop(key), array);
+const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] =>
      R.sortBy(R.prop(key), array);
-const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] => 
-    // const func = R.descend(R.prop(key));
-     R.sortBy(R.prop(key), array);
+/*
+const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
+    R.sort((a: ItemType, b: ItemType): number => {
+        let propA = a[key];
+        let propB = b[key];
+        if (typeof propA === 'string') {
+            propA = propA.toLowerCase();
+            propB = propB.toLowerCase();
+        }
+        // console.log('asc', key, propA, propB);
+        if (propA < propB) {
+            return -1;
+        }
+        if (propA > propB) {
+            return 1;
+        }
+        return 0;
+    }, array);
 
+const sortDescendingBy = (key: string, array: ItemType[]): ItemType[] =>
+    R.sort((a: ItemType, b: ItemType): number => {
+        let propA = a[key];
+        let propB = b[key];
+        if (typeof propA === 'string') {
+            propA = propA.toLowerCase();
+            propB = propB.toLowerCase();
+        }
+        // console.log('desc', key, propA, propB);
+        if (propB < propA) {
+            return -1;
+        }
+        if (propB > propA) {
+            return 1;
+        }
+        return 0;
+    }, array);
+*/
 const getFiles = (ids: string[], filesById: FilesByIdType): FileType[] =>
     R.map((id: string): FileType => filesById[id], ids);
 
