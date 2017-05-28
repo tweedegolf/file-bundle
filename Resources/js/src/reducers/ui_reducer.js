@@ -85,7 +85,7 @@ export const uiInitialState: UIStateType = {
     isAddingFolder: false,
     isUploadingFiles: false,
     scrollPosition: null,
-    hover: null,
+    hover: -1,
     errors: [],
     selected: { fileIds: [], folderIds: [] },
     clipboard: { fileIds: [], folderIds: [] },
@@ -395,13 +395,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
      *                               current folder
      */
     } else if (action.type === 'SET_HOVER') {
-        // if (state.hover === null) {
-        //     return state;
-        // }
         const {
             diff = 0,
             max = state.hover,
         } = action.payload;
+        console.log(state.hover, diff);
 
         let hover = state.hover + diff;
         // console.log(diff, max, hover);

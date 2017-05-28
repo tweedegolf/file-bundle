@@ -141,9 +141,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         this.onKeyDown = (event: Event) => {
             event.stopPropagation();
             if (event.keyCode === 38) {
-                Actions.setHover(-1, this.props.numItemsInCurrentFolder);
-            } else if (event.keyCode === 40) {
                 Actions.setHover(+1, this.props.numItemsInCurrentFolder);
+            } else if (event.keyCode === 40) {
+                Actions.setHover(-1, this.props.numItemsInCurrentFolder);
             }
         };
 
