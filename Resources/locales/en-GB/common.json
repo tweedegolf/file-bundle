@@ -22,6 +22,7 @@
     "permanently": "Remove permanently"
   },
   "errors": {
+     "upload": "Error uploading {{files}}"
   },
   "loading": "loading...",
   "noFilesSelected": "No selected file(s)",

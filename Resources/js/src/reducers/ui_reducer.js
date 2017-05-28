@@ -399,10 +399,8 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             diff = 0,
             max = state.hover,
         } = action.payload;
-        console.log(state.hover, diff);
 
         let hover = state.hover + diff;
-        // console.log(diff, max, hover);
         if (hover > max) {
             hover = 0;
         } else if (hover < 0) {

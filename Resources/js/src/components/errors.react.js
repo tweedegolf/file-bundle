@@ -6,23 +6,26 @@
  */
 import React from 'react';
 import R from 'ramda';
+import { translate } from 'react-i18next';
 import * as ErrorTypes from '../util/constants';
 
 const mapIndexed = R.addIndex(R.map);
 
 type PropsType = {
     errors: ErrorType[],
-    onDismiss: (id: string) => void
+    onDismiss: (id: string) => void,
+    t: (string) => string,
 };
 
-const createErrors = ({ errors, onDismiss }: PropsType): React$Element<*>[] =>
+const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =>
     mapIndexed((error: ErrorType, index: number): React$Element<*> => {
         let message: string = '';
 
         if (error.type === ErrorTypes.ERROR_UPLOADING_FILE) {
-            message = typeof error.data !== 'undefined' ?
-                `Uploaden van "${error.data}" niet gelukt.` :
-                'Uploaden niet gelukt.';
+            message = t('error.upload');
+            // message = typeof error.data !== 'undefined' ?
+            //     `Uploaden van "${error.data}" niet gelukt.` :
+            //     'Uploaden niet gelukt.';
         } else if (error.type === ErrorTypes.ERROR_DELETING_FILE) {
             message = typeof error.data !== 'undefined' ?
                 `Verwijderen van "${error.data}" niet gelukt.` :
@@ -67,4 +70,5 @@ const createErrors = ({ errors, onDismiss }: PropsType): React$Element<*>[] =>
 
 const Errors = (props: PropsType): React$Element<*> => <div>{createErrors(props)}</div>;
 
-export default Errors;
+export default translate('common')(Errors);
+

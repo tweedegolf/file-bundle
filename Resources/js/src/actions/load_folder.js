@@ -95,13 +95,6 @@ const loadFolder = (folderId: string,
     const tree: TreeType = R.clone(treeState.tree);
     const currentFolder = foldersById[folderId];
 
-    if (typeof tree[folderId] === 'undefined') {
-        tree[folderId] = {
-            fileIds: [],
-            folderIds: [],
-        };
-    }
-
     // check if the current user is allowed to open this folder
     // -> happens only during initialization
     let rfCheck = '';
@@ -113,16 +106,29 @@ const loadFolder = (folderId: string,
         folderId,
         rfCheck,
         (folders: Array<FolderType>, files: Array<FileType>) => {
+            // remove deleted files and folders
+            if (typeof tree[folderId] !== 'undefined') {
+                tree[folderId].fileIds.forEach((id: string) => {
+                    delete filesById[id];
+                });
+                tree[folderId].folderIds.forEach((id: string) => {
+                    delete foldersById[id];
+                });
+            }
+
+            tree[folderId] = {
+                fileIds: [],
+                folderIds: [],
+            };
+
             R.forEach((f: FolderType) => {
                 foldersById[f.id] = R.merge(f, { parent: folderId });
-                const ids = R.uniq([...tree[folderId].folderIds, f.id]);
-                tree[folderId].folderIds = ids;
+                tree[folderId].folderIds.push(f.id);
             }, folders);
 
             R.forEach((f: FileType) => {
                 filesById[f.id] = f;
-                const ids = R.uniq([...tree[folderId].fileIds, f.id]);
-                tree[folderId].fileIds = ids;
+                tree[folderId].fileIds.push(f.id);
             }, files);
 
             currentFolder.file_count = getFileCount(tree[folderId].fileIds, filesById);
