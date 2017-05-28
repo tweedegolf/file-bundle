@@ -326,18 +326,6 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             errors: [...state.errors, ...action.payload.errors || []],
         };
 
-
-    /**
-     * An error occurred when the selected files were pasted into another folder.
-     * Most likely this is a network or a server error.
-     */
-    } else if (action.type === 'ERROR_MOVING_FILES') {
-        return {
-            ...state,
-            errors: [...state.errors, ...action.payload.errors || []],
-        };
-
-
     /**
      * User has clicked on one of the columns of the tool bar. If the chosen
      * column is the same as the sort column in the state we invert the selection.
@@ -549,6 +537,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
                 folderIds: [],
             },
             selected: { ...state.clipboard },
+            errors: [...state.errors, ...action.payload.errors || []],
         };
 
     /**

@@ -19,33 +19,28 @@ type PropsType = {
 
 const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =>
     mapIndexed((error: ErrorType, index: number): React$Element<*> => {
+        let tmp: string = '';
         let message: string = '';
 
         if (error.type === ErrorTypes.ERROR_UPLOADING_FILE) {
-            message = t('error.upload');
-            // message = typeof error.data !== 'undefined' ?
-            //     `Uploaden van "${error.data}" niet gelukt.` :
-            //     'Uploaden niet gelukt.';
+            message = t('error.upload', { files: error.data });
         } else if (error.type === ErrorTypes.ERROR_DELETING_FILE) {
-            message = typeof error.data !== 'undefined' ?
-                `Verwijderen van "${error.data}" niet gelukt.` :
-                'Verwijderen van file niet gelukt';
+            tmp = t('words.file');
+            if (typeof error.data !== 'undefined') {
+                tmp = `"${error.data}"`;
+            }
+            message = t('error.deleteFile', { file: tmp });
         } else if (error.type === ErrorTypes.ERROR_DELETING_FOLDER) {
-            message = typeof error.data !== 'undefined' ?
-                `Verwijderen van de folder "${error.data}" is niet gelukt.` :
-                'Verwijderen van folder niet gelukt';
+            message = t('error.deleteFolder', { folder: error.data });
         } else if (error.type === ErrorTypes.ERROR_ADDING_FOLDER) {
-            message = typeof error.data !== 'undefined' ?
-                `Aanmaken van de folder "${error.data}" is niet gelukt.` :
-                'Aanmaken van folder is niet gelukt';
+            message = t('error.deleteFolder', { folder: error.data });
         } else if (error.type === ErrorTypes.ERROR_OPENING_FOLDER) {
-            message = typeof error.data !== 'undefined' ?
-                `Kan de folder "${error.data}" niet openen.` :
-                'Kan de folder niet openen';
+            message = t('error.openFolder', { folder: error.data });
         } else if (error.type === ErrorTypes.ERROR_MOVING_ITEMS) {
-            message = typeof error.data !== 'undefined' ?
-                `Kan de file niet "${error.data}" niet verplaatsen.` :
-                'Kan de file niet verplaatsen';
+            if (typeof error.data !== 'undefined') {
+                tmp = `"${error.data}"`;
+            }
+            message = t('error.moveItem', { item: tmp });
         }
 
         const span: React$Element<*> = (<span>

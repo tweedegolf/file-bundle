@@ -57,6 +57,7 @@ const deleteFolder = (req, res) => {
     console.log(`[API] deleting folder ${folderId}`);
 
     const data = database.deleteFolder(folderId);
+    // data.error = 'Oops, something went wrong!';
     if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
@@ -72,6 +73,7 @@ const deleteFile = (req, res) => {
     console.log(`[API] deleting file ${fileId}`);
 
     const data = database.deleteFile(fileId);
+    // data.error = 'Oops, something went wrong!';
     if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
@@ -101,6 +103,7 @@ const moveItems = (req, res) => {
     }
     // console.log(fileIds, folderIds);
     const data = database.moveItems(fileIds, folderIds, parentId);
+    // data.error = 'Oops, something went wrong';
     if (typeof data.error !== 'undefined') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);

@@ -21,8 +21,16 @@
     "cancel": "Cancel",
     "permanently": "Remove permanently"
   },
-  "errors": {
-     "upload": "Error uploading {{files}}"
+  "error": {
+     "upload": "Error uploading {{files}}",
+     "deleteFile":  "Error deleting {{file}}.",
+     "deleteFolder": "Error deleting folder {{folder}}.",
+     "createFolder": "Error creating folder {{folder}}.",
+     "openFolder": "Can not open folder {{folder}}.",
+     "moveItem": "Can not move {{item}}."
+  },
+  "words": {
+     "file": "file"
   },
   "loading": "loading...",
   "noFilesSelected": "No selected file(s)",

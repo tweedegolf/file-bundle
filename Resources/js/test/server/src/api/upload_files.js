@@ -129,6 +129,7 @@ export function uploadFiles(req, res) {
                     if (typeof value !== 'undefined') {
                         errors[value[0]] = [value[1]];
                     }
+                    // errors.test = ['Oops, something went wrong'];
                 });
                 // store the file description object in the database
                 database.addFiles(uploads, folderId);

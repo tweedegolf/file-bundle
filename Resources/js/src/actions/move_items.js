@@ -95,15 +95,14 @@ const moveFiles = (
             });
         },
         (messages: string[]) => {
-            const errors = fileIds.map((id: string): ErrorType => {
-                const file = filesById[id];
-                return {
-                    id: getUID(),
-                    data: file.name,
-                    type: Constants.ERROR_MOVING_ITEMS,
-                    messages,
-                };
-            });
+            let itemNames = fileIds.map((id: string): string => filesById[id].name);
+            itemNames = itemNames.concat(folderIds.map((id: string): string => foldersById[id].name));
+            const errors = itemNames.map((name: string): ErrorType => ({
+                id: getUID(),
+                data: name,
+                type: Constants.ERROR_MOVING_ITEMS,
+                messages,
+            }));
             reject({ errors });
         },
     );

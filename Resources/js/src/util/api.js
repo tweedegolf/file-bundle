@@ -94,7 +94,8 @@ if (typeof port !== 'undefined' && port !== null && port !== 80 && port !== 8080
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
  */
-const deleteFile = (fileId: string,
+const deleteFile = (
+    fileId: string,
     onSuccess: () => void,
     onError: (string[]) => void) => {
     const url = `${server}/admin/file/delete/${fileId}`;

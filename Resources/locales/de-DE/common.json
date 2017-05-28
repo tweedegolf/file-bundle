@@ -21,7 +21,16 @@
     "cancel": "Annullieren",
     "permanently": "Definitiv entfernen"
   },
-  "errors": {
+  "error": {
+    "upload": "Fehler hochladen {{files}}",
+    "deleteFile":  "Verwijderen van {{file}} niet gelukt.",
+    "deleteFolder": "Verwijderen van de folder {{folder}} is niet gelukt.",
+    "createFolder": "Aanmaken van de folder {{folder}} is niet gelukt.",
+    "openFolder": "Kan de folder {{folder}} niet openen.",
+    "moveItem": "Kan {{item}} niet verplaatsen."
+  },
+  "words": {
+     "file": "file"
   },
   "loading": "Laden...",
   "noFilesSelected": "Keine Bestände selectiert",

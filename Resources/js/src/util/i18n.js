@@ -31,6 +31,17 @@ i18n
               }
               return value;
           },
+          interpolation: {
+              // not used!
+              format(value, format, lng) {
+                  if (format === 'error.delete') {
+                      if (typeof value === 'undefined') {
+                          return 'bummer';
+                      }
+                  }
+                  return value;
+              },
+          },
       },
 
       backend: {
