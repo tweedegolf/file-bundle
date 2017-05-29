@@ -7987,8 +7987,6 @@ button.close {
     height: 41px; }
     .file-browser .toolbar .btn {
       margin-right: 5px; }
-      .file-browser .toolbar .btn .text-label {
-        display: inline; }
       .file-browser .toolbar .btn .fa {
         margin-right: 5px; }
         .file-browser .toolbar .btn .fa.fa-spin {
@@ -8016,85 +8014,90 @@ button.close {
       padding: 0 0.5em; }
     .file-browser .alert .close {
       outline: none; }
-  .file-browser .table-container {
-    max-height: 350px;
-    overflow-y: auto; }
   .file-browser table {
-    margin: 0;
-    width: 100%; }
-    .file-browser table thead tr td.select, .file-browser table thead tr th.select, .file-browser table tbody tr td.select, .file-browser table tbody tr th.select {
-      width: 35px; }
-    .file-browser table thead tr td.preview, .file-browser table thead tr th.preview, .file-browser table tbody tr td.preview, .file-browser table tbody tr th.preview {
-      width: 60px; }
-    .file-browser table thead tr td.name, .file-browser table thead tr th.name, .file-browser table tbody tr td.name, .file-browser table tbody tr th.name {
-      width: calc(100% - 400px); }
-    .file-browser table thead tr td.size, .file-browser table thead tr th.size, .file-browser table tbody tr td.size, .file-browser table tbody tr th.size {
-      width: 85px; }
-    .file-browser table thead tr td.date, .file-browser table thead tr th.date, .file-browser table tbody tr td.date, .file-browser table tbody tr th.date {
-      width: 145px; }
-    .file-browser table thead tr td.buttons, .file-browser table thead tr th.buttons, .file-browser table tbody tr td.buttons, .file-browser table tbody tr th.buttons {
-      width: 75px; }
-    .file-browser table thead tr td.sort, .file-browser table thead tr th.sort, .file-browser table tbody tr td.sort, .file-browser table tbody tr th.sort {
-      cursor: pointer;
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-              user-select: none; }
-      .file-browser table thead tr td.sort:hover, .file-browser table thead tr th.sort:hover, .file-browser table tbody tr td.sort:hover, .file-browser table tbody tr th.sort:hover {
-        color: #337ab7; }
-      .file-browser table thead tr td.sort .fa, .file-browser table thead tr th.sort .fa, .file-browser table tbody tr td.sort .fa, .file-browser table tbody tr th.sort .fa {
-        padding-left: 5px; }
+    margin: 0; }
+    .file-browser table thead {
+      display: block;
+      padding-right: 16px; }
+      .file-browser table thead th {
+        border-bottom: none; }
     .file-browser table tbody {
+      display: block;
+      max-height: 350px;
+      overflow-y: auto;
       border-top: 2px solid #ddd; }
-      .file-browser table tbody tr {
-        position: relative; }
-        .file-browser table tbody tr:nth-of-type(even) {
-          background-color: #fdfdfd; }
-        .file-browser table tbody tr.cutable, .file-browser table tbody tr.selectable {
+      .file-browser table tbody tr.cutable, .file-browser table tbody tr.selectable {
+        cursor: pointer; }
+        .file-browser table tbody tr.cutable:hover, .file-browser table tbody tr.selectable:hover {
+          background-color: #dbe9f5; }
+      .file-browser table tbody tr.folder {
+        background-color: #fafafa;
+        cursor: pointer; }
+        .file-browser table tbody tr.folder:hover {
+          background-color: #dbe9f5; }
+      .file-browser table tbody tr.cut, .file-browser table tbody tr.selected {
+        background-color: #eff5fb; }
+        .file-browser table tbody tr.cut.selected, .file-browser table tbody tr.selected.selected {
           cursor: pointer; }
-          .file-browser table tbody tr.cutable:hover, .file-browser table tbody tr.selectable:hover {
-            background-color: #dbe9f5; }
-        .file-browser table tbody tr.folder {
-          background-color: #fafafa;
-          cursor: pointer; }
-          .file-browser table tbody tr.folder:hover {
-            background-color: #dbe9f5; }
-        .file-browser table tbody tr.cut, .file-browser table tbody tr.selected {
-          background-color: #eff5fb; }
-          .file-browser table tbody tr.cut.selected, .file-browser table tbody tr.selected.selected {
-            cursor: pointer; }
-        .file-browser table tbody tr td, .file-browser table tbody tr th {
-          vertical-align: middle;
-          height: 46px; }
-          .file-browser table tbody tr td.size .fa, .file-browser table tbody tr th.size .fa {
-            margin: 0 4px; }
-            .file-browser table tbody tr td.size .fa:before, .file-browser table tbody tr th.size .fa:before {
-              color: #666;
-              font-size: 12px; }
-          .file-browser table tbody tr td .actions .confirm, .file-browser table tbody tr th .actions .confirm {
-            width: 260px;
-            text-align: left; }
-            .file-browser table tbody tr td .actions .confirm button, .file-browser table tbody tr th .actions .confirm button {
-              margin: 0 5px 0 0; }
-              .file-browser table tbody tr td .actions .confirm button .fa, .file-browser table tbody tr th .actions .confirm button .fa {
-                margin-left: 0.5em; }
-          .file-browser table tbody tr td.select, .file-browser table tbody tr th.select {
-            text-align: center; }
-          .file-browser table tbody tr td.preview, .file-browser table tbody tr th.preview {
-            text-align: center; }
-            .file-browser table tbody tr td.preview .fa, .file-browser table tbody tr th.preview .fa {
-              font-size: 32px; }
-            .file-browser table tbody tr td.preview img, .file-browser table tbody tr th.preview img {
-              max-width: 100%; }
-              .file-browser table tbody tr td.preview img:hover, .file-browser table tbody tr th.preview img:hover {
-                opacity: 0.8; }
-          .file-browser table tbody tr td.name, .file-browser table tbody tr th.name {
-            max-width: 1px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis; }
+  .file-browser.fullpage table thead {
+    padding-right: 0; }
+  .file-browser tr {
+    display: table;
+    position: relative;
+    width: 100%; }
+    .file-browser tr:nth-of-type(even) {
+      background-color: #fdfdfd; }
+    .file-browser tr td, .file-browser tr th {
+      vertical-align: middle; }
+      .file-browser tr td.sort, .file-browser tr th.sort {
+        cursor: pointer;
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none; }
+        .file-browser tr td.sort:hover, .file-browser tr th.sort:hover {
+          color: #337ab7; }
+        .file-browser tr td.sort .fa, .file-browser tr th.sort .fa {
+          padding-left: 5px; }
+      .file-browser tr td.size .fa, .file-browser tr th.size .fa {
+        margin: 0 4px; }
+        .file-browser tr td.size .fa:before, .file-browser tr th.size .fa:before {
+          color: #666;
+          font-size: 12px; }
+      .file-browser tr td .actions .confirm, .file-browser tr th .actions .confirm {
+        width: 250px;
+        text-align: right; }
+        .file-browser tr td .actions .confirm button, .file-browser tr th .actions .confirm button {
+          margin: 0 0.5em; }
+          .file-browser tr td .actions .confirm button .fa, .file-browser tr th .actions .confirm button .fa {
+            margin-left: 0.5em; }
+      .file-browser tr td:nth-child(1), .file-browser tr th:nth-child(1) {
+        width: 35px; }
+      .file-browser tr td:nth-child(2), .file-browser tr th:nth-child(2) {
+        width: 45px;
+        padding: 4px 0 0 0; }
+        .file-browser tr td:nth-child(2) .fa, .file-browser tr th:nth-child(2) .fa {
+          font-size: 23px;
+          vertical-align: bottom; }
+          .file-browser tr td:nth-child(2) .fa.fa-chevron-up, .file-browser tr th:nth-child(2) .fa.fa-chevron-up {
+            position: relative;
+            bottom: 2px; }
+        .file-browser tr td:nth-child(2) img:hover, .file-browser tr th:nth-child(2) img:hover {
+          opacity: 0.8; }
+      .file-browser tr td:nth-child(3), .file-browser tr th:nth-child(3) {
+        width: calc(100% - 330px);
+        max-width: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+      .file-browser tr td:nth-child(4), .file-browser tr th:nth-child(4) {
+        width: 85px; }
+      .file-browser tr td:nth-child(5), .file-browser tr th:nth-child(5) {
+        width: 145px; }
+      .file-browser tr td:nth-child(6), .file-browser tr th:nth-child(6) {
+        width: 55px; }
 
-#tg_file_browser .file-browser .table-container {
+#tg_file_browser .file-browser table tbody {
   max-height: calc(100vh - 165px); }
 
 #tg_file_browser .preview-image, .tg_file_picker .preview-image {
@@ -8104,7 +8107,7 @@ button.close {
   height: 100vh;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(200, 0, 0, 0.8);
   cursor: pointer; }
   #tg_file_browser .preview-image > div, .tg_file_picker .preview-image > div {
     position: absolute;
@@ -8117,15 +8120,15 @@ button.close {
     background: no-repeat center center / contain; }
 
 @media (max-width: 767px) {
-  #tg_file_browser .file-browser table td.size, #tg_file_browser .file-browser table td.date, #tg_file_browser .file-browser table th.size, #tg_file_browser .file-browser table th.date, .tg_file_picker .file-browser table td.size, .tg_file_picker .file-browser table td.date, .tg_file_picker .file-browser table th.size, .tg_file_picker .file-browser table th.date {
+  #tg_file_browser .file-browser table td .btn .text-label, #tg_file_browser .file-browser table th .btn .text-label {
     display: none; }
-  #tg_file_browser .file-browser table td .actions .confirm, #tg_file_browser .file-browser table th .actions .confirm, .tg_file_picker .file-browser table td .actions .confirm, .tg_file_picker .file-browser table th .actions .confirm {
+  #tg_file_browser .file-browser table td .btn .fa, #tg_file_browser .file-browser table th .btn .fa {
+    margin: 0; }
+  #tg_file_browser .file-browser table td:nth-child(4), #tg_file_browser .file-browser table td:nth-child(5), #tg_file_browser .file-browser table th:nth-child(4), #tg_file_browser .file-browser table th:nth-child(5) {
+    display: none; }
+  #tg_file_browser .file-browser table td .actions .confirm, #tg_file_browser .file-browser table th .actions .confirm {
     width: auto; }
-    #tg_file_browser .file-browser table td .actions .confirm button, #tg_file_browser .file-browser table th .actions .confirm button, .tg_file_picker .file-browser table td .actions .confirm button, .tg_file_picker .file-browser table th .actions .confirm button {
+    #tg_file_browser .file-browser table td .actions .confirm button, #tg_file_browser .file-browser table th .actions .confirm button {
       margin: 0; }
-      #tg_file_browser .file-browser table td .actions .confirm button .fa, #tg_file_browser .file-browser table th .actions .confirm button .fa, .tg_file_picker .file-browser table td .actions .confirm button .fa, .tg_file_picker .file-browser table th .actions .confirm button .fa {
-        margin: 0; }
-  #tg_file_browser .file-browser .toolbar .btn .text-label {
-    display: none; }
-  #tg_file_browser .file-browser .toolbar .btn .fa {
-    margin-right: 0; } }
+      #tg_file_browser .file-browser table td .actions .confirm button .fa, #tg_file_browser .file-browser table th .actions .confirm button .fa {
+        margin: 0; } }

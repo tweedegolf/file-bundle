@@ -21,7 +21,7 @@ console.log('media dir:', mediaDir);
 const sessionUploads = [];
 
 // uncomment this if you want to use imageMagick instead of graphicsMagick
-gm.subClass({ imageMagick: true });
+const im = gm.subClass({ imageMagick: true });
 
 /**
  * Returns a promise that creates a thumbnail from an uploaded picture
@@ -39,7 +39,7 @@ function createThumbPromise(uniqueName) {
     const thumb = path.join(mediaDir, 'thumb', uniqueName);
 
     return new Promise((resolve) => {
-        gm(file)
+        im(file)
         .resize(24)
         .write(thumb, (err) => {
             if (typeof err === 'undefined') {
@@ -54,7 +54,7 @@ function createThumbPromise(uniqueName) {
                 // disabled; in case of an error, the original file will double as a
                 // thumbnail
 
-                // console.error(err)
+                console.error(err);
                 // let origName = path.basename(uniqueName).substring()
                 // origName = origName.substring(origName.indexOf('_') + 1)
                 // resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])

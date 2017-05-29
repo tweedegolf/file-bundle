@@ -127,7 +127,7 @@ gulp.task('develop', gulp.series(
     'generate_config',
     'build_css',
     'watch_js',
-    'live_reload',
+    // 'live_reload',
     gulp.parallel(
         'watch_css',
     ),
