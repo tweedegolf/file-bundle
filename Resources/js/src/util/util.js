@@ -26,10 +26,15 @@ export function getUUID() {
 type ItemType = FolderType | FileType;
 
 // const resetNew = array => R.map(f => ({ ...f, isNew: false }), array);
+
+// Note that files and folders can be undefined during the first run when the state get
+// rehydrated from the local storage: see updates.md
 const filterTrashed = (array: ItemType[]): ItemType[] =>
-    R.filter((f: ItemType): boolean => (f.isTrashed !== true), array);
+    R.filter((f: ItemType): boolean => (R.isNil(f) === false && f.isTrashed !== true), array);
+    // R.filter((f: ItemType): boolean => (f.isTrashed !== true), array);
 const filterTrashedInverted = (array: ItemType[]): ItemType[] =>
-    R.filter((f: ItemType): boolean => (f.isTrashed === true), array);
+    R.filter((f: ItemType): boolean => (R.isNil(f) === false && f.isTrashed === true), array);
+    // R.filter((f: ItemType): boolean => (f.isTrashed === true), array);
 
 const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
     R.sortBy(R.prop(key), array);
