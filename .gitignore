@@ -3,6 +3,7 @@ npm-debug.log
 screenshots
 jasmine.api.js
 Resources/js/test/server/media/
+Resources/js/src/config.json
 flow-typed/npm/
 .vscode
 yarn.lock

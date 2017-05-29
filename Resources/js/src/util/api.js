@@ -44,6 +44,9 @@
  */
 
 import request from 'superagent';
+import config from '../config.json';
+
+const api = config.api;
 
 type ErrorType = {
     toString: () => string,
@@ -98,7 +101,7 @@ const deleteFile = (
     fileId: string,
     onSuccess: () => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/delete/${fileId}`;
+    const url = `${server}${api.deleteFile}${fileId}`;
     const req = request.post(url);
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {
@@ -126,7 +129,7 @@ const moveItems = (
     onSuccess: () => void,
     onError: (string[]) => void) => {
     // console.log('[API]', file_ids, folder_id);
-    const url = `${server}/admin/file/move/${folderId}`;
+    const url = `${server}${api.moveItems}${folderId}`;
     const req = request.post(url).type('form');
     req.send({ 'fileIds[]': fileIds, 'folderIds[]': folderIds });
     req.end((err: ErrorType, res: ResponseType) => {
@@ -153,7 +156,7 @@ const addFolder = (
     folderId: string,
     onSuccess: (FolderType[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/create/folder${folderId !== null ? `/${folderId}` : ''}`;
+    const url = `${server}${api.addFolder}${folderId !== null ? `/${folderId}` : ''}`;
     const req = request.post(url).type('form');
     req.send({ name });
     req.end((err: ErrorType, res: ResponseType) => {
@@ -170,7 +173,7 @@ const renameFolder = (
     newName: string,
     onSuccess: (FolderType) => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/rename/folder/${folderId}`;
+    const url = `${server}${api.renameFolder}${folderId}`;
     const req = request.post(url).type('form');
     req.send({ name: newName });
     req.end((err: ErrorType, res: ResponseType) => {
@@ -195,7 +198,7 @@ const deleteFolder = (
     folderId: string,
     onSuccess: () => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/delete/folder/${folderId}`;
+    const url = `${server}${api.deleteFolder}${folderId}`;
     const req = request.post(url).type('form');
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {
@@ -212,7 +215,7 @@ const deleteFolder = (
 const emptyRecycleBin = (
     onSuccess: () => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/recycle-bin/empty`;
+    const url = `${server}${api.emptyRecycleBin}`;
     const req = request.get(url);
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {
@@ -226,6 +229,7 @@ const emptyRecycleBin = (
     });
 };
 
+// not in use!
 const restoreFromRecycleBin = (
     fileIds: string[],
     folderIds: string[],
@@ -263,7 +267,7 @@ const upload = (
     folderId: string,
     onSuccess: (FileType[], { [id: string]: string }) => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/upload${folderId ? `/${folderId}` : ''}`;
+    const url = `${server}${api.uploadFiles}${folderId ? `/${folderId}` : ''}`;
     const req = request.post(url);
     fileList.forEach((file: File) => {
         // console.log(file)
@@ -292,7 +296,7 @@ const openFolder = (
     rootFolderId: string,
     onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/list/${folderId}`;
+    const url = `${server}${api.openFolder}${folderId}`;
     // let url = '/admin/file/list/999'
     // const req = request.post(url).type('form');
     const req = request.get(url);

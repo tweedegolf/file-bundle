@@ -7,7 +7,6 @@ import database from '../database';
 import { getIdFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
 
-
 const openFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
     console.log(`[API] getting contents of folder ${folderId}`);

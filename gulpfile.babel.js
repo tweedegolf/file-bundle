@@ -1,5 +1,6 @@
 /* eslint import/no-extraneous-dependencies: "off" */
 import R from 'ramda';
+import fs from 'fs';
 import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import gutil from 'gulp-util';
@@ -13,12 +14,15 @@ import watchify from 'watchify';
 import babelify from 'babelify';
 import path from 'path';
 import livereload from 'gulp-livereload';
+import YAML from 'yamljs';
 
 const reload = livereload;
 const startsWith = R.invoker(1, 'startsWith');
 
 const sources = {
     main_js: './Resources/js/src/index.js',
+    config_yaml: './Resources/js/src/config.yml',
+    config_json: './Resources/js/src/config.json',
     js: './Resources/js/src/**/*.js',
     css: './Resources/scss/**/*.scss',
 };
@@ -39,14 +43,12 @@ const logBrowserifyError = (e) => {
     }
 };
 
-const rebundle = (b) => {
-    return b.bundle()
+const rebundle = b => b.bundle()
         .on('error', logBrowserifyError)
         .pipe(source('app.js'))
         .pipe(buffer())
         .pipe(gulp.dest(path.join(targets.js)))
         .pipe(reload());
-};
 
 gulp.task('watch_js', () => {
     const opts = {
@@ -114,7 +116,15 @@ gulp.task('live_reload', (done) => {
     done();
 });
 
+gulp.task('generate_config', (done) => {
+    const c = YAML.load(sources.config_yaml);
+    fs.writeFile(sources.config_json, JSON.stringify(c), () => {
+        done();
+    });
+});
+
 gulp.task('develop', gulp.series(
+    'generate_config',
     'build_css',
     'watch_js',
     'live_reload',
