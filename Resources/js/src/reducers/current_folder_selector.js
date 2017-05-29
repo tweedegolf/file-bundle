@@ -49,7 +49,7 @@ export default createSelector(
         //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
         const sortFunc = R.curry(sortBy)(sort);
-        const filterFunc = showingRecycleBin === true ? (): boolean => true : filterTrashed;
+        const filterFunc = showingRecycleBin === true ? (items: ItemType[]): ItemType[] => items : filterTrashed;
 
         const currentFolder = foldersById[currentFolderId];
         let parentFolder = null;

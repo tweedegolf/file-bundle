@@ -100,12 +100,15 @@ export type FileType = {
     isTrashed?: boolean,
 };
 
+export type ItemType = FolderType | FileType;
+
 export type ErrorType = {
     id: string,
     data?: string,
     type: string,
     messages: Array<string>,
 };
+
 
 // options passed via HTML element's data-options attribute
 export type OptionsType = {

@@ -15,7 +15,7 @@ import {
     getFolderCount,
 } from '../util/util';
 
-const DELAY: number = 2000;
+const DELAY: number = 3000;
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
