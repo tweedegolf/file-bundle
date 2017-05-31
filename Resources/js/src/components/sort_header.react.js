@@ -38,7 +38,7 @@ const SortHeader = (props: PropsType): React$Element<*> => {
         onClick: () => {
             props.sortBy(props.columnId);
         },
-        className: `sort ${columns[props.columnId]}`,
+        className: 'sort',
     };
 
     return (<th {...p}>

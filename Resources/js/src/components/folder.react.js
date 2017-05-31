@@ -125,7 +125,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 confirmPane = (<div className="confirm">
                     <button
                       type="button"
-                      className="btn btn-sm btn-primary"
+                      className="btn btn-xs btn-primary"
                       onClick={(e: SyntheticEvent) => {
                           e.stopPropagation();
                           confirmDelete(null);
@@ -137,7 +137,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
 
                     <button
                       type="button"
-                      className="btn btn-sm btn-danger"
+                      className="btn btn-xs btn-danger"
                       onClick={(e: SyntheticEvent) => {
                           e.stopPropagation();
                           deleteFolder(folder.id);
@@ -157,7 +157,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 const confirmDelete = this.props.confirmDelete;
                 buttonDelete = (<button
                   type="button"
-                  className="btn btn-sm btn-danger"
+                  className="btn btn-xs btn-danger"
                   onClick={(e: SyntheticEvent) => {
                       e.stopPropagation();
                       confirmDelete(folder.id);
@@ -177,7 +177,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                     },
                 };
                 const show: boolean = this.props.renameFolderWithId === folder.id;
-                folderNameTD = (<td className="name" {...p2}>
+                folderNameTD = (<td {...p2}>
                     <span className={`${show ? 'hide' : ''}`}>{folder.name}</span>
                     <input
                       className={`form-control input-sm ${show ? '' : 'hide'}`}
@@ -215,15 +215,15 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         return (
             <tr {...p}>
                 <td className="select" {...p1}>{checkbox}</td>
-                <td className="preview">{icon}</td>
+                <td>{icon}</td>
                 {folderNameTD}
                 <td className="size">
                     {folderCount}
                     {fileCount}
                     {confirmPane}
                 </td>
-                <td className="date">{folder.created}</td>
-                <td className="buttons">{buttonDelete}</td>
+                <td>{folder.created}</td>
+                <td>{buttonDelete}</td>
             </tr>
         );
     }

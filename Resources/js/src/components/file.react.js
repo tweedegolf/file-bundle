@@ -66,7 +66,7 @@ const File = (props: PropsType): React$Element<*> => {
         confirmPane = (<div className="confirm">
             <button
               type="button"
-              className="btn btn-sm btn-primary"
+              className="btn btn-xs btn-primary"
               onClick={(e: SyntheticEvent) => {
                   e.stopPropagation();
                   props.confirmDelete(null);
@@ -78,7 +78,7 @@ const File = (props: PropsType): React$Element<*> => {
 
             <button
               type="button"
-              className="btn btn-sm btn-danger"
+              className="btn btn-xs btn-danger"
               onClick={(e: SyntheticEvent) => {
                   e.stopPropagation();
                   props.deleteFile(file.id);
@@ -95,7 +95,7 @@ const File = (props: PropsType): React$Element<*> => {
     ) {
         buttonDelete = (<button
           type="button"
-          className="btn btn-sm btn-danger"
+          className="btn btn-xs btn-danger"
           onClick={(e: SyntheticEvent) => {
               e.stopPropagation();
               props.confirmDelete(file.id);
@@ -109,7 +109,7 @@ const File = (props: PropsType): React$Element<*> => {
         if (props.deleteFileWithId !== file.id && props.showingRecycleBin === false) {
             buttonDownload =
                 (<a
-                  className="btn btn-sm btn-primary"
+                  className="btn btn-xs btn-primary"
                   title="Download"
                   download={file.name}
                   href={file.original}
@@ -168,22 +168,22 @@ const File = (props: PropsType): React$Element<*> => {
     };
     return (
         <tr {...p}>
-            <td className="select">
+            <td>
                 {checkbox}
             </td>
-            <td className="preview">
+            <td>
                 {preview}
             </td>
-            <td className="name">
+            <td>
                 {file.name}
             </td>
-            <td className="size">
+            <td>
                 {file.size}
             </td>
-            <td className="date">
+            <td>
                 {file.created}
             </td>
-            <td className="buttons">
+            <td>
                 {actions}
             </td>
         </tr>

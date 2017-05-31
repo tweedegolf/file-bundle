@@ -128,7 +128,7 @@ class Toolbar
               onClick={this.props.emptyRecycleBin}
             >
                 <span className="fa fa-remove" />
-                <span className="text-label">{this.props.t('toolbar.purge')}</span>
+                <span className="folder-name text-label">{this.props.t('toolbar.purge')}</span>
             </button>);
         } else {
             buttonRecycleBin = (<button
@@ -208,7 +208,7 @@ class Toolbar
         return (
             <div className="toolbar">
                 {actions}
-                <span className="text-label">{this.props.currentFolderName}</span>
+                <span className="folder-name text-label">{this.props.currentFolderName}</span>
                 {buttonRecycleBin}
                 {buttonEmptyRecycleBin}
                 {buttonCreateFolder}

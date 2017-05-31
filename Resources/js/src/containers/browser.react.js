@@ -285,9 +285,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             </button>);
         }
 
-        const browserClassName = classNames('file-browser', {
-            'text-left': this.props.browser === false,
-            'text-left-fullpage': this.props.browser === true,
+        const browserClassName = classNames('file-browser', 'text-left', {
+            fullpage: this.props.browser === true,
         });
 
         return (
@@ -305,10 +304,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                             <table className="table table-condensed">
                                 <thead>
                                     <tr>
-                                        <th className="select" />
-                                        <th className="preview" />
+                                        <th />
+                                        <th />
                                         {headers}
-                                        <th className="buttons" />
                                     </tr>
                                 </thead>
                                 <List

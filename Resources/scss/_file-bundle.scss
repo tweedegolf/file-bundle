@@ -68,6 +68,11 @@
     border-bottom: 1px solid #ddd;
     height: 41px;
 
+    .folder-name {
+      height: 100%;
+      line-height: 100%;
+    }
+
     .btn {
       .fa {
         margin-right: 5px;
@@ -264,7 +269,7 @@
     height: 100vh;
     top: 0;
     left: 0;
-    background-color: rgba(200, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.8);
     cursor: pointer;
     & > div {
       position: absolute;

@@ -7985,6 +7985,9 @@ button.close {
     padding: 5px;
     border-bottom: 1px solid #ddd;
     height: 41px; }
+    .file-browser .toolbar .folder-name {
+      height: 100%;
+      line-height: 100%; }
     .file-browser .toolbar .btn {
       margin-right: 5px; }
       .file-browser .toolbar .btn .fa {
@@ -8107,7 +8110,7 @@ button.close {
   height: 100vh;
   top: 0;
   left: 0;
-  background-color: rgba(200, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   cursor: pointer; }
   #tg_file_browser .preview-image > div, .tg_file_picker .preview-image > div {
     position: absolute;
