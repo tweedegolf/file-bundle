@@ -1,15 +1,17 @@
 import 'babel-polyfill';
+import webpage from 'webpage';
+import fs from 'fs';
 
 // every time we run the jasmine suite we remove all screenshots made by
 // previous test runs
 import config from './config';
-import fs from 'fs';
+import i18n from './i18n';
+
 fs.removeTree(config.SCREENSHOTS_PATH);
 fs.makeDirectory(config.SCREENSHOTS_PATH);
 
 // create the Phantomjs webpage and set viewport (only needed if you want to
 // take screen shots)
-import webpage from 'webpage';
 const page = webpage.create();
 page.viewportSize = { width: 1024, height: 768 };
 page.clipRect = { top: 0, left: 0, width: 1024, height: 768 };
@@ -29,6 +31,7 @@ const phantom = global.phantom;
 const testResults = [];
 const taskRunner = new TaskRunner();
 const debug = false;
+
 
 function printResults() {
     const json = {};

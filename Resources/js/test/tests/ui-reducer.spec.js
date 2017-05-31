@@ -1,5 +1,7 @@
-import * as types from '../../util/constants';
-import { ui as reducer } from '../../reducers/ui_reducer';
+// __dir = /file-bundle/Resources/js/test/tests
+
+import * as types from '../../src/util/constants';
+import { ui as reducer } from '../../src/reducers/ui_reducer';
 import jasmine from './index';
 
 const {
@@ -15,41 +17,56 @@ const {
 let undef; // is undefined
 
 describe('ui reducer', () => {
+    // #1
     it('should set a correct initial state if none is defined', () => {
         const action = {};
-        const new_state = reducer(undef, action);
-        expect(new_state).toEqual({
+        const newState = reducer(undef, action);
+        expect(newState).toEqual({
+            currentFolderId: null,
+            currentFolderIdTmp: null,
+            rootFolderId: null,
             sort: 'create_ts',
             ascending: false,
             expanded: false,
-            preview: null,
-            confirm_delete: null,
+            previewUrl: null,
+            deleteFileWithId: null,
+            deleteFolderWithId: null,
+            renameFolderWithId: null,
+            deletingFileWithId: null,
+            loadingFolderWithId: null,
+            deletingFolderWithId: null,
+            renamingFolderWithId: null,
+            isAddingFolder: false,
+            isUploadingFiles: false,
+            scrollPosition: null,
             hover: -1,
             errors: [],
-            loading_folder: -1,
-            deleting_file: null,
-            deleting_folder: null,
-            adding_folder: false,
-            uploading_files: false,
-            scroll_position: null,
-            selected: [],
-            clipboard: [],
+            selected: { fileIds: [], folderIds: [] },
+            clipboard: { fileIds: [], folderIds: [] },
+            multiple: true,
+            language: 'en-GB',
+            imagesOnly: false,
+            allowNewFolder: false,
+            allowUpload: false,
+            allowDelete: false,
+            allowEdit: false,
+            showingRecycleBin: false,
         });
     });
 
-
+    // #2
     describe('add folder', () => {
         it('should indicate a folder is being added', () => {
             const action = {
                 type: types.ADD_FOLDER,
                 payload: {},
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.adding_folder).toBe(true);
+            const newState = reducer(undef, action);
+            expect(newState.isAddingFolder).toBe(true);
         });
     });
 
-
+    // #3
     describe('folder added', () => {
         it('should disable the adding folder indication', () => {
             const action = {
@@ -58,12 +75,12 @@ describe('ui reducer', () => {
                     errors: [],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.adding_folder).toBe(false);
+            const newState = reducer(undef, action);
+            expect(newState.isAddingFolder).toBe(false);
         });
     });
 
-
+    /* #4
     describe('error adding folder', () => {
         it('should display errors', () => {
             const action = {
@@ -72,47 +89,49 @@ describe('ui reducer', () => {
                     errors: ['error text'],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.errors.length).toBeGreaterThan(0);
+            const newState = reducer(undef, action);
+            expect(newState.errors.length).toBeGreaterThan(0);
         });
     });
+    */
 
-
-    describe('confirm delete', () => {
-        it('should show a confirmation popup if it was passed a number', () => {
+    // #4
+    describe('confirm delete file', () => {
+        it('should show a confirmation popup if it was passed a string', () => {
             const action = {
-                type: types.CONFIRM_DELETE,
+                type: types.CONFIRM_DELETE_FILE,
                 payload: {
-                    id: 2,
+                    id: '2',
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.confirm_delete).toBe(2);
+            const newState = reducer(undef, action);
+            expect(newState.deleteFileWithId).toBe('2');
         });
 
-        it('should NOT show a confirmation popup when NOT passed a number', () => {
+        it('should NOT show a confirmation popup when NOT passed a string', () => {
             const action = {
-                type: types.CONFIRM_DELETE,
+                type: types.CONFIRM_DELETE_FILE,
                 payload: {
                     id: null,
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.confirm_delete).toBeNull();
+            const newState = reducer(undef, action);
+            expect(newState.deleteFileWithId).toBeNull();
         });
     });
 
 
+    // #5
     describe('delete file', () => {
         it('should show a progress indicator during the API call', () => {
             const action = {
                 type: types.DELETE_FILE,
                 payload: {
-                    id: 2,
+                    id: '2',
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.deleting_file).toEqual(2);
+            const newState = reducer(undef, action);
+            expect(newState.deletingFileWithId).toEqual('2');
         });
     });
 
@@ -123,8 +142,8 @@ describe('ui reducer', () => {
                 type: types.FILE_DELETED,
                 payload: {},
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.deleting_file).toBeNull();
+            const newState = reducer(undef, action);
+            expect(newState.deletingFileWithId).toBeNull();
         });
     });
 
@@ -137,8 +156,33 @@ describe('ui reducer', () => {
                     errors: ['error text'],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.errors.length).toBeGreaterThan(0);
+            const newState = reducer(undef, action);
+            expect(newState.errors.length).toBeGreaterThan(0);
+        });
+    });
+
+
+    describe('confirm delete folder', () => {
+        it('should show a confirmation popup if it was passed a string', () => {
+            const action = {
+                type: types.CONFIRM_DELETE_FOLDER,
+                payload: {
+                    id: '2',
+                },
+            };
+            const newState = reducer(undef, action);
+            expect(newState.deleteFolderWithId).toBe('2');
+        });
+
+        it('should NOT show a confirmation popup when NOT passed a string', () => {
+            const action = {
+                type: types.CONFIRM_DELETE_FOLDER,
+                payload: {
+                    id: null,
+                },
+            };
+            const newState = reducer(undef, action);
+            expect(newState.deleteFileWithId).toBeNull();
         });
     });
 
@@ -148,25 +192,25 @@ describe('ui reducer', () => {
             const action = {
                 type: types.DELETE_FOLDER,
                 payload: {
-                    folder_id: 2,
+                    id: '2',
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.deleting_folder).toEqual(2);
+            const newState = reducer(undef, action);
+            expect(newState.deletingFolderWithId).toEqual('2');
         });
     });
 
 
-    describe('delete folder null', () => {
-        it('should not delete root folder', () => {
+    describe('delete root folder', () => {
+        it('should not be possible', () => {
             const action = {
                 type: types.DELETE_FOLDER,
                 payload: {
-                    folder_id: null,
+                    id: '0',
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.deleting_folder).toEqual(null);
+            const newState = reducer(undef, action);
+            expect(newState.deletingFolderWithId).toEqual(null);
         });
     });
 
@@ -177,8 +221,8 @@ describe('ui reducer', () => {
                 type: types.FOLDER_DELETED,
                 payload: {},
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.deleting_folder).toBeNull();
+            const newState = reducer(undef, action);
+            expect(newState.deletingFolderWithId).toBeNull();
         });
     });
 
@@ -191,8 +235,8 @@ describe('ui reducer', () => {
                     errors: ['error text'],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.errors.length).toBeGreaterThan(0);
+            const newState = reducer(undef, action);
+            expect(newState.errors.length).toBeGreaterThan(0);
         });
     });
 
@@ -202,11 +246,11 @@ describe('ui reducer', () => {
             const action = {
                 type: types.OPEN_FOLDER,
                 payload: {
-                    id: 2,
+                    id: '2',
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.loading_folder).toEqual(2);
+            const newState = reducer(undef, action);
+            expect(newState.loadingFolderWithId).toEqual('2');
         });
     });
 
@@ -217,8 +261,8 @@ describe('ui reducer', () => {
                 type: types.FOLDER_OPENED,
                 payload: {},
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.loading_folder).toBe(-1);
+            const newState = reducer(undef, action);
+            expect(newState.loadingFolderWithId).toBe(null);
         });
     });
 
@@ -231,8 +275,8 @@ describe('ui reducer', () => {
                     errors: ['error text'],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.errors.length).toBeGreaterThan(0);
+            const newState = reducer(undef, action);
+            expect(newState.errors.length).toBeGreaterThan(0);
         });
     });
 
@@ -243,8 +287,8 @@ describe('ui reducer', () => {
                 type: types.UPLOAD_START,
                 payload: {},
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.uploading_files).toBeTruthy();
+            const newState = reducer(undef, action);
+            expect(newState.uploading_files).toBeTruthy();
         });
     });
 
@@ -257,8 +301,8 @@ describe('ui reducer', () => {
                     errors: [],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state).toEqual(objectContaining({
+            const newState = reducer(undef, action);
+            expect(newState).toEqual(objectContaining({
                 ascending: false,
                 sort: 'create_ts',
                 scroll_position: 0,
@@ -272,8 +316,8 @@ describe('ui reducer', () => {
                     errors: ['error text'],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.errors.length).toBeGreaterThan(0);
+            const newState = reducer(undef, action);
+            expect(newState.errors.length).toBeGreaterThan(0);
         });
     });
 
@@ -286,8 +330,8 @@ describe('ui reducer', () => {
                     errors: ['error text'],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.errors.length).toBeGreaterThan(0);
+            const newState = reducer(undef, action);
+            expect(newState.errors.length).toBeGreaterThan(0);
         });
     });
 
@@ -300,8 +344,8 @@ describe('ui reducer', () => {
                     errors: ['error text'],
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.errors.length).toBeGreaterThan(0);
+            const newState = reducer(undef, action);
+            expect(newState.errors.length).toBeGreaterThan(0);
         });
     });
 
@@ -314,8 +358,8 @@ describe('ui reducer', () => {
                     sort: 'column1337',
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.sort).toEqual('column1337');
+            const newState = reducer(undef, action);
+            expect(newState.sort).toEqual('column1337');
         });
 
         it('should sort ascending or descending depending on current state', () => {
@@ -344,8 +388,8 @@ describe('ui reducer', () => {
             const old_state = {
                 errors: [{ id: 1 }, { id: 2 }, { id: 3 }],
             };
-            const new_state = reducer(old_state, action);
-            expect(new_state.errors).toEqual([{ id: 1 }, { id: 3 }]);
+            const newState = reducer(old_state, action);
+            expect(newState.errors).toEqual([{ id: 1 }, { id: 3 }]);
         });
     });
 
@@ -358,8 +402,8 @@ describe('ui reducer', () => {
                     image_url: 'https://placekitten.com/g/200/200',
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.preview).toEqual('https://placekitten.com/g/200/200');
+            const newState = reducer(undef, action);
+            expect(newState.preview).toEqual('https://placekitten.com/g/200/200');
         });
     });
 
@@ -373,8 +417,8 @@ describe('ui reducer', () => {
                     max: 10,
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.hover).toBe(0);
+            const newState = reducer(undef, action);
+            expect(newState.hover).toBe(0);
         });
 
         it('should highlight the correct row on arrow down', () => {
@@ -385,8 +429,8 @@ describe('ui reducer', () => {
                     max: 10,
                 },
             };
-            const new_state = reducer({ hover: 5 }, action);
-            expect(new_state.hover).toBe(4);
+            const newState = reducer({ hover: 5 }, action);
+            expect(newState.hover).toBe(4);
         });
 
         it('should start back at the top when passing the last folder', () => {
@@ -397,8 +441,8 @@ describe('ui reducer', () => {
                     max: 10,
                 },
             };
-            const new_state = reducer({ hover: 10 }, action);
-            expect(new_state.hover).toBe(0);
+            const newState = reducer({ hover: 10 }, action);
+            expect(newState.hover).toBe(0);
         });
 
         it('should highlight the last folder when going up from the first', () => {
@@ -409,8 +453,8 @@ describe('ui reducer', () => {
                     max: 10,
                 },
             };
-            const new_state = reducer({ hover: 0 }, action);
-            expect(new_state.hover).toBe(9);
+            const newState = reducer({ hover: 0 }, action);
+            expect(newState.hover).toBe(9);
         });
     });
 
@@ -423,8 +467,8 @@ describe('ui reducer', () => {
                     scroll: 8,
                 },
             };
-            const new_state = reducer(undef, action);
-            expect(new_state.scroll_position).toBe(8);
+            const newState = reducer(undef, action);
+            expect(newState.scroll_position).toBe(8);
         });
     });
 

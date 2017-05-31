@@ -1,5 +1,5 @@
 {
-  "spec_dir": "./Resources/js/file-bundle/test/tests/",
+  "spec_dir": "./Resources/js/test/tests/",
   "spec_files": [
     "ui-reducer.spec.js",
     "phantom.spec.js"
