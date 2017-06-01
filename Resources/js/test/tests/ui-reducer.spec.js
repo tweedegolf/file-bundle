@@ -201,20 +201,6 @@ describe('ui reducer', () => {
     });
 
 
-    describe('delete root folder', () => {
-        it('should not be possible', () => {
-            const action = {
-                type: types.DELETE_FOLDER,
-                payload: {
-                    id: '0',
-                },
-            };
-            const newState = reducer(undef, action);
-            expect(newState.deletingFolderWithId).toEqual(null);
-        });
-    });
-
-
     describe('folder deleted', () => {
         it('should disable the delete folder indication', () => {
             const action = {
@@ -288,7 +274,7 @@ describe('ui reducer', () => {
                 payload: {},
             };
             const newState = reducer(undef, action);
-            expect(newState.uploading_files).toBeTruthy();
+            expect(newState.isUploadingFiles).toBeTruthy();
         });
     });
 
@@ -305,7 +291,7 @@ describe('ui reducer', () => {
             expect(newState).toEqual(objectContaining({
                 ascending: false,
                 sort: 'create_ts',
-                scroll_position: 0,
+                scrollPosition: 0,
             }));
         });
 
@@ -369,10 +355,10 @@ describe('ui reducer', () => {
                     sort: 'column1337',
                 },
             };
-            const second_state = reducer(undef, action);
-            expect(second_state.ascending).toBe(false);
-            const third_state = reducer(second_state, action);
-            expect(third_state.ascending).toBe(true);
+            const secondState = reducer(undef, action);
+            expect(secondState.ascending).toBe(false);
+            const thirdState = reducer(secondState, action);
+            expect(thirdState.ascending).toBe(true);
         });
     });
 
@@ -382,13 +368,13 @@ describe('ui reducer', () => {
             const action = {
                 type: types.DISMISS_ERROR,
                 payload: {
-                    error_id: 2,
+                    id: 2,
                 },
             };
-            const old_state = {
+            const oldState = {
                 errors: [{ id: 1 }, { id: 2 }, { id: 3 }],
             };
-            const newState = reducer(old_state, action);
+            const newState = reducer(oldState, action);
             expect(newState.errors).toEqual([{ id: 1 }, { id: 3 }]);
         });
     });
@@ -399,11 +385,11 @@ describe('ui reducer', () => {
             const action = {
                 type: types.SHOW_PREVIEW,
                 payload: {
-                    image_url: 'https://placekitten.com/g/200/200',
+                    imageUrl: 'https://placekitten.com/g/200/200',
                 },
             };
             const newState = reducer(undef, action);
-            expect(newState.preview).toEqual('https://placekitten.com/g/200/200');
+            expect(newState.previewUrl).toEqual('https://placekitten.com/g/200/200');
         });
     });
 
@@ -468,7 +454,7 @@ describe('ui reducer', () => {
                 },
             };
             const newState = reducer(undef, action);
-            expect(newState.scroll_position).toBe(8);
+            expect(newState.scrollPosition).toBe(8);
         });
     });
 
