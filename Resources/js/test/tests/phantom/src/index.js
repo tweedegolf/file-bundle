@@ -70,7 +70,7 @@ const tasks = [
         id: 'open_folder',
         func: openFolder,
         args: {
-            index: '0', // open the first folder
+            index: '1', // open the first folder
             // name: 'colors', // open a folder by name
             page,
             onError,

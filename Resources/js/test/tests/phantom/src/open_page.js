@@ -57,7 +57,6 @@ export function openPage(conf) {
                         title: '',
                     };
                 });
-                // console.log(data)
                 return data.class === 'loaded';
             },
             onReady() {
@@ -78,7 +77,7 @@ export function openPage(conf) {
  * @property   {string}   id       The id of the task that executes this
  *                                 function
  * @property   {Object}   page     The phantomjs WebPage object
- * @property   {functon}  onReady  The function called after the server has been
+ * @property   {function}  onReady  The function called after the server has been
  *                                 shut down
  */
 export function closeServer(conf) {

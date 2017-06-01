@@ -19,7 +19,7 @@ let check; // check if the folder has been opened
  *                                  opened
  * @property   {string}    name     The name of the folder to be opened (not
  *                                  implemented yet)
- * @property   {functon}   onReady  The function called after the folder's
+ * @property   {function}   onReady  The function called after the folder's
  *                                  contents has been loaded
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.
@@ -40,9 +40,8 @@ const openFolder = (conf) => {
             data = page.evaluate((i, n) => {
                 // get the table row representing the folder by index or by folder name
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
-                let folder;
                 // const name = null;
-                const rect = null;
+                // const rect = null;
                 // if (folders) {
                 //     // no index passed, so we search by folder name
                 //     if (i === null) {
@@ -56,15 +55,19 @@ const openFolder = (conf) => {
                 //     // rect = folder.getBoundingClientRect();
                 //     // folder.click();
                 // }
-                return {
-                    folders,
-                    browser: document.getElementById('tg_file_browser'),
-                    name: 'beer',
-                    rect,
-                };
+
+                if (folders) {
+                    const folder = folders[i];
+                    const folderName = folder.querySelector('td:nth-child(3) > span').innerHTML;
+                    folder.click();
+                    return {
+                        name: folderName,
+                        rect: folder.getBoundingClientRect(),
+                    };
+                }
+                return null;
             }, index, name);
-            console.log('browser', data.browser);
-            return R.isNil(data) === false && data.name !== '';
+            return data !== null;
         },
         onReady() {
             // page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
@@ -102,8 +105,7 @@ check = (conf) => {
     waitFor({
         onTest() {
             data = page.evaluate((folderName) => {
-                const folderNames = document.querySelectorAll('tr.folder > td:nth-child(3n)');
-                console.log(folderNames);
+                const folderNames = document.querySelectorAll('tr.folder > td:nth-child(3) > span');
                 if (typeof folderNames === 'undefined') {
                     return { loaded: false };
                 }
