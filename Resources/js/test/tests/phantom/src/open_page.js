@@ -1,9 +1,9 @@
 // get arguments from command line
 import { waitFor } from './util';
 import config from './config';
-
 // get arguments from command line
 import { args } from 'system';
+
 // default values for command line arguments
 let url = 'http://localhost:5050';
 // overrule the default values if set

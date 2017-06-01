@@ -39,26 +39,32 @@ const openFolder = (conf) => {
         onTest() {
             data = page.evaluate((i, n) => {
                 // get the table row representing the folder by index or by folder name
-                const folders = document.querySelectorAll('tr.folder');
-                let r;
+                const folders = Array.from(document.querySelectorAll('tr.folder'));
                 let folder;
-                if (folders) {
-                    // no index passed, so we search by folder name
-                    if (i === null) {
-                        i = R.findIndex(f =>
-                            f.querySelector('td.name').innerHTML === n, Array.from(folders));
-                    }
-                    folder = folders[i];
-                    n = folder.querySelector('td.name').innerHTML;
-                    r = folder.getBoundingClientRect();
-                    folder.click();
-                }
+                // const name = null;
+                const rect = null;
+                // if (folders) {
+                //     // no index passed, so we search by folder name
+                //     if (i === null) {
+                //         i = R.findIndex(f =>
+                //             f.querySelector('td:nth-child(3)').innerHTML === n, Array.from(folders));
+                //     }
+                //     folder = folders[i];
+                //     console.log('->', folder);
+                //     // name = folder.querySelector('td:nth-child(3) > span').innerHTML;
+                //     console.log('->', name);
+                //     // rect = folder.getBoundingClientRect();
+                //     // folder.click();
+                // }
                 return {
-                    name: n,
-                    rect: r,
+                    folders,
+                    browser: document.getElementById('tg_file_browser'),
+                    name: 'beer',
+                    rect,
                 };
             }, index, name);
-            return data.name !== '';
+            console.log('browser', data.browser);
+            return R.isNil(data) === false && data.name !== '';
         },
         onReady() {
             // page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
@@ -96,7 +102,8 @@ check = (conf) => {
     waitFor({
         onTest() {
             data = page.evaluate((folderName) => {
-                const folderNames = document.querySelectorAll('tr.folder > td.name');
+                const folderNames = document.querySelectorAll('tr.folder > td:nth-child(3n)');
+                console.log(folderNames);
                 if (typeof folderNames === 'undefined') {
                     return { loaded: false };
                 }

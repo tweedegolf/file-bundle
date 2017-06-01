@@ -8,9 +8,15 @@
         "flowtype"
     ],
     "env": {
-        "browser": true
+        "browser": true,
+        "node": true
     },
     "rules": {
+        "import/no-extraneous-dependencies": ["error", {
+            "devDependencies": [
+                "./Resources/js/test/tests/**"
+            ]
+        }],
         "arrow-body-style": [1],
         "indent": [2, 4],
         "max-len": 1,

@@ -21,8 +21,8 @@ const phantom = global.phantom;
  */
 export function waitFor(conf) {
     const {
-        timeout = 10000,
-        delay = 50,
+        timeout = 4000,
+        delay = 500,
         onTest,
         onTestArgs = {},
         onCheck = () => {},
@@ -62,7 +62,7 @@ export function waitFor(conf) {
 
 
 /**
- * Executes an array of promises one after eachother, i.e.: the next promise
+ * Executes an array of promises one after each other, i.e.: the next promise
  * will be executed as soon as the former has resolved or rejected. Note that
  * this is unlike Promise.all(). Also in contrast with Promise.all(), a rejected
  * promise does not stop the following promises from being executed; all

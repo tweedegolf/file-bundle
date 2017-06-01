@@ -1,12 +1,18 @@
 import 'babel-polyfill';
 import webpage from 'webpage';
 import fs from 'fs';
+import config from './config';
+import i18n from './i18n';
+// taskrunner is a simple class that executes functions (tasks) consecutively
+import TaskRunner from './task_runner';
+// import all necessary tasks
+import { openPage, closeServer } from './open_page';
+import openFolder from './open_folder';
+import uploadFiles from './upload_files';
+import createFolder from './create_folder';
 
 // every time we run the jasmine suite we remove all screenshots made by
 // previous test runs
-import config from './config';
-import i18n from './i18n';
-
 fs.removeTree(config.SCREENSHOTS_PATH);
 fs.makeDirectory(config.SCREENSHOTS_PATH);
 
@@ -16,21 +22,12 @@ const page = webpage.create();
 page.viewportSize = { width: 1024, height: 768 };
 page.clipRect = { top: 0, left: 0, width: 1024, height: 768 };
 
-// taskrunner is a simple class that executes functions (tasks) consecutively
-import TaskRunner from './task_runner';
-// import all necessary tasks
-import { openPage, closeServer } from './open_page';
-import openFolder from './open_folder';
-import uploadFiles from './upload_files';
-import createFolder from './create_folder';
-
-
 // put eslint at ease
 const phantom = global.phantom;
 // the return values of all tasks will be stored in the testResults array
 const testResults = [];
 const taskRunner = new TaskRunner();
-const debug = false;
+const debug = true;
 
 
 function printResults() {
@@ -73,12 +70,13 @@ const tasks = [
         id: 'open_folder',
         func: openFolder,
         args: {
-            index: 0, // open the first folder
-      // name: 'colors', // open a folder by name
+            index: '0', // open the first folder
+            // name: 'colors', // open a folder by name
             page,
             onError,
             onReady,
         },
+/*
     }, {
         id: 'upload_single_file',
         func: uploadFiles,
@@ -123,6 +121,7 @@ const tasks = [
             onError,
             onReady,
         },
+*/
     }];
 
 taskRunner.configure({
