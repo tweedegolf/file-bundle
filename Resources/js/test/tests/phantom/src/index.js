@@ -70,13 +70,12 @@ const tasks = [
         id: 'open_folder',
         func: openFolder,
         args: {
-            index: '1', // open the first folder
-            // name: 'colors', // open a folder by name
+            index: 0, // open the first folder
+            // name: 'folder 1', // open a folder by name
             page,
             onError,
             onReady,
         },
-/*
     }, {
         id: 'upload_single_file',
         func: uploadFiles,
@@ -86,6 +85,7 @@ const tasks = [
             onError,
             onReady,
         },
+/*
     }, {
         id: 'upload_multiple_files',
         func: uploadFiles,

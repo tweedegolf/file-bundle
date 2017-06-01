@@ -35,16 +35,18 @@ const uploadFiles = (conf) => {
     */
     waitFor({
         onTest() {
-            const loaded = page.evaluate(() => {
-                const u = document.querySelectorAll('input[type=file]');
-                if (typeof u === 'undefined' || u.length === 0) {
-                    return false;
-                }
-                return true;
-            });
-            return loaded;
+            const loaded = page.evaluate(() =>
+                document.querySelectorAll('input[type=file]'));
+
+            if (typeof loaded === 'undefined' || loaded.length === 0) {
+                // console.log(false, loaded);
+                return false;
+            }
+            // console.log(true, loaded[0].type);
+            return true;
         },
         onReady() {
+            // console.log('multiple', multiple);
             if (multiple === true) {
                 page.uploadFile('input[type=file]', files);
             } else {

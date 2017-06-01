@@ -40,24 +40,13 @@ const openFolder = (conf) => {
             data = page.evaluate((i, n) => {
                 // get the table row representing the folder by index or by folder name
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
-                // const name = null;
-                // const rect = null;
-                // if (folders) {
-                //     // no index passed, so we search by folder name
-                //     if (i === null) {
-                //         i = R.findIndex(f =>
-                //             f.querySelector('td:nth-child(3)').innerHTML === n, Array.from(folders));
-                //     }
-                //     folder = folders[i];
-                //     console.log('->', folder);
-                //     // name = folder.querySelector('td:nth-child(3) > span').innerHTML;
-                //     console.log('->', name);
-                //     // rect = folder.getBoundingClientRect();
-                //     // folder.click();
-                // }
-
                 if (folders) {
-                    const folder = folders[i];
+                    let i1 = i;
+                    if (i1 === null) {
+                        i1 = folders.findIndex(f =>
+                            f.querySelector('td:nth-child(3) > span').innerHTML === n);
+                    }
+                    const folder = folders[i1];
                     const folderName = folder.querySelector('td:nth-child(3) > span').innerHTML;
                     folder.click();
                     return {
