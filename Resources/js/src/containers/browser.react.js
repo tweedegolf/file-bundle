@@ -152,6 +152,12 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
                 return;
             }
+            // Phantomjs' page object does not recognize SyntheticEvent nor DataTransfer
+            if (typeof DataTransfer === 'undefined') {
+                Actions.uploadFiles(event.target.files);
+                return;
+            }
+
             if (event instanceof DataTransfer) {
                 Actions.uploadFiles(event.files);
             } else {

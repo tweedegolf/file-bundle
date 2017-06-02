@@ -21,8 +21,8 @@ const phantom = global.phantom;
  */
 export function waitFor(conf) {
     const {
-        timeout = 6000,
-        delay = 1000,
+        timeout = 5000,
+        delay = 100,
         onTest,
         onTestArgs = {},
         onCheck = () => {},

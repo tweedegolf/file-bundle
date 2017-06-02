@@ -33,6 +33,7 @@ const uploadFiles = (conf) => {
      * We can't start uploading file until the page has fully loaded. Therefor we
      * test if we can find an input[type=file] in the page.
     */
+
     waitFor({
         onTest() {
             const loaded = page.evaluate(() =>
@@ -46,7 +47,6 @@ const uploadFiles = (conf) => {
             return true;
         },
         onReady() {
-            // console.log('multiple', multiple);
             if (multiple === true) {
                 page.uploadFile('input[type=file]', files);
             } else {
@@ -86,18 +86,18 @@ check = (conf) => {
     waitFor({
         onTest() {
             data = page.evaluate(() => {
+                // freshly uploaded files appear at the top of the list
                 const f = document.querySelectorAll('tr.cutable')[0];
-                let name = '';
+                let name = null;
                 if (f) {
-                    name = f.querySelector('td.name').innerHTML;
+                    name = f.querySelector('td:nth-child(3)').innerHTML;
                 }
                 return {
                     name,
                     numFiles: document.querySelectorAll('tr.cutable').length,
                 };
             });
-            // console.log(multiple, data.name)
-            if (data.name === '') {
+            if (data.name === null) {
                 return false;
             }
             if (multiple === true) {
@@ -120,6 +120,5 @@ check = (conf) => {
         },
     });
 };
-
 
 export default uploadFiles;

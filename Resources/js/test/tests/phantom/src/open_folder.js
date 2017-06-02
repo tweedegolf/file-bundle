@@ -43,13 +43,19 @@ const openFolder = (conf) => {
                 if (folders) {
                     let i1 = i;
                     if (i1 === null) {
-                        i1 = folders.findIndex(f =>
-                            f.querySelector('td:nth-child(3) > span').innerHTML === n);
+                        i1 = folders.findIndex((f) => {
+                            const td = f.querySelector('td:nth-child(3) > span');
+                            if (td) {
+                                return td.innerHTML === n;
+                            }
+                            return false;
+                        });
                     }
                     const folder = folders[i1];
                     const folderName = folder.querySelector('td:nth-child(3) > span').innerHTML;
                     folder.click();
                     return {
+                        index: i1,
                         name: folderName,
                         rect: folder.getBoundingClientRect(),
                     };

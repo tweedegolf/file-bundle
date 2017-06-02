@@ -19,7 +19,7 @@ const exec = childProcess.exec;
  * @param      {Array}    params  The command line arguments that will be passed
  *                                to the phantomjs script
  * @return     {Promise}  Resolves with the output of the phantomjs script or
- *                        rejects in case of an error whan stderr or err are not
+ *                        rejects in case of an error when stderr or err are not
  *                        null
  */
 const phantom = (script, ...params) => new Promise((resolve, reject) => {

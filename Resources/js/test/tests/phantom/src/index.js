@@ -85,21 +85,23 @@ const tasks = [
             onError,
             onReady,
         },
-/*
-    }, {
-        id: 'upload_multiple_files',
-        func: uploadFiles,
-        args: {
-            page,
-            files: [`${config.MEDIA_PATH}/1200x280.png`, `${config.MEDIA_PATH}/240x760.png`],
-            onError,
-            onReady,
-        },
+    // }, {
+    //     id: 'upload_multiple_files',
+    //     func: uploadFiles,
+    //     args: {
+    //         page,
+    //         files: [`${config.MEDIA_PATH}/240x760.png`, `${config.MEDIA_PATH}/1200x280.png`],
+    //         onError,
+    //         onReady,
+    //     },
     }, {
         id: 'create_folder',
         func: createFolder,
         args: {
             page,
+            labelSaveButton: i18n.t('toolbar.save'),
+            labelCreateButton: i18n.t('toolbar.createFolder'),
+            placeholderInputField: i18n.t('toolbar.folderName'),
             name: 'phantom_folder',
             onError,
             onReady,
@@ -121,7 +123,6 @@ const tasks = [
             onError,
             onReady,
         },
-*/
     }];
 
 taskRunner.configure({

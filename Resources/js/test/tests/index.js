@@ -7,8 +7,9 @@ import 'babel-polyfill';
 import path from 'path';
 import Jasmine from 'jasmine';
 
-// const configFile = path.join(__dirname, '../../../../', 'jasmine.json');
-const configFile = path.join(__dirname, 'jasmine2.json');
+const configFile = path.join(__dirname, '../../../../', 'jasmine.json');
+// const configFile = path.join(__dirname, 'jasmine.json');
+// const configFile = path.join(__dirname, 'jasmine2.json');
 const instance = new Jasmine();
 // override the default timeout of 5 seconds
 instance.jasmine.getEnv().defaultTimeoutInterval = 30000;

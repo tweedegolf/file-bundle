@@ -44,8 +44,8 @@ export function openPage(conf) {
         waitFor({
             onTest() {
                 data = page.evaluate(() => {
-                    localStorage.clear();
                     // wait until browser list has loaded
+                    localStorage.clear();
                     const t = document.querySelector('tbody');
                     if (t) {
                         return {

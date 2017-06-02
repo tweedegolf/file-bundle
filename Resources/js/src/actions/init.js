@@ -85,8 +85,8 @@ const init = (options: OptionsType, browser: boolean) => {
 };
 
 export default (options: OptionsType, browser: boolean) => {
-    // init(options, browser);
-    persistStore(store, {}, () => {
-        init(options, browser);
-    });
+    init(options, browser);
+    // persistStore(store, {}, () => {
+    //     init(options, browser);
+    // });
 };

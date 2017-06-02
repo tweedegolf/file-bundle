@@ -23,13 +23,14 @@ let check; // check if the the new folder has been created succesfully
 const createFolder = (conf) => {
     const {
         id,
+        labelCreateButton,
         page,
         onError,
-      } = conf;
+    } = conf;
 
     waitFor({
         onTest() {
-            const data = page.evaluate(() => {
+            const data = page.evaluate((buttonLabel) => {
                 // get the "create folder" button
                 const s = document.querySelectorAll('button[type=button] > span.text-label');
                 const buttons = [];
@@ -39,7 +40,7 @@ const createFolder = (conf) => {
                 if (s) {
                     Array.from(s).forEach((span) => {
                         buttons.push(span.innerHTML);
-                        if (span.innerHTML === 'Nieuwe map') {
+                        if (span.innerHTML === buttonLabel) {
                             span.parentNode.click();
                             clicked = true;
                         }
@@ -53,10 +54,11 @@ const createFolder = (conf) => {
                     ready: false,
                     buttons: [],
                 };
-            });
+            }, labelCreateButton);
             // data.buttons.forEach(button => {
             //   console.log(button)
             // })
+            // console.log('create', data.ready);
             return data.ready;
         },
         onReady() {
@@ -80,15 +82,17 @@ const createFolder = (conf) => {
 typeName = (conf) => {
     const {
         id,
+        placeholderInputField,
+        labelSaveButton,
         page,
         name,
         onError,
-  } = conf;
+    } = conf;
 
     waitFor({
         onTest() {
-            const data = page.evaluate((n) => {
-                const input = document.querySelector('input[placeholder=Mapnaam]');
+            const data = page.evaluate((n, placeholder) => {
+                const input = document.querySelector(`input[placeholder=${placeholder}]`);
                 if (input !== null) {
                     input.value = n;
                     return {
@@ -98,7 +102,8 @@ typeName = (conf) => {
                 return {
                     ready: false,
                 };
-            }, name);
+            }, name, placeholderInputField);
+            // console.log('type', data.ready, placeholderInputField);
             return data.ready;
         },
         onReady() {
@@ -106,7 +111,7 @@ typeName = (conf) => {
             submit(conf);
         },
         onError(error) {
-            onError({ id, error });
+            onError({ id, error, labelSaveButton });
         },
     });
 };
@@ -122,18 +127,19 @@ typeName = (conf) => {
 submit = (conf) => {
     const {
         id,
+        labelSaveButton,
         page,
         onError,
     } = conf;
 
     waitFor({
         onTest() {
-            const data = page.evaluate(() => {
+            const data = page.evaluate((buttonLabel) => {
                 const s = document.querySelectorAll('button[type=button] > span.text-label');
                 let clicked = false;
                 if (s) {
                     Array.from(s).forEach((span) => {
-                        if (span.innerHTML === 'Opslaan') {
+                        if (span.innerHTML === buttonLabel) {
                             span.parentNode.click();
                             clicked = true;
                         }
@@ -145,7 +151,8 @@ submit = (conf) => {
                 return {
                     ready: false,
                 };
-            });
+            }, labelSaveButton);
+            // console.log('save', data.ready);
             return data.ready;
         },
         onReady() {

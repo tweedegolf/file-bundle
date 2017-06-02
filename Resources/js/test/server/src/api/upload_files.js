@@ -54,7 +54,7 @@ function createThumbPromise(uniqueName) {
                 // disabled; in case of an error, the original file will double as a
                 // thumbnail
 
-                console.error(err);
+                // console.error('ERROR', err);
                 // let origName = path.basename(uniqueName).substring()
                 // origName = origName.substring(origName.indexOf('_') + 1)
                 // resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])
