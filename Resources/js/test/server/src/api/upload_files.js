@@ -54,18 +54,47 @@ function createThumbPromise(uniqueName) {
                 // disabled; in case of an error, the original file will double as a
                 // thumbnail
 
-                // console.error('ERROR', err);
+                console.error('ERROR', err);
                 // let origName = path.basename(uniqueName).substring()
                 // origName = origName.substring(origName.indexOf('_') + 1)
                 // resolve([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick'])
 
                 resolve();
-                fs.createReadStream(file).pipe(fs.createWriteStream(thumb));
+                // fs.createReadStream(file).pipe(fs.createWriteStream(thumb));
+                const data = fs.readFileSync(file);
+                fs.writeFileSync(thumb, data);
                 sessionUploads.push(thumb);
             }
         });
     });
 }
+
+const createThumbnail = (uniqueName, errors, callback) => {
+    const file = path.join(mediaDir, uniqueName);
+    const thumb = path.join(mediaDir, 'thumb', uniqueName);
+
+    im(file)
+    .resize(24)
+    .write(thumb, (err) => {
+        if (typeof err === 'undefined') {
+            // add the path to the session uploads so we can clean them up when
+            // the server stops or crashes
+            sessionUploads.push(thumb);
+            errors.push([uniqueName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick']);
+            callback(errors);
+        } else {
+            // console.error('ERROR', err);
+            let origName = path.basename(uniqueName).substring();
+            origName = origName.substring(origName.indexOf('_') + 1);
+            errors.push([origName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick']);
+
+            const data = fs.readFileSync(file);
+            fs.writeFileSync(thumb, data);
+            sessionUploads.push(thumb);
+            callback(errors);
+        }
+    });
+};
 
 
 /**
@@ -75,7 +104,7 @@ function createThumbPromise(uniqueName) {
  * @param      {ServerResponse}  res     The response of the http call
  */
 export function uploadFiles(req, res) {
-    const errors = {};
+    // const errors = {};
     const uploads = [];
     const paths = [];
     const folderId = getIdFromUrl(req.url);
@@ -86,9 +115,12 @@ export function uploadFiles(req, res) {
         req.busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
             // create a unique name, this allows users to upload the same file, or files with the same name more than once
             const uniqueName = `${new Date().getTime().toString(16)}_${filename}`;
+            // console.log('START', Date.now(), uniqueName);
+
             // create the path to the save location
             const saveTo = path.join(mediaDir, uniqueName);
             const writer = fs.createWriteStream(saveTo);
+            file.pipe(writer);
 
             // get the file's size in bytes
             let sizeBytes = 0;
@@ -116,25 +148,47 @@ export function uploadFiles(req, res) {
                     mimetype: mapMimeType(mimetype),
                 });
                 uploads.push(fileDescr);
+                // console.log('DONE', Date.now(), uniqueName);
+                // writer.end();
             });
-
-            file.pipe(writer);
         });
 
         req.busboy.on('finish', () => {
-            const promises = paths.map(filePath => createThumbPromise(filePath));
-            Promise.all(promises).then((values) => {
-                // values are error messages that were yielded while creating thumbnails
-                values.forEach((value) => {
-                    if (typeof value !== 'undefined') {
-                        errors[value[0]] = [value[1]];
-                    }
-                    // errors.test = ['Oops, something went wrong'];
-                });
-                // store the file description object in the database
+            // console.log(paths);
+            // const promises = paths.map(filePath => createThumbPromise(filePath));
+            // Promise.all(promises).then((values) => {
+            //     // values are error messages that were yielded while creating thumbnails
+            //     values.forEach((value) => {
+            //         if (typeof value !== 'undefined') {
+            //             errors[value[0]] = [value[1]];
+            //         }
+            //         // errors.test = ['Oops, something went wrong'];
+            //     });
+            //     // store the file description object in the database
+            //     database.addFiles(uploads, folderId);
+            //     res.setHeader('Content-Type', 'application/json');
+            //     res.send(JSON.stringify({ uploads, errors }));
+            // });
+
+            const loop = (names, index, max, errors, callback) => {
+                if (index === max) {
+                    callback(errors);
+                } else {
+                    const name = names[index];
+                    // console.log('resizing', index, name);
+                    createThumbnail(name, errors, (err) => {
+                        loop(names, index + 1, max, err, callback);
+                    });
+                }
+            };
+            loop(paths, 0, paths.length, [], (errors) => {
                 database.addFiles(uploads, folderId);
                 res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({ uploads, errors }));
+                const obj = {};
+                errors.forEach((error) => {
+                    obj[error[0]] = error[1];
+                });
+                res.send(JSON.stringify({ uploads, errors: obj }));
             });
         });
         req.pipe(req.busboy);

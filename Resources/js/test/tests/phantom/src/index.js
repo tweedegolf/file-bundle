@@ -10,6 +10,18 @@ import { openPage, closeServer } from './open_page';
 import openFolder from './open_folder';
 import uploadFiles from './upload_files';
 import createFolder from './create_folder';
+// get arguments from command line
+import { args } from 'system';
+
+// default values for command line arguments
+let url = 'http://localhost:5050';
+// overrule the default values if set
+args.forEach((arg) => {
+    if (arg.indexOf('url') === 0) {
+        url = arg.substring(arg.indexOf('url') + 4);
+    }
+});
+
 
 // every time we run the jasmine suite we remove all screenshots made by
 // previous test runs
@@ -27,7 +39,7 @@ const phantom = global.phantom;
 // the return values of all tasks will be stored in the testResults array
 const testResults = [];
 const taskRunner = new TaskRunner();
-const debug = true;
+const debug = false;
 
 
 function printResults() {
@@ -35,7 +47,7 @@ function printResults() {
     testResults.forEach((result) => {
         json[result.id] = result;
     });
-    console.log(JSON.stringify(json));
+    console.log(`$DATA${JSON.stringify(json)}$DATA`);
     phantom.exit(0);
 }
 
@@ -57,11 +69,13 @@ function onReady(data) {
     taskRunner.runTask();
 }
 
+
 const tasks = [
     {
         id: 'open_page',
         func: openPage,
         args: {
+            url,
             page,
             onError,
             onReady,
@@ -85,15 +99,15 @@ const tasks = [
             onError,
             onReady,
         },
-    // }, {
-    //     id: 'upload_multiple_files',
-    //     func: uploadFiles,
-    //     args: {
-    //         page,
-    //         files: [`${config.MEDIA_PATH}/240x760.png`, `${config.MEDIA_PATH}/1200x280.png`],
-    //         onError,
-    //         onReady,
-    //     },
+    }, {
+        id: 'upload_multiple_files',
+        func: uploadFiles,
+        args: {
+            page,
+            files: [`${config.MEDIA_PATH}/240x760.png`, `${config.MEDIA_PATH}/1200x280.png`],
+            onError,
+            onReady,
+        },
     }, {
         id: 'create_folder',
         func: createFolder,
@@ -120,14 +134,22 @@ const tasks = [
         func: closeServer,
         args: {
             page,
+            url,
             onError,
             onReady,
         },
     }];
 
-taskRunner.configure({
-    debug,
-    tasks,
-    onReady: printResults,
-//  maxIndex: 2,
-}).runTask();
+
+page.open(url, () => {
+    page.evaluate(() => {
+        localStorage.clear();
+    });
+    taskRunner.configure({
+        debug,
+        tasks,
+        onReady: printResults,
+    //  maxIndex: 2,
+    }).runTask();
+});
+

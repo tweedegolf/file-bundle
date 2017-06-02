@@ -1,18 +1,6 @@
 // get arguments from command line
 import { waitFor } from './util';
 import config from './config';
-// get arguments from command line
-import { args } from 'system';
-
-// default values for command line arguments
-let url = 'http://localhost:5050';
-// overrule the default values if set
-args.forEach((arg) => {
-    if (arg.indexOf('url') === 0) {
-        url = arg.substring(arg.indexOf('url') + 4);
-    }
-});
-
 
 /**
  * Opens a webpage in a phantomjs WebPage object. The url is read from the
@@ -30,6 +18,7 @@ args.forEach((arg) => {
 export function openPage(conf) {
     const {
         id,
+        url,
         page,
         onReady,
         onError,
@@ -45,9 +34,9 @@ export function openPage(conf) {
             onTest() {
                 data = page.evaluate(() => {
                     // wait until browser list has loaded
-                    localStorage.clear();
                     const t = document.querySelector('tbody');
                     if (t) {
+                        localStorage.clear();
                         return {
                             class: t.className,
                             title: document.title,
@@ -58,6 +47,7 @@ export function openPage(conf) {
                         title: '',
                     };
                 });
+
                 return data.class === 'loaded';
             },
             onReady() {
@@ -84,6 +74,7 @@ export function openPage(conf) {
 export function closeServer(conf) {
     const {
         id,
+        url,
         page,
         onReady,
     } = conf;

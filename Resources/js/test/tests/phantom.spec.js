@@ -1,4 +1,5 @@
 import childProcess from 'child_process';
+import fs from 'fs';
 import path from 'path';
 import jasmine from './index';
 
@@ -62,19 +63,22 @@ describe('User interaction tests with phantomjs', () => {
     let result;
     let subResult;
 
-    // beforeAll(async function() {
-    //   result = await phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
-    //   result = JSON.parse(result)
-    //   console.log(result)
-    // })
+    // beforeAll(async () => {
+    //     result = await phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050');
+    //     result = JSON.parse(result);
+    //     console.log(result);
+    // });
 
     beforeAll((done) => {
         phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
-    .then((data) => {
-        result = JSON.parse(data);
-        console.log(result);
-        done();
-    });
+        .then((data) => {
+            const index1 = data.indexOf('$DATA') + 5;
+            const index2 = data.lastIndexOf('$DATA');
+            const filtered = data.substring(index1, index2);
+            result = JSON.parse(filtered);
+            fs.writeFileSync(path.join(__dirname, 'result.json'), filtered);
+            done();
+        });
     });
 
     it('Open the page', () => {
@@ -83,12 +87,12 @@ describe('User interaction tests with phantomjs', () => {
         expect(subResult.title).toEqual('The Art of State');
     });
 
-    it('Open folder "colors"', () => {
+    it('Open folder "folder 1"', () => {
         subResult = result.open_folder;
         expect(subResult.error).not.toBeDefined();
-        expect(subResult.name).toEqual('colors');
+        expect(subResult.name).toEqual('folder 1');
         expect(subResult.numFiles).toBe(0);
-        expect(subResult.numFolders).toBe(1);
+        expect(subResult.numFolders).toBe(2);
     });
 
     it('Upload single file', () => {
@@ -108,7 +112,7 @@ describe('User interaction tests with phantomjs', () => {
     it('Add new folder', () => {
         subResult = result.create_folder;
         expect(subResult.error).not.toBeDefined();
-        expect(subResult.numFolders).toBe(2);
+        expect(subResult.numFolders).toBe(3);
     });
 
     it('Open folder "phantom_folder"', () => {
