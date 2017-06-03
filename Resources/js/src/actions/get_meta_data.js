@@ -58,36 +58,47 @@ export default () => {
     const filesById: FilesByIdType = tmp1;
     const foldersById: FoldersByIdType = tmp2;
     const selected: ClipboardType = { ...uiState.selected };
+    const fileIds = selected.fileIds;
+    const folderIds = selected.folderIds;
 
     api.getMetaData(
-        selected.fileIds,
-        selected.folderIds,
-        (files: Array<FileType>, folders: Array<FolderType>) => {
-            R.forEach((f: FileType) => {
-                if (R.isNil(f) === false) {
-                    filesById[f.id] = f;
-                }
-            }, files);
+        fileIds,
+        folderIds,
+        (files: FileType[], folders: FolderType[]) => {
+            fileIds.forEach((id: string) => {
+                delete filesById[id];
+            });
 
-            R.forEach((f: FolderType) => {
-                if (R.isNil(f) === false) {
-                    foldersById[f.id] = f;
-                }
-            }, folders);
+            folderIds.forEach((id: string) => {
+                delete foldersById[id];
+            });
 
-            const fileIds = selected.fileIds.filter((id: string): boolean =>
-                R.isNil(filesById[id]) === false);
-            const folderIds = selected.folderIds.filter((id: string): boolean =>
-                R.isNil(foldersById[id]) === false);
+            files.forEach((f: FileType) => {
+                filesById[f.id] = f;
+            });
 
-            console.log(fileIds, R.isNil(filesById[fileIds[0]]) === false);
+            folders.forEach((f: FolderType) => {
+                foldersById[f.id] = f;
+            });
+
+            const fileIdsF = fileIds.filter((id: string): boolean => {
+                const f = filesById[id];
+                return R.isNil(f) === false && f.isTrashed !== true;
+            });
+
+            const folderIdsF = folderIds.filter((id: string): boolean => {
+                const f = foldersById[id];
+                return R.isNil(f) === false && f.isTrashed !== true;
+            });
+
+            // console.log(fileIdsF, folderIdsF);
 
             resolve({
                 foldersById,
                 filesById,
                 selected: {
-                    fileIds,
-                    folderIds,
+                    fileIds: fileIdsF,
+                    folderIds: folderIdsF,
                 },
             });
         },

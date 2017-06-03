@@ -68,6 +68,8 @@ type ResponseType = {
         uploads: FileType[],
         folders: FolderType[],
         files: FileType[],
+        filesById: FilesByIdType[],
+        foldersById: FoldersByIdType[],
         data: DataType,
     },
 };
@@ -233,7 +235,8 @@ const emptyRecycleBin = (
 const getMetaData = (
     fileIds: string[],
     folderIds: string[],
-    onSuccess: () => void,
+    // onSuccess: (filesById: FilesByIdType, foldersById: FoldersByIdType) => void,
+    onSuccess: (files: FileType[], folders: FolderType[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}/admin/file/metadata`;
     const req = request.post(url).type('form');
@@ -243,6 +246,7 @@ const getMetaData = (
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
+            // onSuccess(res.body.filesById, res.body.foldersById);
             onSuccess(res.body.files, res.body.folders);
         }
     });

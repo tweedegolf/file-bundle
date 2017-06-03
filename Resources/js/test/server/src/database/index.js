@@ -265,14 +265,36 @@ const emptyRecycleBin = (): SuccessType => {
         msg: 'ok',
     };
 };
+/*
+type MetaDataType = {
+    filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
+};
+const getMetaData = (fileIds: string[], folderIds: string[]): MetaDataType => {
+    const files = fileIds.reduce((acc: FilesByIdType, id: string): FilesByIdType => {
+        acc[id] = filesById[id];
+        return acc;
+    }, {});
 
+    const folders = folderIds.reduce((acc: FoldersByIdType, id: string): FoldersByIdType => {
+        acc[id] = foldersById[id];
+        return acc;
+    }, {});
+
+    return {
+        filesById: files,
+        foldersById: folders,
+    };
+};
+*/
 
 const getMetaData = (fileIds: string[], folderIds: string[]): OpenFolderType => {
     const files = fileIds.map((id: string): FileType => filesById[id]);
     const folders = folderIds.map((id: string): FolderType => foldersById[id]);
+
     return {
-        files,
-        folders,
+        files: files.filter((f: FileType): boolean => R.isNil(f) === false),
+        folders: folders.filter((f: FolderType): boolean => R.isNil(f) === false),
     };
 };
 
