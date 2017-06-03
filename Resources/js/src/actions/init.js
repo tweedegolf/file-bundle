@@ -3,8 +3,8 @@ import R from 'ramda';
 import { persistStore } from 'redux-persist';
 import i18next from 'i18next';
 import { getStore } from '../reducers/store';
-import { INIT, RECYCLE_BIN_ID } from '../util/constants';
-import { openFolder } from '../actions';
+import { INIT, RECYCLE_BIN_ID, GET_META_DATA } from '../util/constants';
+import { openFolder, getMetaData } from '../actions';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
@@ -43,6 +43,15 @@ const init = (options: OptionsType, browser: boolean) => {
         filesById = {};
     }
 
+    const selected = { ...uiState.selected };
+    const s = options.selected;
+    if (typeof s !== 'undefined' && s.length > 0) {
+        s.forEach((f: FileType) => {
+            filesById[f.id] = f;
+            selected.fileIds.push(f.id);
+        });
+    }
+
     const {
         imagesOnly = false,
         allowNewFolder = true,
@@ -56,7 +65,7 @@ const init = (options: OptionsType, browser: boolean) => {
         type: INIT,
         payload: {
             browser,
-            selected: options.selected || [],
+            selected,
             multiple: options.multiple || true,
             language: options.language,
             imagesOnly,
@@ -81,6 +90,10 @@ const init = (options: OptionsType, browser: boolean) => {
         openFolder({ id: currentFolderId, checkRootFolder: true });
     } else {
         openFolder({ id: currentFolderId });
+    }
+
+    if (selected.fileIds.length + selected.folderIds.length > 0) {
+        getMetaData();
     }
 };
 

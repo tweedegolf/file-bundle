@@ -127,6 +127,28 @@ const emptyRecycleBin = (req, res) => {
 };
 
 
+const getMetaData = (req, res) => {
+    console.log('[API] get metadata for files and folders');
+    let fileIds = req.body['fileIds[]'] || req.body.fileIds || [];
+    let folderIds = req.body['folderIds[]'] || req.body.folderIds || [];
+    if ((R.length(fileIds) === 1 || fileIds instanceof Array === false) && R.isNil(fileIds) === false) {
+        fileIds = [fileIds];
+    }
+    if ((R.length(folderIds) === 1 || folderIds instanceof Array === false) && R.isNil(folderIds) === false) {
+        folderIds = [folderIds];
+    }
+
+    const data = database.getMetaData(fileIds, folderIds);
+    if (typeof data.error !== 'undefined') {
+        res.setHeader('Content-Type', 'text/plain');
+        res.status(500).send(data.error);
+    } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data);
+    }
+};
+
+
 const restoreFromRecycleBin = (req, res) => {
     console.log('[API] restore from recycle bin');
     let fileIds = req.body['fileIds[]'] || req.body.fileIds || [];
@@ -176,5 +198,6 @@ export default{
     closeServer,
     emptyRecycleBin,
     restoreFromRecycleBin,
+    getMetaData,
     getData,
 };

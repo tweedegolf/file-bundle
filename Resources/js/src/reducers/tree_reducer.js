@@ -36,6 +36,13 @@ export const tree = (state: TreeStateType = treeInitialState,
             foldersById: action.payload.foldersById,
         };
 
+    case 'META_DATA_RECEIVED':
+        return {
+            ...state,
+            filesById: action.payload.filesById,
+            foldersById: action.payload.foldersById,
+        };
+
     /**
      * Contents of a folder has been loaded from the server or from cache
      */

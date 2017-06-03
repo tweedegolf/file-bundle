@@ -229,6 +229,25 @@ const emptyRecycleBin = (
     });
 };
 
+
+const getMetaData = (
+    fileIds: string[],
+    folderIds: string[],
+    onSuccess: () => void,
+    onError: (string[]) => void) => {
+    const url = `${server}/admin/file/metadata`;
+    const req = request.post(url).type('form');
+    req.send({ fileIds, folderIds });
+    req.end((err: ErrorType, res: ResponseType) => {
+        if (err) {
+            // console.log(err)
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess(res.body.files, res.body.folders);
+        }
+    });
+};
+
 // not in use!
 const restoreFromRecycleBin = (
     fileIds: string[],
@@ -320,4 +339,5 @@ export default {
     openFolder,
     emptyRecycleBin,
     restoreFromRecycleBin,
+    getMetaData,
 };

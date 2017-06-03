@@ -4,6 +4,7 @@ import { getStore } from '../reducers/store';
 
 export { openFolder, showRecycleBin } from './load_folder';
 export { default as init } from './init';
+export { default as getMetaData } from './get_meta_data';
 export { default as addFolder } from './add_folder';
 export { default as renameFolder } from './rename_folder';
 export { default as deleteFile } from './delete_file';

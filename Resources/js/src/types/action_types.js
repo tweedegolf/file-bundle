@@ -31,6 +31,7 @@ export type PayloadInitType = {
     allowUpload: boolean,
     allowDelete: boolean,
     allowEdit: boolean,
+    selected: SelectedType,
 };
 
 // open folder
@@ -159,6 +160,7 @@ type errorTypes =
     | 'ERROR_RENAMING_FOLDER'
     | 'ERROR_EMPTY_RECYCLE_BIN'
     | 'ERROR_RESTORE_FROM_RECYCLE_BIN'
+    | 'ERROR_GETTING_META_DATA'
 ;
 export type ActionErrorType = {
     type: errorTypes;
@@ -200,9 +202,22 @@ export type PayloadDeletedType = {
     foldersById: FoldersByIdType,
 };
 
+
+export type ActionMetaDataType = {
+    type: 'META_DATA_RECEIVED',
+    payload: PayloadActionMetaDataType,
+};
+
+export type PayloadActionMetaDataType = {
+    filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
+    selected: ClipboardType,
+};
+
+
 // simple types
 export type ActionSimpleType = {
-    type: 'EMPTY_RECYCLE_BIN' | 'RESTORE_FROM_RECYCLE_BIN',
+    type: 'EMPTY_RECYCLE_BIN' | 'RESTORE_FROM_RECYCLE_BIN' | 'GET_META_DATA',
 };
 
 /*
@@ -229,7 +244,7 @@ export type ActionUnionType =
     | ActionDismissErrorType
     | ActionChangeSortingType
 ;
-
+/*
 const actions = {
     INIT: 'INIT',
     UPLOAD_START: 'UPLOAD_START',
@@ -260,9 +275,10 @@ const actions = {
     EXPAND_BROWSER: 'EXPAND_BROWSER',
     SET_HOVER: 'SET_HOVER',
     SET_SCROLL_POSITION: 'SET_SCROLL_POSITION',
+    GET_META_DATA: 'GET_META_DATA',
 };
-// export type Actions = $Keys<typeof actions>;
-
+export type Actions = $Keys<typeof actions>;
+*/
 // wip
 /*
 export type PayloadType = {

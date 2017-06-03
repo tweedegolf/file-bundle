@@ -267,6 +267,16 @@ const emptyRecycleBin = (): SuccessType => {
 };
 
 
+const getMetaData = (fileIds: string[], folderIds: string[]): OpenFolderType => {
+    const files = fileIds.map((id: string): FileType => filesById[id]);
+    const folders = folderIds.map((id: string): FolderType => foldersById[id]);
+    return {
+        files,
+        folders,
+    };
+};
+
+
 const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): SuccessType => {
     // console.log('restore files:', fileIds, 'restore folders:', folderIds);
     fileIds.forEach((id: string) => {
@@ -300,5 +310,6 @@ export default{
     deleteFile,
     emptyRecycleBin,
     restoreFromRecycleBin,
+    getMetaData,
     getData: (): TreeType => data,
 };

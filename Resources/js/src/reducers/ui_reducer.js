@@ -121,6 +121,15 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             allowDelete: action.payload.allowDelete,
             allowEdit: action.payload.allowEdit,
             rootFolderId: action.payload.rootFolderId,
+            selected: {
+                folderIds: [...state.selected.folderIds],
+                fileIds: [...action.payload.selected, ...state.selected.fileIds],
+            },
+        };
+    } else if (action.type === 'META_DATA_RECEIVED') {
+        return {
+            ...state,
+            selected: action.payload.selected,
         };
     /**
      * User has added a folder, we can show a progress indicator while we make

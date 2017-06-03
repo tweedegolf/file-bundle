@@ -80,7 +80,7 @@ const createThumbnail = (uniqueName, errors, callback) => {
             // add the path to the session uploads so we can clean them up when
             // the server stops or crashes
             sessionUploads.push(thumb);
-            errors.push([uniqueName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick']);
+            // errors.push([uniqueName, 'A non critical error while creating thumbnail occurred, please install GraphicsMagick or ImageMagick']);
             callback(errors);
         } else {
             // console.error('ERROR', err);

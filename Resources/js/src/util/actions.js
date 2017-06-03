@@ -32,6 +32,7 @@ type ActionStringsType =
     | 'EXPAND_BROWSER'
     | 'SET_HOVER'
     | 'SET_SCROLL_POSITION'
+    | 'GET_META_DATA'
 ;
 
 const actions: {[key: ActionStringsType]: ActionStringsType} = {
@@ -64,6 +65,7 @@ const actions: {[key: ActionStringsType]: ActionStringsType} = {
     EXPAND_BROWSER: 'EXPAND_BROWSER',
     SET_HOVER: 'SET_HOVER',
     SET_SCROLL_POSITION: 'SET_SCROLL_POSITION',
+    GET_META_DATA: 'GET_META_DATA',
 };
 
 export type Actions = $Keys<typeof actions>;
