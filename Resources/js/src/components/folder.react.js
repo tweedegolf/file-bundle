@@ -46,7 +46,15 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 this.props.confirmRenameFolder(null);
             }
         };
-        document.addEventListener('mousedown', this.mouseDownListener);
+        // document.addEventListener('mousedown', this.mouseDownListener);
+    }
+    componentWillUpdate(nextProps: PropsType, nextState: FolderStateType) {
+        if (this.props.renameFolderWithId !== null && nextProps.renameFolderWithId === null) {
+            this.closeRenameMenu = true;
+            console.log(this.closeRenameMenu, this.props.renameFolderWithId, nextProps.renameFolderWithId);
+        } else {
+            this.closeRenameMenu = false;
+        }
     }
     componentDidUpdate() {
         if (this.props.renameFolderWithId === this.props.folder.id) {
@@ -57,7 +65,6 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             this.folderName.select();
         }
     }
-
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.mouseDownListener);
     }
@@ -76,6 +83,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             this.props.confirmRenameFolder(null);
         }
     };
+    closeRenameMenu: boolean
     folderName: HTMLInputElement
     props: PropsType
     mouseDownListener: (MouseEvent) => mixed
@@ -224,10 +232,20 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
 
         const p = {
             onClick: () => {
-                this.props.openFolder(folder.id);
+                if (this.closeRenameMenu === false) {
+                    this.props.openFolder(folder.id);
+                } else {
+                    this.closeRenameMenu = false;
+                }
             },
             className,
         };
+
+        if (this.props.renameFolderWithId === folder.id) {
+            document.addEventListener('mousedown', this.mouseDownListener);
+        } else {
+            document.removeEventListener('mousedown', this.mouseDownListener);
+        }
 
         return (
             <tr {...p}>
