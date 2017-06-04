@@ -79,16 +79,15 @@ class Toolbar
             });
         };
 
-/*
         // hide create new folder popup if user clicks somewhere outside the popup
-        addEventListener('mousedown', e => {
-            if (e.target !== this.refs.button_add_folder &&
-               e.target !== this.refs.button_save_folder &&
-               e.target !== this.folderName) {
+        document.addEventListener('mousedown', (e: MouseEvent) => {
+            if (e.target !== this.folderName &&
+                e.target !== this.submitNewFolder &&
+                e.target !== this.submitNewFolderLabel
+            ) {
                 this.setState({ showForm: false });
             }
         });
-*/
     }
 
     state: ToolbarStateType
@@ -99,6 +98,8 @@ class Toolbar
     hideRecycleBin: () => void
     folderName: HTMLInputElement
     props: PropsType
+    submitNewFolder: HTMLButtonElement
+    submitNewFolderLabel: HTMLSpanElement
 
     render(): React$Element<*> {
         const loader = this.props.isUploadingFiles ? <span className="fa fa-circle-o-notch fa-spin" /> : null;
@@ -222,11 +223,17 @@ class Toolbar
                     />
                     <button
                       type="button"
+                      ref={(button: HTMLButtonElement) => { this.submitNewFolder = button; }}
                       className="btn btn-sm btn-success pull-right"
                       onClick={this.onAddFolder}
                     >
                         <span className="fa fa-save" />
-                        <span className="text-label">{this.props.t('toolbar.save')}</span>
+                        <span
+                          className="text-label"
+                          ref={(span: HTMLSpanElement) => { this.submitNewFolderLabel = span; }}
+                        >
+                            {this.props.t('toolbar.save')}
+                        </span>
                     </button>
                 </div>
                 {buttonUpload}

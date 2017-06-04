@@ -38,6 +38,16 @@ type FolderStateType = {};
 class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateType> {
     static defaultProps = {}
     state: FolderStateType
+    componentDidMount() {
+        this.mouseDownListener = (e: MouseEvent) => {
+            // console.log('mousedown', this.props.folder.id);
+            if (e.target !== this.folderName && this.props.renameFolderWithId === this.props.folder.id) {
+                e.preventDefault();
+                this.props.confirmRenameFolder(null);
+            }
+        };
+        document.addEventListener('mousedown', this.mouseDownListener);
+    }
     componentDidUpdate() {
         if (this.props.renameFolderWithId === this.props.folder.id) {
             if (this.folderName.value === '') {
@@ -46,6 +56,10 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             this.folderName.focus();
             this.folderName.select();
         }
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.mouseDownListener);
     }
 
     onKeyUp = (e: SyntheticEvent) => {
@@ -64,6 +78,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
     };
     folderName: HTMLInputElement
     props: PropsType
+    mouseDownListener: (MouseEvent) => mixed
 
     render(): React$Element<*> {
         const folder = this.props.folder;
