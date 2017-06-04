@@ -41,13 +41,15 @@ const renameFolder = (req, res) => {
     console.log(`[API] renaming folder ${folderId} to "${req.body.name}"`);
 
     const data = database.renameFolder(folderId, req.body.name);
-    if (typeof data.error !== 'undefined') {
-        res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
-    } else {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(data);
-    }
+    setTimeout(() => {
+        if (typeof data.error !== 'undefined') {
+            res.setHeader('Content-Type', 'text/plain');
+            res.status(500).send(data.error);
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(data);
+        }
+    }, 0);
 };
 
 

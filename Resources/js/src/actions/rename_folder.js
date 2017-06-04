@@ -35,12 +35,13 @@ const renameFolder = (folderId: string,
         return;
     }
     const foldersById: FoldersByIdType = tmp1;
+    const folder: FolderType = { ...foldersById[folderId], name: newName };
 
     api.renameFolder(
         folderId,
         newName,
-        (folder: FolderType) => {
-            foldersById[folder.id] = folder;
+        () => {
+            foldersById[folderId] = folder;
             const a: ActionFolderRenamedType = {
                 type: FOLDER_RENAMED,
                 payload: {

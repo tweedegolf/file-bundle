@@ -40,7 +40,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
     state: FolderStateType
     componentDidUpdate() {
         if (this.props.renameFolderWithId === this.props.folder.id) {
-            this.folderName.value = this.props.folder.name;
+            if (this.folderName.value === '') {
+                this.folderName.value = this.props.folder.name;
+            }
             this.folderName.focus();
             this.folderName.select();
         }
@@ -50,7 +52,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         // <enter> submits new name
         if (e.which === 13) {
             const name = this.folderName.value;
-            if (name !== '') {
+            if (name !== '' && name !== this.props.folder.name) {
                 e.preventDefault();
                 this.props.renameFolder(this.props.folder.id, name);
             }

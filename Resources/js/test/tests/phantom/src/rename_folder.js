@@ -2,6 +2,9 @@ import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
+let sendEnter;
+let check;
+
 const renameFolder = (conf) => {
     let data;
     waitFor({
@@ -23,29 +26,29 @@ const renameFolder = (conf) => {
 
                     const input = folder.querySelector('td:nth-child(3) > input');
                     input.value = newName;
+
+
                     let classNames = '';
                     if (input) {
                         classNames = input.classList.toString();
                     }
 
                     return {
+                        index,
+                        ready: true,
+                        numFolders: folders.length,
                         classNames,
-                        name: folderName,
-                        rect: folder.getBoundingClientRect(),
                     };
                 }
-                return null;
+                return {
+                    ready: false,
+                };
             }, conf.name, conf.newName);
-            if (data !== null) {
-                console.log(data.index, data.classNames);
-            }
-            return data !== null;
+            return data.ready === true;
         },
         onReady() {
-            // page.sendEvent('click', data.rect.left + data.rect.width / 2, data.rect.top + data.rect.height / 2)
-            // conf.onReady({ ...conf, ...data });
-            conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-renamed-to-${conf.newName}.png`);
-            conf.onReady({ id: conf.id, renamed: 'ready' });
+            conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-rename-to-${conf.newName}.png`);
+            sendEnter({ ...conf, index: data.index });
         },
         onError(error) {
             conf.onError({ id: conf.id, error });
@@ -53,36 +56,47 @@ const renameFolder = (conf) => {
     });
 };
 
-/*
-const check = (conf) => {
+
+sendEnter = (conf) => {
+    waitFor({
+        onTest() {
+            // press <enter>, this will submit the new name to the server
+            conf.page.sendEvent('keypress', conf.page.event.key.Enter);
+            return true;
+        },
+        onReady() {
+            check(conf);
+        },
+        onError(error) {
+            conf.onError({ id: conf.id, error });
+        },
+    });
+};
+
+
+check = (conf) => {
     let data;
     waitFor({
         onTest() {
-            data = conf.page.evaluate((name) => {
-                const folderNames = document.querySelectorAll('tr.folder > td:nth-child(3) > span');
-                if (typeof folderNames === 'undefined') {
-                    return { loaded: false };
+            data = conf.page.evaluate((index, newName) => {
+                const spans = Array.from(document.querySelectorAll('tr.folder > td:nth-child(3) > span'));
+                if (spans) {
+                    const folderNames = spans.map(span => span.innerHTML);
+                    return {
+                        numFolders: folderNames.length,
+                        ready: folderNames[index] === newName,
+                    };
                 }
-                let loaded = true;
-                // let names = []
-                Array.from(folderNames).forEach((n) => {
-                    // names.push(n.innerHTML)
-                    if (n.innerHTML === name) {
-                        loaded = false;
-                    }
-                });
                 return {
-                    loaded,
-                    // folderNames: names,
-                    numFiles: document.querySelectorAll('tr.cutable').length,
-                    numFolders: document.querySelectorAll('tr.folder').length,
+                    ready: false,
                 };
-            }, conf.name);
-            return data.loaded;
+            }, conf.index, conf.newName);
+            // console.log(data.numFolders, conf.index);
+            return data.ready;
         },
         onReady() {
-            conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${name}-opened.png`);
-            conf.onReady({ id: conf.id, name, ...data });
+            conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-renamed-to-${conf.newName}.png`);
+            conf.onReady({ id: conf.id, renamed: data.renamed, ready: data.ready });
         },
         onError(error) {
             conf.onError({ id: conf.id, error });
@@ -90,5 +104,4 @@ const check = (conf) => {
     });
 };
 
-*/
 export default renameFolder;
