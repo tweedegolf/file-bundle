@@ -9,12 +9,8 @@ import data from './data.json';
 import { createFolderDescription, RECYCLE_BIN_ID } from '../util';
 import { getFileCount, getFolderCount, getItemIds } from '../../../../src/util/util';
 
-type ErrorType = {
-    error: string,
-};
-
-type SuccessType = {
-    msg: string,
+type ReturnType = {
+    error: boolean | string,
 };
 
 type OpenFolderType = {
@@ -28,24 +24,19 @@ const {
     folders: foldersById,
 } = data;
 
-const openFolder = (folderId: string): ErrorType | OpenFolderType => {
-    // fake and real errors
+const openFolder = (folderId: string): ReturnType | OpenFolderType => {
     const folderData: TreeFolderType = tree[folderId];
-    if (typeof folderData === 'undefined' || folderId === 1000) {
-        // folder id 1000 is a test id -> this alway generates an error
-        if (folderId !== 1000) {
-            console.error('this should not happen!');
-        }
+    if (typeof folderData !== 'undefined') {
+        const { fileIds, folderIds } = folderData;
+        // map file and folder ids to their corresponding description objects
         return {
-            error: 'Could not open folder: folder not found',
+            error: false,
+            files: R.map((id: string): FileType => filesById[id], fileIds),
+            folders: R.map((id: string): FolderType => foldersById[id], folderIds),
         };
     }
-
-    // map file and folder ids to their corresponding description objects
-    const { fileIds, folderIds } = folderData;
     return {
-        files: R.map((id: string): FileType => filesById[id], fileIds),
-        folders: R.map((id: string): FolderType => foldersById[id], folderIds),
+        error: `Can not find folder with id ${folderId}`,
     };
 };
 
@@ -54,11 +45,10 @@ type AddFolderType = {
     new_folders: FolderType[],
     errors: string[],
 };
-const addFolder = (name: string, parentId: string): ErrorType | AddFolderType => {
-    // fake error
+const addFolder = (name: string, parentId: string): ReturnType | AddFolderType => {
     if (name === 'errorfolder') {
         return {
-            error: 'Could not create folder "errorfolder"',
+            error: 'Fake error: could not create folder "errorfolder"',
         };
     }
 
@@ -84,15 +74,15 @@ const addFolder = (name: string, parentId: string): ErrorType | AddFolderType =>
     return {
         new_folders: [folder],
         errors: [],
+        // errors: ['why this, why now?'],
     };
 };
 
 
-const renameFolder = (folderId: string, newName: string): ErrorType | SuccessType => {
-    // fake error
+const renameFolder = (folderId: string, newName: string): ReturnType => {
     if (newName === 'errorfolder') {
         return {
-            error: 'Could not create folder "errorfolder"',
+            error: 'Fake error: could not create folder "errorfolder"',
         };
     }
 
@@ -100,15 +90,14 @@ const renameFolder = (folderId: string, newName: string): ErrorType | SuccessTyp
     const folder: FolderType = foldersById[folderId];
     foldersById[folder.id] = { ...folder, name: newName };
 
-    return { msg: 'ok' };
+    return { error: false };
 };
 
 
-const deleteFolder = (deletedFolderId: string): ErrorType | SuccessType => {
-    // test error
+const deleteFolder = (deletedFolderId: string): ReturnType => {
     if (deletedFolderId === 1000) {
         return {
-            error: 'Folder could not be deleted',
+            error: 'Fake error: folder 1000 could not be deleted',
         };
     }
     const collectedItemIds: { files: string[], folders: string[] } = {
@@ -130,12 +119,12 @@ const deleteFolder = (deletedFolderId: string): ErrorType | SuccessType => {
     });
     // TODO: update file_count and folder_count
     return {
-        msg: 'ok',
+        error: false,
     };
 };
 
 
-const addFiles = (files: FileType[], folderId: string): SuccessType => {
+const addFiles = (files: FileType[], folderId: string): ReturnType => {
     // console.log(files, folderId);
     files.forEach((file: FileType) => {
         filesById[file.id] = file;
@@ -144,7 +133,7 @@ const addFiles = (files: FileType[], folderId: string): SuccessType => {
     foldersById[folderId].file_count += files.length;
 
     return {
-        msg: 'ok',
+        error: false,
     };
 };
 
@@ -152,14 +141,7 @@ const addFiles = (files: FileType[], folderId: string): SuccessType => {
 const moveItems = (
     fileIds: string[],
     folderIds: string[],
-    currentFolderId: string): ErrorType | SuccessType => {
-    // test error
-    if (currentFolderId === 1000) {
-        return {
-            error: 'Could not move files to folder with id "1000"',
-        };
-    }
-
+    currentFolderId: string): ReturnType | SuccessType => {
     const collectedItemIds = {
         files: [],
         folders: [],
@@ -202,17 +184,15 @@ const moveItems = (
     }, R.compose(R.filter(removeCurrentFolder), R.toPairs)(tree));
 
     return {
-        msg: 'ok',
+        error: false,
     };
 };
 
 
-const deleteFile = (fileId: string): ErrorType | SuccessType => {
-    // for testings error messages
-    if (fileId === 1000) {
-        // fileId 1000 does probably not really exist so no need to remove it
+const deleteFile = (fileId: string): ReturnType => {
+    if (fileId === '101') {
         return {
-            error: 'File could not be deleted!',
+            error: 'Fake error: file 101 could not be deleted!',
         };
     }
 
@@ -234,12 +214,12 @@ const deleteFile = (fileId: string): ErrorType | SuccessType => {
     }
 
     return {
-        msg: 'ok',
+        error: false,
     };
 };
 
 
-const emptyRecycleBin = (): SuccessType => {
+const emptyRecycleBin = (): ReturnType => {
     const fileIds = R.filter((id: string): boolean =>
         filesById[id].isTrashed === true, R.keys(filesById));
 
@@ -262,7 +242,7 @@ const emptyRecycleBin = (): SuccessType => {
     }, R.keys(tree));
 
     return {
-        msg: 'ok',
+        error: false,
     };
 };
 /*

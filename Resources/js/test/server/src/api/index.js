@@ -11,11 +11,14 @@ const openFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
     console.log(`[API] getting contents of folder ${folderId}`);
 
-    const data = database.openFolder(folderId);
-    if (typeof data.error !== 'undefined') {
+    if (folderId === '103') {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send('Fake error; could not open folder 103');
+    // } else if (folderId === '104') {
+    //     res.setHeader('Content-Type', 'text/plain');
+    //     res.send({ error: 'Fake error; could not open folder 104' });
     } else {
+        const data = database.openFolder(folderId);
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }
@@ -75,7 +78,7 @@ const deleteFile = (req, res) => {
 
     const data = database.deleteFile(fileId);
     // data.error = 'Oops, something went wrong!';
-    if (typeof data.error !== 'undefined') {
+    if (data.error !== false) {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send(data.error);
     } else {

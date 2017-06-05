@@ -3,20 +3,10 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID, getFileCount } from '../util/util';
+import { createError, getFileCount } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
-    const errors = [{
-        id: getUID(),
-        type: Constants.ERROR_DELETING_FILE,
-        data,
-        messages,
-    }];
-    return { errors };
-};
 
 const deleteFile = (fileId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
@@ -28,7 +18,8 @@ const deleteFile = (fileId: string,
     const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        reject(createError(`file with id ${fileId}`, ['invalid state']));
+        const error = createError(Constants.ERROR_DELETING_FILE, ['invalid state', `file with id ${fileId}`], 'huh');
+        reject({ errors: [error] });
         return;
     }
 
@@ -38,23 +29,34 @@ const deleteFile = (fileId: string,
     const tree: TreeType = R.clone(treeState.tree);
 
     api.deleteFile(fileId,
-        () => {
-            const file = filesById[fileId];
-            filesById[fileId] = R.merge(file, { isTrashed: true });
+        (error: boolean | string) => {
+            const errors = { errors: [] };
+            if (error === false) {
+                const file = filesById[fileId];
+                filesById[fileId] = R.merge(file, { isTrashed: true });
 
-            const currentFolder: FolderType = foldersById[currentFolderId];
-            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
-            foldersById[currentFolderId] = currentFolder;
+                const currentFolder: FolderType = foldersById[currentFolderId];
+                currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
+                foldersById[currentFolderId] = currentFolder;
 
-            if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
-                tree[Constants.RECYCLE_BIN_ID] = {
-                    fileIds: [...tree[Constants.RECYCLE_BIN_ID].fileIds, fileId],
-                    folderIds: tree[Constants.RECYCLE_BIN_ID].folderIds,
-                };
+                if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
+                    tree[Constants.RECYCLE_BIN_ID] = {
+                        fileIds: [...tree[Constants.RECYCLE_BIN_ID].fileIds, fileId],
+                        folderIds: tree[Constants.RECYCLE_BIN_ID].folderIds,
+                    };
+                }
+            } else {
+                let messages = [];
+                if (typeof error === 'string') {
+                    messages = [error];
+                }
+                const err = createError(Constants.ERROR_DELETING_FILE, messages);
+                errors.errors.push(err);
             }
 
             resolve({
                 tree,
+                errors,
                 filesById,
                 foldersById,
             });
@@ -62,7 +64,8 @@ const deleteFile = (fileId: string,
         (messages: Array<string>) => {
             const f: null | FileType = filesById[fileId];
             const n: string = f === null ? 'no name' : f.name;
-            reject(createError(n, messages));
+            const error = createError(Constants.ERROR_DELETING_FILE, messages, n);
+            reject({ errors: [error] });
         },
     );
 };

@@ -59,7 +59,7 @@ const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =
             &times;
             </button>
             <span className="fa fa-bell-o" />
-            {message}
+            {span}
         </div>);
     }, errors);
 

@@ -91,6 +91,7 @@ export type ActionFolderAddedType = {
 
 export type PayloadFolderAddedType = {
     tree: TreeType,
+    errors: ErrorType[],
     foldersById: FoldersByIdType,
 };
 

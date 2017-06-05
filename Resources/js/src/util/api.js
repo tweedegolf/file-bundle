@@ -58,11 +58,16 @@ type DataType = {
     foldersById: FoldersByIdType,
 };
 
+type Errors1Type = { [id: string]: string };
+type Errors2Type = string[];
+type ErrorsType = Errors1Type | Errors2Type;
+
 type ResponseType = {
     text: string,
     error: ErrorType,
     body: {
-        errors: { [id: string]: string },
+        error: string,
+        errors: ErrorsType,
         new_folders: FolderType[],
         folder: FolderType,
         uploads: FileType[],
@@ -101,7 +106,7 @@ if (typeof port !== 'undefined' && port !== null && port !== 80 && port !== 8080
  */
 const deleteFile = (
     fileId: string,
-    onSuccess: () => void,
+    onSuccess: (error: string) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.deleteFile}${fileId}`;
     const req = request.post(url);
@@ -109,7 +114,7 @@ const deleteFile = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess();
+            onSuccess(res.body.error);
         }
     });
 };
@@ -138,7 +143,7 @@ const moveItems = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess();
+            onSuccess(res.body.errors);
         }
     });
 };
@@ -156,7 +161,7 @@ const moveItems = (
 const addFolder = (
     name: string,
     folderId: string,
-    onSuccess: (FolderType[]) => void,
+    onSuccess: (FolderType[], string[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.addFolder}${folderId !== null ? `/${folderId}` : ''}`;
     const req = request.post(url).type('form');
@@ -165,7 +170,11 @@ const addFolder = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.new_folders);
+            let errors2: Errors2Type = [];
+            if (res.body.errors instanceof Array) {
+                errors2 = res.body.errors;
+            }
+            onSuccess(res.body.new_folders, errors2);
         }
     });
 };
@@ -207,9 +216,7 @@ const deleteFolder = (
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            // console.log(res.body.data);
-            // onSuccess(res.body.data);
-            onSuccess();
+            onSuccess(res.body.error);
         }
     });
 };
@@ -224,9 +231,7 @@ const emptyRecycleBin = (
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            // console.log(res.body.data);
-            // onSuccess(res.body.data);
-            onSuccess();
+            onSuccess(res.body.error);
         }
     });
 };
@@ -300,7 +305,11 @@ const upload = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.uploads, res.body.errors);
+            let errors1: Errors1Type = {};
+            if (res.body.errors instanceof Object) {
+                errors1 = res.body.errors;
+            }
+            onSuccess(res.body.uploads, errors1);
         }
     });
 };
@@ -317,7 +326,7 @@ const upload = (
 const openFolder = (
     folderId: string,
     rootFolderId: string,
-    onSuccess: (FolderType[], FileType[]) => void,
+    onSuccess: (boolean | string, FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.openFolder}${folderId}`;
     // let url = '/admin/file/list/999'
@@ -328,7 +337,7 @@ const openFolder = (
             // console.log(err: ErrType, res: ResponseType)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.folders, res.body.files);
+            onSuccess(res.body.error, res.body.folders, res.body.files);
         }
     });
 };

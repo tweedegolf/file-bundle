@@ -118,6 +118,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                     folder.id === folderId, selectedFolderIds);
                 isSelected = R.isNil(index) === false;
             }
+
             if (this.props.allowEdit) {
                 checkbox = <input type="checkbox" checked={isSelected} readOnly />;
                 if (clipboardFolderIds.length + this.props.clipboard.fileIds.length > 0) {
@@ -137,11 +138,8 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 }
             }
 
-
             // user has clicked the delete button; show the confirm pane
             if (this.props.deleteFolderWithId === folder.id &&
-                typeof this.props.confirmDelete !== 'undefined' &&
-                typeof this.props.deleteFolder !== 'undefined' &&
                 this.props.allowDelete === true
             ) {
                 const confirmDelete = this.props.confirmDelete;
@@ -174,7 +172,6 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             // no delete action has started yet: show the delete button
             } else if (
                 selectedFolderIds.length + clipboardFolderIds.length === 0 &&
-                typeof this.props.confirmDelete !== 'undefined' &&
                 this.props.allowDelete === true &&
                 this.props.showingRecycleBin === false
             ) {
@@ -230,9 +227,8 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         }
 
         const p = {
-            onClick: (e: MouseEvent) => {
+            onClick: () => {
                 if (this.closeRenameMenu === false) {
-                // if (this.props.renameFolderWithId !== folder.id) {
                     this.props.openFolder(folder.id);
                 } else {
                     this.closeRenameMenu = false;

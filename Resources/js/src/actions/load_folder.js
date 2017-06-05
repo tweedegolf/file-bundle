@@ -10,7 +10,7 @@ import {
     RECYCLE_BIN_ID,
 } from '../util/constants';
 import {
-    getUID,
+    createError,
     getFileCount,
     getFolderCount,
 } from '../util/util';
@@ -105,7 +105,11 @@ const loadFolder = (folderId: string,
     api.openFolder(
         folderId,
         rfCheck,
-        (folders: Array<FolderType>, files: Array<FileType>) => {
+        (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
+            if (boolean !== false) {
+                return;
+            }
+
             // remove deleted files and folders
             if (typeof tree[folderId] !== 'undefined') {
                 tree[folderId].fileIds.forEach((id: string) => {

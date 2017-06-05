@@ -3,20 +3,10 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID, getFolderCount } from '../util/util';
+import { getFolderCount, createError } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const createError = (data: string, messages: string[]): PayloadErrorType => {
-    const errors = [{
-        id: getUID(),
-        data,
-        type: Constants.ERROR_ADDING_FOLDER,
-        messages,
-    }];
-    return { errors };
-};
 
 const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
@@ -26,15 +16,18 @@ const addFolder = (folderName: string,
     const tmp1 = state.ui.currentFolderId;
     const tmp2 = R.clone(treeState.foldersById);
     if (tmp1 === null || tmp2 === null) {
-        reject(createError(folderName, ['invalid state']));
+        const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, ['invalid state'], folderName);
+        reject({ errors: [error] });
         return;
     }
     const currentFolderId: string = tmp1;
     const foldersById: FoldersByIdType = tmp2;
     const tree: TreeType = R.clone(treeState.tree);
 
-    api.addFolder(folderName, currentFolderId,
-        (folders: Array<FolderType>) => {
+    api.addFolder(
+        folderName,
+        currentFolderId,
+        (folders: FolderType[], errorMessages: string[]) => {
             folders.forEach((f: FolderType) => {
                 foldersById[f.id] = R.merge(f, { isNew: true });
             });
@@ -44,14 +37,20 @@ const addFolder = (folderName: string,
             currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
             foldersById[currentFolderId] = currentFolder;
 
+            const errors = errorMessages.map((msg: string): ErrorType =>
+                createError(Constants.ERROR_ADDING_FOLDER, [msg], folderName),
+            );
+
             const payload: PayloadFolderAddedType = {
                 foldersById,
+                errors,
                 tree,
             };
             resolve(payload);
         },
-        (messages: Array<string>) => {
-            reject(createError(folderName, messages));
+        (messages: string[]) => {
+            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, folderName);
+            reject({ errors: [error] });
         },
     );
 };

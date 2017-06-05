@@ -167,6 +167,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             isAddingFolder: false,
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**
