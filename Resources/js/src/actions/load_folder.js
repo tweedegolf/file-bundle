@@ -19,16 +19,6 @@ const DELAY: number = 100;
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-const createError = (data: string, messages: string[]): PayloadErrorType => {
-    const errors = [{
-        id: getUID(),
-        data,
-        type: ERROR_OPENING_FOLDER,
-        messages,
-    }];
-    return { errors };
-};
-
 const optimisticUpdate = (folderId: string): boolean => {
     const treeState: TreeStateType = store.getState().tree;
     const tmp1 = R.clone(treeState.tree);
@@ -77,7 +67,8 @@ const reject = (payload: PayloadErrorType) => {
     dispatch(a);
 };
 
-const loadFolder = (folderId: string,
+const loadFolder = (
+    folderId: string,
     checkRootFolder: boolean) => {
     const state = store.getState();
     const treeState: TreeStateType = state.tree;
@@ -86,7 +77,10 @@ const loadFolder = (folderId: string,
     const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        reject(createError(`opening folder with id ${folderId}`, ['invalid state']));
+        const err = createError(ERROR_OPENING_FOLDER, [`opening folder with id ${folderId}`, 'invalid state']);
+        reject({
+            errors: [err],
+        });
         return;
     }
     const rootFolderId: string = tmp1;
@@ -106,7 +100,11 @@ const loadFolder = (folderId: string,
         folderId,
         rfCheck,
         (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
-            if (boolean !== false) {
+            if (typeof error === 'string') {
+                const err = createError(ERROR_OPENING_FOLDER, [error]);
+                reject({
+                    errors: [err],
+                });
                 return;
             }
 
@@ -147,7 +145,10 @@ const loadFolder = (folderId: string,
             });
         },
         (messages: Array<string>) => {
-            reject(createError(`Error opening folder with id "${folderId}"`, messages));
+            const err = createError(ERROR_OPENING_FOLDER, [`Error opening folder with id "${folderId}"`, ...messages]);
+            reject({
+                errors: [err],
+            });
         },
     );
 };

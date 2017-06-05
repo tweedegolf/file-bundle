@@ -182,7 +182,7 @@ const addFolder = (
 const renameFolder = (
     folderId: string,
     newName: string,
-    onSuccess: (FolderType) => void,
+    onSuccess: (boolean | string) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.renameFolder}${folderId}`;
     const req = request.post(url).type('form');
@@ -191,7 +191,7 @@ const renameFolder = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.folder);
+            onSuccess(res.body.error);
         }
     });
 };

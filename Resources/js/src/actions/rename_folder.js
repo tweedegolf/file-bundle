@@ -8,20 +8,10 @@ import {
     ERROR_RENAMING_FOLDER,
 
 } from '../util/constants';
-import { getUID } from '../util/util';
+import { createError } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const createError = (data: string, messages: string[]): PayloadErrorType => {
-    const errors = [{
-        id: getUID(),
-        data,
-        type: ERROR_RENAMING_FOLDER,
-        messages,
-    }];
-    return { errors };
-};
 
 const renameFolder = (folderId: string,
     newName: string,
@@ -31,7 +21,8 @@ const renameFolder = (folderId: string,
     const tmp1 = tree.foldersById;
 
     if (tmp1 === null) {
-        reject({ errors: [createError(`renaming file with id "${folderId}" to ${newName}`, ['invalid state'])] });
+        const err = createError(ERROR_RENAMING_FOLDER, ['invalid state'], `renaming file with id "${folderId}" to ${newName}`);
+        reject({ errors: [err] });
         return;
     }
     const foldersById: FoldersByIdType = tmp1;
@@ -40,7 +31,19 @@ const renameFolder = (folderId: string,
     api.renameFolder(
         folderId,
         newName,
-        () => {
+        (error: boolean | string) => {
+            if (error !== false) {
+                let err;
+                if (typeof error === 'string') {
+                    err = createError(ERROR_RENAMING_FOLDER, [error], newName);
+                } else {
+                    err = createError(ERROR_RENAMING_FOLDER, [], newName);
+                }
+                reject({
+                    errors: [err],
+                });
+                return;
+            }
             foldersById[folderId] = folder;
             const a: ActionFolderRenamedType = {
                 type: FOLDER_RENAMED,
@@ -51,7 +54,10 @@ const renameFolder = (folderId: string,
             dispatch(a);
         },
         (errorMessages: string[]) => {
-            reject(createError(newName, errorMessages));
+            const err = createError(ERROR_RENAMING_FOLDER, errorMessages, newName);
+            reject({
+                errors: [err],
+            });
         },
     );
 };

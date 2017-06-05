@@ -6,7 +6,7 @@ General: folder and file ids are strings and can *not* be `null` anymore!
 #### open folder
 
 - GET      /url/id:string (note that id may not be `null` anymore!_
-- RESPONSE{ error: string, files: FileType[], folders: FolderType[] } (`error` must be added)
+- RESPONSE{ error: string, files: FileType[], folders: FolderType[] } (`error` must be added, for instance if the folder has been deleted or if the user has no rights to view the folder's content)
 - ERROR   error: string (server error code, e.g. 500)
 
 #### upload files
@@ -49,7 +49,7 @@ General: folder and file ids are strings and can *not* be `null` anymore!
 - POST      /url/id:string
 - FORM      { name: string } (the new name of the folder)
 - RESPONSE  { error: boolean | string }
-- ERROR    error: string
+- ERROR     error: string
 
 
 #### empty recycle bin

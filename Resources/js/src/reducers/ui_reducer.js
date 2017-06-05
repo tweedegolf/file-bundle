@@ -156,6 +156,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             renameFolderWithId: null,
             renamingFolderWithId: null,
         };
+    } else if (action.type === 'ERROR_RENAMING_FOLDER') {
+        return {
+            ...state,
+            errors: [...state.errors, ...action.payload.errors],
+        };
 
     /**
      * Response from the server; folder has been created, we can remove the
@@ -274,7 +279,6 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'OPEN_FOLDER') {
         return {
             ...state,
-            currentFolderId: action.payload.id,
             loadingFolderWithId: action.payload.id,
         };
 
@@ -285,6 +289,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
     } else if (action.type === 'FOLDER_OPENED') {
         return {
             ...state,
+            currentFolderId: action.payload.currentFolderId,
             loadingFolderWithId: null,
         };
 

@@ -14,9 +14,9 @@ const openFolder = (req, res) => {
     if (folderId === '103') {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send('Fake error; could not open folder 103');
-    // } else if (folderId === '104') {
-    //     res.setHeader('Content-Type', 'text/plain');
-    //     res.send({ error: 'Fake error; could not open folder 104' });
+    } else if (folderId === '104') {
+        res.setHeader('Content-Type', 'application/json');
+        res.send({ error: 'Fake error; could not open folder 104' });
     } else {
         const data = database.openFolder(folderId);
         res.setHeader('Content-Type', 'application/json');
@@ -41,18 +41,22 @@ const addFolder = (req, res) => {
 
 const renameFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
-    console.log(`[API] renaming folder ${folderId} to "${req.body.name}"`);
+    const newName = req.body.name;
+    console.log(`[API] renaming folder ${folderId} to "${newName}"`);
 
-    const data = database.renameFolder(folderId, req.body.name);
-    setTimeout(() => {
-        if (typeof data.error !== 'undefined') {
-            res.setHeader('Content-Type', 'text/plain');
-            res.status(500).send(data.error);
-        } else {
+    if (newName === 'servererror') {
+        res.setHeader('Content-Type', 'text/plain');
+        res.status(500).send('Fake error: could not create folder "servererror"');
+    } else if (newName === 'errorfolder') {
+        res.setHeader('Content-Type', 'application/json');
+        res.send({ error: 'Fake error: could not create folder "errorfolder"' });
+    } else {
+        const data = database.renameFolder(folderId, newName);
+        setTimeout(() => {
             res.setHeader('Content-Type', 'application/json');
             res.send(data);
-        }
-    }, 0);
+        }, 0);
+    }
 };
 
 

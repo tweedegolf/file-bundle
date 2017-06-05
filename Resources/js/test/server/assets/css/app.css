@@ -7935,6 +7935,9 @@ button.close {
   overflow: visible;
   clip: auto; }
 
+html, body {
+  background-color: #aaa; }
+
 .tg_file_picker .collapse-button {
   width: 100px;
   margin: 0.5em 0 0 0;

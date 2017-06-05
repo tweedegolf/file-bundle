@@ -80,16 +80,9 @@ const addFolder = (name: string, parentId: string): ReturnType | AddFolderType =
 
 
 const renameFolder = (folderId: string, newName: string): ReturnType => {
-    if (newName === 'errorfolder') {
-        return {
-            error: 'Fake error: could not create folder "errorfolder"',
-        };
-    }
-
     // store the new folder with the new name in the database
     const folder: FolderType = foldersById[folderId];
     foldersById[folder.id] = { ...folder, name: newName };
-
     return { error: false };
 };
 
