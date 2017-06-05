@@ -80,20 +80,21 @@ class Toolbar
         };
 
         // hide create new folder popup if user clicks somewhere outside the popup
-        document.addEventListener('mousedown', (e: MouseEvent) => {
+        this.mouseDownListener = (e: MouseEvent) => {
             if (e.target !== this.folderName &&
                 e.target !== this.submitNewFolder &&
                 e.target !== this.submitNewFolderLabel
             ) {
                 this.setState({ showForm: false });
             }
-        });
+        };
     }
 
     state: ToolbarStateType
     onKeyUp: (e: SyntheticEvent) => void
     onShowForm: () => void
     onAddFolder: () => void
+    mouseDownListener: (e: MouseEvent) => void
     showRecycleBin: () => void
     hideRecycleBin: () => void
     folderName: HTMLInputElement
@@ -113,6 +114,12 @@ class Toolbar
         let actions = null;
         let buttonUpload = null;
         let buttonCreateFolder = null;
+
+        if (this.state.showForm === true) {
+            document.addEventListener('mousedown', this.mouseDownListener);
+        } else {
+            document.removeEventListener('mousedown', this.mouseDownListener);
+        }
 
         if (this.props.showingRecycleBin === true) {
             buttonRecycleBin = (<button

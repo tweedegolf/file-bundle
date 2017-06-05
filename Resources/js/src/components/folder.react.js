@@ -46,12 +46,11 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 this.props.confirmRenameFolder(null);
             }
         };
-        // document.addEventListener('mousedown', this.mouseDownListener);
     }
     componentWillUpdate(nextProps: PropsType, nextState: FolderStateType) {
         if (this.props.renameFolderWithId !== null && nextProps.renameFolderWithId === null) {
             this.closeRenameMenu = true;
-            console.log(this.closeRenameMenu, this.props.renameFolderWithId, nextProps.renameFolderWithId);
+            // console.log(this.closeRenameMenu, this.props.renameFolderWithId, nextProps.renameFolderWithId);
         } else {
             this.closeRenameMenu = false;
         }
@@ -231,8 +230,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         }
 
         const p = {
-            onClick: () => {
+            onClick: (e: MouseEvent) => {
                 if (this.closeRenameMenu === false) {
+                // if (this.props.renameFolderWithId !== folder.id) {
                     this.props.openFolder(folder.id);
                 } else {
                     this.closeRenameMenu = false;
@@ -249,16 +249,20 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
 
         return (
             <tr {...p}>
-                <td className="select" {...p1}>{checkbox}</td>
+                <td {...p1}>{checkbox}</td>
                 <td>{icon}</td>
                 {folderNameTD}
-                <td className="size">
+                <td>
                     {folderCount}
                     {fileCount}
-                    {confirmPane}
                 </td>
                 <td>{folder.created}</td>
-                <td>{buttonDelete}</td>
+                <td>
+                    <div className="actions">
+                        {buttonDelete}
+                        {confirmPane}
+                    </div>
+                </td>
             </tr>
         );
     }
