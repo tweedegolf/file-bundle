@@ -50,10 +50,10 @@ class Toolbar
         };
 
         this.onAddFolder = () => {
-            this.setState({ showForm: false });
             const name = this.folderName.value;
             if (name !== '') {
                 this.props.onAddFolder(name);
+                this.setState({ showForm: false });
             }
         };
 
@@ -63,6 +63,7 @@ class Toolbar
                 if (name !== '') {
                     e.preventDefault();
                     this.props.onAddFolder(name);
+                    this.setState({ showForm: false });
                 }
             } else if (e.keyCode === 27) {
                 e.preventDefault();

@@ -145,7 +145,7 @@ const loadFolder = (
             });
         },
         (messages: Array<string>) => {
-            const err = createError(ERROR_OPENING_FOLDER, [`Error opening folder with id "${folderId}"`, ...messages]);
+            const err = createError(ERROR_OPENING_FOLDER, [`Error opening folder with id "${folderId}"`, ...messages], folderId);
             reject({
                 errors: [err],
             });
