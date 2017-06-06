@@ -33,14 +33,15 @@ const renameFolder = (folderId: string,
         newName,
         (error: boolean | string) => {
             if (error !== false) {
-                let err;
+                const errors = [];
+                const interpolation = { folder: folderId, name: newName };
                 if (typeof error === 'string') {
-                    err = createError(ERROR_RENAMING_FOLDER, [error], { folder: folderId, name: newName });
+                    errors.push(createError(ERROR_RENAMING_FOLDER, [error], interpolation));
                 } else {
-                    err = createError(ERROR_RENAMING_FOLDER, [], { folder: folderId, name: newName });
+                    errors.push(createError(ERROR_RENAMING_FOLDER, [], interpolation));
                 }
                 reject({
-                    errors: [err],
+                    errors,
                 });
                 return;
             }
@@ -54,7 +55,8 @@ const renameFolder = (folderId: string,
             dispatch(a);
         },
         (errorMessages: string[]) => {
-            const err = createError(ERROR_RENAMING_FOLDER, errorMessages, { folder: folderId, name: newName });
+            const err = createError(ERROR_RENAMING_FOLDER, errorMessages,
+                { folder: folderId, name: newName });
             reject({
                 errors: [err],
             });

@@ -181,12 +181,6 @@ const moveItems = (
 
 
 const deleteFile = (fileId: string): ReturnType => {
-    if (fileId === '101') {
-        return {
-            error: 'Fake error: file 101 could not be deleted!',
-        };
-    }
-
     // delete file from folder object
     const file: FileType = filesById[fileId];
     file.isTrashed = true;
@@ -270,7 +264,7 @@ const getMetaData = (fileIds: string[], folderIds: string[]): OpenFolderType => 
 };
 
 
-const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): SuccessType => {
+const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): ReturnType => {
     // console.log('restore files:', fileIds, 'restore folders:', folderIds);
     fileIds.forEach((id: string) => {
         filesById[id].isTrashed = false;
@@ -289,7 +283,7 @@ const restoreFromRecycleBin = (fileIds: string[], folderIds: string[]): SuccessT
     // TODO: get all items in folder because the client does not
     // pass all ids if the folder in the recycle bin hasn't been opened yet!
     return {
-        msg: 'ok',
+        error: false,
     };
 };
 

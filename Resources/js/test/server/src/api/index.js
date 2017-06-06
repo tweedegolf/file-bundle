@@ -90,12 +90,14 @@ const deleteFile = (req, res) => {
     const fileId = getIdFromUrl(req.url);
     console.log(`[API] deleting file ${fileId}`);
 
-    const data = database.deleteFile(fileId);
-    // data.error = 'Oops, something went wrong!';
-    if (data.error !== false) {
+    if (fileId === '102') {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send('Fake error: could not delete file "103"');
+    } else if (fileId === '103') {
+        res.setHeader('Content-Type', 'application/json');
+        res.send({ error: 'Fake error: could not delete file "103"' });
     } else {
+        const data = database.deleteFile(fileId);
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }
@@ -140,11 +142,12 @@ const moveItems = (req, res) => {
 const emptyRecycleBin = (req, res) => {
     console.log('[API] empty recycle bin');
 
-    const data = database.emptyRecycleBin();
-    if (typeof data.error !== 'undefined') {
+    const fakeError = false;
+    if (fakeError) {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send('Fake error: can\'t empty recycle bin');
     } else {
+        const data = database.emptyRecycleBin();
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }
@@ -162,11 +165,12 @@ const getMetaData = (req, res) => {
         folderIds = [folderIds];
     }
 
-    const data = database.getMetaData(fileIds, folderIds);
-    if (typeof data.error !== 'undefined') {
+    const fakeError = false;
+    if (fakeError) {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send('Fake error: can\'t get metadata');
     } else {
+        const data = database.getMetaData(fileIds, folderIds);
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }
@@ -184,11 +188,12 @@ const restoreFromRecycleBin = (req, res) => {
         folderIds = [folderIds];
     }
 
-    const data = database.restoreFromRecycleBin(fileIds, folderIds);
-    if (typeof data.error !== 'undefined') {
+    const fakeError = false;
+    if (fakeError) {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send('Fake error: could not restore items from recycle bin');
     } else {
+        const data = database.restoreFromRecycleBin(fileIds, folderIds);
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }
@@ -197,7 +202,6 @@ const restoreFromRecycleBin = (req, res) => {
 
 const getData = (req, res) => {
     console.log('[API] get data');
-
     res.setHeader('Content-Type', 'application/json');
     res.send(database.getData());
 };

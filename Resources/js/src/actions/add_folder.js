@@ -28,21 +28,23 @@ const addFolder = (folderName: string,
         folderName,
         currentFolderId,
         (folders: FolderType[], errorMessages: string[]) => {
-            folders.forEach((f: FolderType) => {
-                foldersById[f.id] = R.merge(f, { isNew: true });
-            });
-            const newFolderIds = R.map((f: FolderType): string => f.id, folders);
-            tree[currentFolderId].folderIds.push(...newFolderIds);
-            const currentFolder = foldersById[currentFolderId];
-            currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
-            foldersById[currentFolderId] = currentFolder;
+            if (folders.length > 0) {
+                folders.forEach((f: FolderType) => {
+                    foldersById[f.id] = R.merge(f, { isNew: true });
+                });
+                const newFolderIds = R.map((f: FolderType): string => f.id, folders);
+                tree[currentFolderId].folderIds.push(...newFolderIds);
+                const currentFolder = foldersById[currentFolderId];
+                currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
+                foldersById[currentFolderId] = currentFolder;
+            }
 
             // const errors = errorMessages.map((msg: string): ErrorType =>
             //     createError(Constants.ERROR_ADDING_FOLDER, [msg], folderName),
             // );
-            let errors = [];
+            const errors = [];
             if (errorMessages.length > 0) {
-                errors = [createError(Constants.ERROR_ADDING_FOLDER, errorMessages, { folder: folderName })];
+                errors.push(createError(Constants.ERROR_ADDING_FOLDER, errorMessages, { folder: folderName }));
             }
 
             const payload: PayloadFolderAddedType = {

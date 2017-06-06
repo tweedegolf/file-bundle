@@ -207,7 +207,7 @@ const renameFolder = (
  */
 const deleteFolder = (
     folderId: string,
-    onSuccess: () => void,
+    onSuccess: (boolean | string) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.deleteFolder}${folderId}`;
     const req = request.post(url).type('form');
@@ -222,7 +222,7 @@ const deleteFolder = (
 };
 
 const emptyRecycleBin = (
-    onSuccess: () => void,
+    onSuccess: (boolean | string) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.emptyRecycleBin}`;
     const req = request.get(url);
@@ -243,7 +243,7 @@ const getMetaData = (
     // onSuccess: (filesById: FilesByIdType, foldersById: FoldersByIdType) => void,
     onSuccess: (files: FileType[], folders: FolderType[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/metadata`;
+    const url = `${server}${api.getMetaData}`;
     const req = request.post(url).type('form');
     req.send({ fileIds, folderIds });
     req.end((err: ErrorType, res: ResponseType) => {

@@ -27,7 +27,7 @@ const emptyRecycleBin = (
     const tree: TreeType = R.clone(treeState.tree);
 
     api.emptyRecycleBin(
-        () => {
+        (error: boolean | string) => {
             const fileIds = R.filter((id: string): boolean =>
                 filesById[id].isTrashed === true, R.keys(filesById));
 
@@ -55,7 +55,7 @@ const emptyRecycleBin = (
                 foldersById,
             });
         },
-        (messages: Array<string>) => {
+        (messages: string[]) => {
             const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, messages);
             reject({ errors: [err] });
         },

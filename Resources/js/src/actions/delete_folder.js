@@ -45,7 +45,15 @@ const deleteFolder = (folderId: string,
 
     api.deleteFolder(
         folderId,
-        () => {
+        (error: boolean | string) => {
+            if (typeof error === 'string') {
+                const err = createError(Constants.ERROR_DELETING_FOLDER, [error], { id: folderId });
+                reject({
+                    errors: [err],
+                });
+                return;
+            }
+
             const collectedItemIds = {
                 files: [],
                 folders: [],
