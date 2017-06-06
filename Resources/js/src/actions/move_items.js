@@ -5,7 +5,7 @@ import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import {
-    getUID,
+    createError,
     getItemIds,
     getFileCount,
     getFolderCount,
@@ -13,16 +13,6 @@ import {
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
-    const errors = [{
-        id: getUID(),
-        type: Constants.ERROR_MOVING_ITEMS,
-        data,
-        messages,
-    }];
-    return { errors };
-};
 
 const moveFiles = (
     resolve: (payload: PayloadFilesMovedType) => mixed,
@@ -48,11 +38,22 @@ const moveFiles = (
     const folderIds: string[] = ui.clipboard.folderIds;
 
     api.moveItems(fileIds, folderIds, currentFolderId,
-        () => {
+        (fileErrors: string[], folderErrors: string[]) => {
+            const fileNames = fileErrors.map((id: string): string => filesById[id].name);
+            const folderNames = folderErrors.map((id: string): string => foldersById[id].name);
+
+            const err = createError(Constants.ERROR_MOVING_ITEMS, [], {
+                files: fileNames.join(', '),
+                folders: folderNames.join(', '),
+            });
+
+
             const collectedItemIds = {
                 files: [],
                 folders: [],
             };
+
+            // TODO: filter the rejected items!
 
             fileIds.forEach((id: string) => {
                 tree[currentFolderId].fileIds.push(id);
@@ -92,18 +93,18 @@ const moveFiles = (
                 foldersById,
                 filesById,
                 tree,
+                errors: [err],
             });
         },
         (messages: string[]) => {
-            let itemNames = fileIds.map((id: string): string => filesById[id].name);
-            itemNames = itemNames.concat(folderIds.map((id: string): string => foldersById[id].name));
-            const errors = itemNames.map((name: string): ErrorType => ({
-                id: getUID(),
-                data: name,
-                type: Constants.ERROR_MOVING_ITEMS,
-                messages,
-            }));
-            reject({ errors });
+            const fileNames = fileIds.map((id: string): string => filesById[id].name);
+            const folderNames = folderIds.map((id: string): string => foldersById[id].name);
+
+            const err = createError(Constants.ERROR_MOVING_ITEMS, messages, {
+                files: fileNames.join(', '),
+                folders: folderNames.join(', '),
+            });
+            reject({ errors: [err] });
         },
     );
 };

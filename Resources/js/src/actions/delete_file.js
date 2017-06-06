@@ -18,7 +18,7 @@ const deleteFile = (fileId: string,
     const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        const error = createError(Constants.ERROR_DELETING_FILE, ['invalid state', `file with id ${fileId}`], 'huh');
+        const error = createError(Constants.ERROR_DELETING_FILE, ['invalid state', `no file with id ${fileId}`]);
         reject({ errors: [error] });
         return;
     }
@@ -64,7 +64,7 @@ const deleteFile = (fileId: string,
         (messages: Array<string>) => {
             const f: null | FileType = filesById[fileId];
             const n: string = f === null ? 'no name' : f.name;
-            const error = createError(Constants.ERROR_DELETING_FILE, messages, n);
+            const error = createError(Constants.ERROR_DELETING_FILE, messages, { file: n });
             reject({ errors: [error] });
         },
     );

@@ -19,27 +19,29 @@ type PropsType = {
 
 const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =>
     mapIndexed((error: ErrorType, index: number): React$Element<*> => {
-        let tmp: string = '';
         let message: string = '';
+        let interpolation: {[string]: string} = {};
         if (typeof error.data !== 'undefined') {
-            tmp = `"${error.data}"`;
+            interpolation = error.data;
         }
 
         if (error.type === ErrorTypes.ERROR_UPLOADING_FILE) {
-            message = t('error.upload', { files: error.data });
+            message = t('error.upload', { interpolation });
         } else if (error.type === ErrorTypes.ERROR_DELETING_FILE) {
-            if (tmp === '') {
-                tmp = t('words.file');
+            if (typeof interpolation.file === 'undefined') {
+                interpolation.file = t('words.file');
             }
-            message = t('error.deleteFile', { file: tmp });
+            message = t('error.deleteFile', interpolation);
         } else if (error.type === ErrorTypes.ERROR_DELETING_FOLDER) {
-            message = t('error.deleteFolder', { folder: tmp });
+            message = t('error.deleteFolder', interpolation);
         } else if (error.type === ErrorTypes.ERROR_ADDING_FOLDER) {
-            message = t('error.createFolder', { folder: tmp });
+            message = t('error.createFolder', interpolation);
+        } else if (error.type === ErrorTypes.ERROR_RENAMING_FOLDER) {
+            message = t('error.renameFolder', interpolation);
         } else if (error.type === ErrorTypes.ERROR_OPENING_FOLDER) {
-            message = t('error.openFolder', { folder: tmp });
+            message = t('error.openFolder', interpolation);
         } else if (error.type === ErrorTypes.ERROR_MOVING_ITEMS) {
-            message = t('error.moveItem', { item: tmp });
+            message = t('error.moveItem', interpolation);
         }
 
         const span: React$Element<*> = (<span>

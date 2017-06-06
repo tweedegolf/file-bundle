@@ -3,7 +3,7 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID } from '../util/util';
+import { createError } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
@@ -24,16 +24,6 @@ const getItemIds = (folderId: string,
     });
 };
 
-const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
-    const errors = [{
-        id: getUID(),
-        type: Constants.ERROR_DELETING_FOLDER,
-        data,
-        messages,
-    }];
-    return { errors };
-};
-
 const deleteFolder = (folderId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
@@ -44,7 +34,8 @@ const deleteFolder = (folderId: string,
     const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        reject(createError(`folder with id ${folderId}`, ['invalid state']));
+        const err = createError(Constants.ERROR_DELETING_FOLDER, ['invalid state'], { folder: folderId });
+        reject({ errors: [err] });
         return;
     }
     const currentFolderId: string = tmp1;
@@ -99,7 +90,8 @@ const deleteFolder = (folderId: string,
         },
         (messages: Array<string>) => {
             const folder = foldersById[folderId];
-            reject(createError(folder.name, messages));
+            const err = createError(Constants.CONFIRM_DELETE_FOLDER, messages, { folder: folder.name });
+            reject({ errors: [err] });
         },
     );
 };

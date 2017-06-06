@@ -77,7 +77,7 @@ const loadFolder = (
     const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        const err = createError(ERROR_OPENING_FOLDER, [`opening folder with id ${folderId}`, 'invalid state']);
+        const err = createError(ERROR_OPENING_FOLDER, ['invalid state'], { id: folderId });
         reject({
             errors: [err],
         });
@@ -101,7 +101,7 @@ const loadFolder = (
         rfCheck,
         (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
             if (typeof error === 'string') {
-                const err = createError(ERROR_OPENING_FOLDER, [error], folderId);
+                const err = createError(ERROR_OPENING_FOLDER, [error], { id: folderId });
                 reject({
                     errors: [err],
                 });
@@ -145,7 +145,7 @@ const loadFolder = (
             });
         },
         (messages: Array<string>) => {
-            const err = createError(ERROR_OPENING_FOLDER, [`Error opening folder with id "${folderId}"`, ...messages], folderId);
+            const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
             reject({
                 errors: [err],
             });

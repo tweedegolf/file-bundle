@@ -3,20 +3,10 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID } from '../util/util';
+import { createError } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const createError = (data: string, messages: string[]): { errors: ErrorType[] } => {
-    const errors = [{
-        id: getUID(),
-        type: Constants.ERROR_EMPTY_RECYCLE_BIN,
-        data,
-        messages,
-    }];
-    return { errors };
-};
 
 const emptyRecycleBin = (
     resolve: (payload: PayloadDeletedType) => mixed,
@@ -27,7 +17,8 @@ const emptyRecycleBin = (
     const tmp2 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null) {
-        reject(createError('empty recycle bin', ['invalid state']));
+        const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, ['invalid state']);
+        reject({ errors: [err] });
         return;
     }
 
@@ -65,7 +56,8 @@ const emptyRecycleBin = (
             });
         },
         (messages: Array<string>) => {
-            reject(createError('Empty recycle bin', messages));
+            const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, messages);
+            reject({ errors: [err] });
         },
     );
 };

@@ -27,6 +27,7 @@
     "deleteFolder": "Verwijderen van de folder {{folder}} is niet gelukt.",
     "createFolder": "Aanmaken van de folder {{folder}} is niet gelukt.",
     "openFolder": "Kan de folder {{folder}} niet openen.",
+    "renameFolder": "Kan de folder met id {{id}} niet hernoemen naar {{name}}.",
     "moveItem": "Kan {{item}} niet verplaatsen."
   },
   "words": {

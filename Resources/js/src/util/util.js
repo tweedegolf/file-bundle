@@ -116,7 +116,7 @@ const reduceToMap = (arr: ItemType[]): {[id: string]: ItemType} =>
     R.reduce((acc: {[id: string]: ItemType}, item: ItemType): {[id: string]: ItemType} =>
         ({ ...acc, [item.id]: item }), {}, arr);
 
-const createError = (type: string, messages?: string[], data?: string): ErrorType => ({
+const createError = (type: string, messages?: string[], data?: {[string]: string}): ErrorType => ({
     id: getUID(),
     data,
     type,

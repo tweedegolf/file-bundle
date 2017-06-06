@@ -120,10 +120,16 @@ const addFiles = (files: FileType[], folderId: string): ReturnType => {
 };
 
 
+type MoveType = {
+    errors: {
+        fileIds: string[],
+        folderIds: string[],
+    },
+};
 const moveItems = (
     fileIds: string[],
     folderIds: string[],
-    currentFolderId: string): ReturnType => {
+    currentFolderId: string): MoveType => {
     const collectedItemIds = {
         files: [],
         folders: [],
@@ -166,7 +172,10 @@ const moveItems = (
     }, R.compose(R.filter(removeCurrentFolder), R.toPairs)(tree));
 
     return {
-        error: false,
+        errors: {
+            fileIds: [],
+            folderIds: [],
+        },
     };
 };
 

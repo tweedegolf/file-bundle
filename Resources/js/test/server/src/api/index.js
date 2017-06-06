@@ -120,12 +120,17 @@ const moveItems = (req, res) => {
         folderIds = [folderIds];
     }
     // console.log(fileIds, folderIds);
-    const data = database.moveItems(fileIds, folderIds, parentId);
-    // data.error = 'Oops, something went wrong';
-    if (typeof data.error !== 'undefined') {
+    if (fileIds.indexOf('101') !== -1) {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send('Fake error: could not move file with id "101"');
+    } else if (fileIds.indexOf('102') !== -1) {
+        res.setHeader('Content-Type', 'application/json');
+        res.send({ errors: {
+            fileIds: [102],
+            folderIds: [],
+        } });
     } else {
+        const data = database.moveItems(fileIds, folderIds, parentId);
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }

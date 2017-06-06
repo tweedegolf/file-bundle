@@ -16,7 +16,7 @@ const addFolder = (folderName: string,
     const tmp1 = state.ui.currentFolderId;
     const tmp2 = R.clone(treeState.foldersById);
     if (tmp1 === null || tmp2 === null) {
-        const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, ['invalid state'], folderName);
+        const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, ['invalid state'], { folder: folderName });
         reject({ errors: [error] });
         return;
     }
@@ -42,7 +42,7 @@ const addFolder = (folderName: string,
             // );
             let errors = [];
             if (errorMessages.length > 0) {
-                errors = [createError(Constants.ERROR_ADDING_FOLDER, errorMessages, folderName)];
+                errors = [createError(Constants.ERROR_ADDING_FOLDER, errorMessages, { folder: folderName })];
             }
 
             const payload: PayloadFolderAddedType = {
@@ -53,7 +53,7 @@ const addFolder = (folderName: string,
             resolve(payload);
         },
         (messages: string[]) => {
-            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, folderName);
+            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, { folder: folderName });
             reject({ errors: [error] });
         },
     );

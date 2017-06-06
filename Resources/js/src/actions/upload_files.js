@@ -3,17 +3,10 @@ import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
-import { getUID } from '../util/util';
+import { createError } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const createError = (data: string, messages: string[]): ErrorType => ({
-    id: getUID(),
-    type: Constants.ERROR_UPLOADING_FILE,
-    data,
-    messages,
-});
 
 const uploadFiles = (files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
@@ -46,7 +39,7 @@ const uploadFiles = (files: Array<File>,
             foldersById[currentFolderId] = currentFolder;
 
             const errors = R.map((key: string): ErrorType =>
-                createError(key, [rejected[key]]), R.keys(rejected));
+                createError(Constants.ERROR_UPLOADING_FILE, [rejected[key]], { file: key }), R.keys(rejected));
 
             resolve({
                 foldersById,
@@ -55,11 +48,9 @@ const uploadFiles = (files: Array<File>,
                 tree,
             });
         },
-        (errorMessages: string[]) => {
-            // console.log(error)
-            const errors = R.map((file: File): ErrorType =>
-                createError(file.name, errorMessages), files);
-            reject({ errors });
+        (errors: string[]) => {
+            const err = createError(Constants.ERROR_UPLOADING_FILE, errors);
+            reject({ errors: [err] });
         },
     );
 };

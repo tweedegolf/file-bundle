@@ -6,22 +6,10 @@ import {
     ERROR_GETTING_META_DATA,
     META_DATA_RECEIVED,
 } from '../util/constants';
-import {
-    getUID,
-} from '../util/util';
+import { createError } from '../util/util';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const createError = (data: string, messages: string[]): PayloadErrorType => {
-    const errors = [{
-        id: getUID(),
-        data,
-        type: ERROR_GETTING_META_DATA,
-        messages,
-    }];
-    return { errors };
-};
 
 type MetaDataReceivedType = {
     filesById: FilesByIdType,
@@ -52,7 +40,8 @@ export default () => {
     const tmp2 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null) {
-        reject(createError('getting metadata', ['invalid state']));
+        const err = createError(ERROR_GETTING_META_DATA, ['invalid state']);
+        reject({ errors: [err] });
         return;
     }
     const filesById: FilesByIdType = tmp1;
@@ -103,7 +92,11 @@ export default () => {
             });
         },
         (messages: Array<string>) => {
-            reject(createError(`Error getting metadata for files ${selected.fileIds.join(',')} and folders ${selected.folderIds.join(',')}`, messages));
+            const err = createError(ERROR_GETTING_META_DATA, messages, {
+                fileIds: selected.fileIds.join(','),
+                folderIds: selected.folderIds.join(','),
+            });
+            reject({ errors: [err] });
         },
     );
 };

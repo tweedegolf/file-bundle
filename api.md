@@ -9,18 +9,21 @@ General: folder and file ids are strings and can *not* be `null` anymore!
 - RESPONSE{ error: string, files: FileType[], folders: FolderType[] } (`error` must be added, for instance if the folder has been deleted or if the user has no rights to view the folder's content)
 - ERROR   error: string (server error code, e.g. 500)
 
+
 #### upload files
 
 - POST      fileList: FileList
 - RESPONSE  { files: FileType[], errors: { [id: string]: string } } (id is the name of the file that caused the error)
 - ERROR     error: string
 
+
 #### move items
 
 - POST      /url/id:string (folder id of the folder where the items will be moved to)
 - FORM      { fileIds: string[], folderIds: string[] } (items)
-- RESPONSE  { errors: { [id: string]: string } } (id is the name of the item that caused the error, not implemented in php server)
+- RESPONSE  { errors: { fileIds: string[], folderIds: string[] } } (the ids of the items that raised errors while moving will be returned)
 - ERROR     error: string
+
 
 #### delete file
 

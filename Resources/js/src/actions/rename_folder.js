@@ -21,7 +21,7 @@ const renameFolder = (folderId: string,
     const tmp1 = tree.foldersById;
 
     if (tmp1 === null) {
-        const err = createError(ERROR_RENAMING_FOLDER, ['invalid state'], `renaming file with id "${folderId}" to ${newName}`);
+        const err = createError(ERROR_RENAMING_FOLDER, ['invalid state'], { folder: folderId, name: newName });
         reject({ errors: [err] });
         return;
     }
@@ -35,9 +35,9 @@ const renameFolder = (folderId: string,
             if (error !== false) {
                 let err;
                 if (typeof error === 'string') {
-                    err = createError(ERROR_RENAMING_FOLDER, [error], newName);
+                    err = createError(ERROR_RENAMING_FOLDER, [error], { folder: folderId, name: newName });
                 } else {
-                    err = createError(ERROR_RENAMING_FOLDER, [], newName);
+                    err = createError(ERROR_RENAMING_FOLDER, [], { folder: folderId, name: newName });
                 }
                 reject({
                     errors: [err],
@@ -54,7 +54,7 @@ const renameFolder = (folderId: string,
             dispatch(a);
         },
         (errorMessages: string[]) => {
-            const err = createError(ERROR_RENAMING_FOLDER, errorMessages, newName);
+            const err = createError(ERROR_RENAMING_FOLDER, errorMessages, { folder: folderId, name: newName });
             reject({
                 errors: [err],
             });

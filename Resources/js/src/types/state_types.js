@@ -104,7 +104,7 @@ export type ItemType = FolderType | FileType;
 
 export type ErrorType = {
     id: string,
-    data?: string,
+    data?: {[string]: string},
     type: string,
     messages: Array<string>,
 };

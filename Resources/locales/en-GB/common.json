@@ -27,6 +27,7 @@
      "deleteFolder": "Error deleting folder {{folder}}.",
      "createFolder": "Error creating folder {{folder}}.",
      "openFolder": "Can not open folder {{folder}}.",
+     "renameFolder": "Can not rename folder with id {{id}} to {{name}}.",
      "moveItem": "Can not move {{item}}."
   },
   "words": {

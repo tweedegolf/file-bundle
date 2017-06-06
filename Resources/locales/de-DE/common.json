@@ -23,11 +23,12 @@
   },
   "error": {
     "upload": "Fehler hochladen {{files}}",
-    "deleteFile":  "Verwijderen van {{file}} niet gelukt.",
-    "deleteFolder": "Verwijderen van de folder {{folder}} is niet gelukt.",
-    "createFolder": "Aanmaken van de folder {{folder}} is niet gelukt.",
-    "openFolder": "Kan de folder {{folder}} niet openen.",
-    "moveItem": "Kan {{item}} niet verplaatsen."
+    "deleteFile":  "de-DE: Verwijderen van {{file}} niet gelukt.",
+    "deleteFolder": "de-DE: Verwijderen van de folder {{folder}} is niet gelukt.",
+    "createFolder": "de-DE:  Aanmaken van de folder {{folder}} is niet gelukt.",
+    "openFolder": "de-DE:  Kan de folder {{folder}} niet openen.",
+    "renameFolder": "de-DE: Kan de folder met id {{id}} niet hernoemen naar {{name}}.",
+    "moveItem": "de-DE: Kan {{item}} niet verplaatsen."
   },
   "words": {
      "file": "file"

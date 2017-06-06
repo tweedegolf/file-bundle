@@ -3,7 +3,7 @@ import R from 'ramda';
 import { persistStore } from 'redux-persist';
 import i18next from 'i18next';
 import { getStore } from '../reducers/store';
-import { INIT, RECYCLE_BIN_ID, GET_META_DATA } from '../util/constants';
+import { INIT, RECYCLE_BIN_ID } from '../util/constants';
 import { openFolder, getMetaData } from '../actions';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
