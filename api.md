@@ -54,7 +54,7 @@ General: folder and file ids are strings and can *not* be `null` anymore!
 
 #### empty recycle bin
 
-- GET       /url
+- GET  -> POST     /url
 - RESPONSE  { error: boolean }
 - ERROR    error: string
 

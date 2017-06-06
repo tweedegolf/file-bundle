@@ -37,9 +37,13 @@ const addFolder = (folderName: string,
             currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
             foldersById[currentFolderId] = currentFolder;
 
-            const errors = errorMessages.map((msg: string): ErrorType =>
-                createError(Constants.ERROR_ADDING_FOLDER, [msg], folderName),
-            );
+            // const errors = errorMessages.map((msg: string): ErrorType =>
+            //     createError(Constants.ERROR_ADDING_FOLDER, [msg], folderName),
+            // );
+            let errors = [];
+            if (errorMessages.length > 0) {
+                errors = [createError(Constants.ERROR_ADDING_FOLDER, errorMessages, folderName)];
+            }
 
             const payload: PayloadFolderAddedType = {
                 foldersById,

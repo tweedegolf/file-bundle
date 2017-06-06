@@ -24,15 +24,23 @@ const openFolder = (req, res) => {
     }
 };
 
+
 const addFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
-    console.log(`[API] adding new folder "${req.body.name}" in folder ${folderId}`);
+    const folderName = req.body.name;
+    console.log(`[API] adding new folder "${folderName}" in folder ${folderId}`);
 
-    const data = database.addFolder(req.body.name, folderId);
-    if (typeof data.error !== 'undefined') {
+    if (folderName === 'servererror') {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send(`Fake error: could not create folder "${folderName}"`);
+    } else if (folderName === 'errorfolder') {
+        res.setHeader('Content-Type', 'application/json');
+        res.send({
+            new_folders: [],
+            errors: [`Fake error: could not create folder "${folderName}"`, 'And another fake error'],
+        });
     } else {
+        const data = database.addFolder(req.body.name, folderId);
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }
@@ -46,10 +54,10 @@ const renameFolder = (req, res) => {
 
     if (newName === 'servererror') {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send('Fake error: could not create folder "servererror"');
+        res.status(500).send(`Fake error: could not rename folder to "${newName}"`);
     } else if (newName === 'errorfolder') {
         res.setHeader('Content-Type', 'application/json');
-        res.send({ error: 'Fake error: could not create folder "errorfolder"' });
+        res.send({ error: `Fake error: could not rename folder to "${newName}"` });
     } else {
         const data = database.renameFolder(folderId, newName);
         setTimeout(() => {
@@ -64,12 +72,14 @@ const deleteFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
     console.log(`[API] deleting folder ${folderId}`);
 
-    const data = database.deleteFolder(folderId);
-    // data.error = 'Oops, something went wrong!';
-    if (typeof data.error !== 'undefined') {
+    if (folderId === '102') {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send(data.error);
+        res.status(500).send('Fake error: could not delete folder "102"');
+    } else if (folderId === '103') {
+        res.setHeader('Content-Type', 'application/json');
+        res.send({ error: 'Fake error: could not delete folder "103"' });
     } else {
+        const data = database.deleteFolder(folderId);
         res.setHeader('Content-Type', 'application/json');
         res.send(data);
     }

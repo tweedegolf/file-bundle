@@ -101,7 +101,7 @@ const loadFolder = (
         rfCheck,
         (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
             if (typeof error === 'string') {
-                const err = createError(ERROR_OPENING_FOLDER, [error]);
+                const err = createError(ERROR_OPENING_FOLDER, [error], folderId);
                 reject({
                     errors: [err],
                 });

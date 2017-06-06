@@ -163,7 +163,7 @@ const addFolder = (
     folderId: string,
     onSuccess: (FolderType[], string[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.addFolder}${folderId !== null ? `/${folderId}` : ''}`;
+    const url = `${server}${api.addFolder}${folderId}`;
     const req = request.post(url).type('form');
     req.send({ name });
     req.end((err: ErrorType, res: ResponseType) => {

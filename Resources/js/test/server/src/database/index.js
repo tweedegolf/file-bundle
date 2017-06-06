@@ -45,13 +45,7 @@ type AddFolderType = {
     new_folders: FolderType[],
     errors: string[],
 };
-const addFolder = (name: string, parentId: string): ReturnType | AddFolderType => {
-    if (name === 'errorfolder') {
-        return {
-            error: 'Fake error: could not create folder "errorfolder"',
-        };
-    }
-
+const addFolder = (name: string, parentId: string): AddFolderType => {
     // add metadata to folder like creation date
     const folder: FolderType = createFolderDescription({
         name,
@@ -74,7 +68,6 @@ const addFolder = (name: string, parentId: string): ReturnType | AddFolderType =
     return {
         new_folders: [folder],
         errors: [],
-        // errors: ['why this, why now?'],
     };
 };
 
@@ -88,11 +81,6 @@ const renameFolder = (folderId: string, newName: string): ReturnType => {
 
 
 const deleteFolder = (deletedFolderId: string): ReturnType => {
-    if (deletedFolderId === 1000) {
-        return {
-            error: 'Fake error: folder 1000 could not be deleted',
-        };
-    }
     const collectedItemIds: { files: string[], folders: string[] } = {
         files: [],
         folders: [],
@@ -110,7 +98,8 @@ const deleteFolder = (deletedFolderId: string): ReturnType => {
         const folder = foldersById[id];
         foldersById[id] = { ...folder, isTrashed: true };
     });
-    // TODO: update file_count and folder_count
+    // TODO: update file_count and folder_count -> on the other hand: the client
+    // calculates these values anyway so may be it is not necessary
     return {
         error: false,
     };
@@ -134,7 +123,7 @@ const addFiles = (files: FileType[], folderId: string): ReturnType => {
 const moveItems = (
     fileIds: string[],
     folderIds: string[],
-    currentFolderId: string): ReturnType | SuccessType => {
+    currentFolderId: string): ReturnType => {
     const collectedItemIds = {
         files: [],
         folders: [],
