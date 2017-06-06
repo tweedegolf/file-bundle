@@ -28,10 +28,14 @@ const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =
         if (error.type === ErrorTypes.ERROR_UPLOADING_FILE) {
             message = t('error.upload', { interpolation });
         } else if (error.type === ErrorTypes.ERROR_DELETING_FILE) {
-            if (typeof interpolation.file === 'undefined') {
+            if (typeof interpolation.name !== 'undefined') {
+                message = t('error.deleteFile', interpolation);
+            } else if (typeof interpolation.id !== 'undefined') {
+                message = t('error.deleteFolder2', interpolation);
+            } else {
                 interpolation.file = t('words.file');
+                message = t('error.deleteFile', interpolation);
             }
-            message = t('error.deleteFile', interpolation);
         } else if (error.type === ErrorTypes.ERROR_DELETING_FOLDER) {
             if (typeof interpolation.name !== 'undefined') {
                 message = t('error.deleteFolder', interpolation);

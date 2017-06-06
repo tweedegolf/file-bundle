@@ -23,11 +23,12 @@
   },
   "error": {
      "upload": "Error uploading {{files}}",
-     "deleteFile":  "Error deleting {{file}}.",
+     "deleteFile":  "Error deleting {{name}}.",
+     "deleteFile2":  "Error deleting file with id {{id}}.",
      "deleteFolder": "Error deleting folder {{name}}.",
      "deleteFolder2": "Error deleting folder with id {{id}}.",
-     "createFolder": "Error creating folder {{folder}}.",
-     "openFolder": "Can not open folder {{folder}}.",
+     "createFolder": "Error creating folder {{name}}.",
+     "openFolder": "Can not open folder {{name}}.",
      "renameFolder": "Can not rename folder with id {{id}} to {{name}}.",
      "moveItem": "Can not move {{item}}."
   },
