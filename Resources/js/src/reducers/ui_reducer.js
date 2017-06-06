@@ -222,6 +222,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             ...state,
             deleteFileWithId: null,
             deletingFileWithId: null,
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**
@@ -257,6 +258,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             ...state,
             deleteFolderWithId: null,
             deletingFolderWithId: null,
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**

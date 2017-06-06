@@ -24,7 +24,8 @@
   "error": {
     "upload": "Fehler hochladen {{files}}",
     "deleteFile":  "de-DE: Verwijderen van {{file}} niet gelukt.",
-    "deleteFolder": "de-DE: Verwijderen van de folder {{folder}} is niet gelukt.",
+    "deleteFolder": "de-DE: Verwijderen van de folder {{name}} is niet gelukt.",
+    "deleteFolder2": "de-DE: Verwijderen van folder met id {{id}} is niet gelukt.",
     "createFolder": "de-DE:  Aanmaken van de folder {{folder}} is niet gelukt.",
     "openFolder": "de-DE:  Kan de folder {{folder}} niet openen.",
     "renameFolder": "de-DE: Kan de folder met id {{id}} niet hernoemen naar {{name}}.",

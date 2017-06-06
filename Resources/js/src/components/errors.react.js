@@ -33,7 +33,11 @@ const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =
             }
             message = t('error.deleteFile', interpolation);
         } else if (error.type === ErrorTypes.ERROR_DELETING_FOLDER) {
-            message = t('error.deleteFolder', interpolation);
+            if (typeof interpolation.name !== 'undefined') {
+                message = t('error.deleteFolder', interpolation);
+            } else {
+                message = t('error.deleteFolder2', interpolation);
+            }
         } else if (error.type === ErrorTypes.ERROR_ADDING_FOLDER) {
             message = t('error.createFolder', interpolation);
         } else if (error.type === ErrorTypes.ERROR_RENAMING_FOLDER) {

@@ -44,7 +44,7 @@ const addFolder = (folderName: string,
             // );
             const errors = [];
             if (errorMessages.length > 0) {
-                errors.push(createError(Constants.ERROR_ADDING_FOLDER, errorMessages, { folder: folderName }));
+                errors.push(createError(Constants.ERROR_ADDING_FOLDER, errorMessages, { folder: `"${folderName}"` }));
             }
 
             const payload: PayloadFolderAddedType = {
@@ -55,7 +55,7 @@ const addFolder = (folderName: string,
             resolve(payload);
         },
         (messages: string[]) => {
-            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, { folder: folderName });
+            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, { folder: `"${folderName}"` });
             reject({ errors: [error] });
         },
     );

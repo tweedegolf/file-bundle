@@ -30,7 +30,7 @@ const deleteFile = (fileId: string,
 
     api.deleteFile(fileId,
         (error: boolean | string) => {
-            const errors = { errors: [] };
+            const errors = [];
             if (error === false) {
                 const file = filesById[fileId];
                 filesById[fileId] = R.merge(file, { isTrashed: true });
@@ -46,12 +46,14 @@ const deleteFile = (fileId: string,
                     };
                 }
             } else {
-                let messages = [];
+                const messages = [];
                 if (typeof error === 'string') {
-                    messages = [error];
+                    messages.push(error);
                 }
-                const err = createError(Constants.ERROR_DELETING_FILE, messages);
-                errors.errors.push(err);
+                const file = filesById[fileId];
+                const name = typeof file === 'undefined' ? `"${fileId}"` : `"${file.name}"`;
+                const err = createError(Constants.ERROR_DELETING_FILE, messages, { file: name });
+                errors.push(err);
             }
 
             resolve({
@@ -62,9 +64,9 @@ const deleteFile = (fileId: string,
             });
         },
         (messages: Array<string>) => {
-            const f: null | FileType = filesById[fileId];
-            const n: string = f === null ? 'no name' : f.name;
-            const error = createError(Constants.ERROR_DELETING_FILE, messages, { file: n });
+            const file: FileType = filesById[fileId];
+            const name: string = typeof file === 'undefined' ? '"no name"' : `"${file.name}`;
+            const error = createError(Constants.ERROR_DELETING_FILE, messages, { file: name });
             reject({ errors: [error] });
         },
     );

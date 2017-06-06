@@ -92,7 +92,7 @@ const deleteFile = (req, res) => {
 
     if (fileId === '102') {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send('Fake error: could not delete file "103"');
+        res.status(500).send('Fake error: could not delete file "102"');
     } else if (fileId === '103') {
         res.setHeader('Content-Type', 'application/json');
         res.send({ error: 'Fake error: could not delete file "103"' });

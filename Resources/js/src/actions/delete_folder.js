@@ -34,7 +34,7 @@ const deleteFolder = (folderId: string,
     const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        const err = createError(Constants.ERROR_DELETING_FOLDER, ['invalid state'], { folder: folderId });
+        const err = createError(Constants.ERROR_DELETING_FOLDER, ['invalid state'], { id: `"${folderId}"` });
         reject({ errors: [err] });
         return;
     }
@@ -46,59 +46,64 @@ const deleteFolder = (folderId: string,
     api.deleteFolder(
         folderId,
         (error: boolean | string) => {
-            if (typeof error === 'string') {
-                const err = createError(Constants.ERROR_DELETING_FOLDER, [error], { id: folderId });
-                reject({
-                    errors: [err],
-                });
-                return;
-            }
+            const errors = [];
 
-            const collectedItemIds = {
-                files: [],
-                folders: [],
-            };
-            getItemIds(folderId, collectedItemIds, tree);
-            collectedItemIds.files.forEach((id: string) => {
-                const file = filesById[id];
-                filesById[id] = { ...file, isTrashed: true };
-            });
-
-            collectedItemIds.folders.forEach((id: string) => {
-                const folder = foldersById[id];
-                foldersById[id] = { ...folder, isTrashed: true };
-            });
-
-            const currentFolder: FolderType = foldersById[currentFolderId];
-            if (typeof currentFolder.file_count !== 'undefined') {
-                currentFolder.file_count -= R.length(tree[currentFolderId].fileIds);
-            }
-            if (typeof currentFolder.folder_count !== 'undefined') {
-                currentFolder.folder_count -= R.length(tree[currentFolderId].folderIds);
-            }
-            foldersById[currentFolderId] = currentFolder;
-
-            const deletedFolder = foldersById[folderId];
-            // deletedFolder.parent = Constants.RECYCLE_BIN_ID;
-            deletedFolder.isTrashed = true;
-            foldersById[folderId] = deletedFolder;
-
-            if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
-                tree[Constants.RECYCLE_BIN_ID] = {
-                    fileIds: tree[Constants.RECYCLE_BIN_ID].fileIds,
-                    folderIds: [...tree[Constants.RECYCLE_BIN_ID].folderIds, folderId],
+            if (error === false) {
+                const collectedItemIds = {
+                    files: [],
+                    folders: [],
                 };
+                getItemIds(folderId, collectedItemIds, tree);
+                collectedItemIds.files.forEach((id: string) => {
+                    const file = filesById[id];
+                    filesById[id] = { ...file, isTrashed: true };
+                });
+
+                collectedItemIds.folders.forEach((id: string) => {
+                    const folder = foldersById[id];
+                    foldersById[id] = { ...folder, isTrashed: true };
+                });
+
+                const currentFolder: FolderType = foldersById[currentFolderId];
+                if (typeof currentFolder.file_count !== 'undefined') {
+                    currentFolder.file_count -= R.length(tree[currentFolderId].fileIds);
+                }
+                if (typeof currentFolder.folder_count !== 'undefined') {
+                    currentFolder.folder_count -= R.length(tree[currentFolderId].folderIds);
+                }
+                foldersById[currentFolderId] = currentFolder;
+
+                const deletedFolder = foldersById[folderId];
+                // deletedFolder.parent = Constants.RECYCLE_BIN_ID;
+                deletedFolder.isTrashed = true;
+                foldersById[folderId] = deletedFolder;
+
+                if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
+                    tree[Constants.RECYCLE_BIN_ID] = {
+                        fileIds: tree[Constants.RECYCLE_BIN_ID].fileIds,
+                        folderIds: [...tree[Constants.RECYCLE_BIN_ID].folderIds, folderId],
+                    };
+                }
+            } else {
+                const messages = [];
+                if (typeof error === 'string') {
+                    messages.push(error);
+                }
+                const err = createError(Constants.ERROR_DELETING_FOLDER, messages, { id: `"${folderId}"` });
+                errors.push(err);
             }
 
             resolve({
                 tree,
+                errors,
                 filesById,
                 foldersById,
             });
         },
         (messages: Array<string>) => {
             const folder = foldersById[folderId];
-            const err = createError(Constants.CONFIRM_DELETE_FOLDER, messages, { folder: folder.name });
+            const name = typeof folder === 'undefined' ? `"${folderId}"` : `"${folder.name}"`;
+            const err = createError(Constants.ERROR_DELETING_FOLDER, messages, { name });
             reject({ errors: [err] });
         },
     );
