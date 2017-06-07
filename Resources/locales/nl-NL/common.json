@@ -30,7 +30,9 @@
     "createFolder": "Aanmaken van de folder {{name}} is niet gelukt.",
     "openFolder": "Kan de folder {{name}} niet openen.",
     "renameFolder": "Kan de folder met id {{id}} niet hernoemen naar {{name}}.",
-    "moveItem": "Kan {{item}} niet verplaatsen."
+    "moveItems1": "Kan de files {{files}} niet verplaatsen.",
+    "moveItems2": "Kan de folders {{folders}} niet verplaatsen.",
+    "moveItems3": "Kan de files {{files}} en de folders {{folders}} niet verplaatsen."
   },
   "words": {
      "file": "bestand"

@@ -30,7 +30,9 @@
      "createFolder": "Error creating folder {{name}}.",
      "openFolder": "Can not open folder {{name}}.",
      "renameFolder": "Can not rename folder with id {{id}} to {{name}}.",
-     "moveItem": "Can not move {{item}}."
+    "moveItems1": "Can not move files {{files}}.",
+    "moveItems2": "Can not move folders {{folders}}.",
+    "moveItems3": "Can not move files {{files}} en de folders {{folders}}."
   },
   "words": {
      "file": "file"

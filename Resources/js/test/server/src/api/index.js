@@ -133,11 +133,11 @@ const moveItems = (req, res) => {
     if (fileIds.indexOf('101') !== -1) {
         res.setHeader('Content-Type', 'text/plain');
         res.status(500).send('Fake error: could not move file with id "101"');
-    } else if (fileIds.indexOf('102') !== -1) {
+    } else if (fileIds.indexOf('102') !== -1 && folderIds.indexOf('101') !== -1) {
         res.setHeader('Content-Type', 'application/json');
         res.send({ errors: {
-            fileIds: [102],
-            folderIds: [],
+            fileIds: ['102'],
+            folderIds: ['101'],
         } });
     } else {
         const data = database.moveItems(fileIds, folderIds, parentId);

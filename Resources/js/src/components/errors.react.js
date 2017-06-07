@@ -49,7 +49,13 @@ const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =
         } else if (error.type === ErrorTypes.ERROR_OPENING_FOLDER) {
             message = t('error.openFolder', interpolation);
         } else if (error.type === ErrorTypes.ERROR_MOVING_ITEMS) {
-            message = t('error.moveItem', interpolation);
+            if (typeof interpolation.folders === 'undefined' || interpolation.folders.length === 0) {
+                message = t('error.moveItems1', interpolation);
+            } else if (typeof interpolation.files === 'undefined' || interpolation.files.length === 0) {
+                message = t('error.moveItems2', interpolation);
+            } else {
+                message = t('error.moveItems3', interpolation);
+            }
         }
 
         const span: React$Element<*> = (<span>

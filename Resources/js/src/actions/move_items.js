@@ -14,6 +14,15 @@ import {
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
+const excludeIds = (arr: string[], exclude: string[]): string[] => {
+    const filtered = arr.filter(
+        (id: string): boolean => {
+            const index = exclude.findIndex((e: string): boolean => e === id);
+            return index === -1;
+        });
+    return filtered;
+};
+
 const moveFiles = (
     resolve: (payload: PayloadItemsMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
@@ -35,8 +44,8 @@ const moveFiles = (
     const currentFolder: FolderType = foldersById[currentFolderId];
     const tree: TreeType = R.clone(treeState.tree);
 
-    const fileIds: string[] = ui.clipboard.fileIds;
-    const folderIds: string[] = ui.clipboard.folderIds;
+    let fileIds: string[] = ui.clipboard.fileIds;
+    let folderIds: string[] = ui.clipboard.folderIds;
 
     api.moveItems(fileIds, folderIds, currentFolderId,
         (fileErrors: string[], folderErrors: string[]) => {
@@ -48,13 +57,13 @@ const moveFiles = (
                 folders: folderNames.join(', '),
             });
 
-
             const collectedItemIds = {
                 files: [],
                 folders: [],
             };
 
-            // TODO: filter the rejected items!
+            fileIds = excludeIds(fileIds, fileErrors);
+            folderIds = excludeIds(folderIds, folderErrors);
 
             fileIds.forEach((id: string) => {
                 tree[currentFolderId].fileIds.push(id);

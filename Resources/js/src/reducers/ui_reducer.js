@@ -573,6 +573,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
                 fileIds: [],
                 folderIds: [],
             },
+            errors: [...state.errors, ...action.payload.errors],
         };
     } else if (action.type === 'SHOW_RECYCLE_BIN') {
         return {
