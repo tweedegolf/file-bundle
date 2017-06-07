@@ -2,10 +2,11 @@
 
 General: folder and file ids are strings and can *not* be `null` anymore!
 
-
 #### open folder
 
-- GET      /url/id:string (note that id may not be `null` anymore!_
+This endpoint now contains 2 parameters; the id of the folder to be opened and the id of the chroot folder for this user. The server should check if the folder is inside the chroot folder tree. A chroot check can be bypassed by passing the value `'null'`, i.e. a *string* null.
+
+- GET      /url/id:string/root:string (note that id may not be `null` anymore!)
 - RESPONSE{ error: string, files?: FileType[], folders?: FolderType[] } (`error` must be added, for instance if the folder has been deleted or if the user has no rights to view the folder's content. If `error` is false `files` and `folders` may be omitted)
 - ERROR   error: string (server error code, e.g. 500)
 
@@ -57,7 +58,7 @@ General: folder and file ids are strings and can *not* be `null` anymore!
 
 #### empty recycle bin
 
-- POST      /url
+- DELETE    /url
 - RESPONSE  { error: boolean | string }
 - ERROR    error: string
 

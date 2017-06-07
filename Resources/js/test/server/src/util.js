@@ -119,13 +119,14 @@ export const cleanup = (callback) => {
  */
 export const getIdFromUrl = (url) => {
     const id = url.substring(url.lastIndexOf('/') + 1);
-
-    // if (isNaN(id) || id === '') {
-    //     id = null;
-    // } else {
-    //     id = parseInt(id, 10);
-    // }
     return id;
+};
+
+export const getIdAndRootFromUrl = (url) => {
+    const rootFolderId = url.substring(url.lastIndexOf('/') + 1);
+    const tmp = url.substring(0, url.lastIndexOf('/'));
+    const folderId = tmp.substring(tmp.lastIndexOf('/') + 1);
+    return { folderId, rootFolderId };
 };
 
 // used to create a unique file id

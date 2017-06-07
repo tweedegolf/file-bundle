@@ -88,10 +88,15 @@ const loadFolder = (
     const foldersById: FoldersByIdType = tmp3;
     const tree: TreeType = R.clone(treeState.tree);
     const currentFolder = foldersById[folderId];
+    let parentFolderId = rootFolderId;
+    if (currentFolder.parent !== null) {
+        parentFolderId = currentFolder.parent;
+    }
 
     // check if the current user is allowed to open this folder
     // -> happens only during initialization
-    let rfCheck = '';
+    let rfCheck = 'null';
+    // let rfCheck = rootFolderId;
     if (checkRootFolder === true) {
         rfCheck = rootFolderId;
     }
@@ -100,10 +105,15 @@ const loadFolder = (
         folderId,
         rfCheck,
         (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
-            if (typeof error === 'string') {
-                const err = createError(ERROR_OPENING_FOLDER, [error], { id: folderId });
+            if (error !== false) {
+                const messages = [];
+                if (typeof error === 'string') {
+                    messages.push(error);
+                }
+                const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
                 reject({
                     errors: [err],
+                    currentFolderId: parentFolderId,
                 });
                 return;
             }

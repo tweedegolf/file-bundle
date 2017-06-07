@@ -89,7 +89,14 @@ const deleteFolder = (folderId: string,
                 if (typeof error === 'string') {
                     messages.push(error);
                 }
-                const err = createError(Constants.ERROR_DELETING_FOLDER, messages, { id: `"${folderId}"` });
+                const folder = foldersById[folderId];
+                const interpolation = {};
+                if (typeof folder === 'undefined') {
+                    interpolation.id = `"${folderId}"`;
+                } else {
+                    interpolation.name = `"${folder.name}"`;
+                }
+                const err = createError(Constants.ERROR_DELETING_FOLDER, messages, interpolation);
                 errors.push(err);
             }
 

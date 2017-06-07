@@ -60,7 +60,7 @@ const init = (options: OptionsType, browser: boolean) => {
         allowEdit = true,
     } = options;
 
-    const noCache = rootFolderId !== uiState.rootFolderId;
+    const checkRootFolder = rootFolderId !== uiState.rootFolderId;
     const action: ActionInitType = {
         type: INIT,
         payload: {
@@ -86,8 +86,8 @@ const init = (options: OptionsType, browser: boolean) => {
         currentFolderId = uiState.currentFolderId;
     }
 
-    if (noCache === true) {
-        openFolder({ id: currentFolderId, checkRootFolder: true });
+    if (checkRootFolder === true) {
+        openFolder({ id: currentFolderId, checkRootFolder });
     } else {
         openFolder({ id: currentFolderId });
     }

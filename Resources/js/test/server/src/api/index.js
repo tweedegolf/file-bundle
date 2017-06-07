@@ -4,12 +4,20 @@
  */
 import R from 'ramda';
 import database from '../database';
-import { getIdFromUrl } from '../util';
+import { getIdFromUrl, getIdAndRootFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
 
 const openFolder = (req, res) => {
-    const folderId = getIdFromUrl(req.url);
-    console.log(`[API] getting contents of folder ${folderId}`);
+    const { folderId, rootFolderId } = getIdAndRootFromUrl(req.url);
+    if (rootFolderId !== 'null') {
+        console.log(`[API] checking chroot; root folder: "${rootFolderId}"`);
+        if (folderId === '101') {
+            res.setHeader('Content-Type', 'application/json');
+            res.send({ error: `Fake error; not allowed to get contents of folder with id "${folderId}"` });
+            return;
+        }
+    }
+    console.log(`[API] getting contents of folder "${folderId}"`);
 
     if (folderId === '103') {
         res.setHeader('Content-Type', 'text/plain');
@@ -28,7 +36,7 @@ const openFolder = (req, res) => {
 const addFolder = (req, res) => {
     const folderId = getIdFromUrl(req.url);
     const folderName = req.body.name;
-    console.log(`[API] adding new folder "${folderName}" in folder ${folderId}`);
+    console.log(`[API] adding new folder "${folderName}" in folder "${folderId}"`);
 
     if (folderName === 'servererror') {
         res.setHeader('Content-Type', 'text/plain');

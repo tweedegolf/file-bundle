@@ -302,6 +302,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             loadingFolderWithId: null,
+            currentFolderId: action.payload.currentFolderId,
             errors: [...state.errors, ...action.payload.errors],
         };
 
@@ -330,7 +331,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             sort: 'create_ts',
             scrollPosition: 0,
             isUploadingFiles: false,
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**
@@ -340,7 +341,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         return {
             ...state,
             isUploadingFiles: false,
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**
@@ -554,7 +555,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
                 folderIds: [],
             },
             selected: { ...state.clipboard },
-            errors: [...state.errors, ...action.payload.errors || []],
+            errors: [...state.errors, ...action.payload.errors],
         };
 
     /**
@@ -592,6 +593,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             ...state,
             showingRecycleBin: false,
             currentFolderId: state.currentFolderIdTmp,
+        };
+    } else if (action.type === 'ERROR_EMPTY_RECYCLE_BIN') {
+        return {
+            ...state,
+            errors: [...state.errors, ...action.payload.errors],
         };
     } else if (action.type === 'RESTORED_FROM_RECYCLE_BIN') {
         return {

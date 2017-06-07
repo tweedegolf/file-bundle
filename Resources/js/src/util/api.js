@@ -48,23 +48,29 @@ import config from '../config.json';
 
 const api = config.api;
 
-type ErrorType = {
-    toString: () => string,
-    message: string,
-};
-
 type DataType = {
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
 };
 
+type RequestErrorType = {
+    toString: (mixed) => string,
+};
+
 type Errors1Type = { [id: string]: string };
 type Errors2Type = string[];
-type ErrorsType = Errors1Type | Errors2Type;
+type Errors3Type = { fileIds: string[], folderIds: string[] };
+type ErrorsType =
+    | Errors1Type
+    | Errors2Type
+    | Errors3Type
+;
 
 type ResponseType = {
     text: string,
-    error: ErrorType,
+    error: {
+        message: string,
+    },
     body: {
         error: string,
         errors: ErrorsType,
@@ -99,7 +105,7 @@ if (typeof port !== 'undefined' && port !== null && port !== 80 && port !== 8080
 /**
  * Deletes a file
  *
- * @param      {string}    file_id    The id of the file that will be deleted
+ * @param      {string}    fileId    The id of the file that will be deleted
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
  * @return     {void}      Calls success or error callback
@@ -110,7 +116,7 @@ const deleteFile = (
     onError: (string[]) => void) => {
     const url = `${server}${api.deleteFile}${fileId}`;
     const req = request.post(url);
-    req.end((err: ErrorType, res: ResponseType) => {
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
@@ -122,8 +128,8 @@ const deleteFile = (
 /**
  * Moves a file or folder to another location
  *
- * @param      {string}    file_ids   The ids of the files that will be moved
- * @param      {number}    folder_id  The id of the folder where the files will
+ * @param      {string}    fileIds   The ids of the files that will be moved
+ * @param      {number}    folderId  The id of the folder where the files will
  *                                    be moved to
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
@@ -133,17 +139,24 @@ const moveItems = (
     fileIds: string[],
     folderIds: string[],
     folderId: string,
-    onSuccess: () => void,
+    onSuccess: (string[], string[]) => void,
     onError: (string[]) => void) => {
-    // console.log('[API]', file_ids, folder_id);
     const url = `${server}${api.moveItems}${folderId}`;
     const req = request.post(url).type('form');
     req.send({ 'fileIds[]': fileIds, 'folderIds[]': folderIds });
-    req.end((err: ErrorType, res: ResponseType) => {
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.errors);
+            const fileIds2 = [];
+            const folderIds2 = [];
+            if (res.body.errors.fileIds instanceof Array) {
+                fileIds2.push(...res.body.errors.fileIds);
+            }
+            if (res.body.errors.folderIds instanceof Array) {
+                folderIds2.push(...res.body.errors.folderIds);
+            }
+            onSuccess(fileIds2, folderIds2);
         }
     });
 };
@@ -152,7 +165,7 @@ const moveItems = (
  * Adds a new folder to the current folder
  *
  * @param      {string}    name       The name of the new folder
- * @param      {number}    folder_id  The id of the current folder, i.e. the
+ * @param      {number}    folderId   The id of the current folder, i.e. the
  *                                    parent folder of the new folder
  * @param      {Function}  onSuccess  Success handler
  * @param      {Function}  onError    Error handler
@@ -166,7 +179,7 @@ const addFolder = (
     const url = `${server}${api.addFolder}${folderId}`;
     const req = request.post(url).type('form');
     req.send({ name });
-    req.end((err: ErrorType, res: ResponseType) => {
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
@@ -187,7 +200,7 @@ const renameFolder = (
     const url = `${server}${api.renameFolder}${folderId}`;
     const req = request.post(url).type('form');
     req.send({ name: newName });
-    req.end((err: ErrorType, res: ResponseType) => {
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
@@ -211,7 +224,7 @@ const deleteFolder = (
     onError: (string[]) => void) => {
     const url = `${server}${api.deleteFolder}${folderId}`;
     const req = request.post(url).type('form');
-    req.end((err: ErrorType, res: ResponseType) => {
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
@@ -225,8 +238,8 @@ const emptyRecycleBin = (
     onSuccess: (boolean | string) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.emptyRecycleBin}`;
-    const req = request.get(url);
-    req.end((err: ErrorType, res: ResponseType) => {
+    const req = request.delete(url);
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
@@ -246,9 +259,8 @@ const getMetaData = (
     const url = `${server}${api.getMetaData}`;
     const req = request.post(url).type('form');
     req.send({ fileIds, folderIds });
-    req.end((err: ErrorType, res: ResponseType) => {
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
-            // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
             // onSuccess(res.body.filesById, res.body.foldersById);
@@ -266,13 +278,10 @@ const restoreFromRecycleBin = (
     const url = `${server}/admin/file/recycle-bin/restore`;
     const req = request.post(url).type('form');
     req.send({ fileIds, folderIds });
-    req.end((err: ErrorType, res: ResponseType) => {
+    req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
-            // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            // console.log(res.body.data);
-            // onSuccess(res.body.data);
             onSuccess();
         }
     });
@@ -281,20 +290,14 @@ const restoreFromRecycleBin = (
 /**
  * Upload new files to folder
  *
- * @param      {Array}     file_list  The FileList converted to an Array,
- *                                    contains all files that will be uploaded
- * @param      {?number}   folder_id  The id of the current folder, i.e. the
- *                                    folder that will contain the newly
- *                                    uploaded files
- * @param      {Function}  onSuccess  Success handler
- * @param      {Function}  onError    Error handler
- * @return     {void}      Calls success or error callback
+ * fileList: contains all files that will be uploaded
+ * folderId:  The id of the current folder, i.e. the folder that will contain the newly uploaded files
  */
 const upload = (
     fileList: File[],
     folderId: string,
     onSuccess: (FileType[], { [id: string]: string }) => void,
-    onError: (string[]) => void) => {
+        onError: (string[]) => void) => {
     const url = `${server}${api.uploadFiles}${folderId ? `/${folderId}` : ''}`;
     const req = request.post(url);
     fileList.forEach((file: File) => {
@@ -318,17 +321,16 @@ const upload = (
 /**
  * Loads the contents of a folder
  *
- * @param      {?number}   folder_id  The id of the folder
- * @param      {Function}  onSuccess  Success handler
- * @param      {Function}  onError    Error handler
- * @return     {void}      Calls success or error callback
+ * folderId: the id of the folder to load
+ * rootFolderId: the chroot folder id of the current user; if a non-null value is provided
+ * the server will check if the requested folder is inside the chroot folder
  */
 const openFolder = (
     folderId: string,
     rootFolderId: string,
     onSuccess: (boolean | string, FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.openFolder}${folderId}`;
+    const url = `${server}${api.openFolder}${folderId}/${rootFolderId}`;
     // let url = '/admin/file/list/999'
     // const req = request.post(url).type('form');
     const req = request.get(url);

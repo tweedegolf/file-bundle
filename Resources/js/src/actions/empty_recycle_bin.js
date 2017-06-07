@@ -28,29 +28,40 @@ const emptyRecycleBin = (
 
     api.emptyRecycleBin(
         (error: boolean | string) => {
-            const fileIds = R.filter((id: string): boolean =>
-                filesById[id].isTrashed === true, R.keys(filesById));
+            const errors = [];
+            if (error === false) {
+                const fileIds = R.filter((id: string): boolean =>
+                    filesById[id].isTrashed === true, R.keys(filesById));
 
-            const folderIds = R.filter((id: string): boolean =>
-                foldersById[id].isTrashed === true, R.keys(foldersById));
+                const folderIds = R.filter((id: string): boolean =>
+                    foldersById[id].isTrashed === true, R.keys(foldersById));
 
-            R.forEach((id: string) => {
-                delete filesById[id];
-            }, fileIds);
+                R.forEach((id: string) => {
+                    delete filesById[id];
+                }, fileIds);
 
-            R.forEach((id: string) => {
-                delete tree[id];
-                delete foldersById[id];
-            }, folderIds);
+                R.forEach((id: string) => {
+                    delete tree[id];
+                    delete foldersById[id];
+                }, folderIds);
 
-            // clean up tree, this cleans up the recycle bin as well
-            R.forEach((id: string) => {
-                tree[id].fileIds = R.without(fileIds, tree[id].fileIds);
-                tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
-            }, R.keys(tree));
+                // clean up tree, this cleans up the recycle bin as well
+                R.forEach((id: string) => {
+                    tree[id].fileIds = R.without(fileIds, tree[id].fileIds);
+                    tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
+                }, R.keys(tree));
+            } else {
+                const messages = [];
+                if (typeof error === 'string') {
+                    messages.push(error);
+                }
+                const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, messages);
+                errors.push(err);
+            }
 
             resolve({
                 tree,
+                errors,
                 filesById,
                 foldersById,
             });
