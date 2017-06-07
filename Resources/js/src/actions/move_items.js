@@ -15,7 +15,7 @@ const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const moveFiles = (
-    resolve: (payload: PayloadFilesMovedType) => mixed,
+    resolve: (payload: PayloadItemsMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
     const ui: UIStateType = store.getState().ui;
     const state = store.getState();
@@ -25,7 +25,8 @@ const moveFiles = (
     const tmp3 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        reject(createError('moving files', ['invalid state']));
+        const err = createError(Constants.ERROR_MOVING_ITEMS, ['invalid state']);
+        reject({ errors: [err] });
         return;
     }
     const currentFolderId: string = tmp1;
@@ -112,7 +113,7 @@ const moveFiles = (
 export default () => {
     // dispatch ui state action here?
     moveFiles(
-        (payload: PayloadFilesMovedType) => {
+        (payload: PayloadItemsMovedType) => {
             dispatch({
                 type: Constants.ITEMS_MOVED,
                 payload,

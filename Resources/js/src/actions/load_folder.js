@@ -59,8 +59,8 @@ const resolve = (payload: PayloadFolderOpenedType) => {
     dispatch(a);
 };
 
-const reject = (payload: PayloadErrorType) => {
-    const a: ActionErrorType = {
+const reject = (payload: PayloadErrorOpenFolderType) => {
+    const a: ActionErrorOpenFolderType = {
         type: ERROR_OPENING_FOLDER,
         payload,
     };
@@ -71,6 +71,7 @@ const loadFolder = (
     folderId: string,
     checkRootFolder: boolean) => {
     const state = store.getState();
+    const uiState: UIStateType = state.ui;
     const treeState: TreeStateType = state.tree;
     const tmp1 = state.ui.rootFolderId;
     const tmp2 = R.clone(treeState.filesById);
@@ -78,8 +79,10 @@ const loadFolder = (
 
     if (tmp1 === null || tmp2 === null || tmp3 === null) {
         const err = createError(ERROR_OPENING_FOLDER, ['invalid state'], { id: folderId });
+        const rootFolderId = uiState.rootFolderId !== null ? uiState.rootFolderId : folderId;
         reject({
             errors: [err],
+            currentFolderId: rootFolderId,
         });
         return;
     }
@@ -158,6 +161,7 @@ const loadFolder = (
             const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
             reject({
                 errors: [err],
+                currentFolderId: parentFolderId,
             });
         },
     );

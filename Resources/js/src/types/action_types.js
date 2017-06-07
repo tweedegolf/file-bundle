@@ -54,6 +54,16 @@ export type PayloadFolderOpenedType = {
     tree: TreeType,
 };
 
+export type ActionErrorOpenFolderType = {
+    type: 'ERROR_OPENING_FOLDER',
+    payload: PayloadErrorOpenFolderType,
+}
+
+export type PayloadErrorOpenFolderType = {
+    errors: ErrorType[],
+    currentFolderId: string,
+};
+
 // rename folder
 export type ActionRenameFolderType = {
     type: 'RENAME_FOLDER',
@@ -117,14 +127,15 @@ export type PayloadUploadDoneType = {
 };
 
 // move files
-export type ActionFilesMovedType = {
-    type: 'FILES_MOVED',
+export type ActionItemsMovedType = {
+    type: 'ITEMS_MOVED',
     payload: PayloadUploadDoneType,
 };
 
-export type PayloadFilesMovedType = {
+export type PayloadItemsMovedType = {
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
+    errors: ErrorType[],
     tree: TreeType,
 };
 
@@ -156,7 +167,7 @@ type errorTypes =
     | 'ERROR_DELETING_FOLDER'
     | 'ERROR_ADDING_FOLDER'
     | 'ERROR_UPLOADING_FILE'
-    | 'ERROR_OPENING_FOLDER'
+//    | 'ERROR_OPENING_FOLDER'
     | 'ERROR_MOVING_ITEMS'
     | 'ERROR_RENAMING_FOLDER'
     | 'ERROR_EMPTY_RECYCLE_BIN'
@@ -242,7 +253,7 @@ export type ActionUnionType =
     | ActionErrorType
     | ActionUploadStartType
     | ActionUploadDoneType
-    | ActionFilesMovedType
+    | ActionItemsMovedType
     | ActionDismissErrorType
     | ActionChangeSortingType
 ;
