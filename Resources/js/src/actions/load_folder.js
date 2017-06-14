@@ -168,6 +168,8 @@ const loadFolder = (
             reject({
                 errors: [err],
                 currentFolderId: parentFolderId,
+                foldersById,
+                tree,
             });
         },
     );
@@ -189,6 +191,10 @@ export const openFolder = (data: { id: string, checkRootFolder?: boolean, forceL
     }
 
     setTimeout(() => {
+        dispatch({
+            type: OPEN_FOLDER,
+            payload: { id },
+        });
         loadFolder(id, checkRootFolder);
     }, delay);
 };

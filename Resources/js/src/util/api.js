@@ -337,7 +337,11 @@ const openFolder = (
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {
             // console.log(err: ErrType, res: ResponseType)
-            onError([res.text, res.error.message, err.toString()]);
+            if (res) {
+                onError([res.text, res.error.message, err.toString()]);
+            } else {
+                onError([err.toString()]);
+            }
         } else {
             onSuccess(res.body.error, res.body.folders, res.body.files);
         }

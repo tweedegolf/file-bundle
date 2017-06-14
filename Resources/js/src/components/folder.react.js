@@ -23,8 +23,8 @@ type PropsType = {
     confirmRenameFolder: (id: null | string) => void,
     renameFolder: (id: string, newName: string) => void,
     showingRecycleBin: boolean,
-    loading?: string,
-    hovering?: boolean,
+    loadingFolderWithId: string,
+    hovering: boolean,
     deleteFolder: (id: string) => void,
     confirmDelete: (id: null | string) => void,
     deleteFolderWithId?: null | string,
@@ -92,8 +92,10 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         let className = classNames('folder',
             { success: folder.isNew === true },
             { selected: this.props.hovering },
-            { 'fa fa-circle-o-notch fa-spin': this.props.loading === folder.id },
+            { 'fa fa-circle-o-notch fa-spin': this.props.loadingFolderWithId === folder.id },
         );
+        // @TODO: spinner is never shown, instead a message 'loading' is displayed in the file browser -> is this okay?
+        // console.log(this.props.loadingFolderWithId, folder.id, this.props.loadingFolderWithId === folder.id, className);
         let p1 = {};
         let checkbox = null;
         let confirmPane = null;

@@ -59,8 +59,8 @@ export const tree = (state: TreeStateType = treeInitialState,
         // console.log(R.clone(action.payload.foldersById));
         return {
             ...state,
-            tree: action.payload.tree,
-            foldersById: action.payload.foldersById,
+            tree: action.payload.tree === null ? state.tree : action.payload.tree,
+            foldersById: action.payload.foldersById === null ? state.foldersById : action.payload.foldersById,
         };
 
     /**

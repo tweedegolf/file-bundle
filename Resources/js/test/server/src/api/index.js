@@ -7,6 +7,10 @@ import database from '../database';
 import { getIdFromUrl, getIdAndRootFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
 
+// const delay = (func, amount = 2000) => setTimeout(() => {
+//     func();
+// }, amount);
+
 const openFolder = (req, res) => {
     const { folderId, rootFolderId } = getIdAndRootFromUrl(req.url);
     if (rootFolderId !== 'null') {
@@ -19,17 +23,19 @@ const openFolder = (req, res) => {
     }
     console.log(`[API] getting contents of folder "${folderId}"`);
 
-    if (folderId === '103') {
-        res.setHeader('Content-Type', 'text/plain');
-        res.status(500).send('Fake error; could not open folder 103');
-    } else if (folderId === '104') {
-        res.setHeader('Content-Type', 'application/json');
-        res.send({ error: 'Fake error; could not open folder 104' });
-    } else {
-        const data = database.openFolder(folderId);
-        res.setHeader('Content-Type', 'application/json');
-        res.send(data);
-    }
+    setTimeout(() => {
+        if (folderId === '103') {
+            res.setHeader('Content-Type', 'text/plain');
+            res.status(500).send('Fake error; could not open folder 103');
+        } else if (folderId === '104') {
+            res.setHeader('Content-Type', 'application/json');
+            res.send({ error: 'Fake error; could not open folder 104' });
+        } else {
+            const data = database.openFolder(folderId);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(data);
+        }
+    }, 0);
 };
 
 

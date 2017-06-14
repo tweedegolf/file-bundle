@@ -76,6 +76,10 @@ const init = (options: OptionsType, browser: boolean) => {
             rootFolderId,
             foldersById,
             filesById,
+            isUploadingFile: false,
+            isAddingFolder: false,
+            loadingFolderWithId: null,
+            errors: [],
             tree: treeState.tree,
         },
     };

@@ -32,6 +32,10 @@ export type PayloadInitType = {
     allowDelete: boolean,
     allowEdit: boolean,
     selected: SelectedType,
+    errors: string[],
+    isUploadingFile: boolean,
+    isAddingFolder: boolean,
+    loadingFolderWithId: null | string,
 };
 
 // open folder
@@ -62,8 +66,8 @@ export type ActionErrorOpenFolderType = {
 export type PayloadErrorOpenFolderType = {
     errors: ErrorType[],
     currentFolderId: string,
-    foldersById: FoldersByIdType,
-    tree: TreeType,
+    foldersById: null | FoldersByIdType,
+    tree: null | TreeType,
 };
 
 // rename folder
