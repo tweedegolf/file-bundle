@@ -11,6 +11,7 @@ import openFolder from './open_folder';
 import uploadFiles from './upload_files';
 import createFolder from './create_folder';
 import renameFolder from './rename_folder';
+import deleteFolder from './delete_folder';
 // get arguments from command line
 import { args } from 'system';
 
@@ -82,15 +83,24 @@ const tasks = [
             onReady,
         },
     }, {
-        id: 'rename_folder',
-        func: renameFolder,
+        id: 'delete_folder',
+        func: deleteFolder,
         args: {
             name: 'folder 1',
-            newName: 'folder renamed',
             page,
             onError,
             onReady,
         },
+    // }, {
+    //     id: 'rename_folder',
+    //     func: renameFolder,
+    //     args: {
+    //         name: 'folder 1',
+    //         newName: 'folder renamed',
+    //         page,
+    //         onError,
+    //         onReady,
+    //     },
     // }, {
     //     id: 'open_folder',
     //     func: openFolder,
