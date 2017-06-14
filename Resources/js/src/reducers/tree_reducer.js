@@ -55,6 +55,14 @@ export const tree = (state: TreeStateType = treeInitialState,
             foldersById: action.payload.foldersById,
         };
 
+    case 'ERROR_OPENING_FOLDER':
+        // console.log(R.clone(action.payload.foldersById));
+        return {
+            ...state,
+            tree: action.payload.tree,
+            foldersById: action.payload.foldersById,
+        };
+
     /**
      * A file has been deleted from a folder, we need to update the
      * currentFolder object and update the files array containing all files in

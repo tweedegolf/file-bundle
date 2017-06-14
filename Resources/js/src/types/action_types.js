@@ -62,6 +62,8 @@ export type ActionErrorOpenFolderType = {
 export type PayloadErrorOpenFolderType = {
     errors: ErrorType[],
     currentFolderId: string,
+    foldersById: FoldersByIdType,
+    tree: TreeType,
 };
 
 // rename folder

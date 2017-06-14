@@ -114,9 +114,15 @@ const loadFolder = (
                     messages.push(error);
                 }
                 const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
+                delete tree[folderId];
+                delete foldersById[folderId];
+                const folderIds = tree[parentFolderId].folderIds;
+                tree[parentFolderId].folderIds = folderIds.filter((id: string): boolean => id !== folderId);
                 reject({
                     errors: [err],
                     currentFolderId: parentFolderId,
+                    foldersById,
+                    tree,
                 });
                 return;
             }
