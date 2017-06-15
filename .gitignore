@@ -1,1 +1,4 @@
 node_modules/
+Resources/js/test/
+flow-typed/
+yarn.lock
