@@ -7,7 +7,7 @@ import i18n from './i18n';
 import TaskRunner from './task_runner';
 // import all necessary tasks
 import { openPage, closeServer } from './open_page';
-import openFolder from './open_folder';
+import { openFolderById, openFolderByName } from './open_folder';
 import uploadFiles from './upload_files';
 import createFolder from './create_folder';
 import renameFolder from './rename_folder';
@@ -72,104 +72,134 @@ function onReady(data) {
     taskRunner.runTask();
 }
 
+const taskOpenPage = {
+    id: 'open_page',
+    func: openPage,
+    args: {
+        url,
+        page,
+        onError,
+        onReady,
+    },
+};
+
+const taskRenameFolder = {
+    id: 'rename_folder',
+    func: renameFolder,
+    args: {
+        name: 'folder 1',
+        newName: 'folder renamed',
+        page,
+        onError,
+        onReady,
+    },
+};
+
+const taskOpenFirstFolder = {
+    id: 'open_folder',
+    func: openFolderById,
+    args: {
+        index: 0,
+        page,
+        onError,
+        onReady,
+    },
+};
+
+const taskUploadSingleFile = {
+    id: 'upload_single_file',
+    func: uploadFiles,
+    args: {
+        page,
+        files: [`${config.MEDIA_PATH}/400x220.png`],
+        onError,
+        onReady,
+    },
+};
+
+const taskUploadMultipleFiles = {
+    id: 'upload_multiple_files',
+    func: uploadFiles,
+    args: {
+        page,
+        files: [`${config.MEDIA_PATH}/240x760.png`, `${config.MEDIA_PATH}/1200x280.png`],
+        onError,
+        onReady,
+    },
+
+};
+
+const taskCreateFolderPhantom = {
+    id: 'create_folder',
+    func: createFolder,
+    args: {
+        page,
+        labelSaveButton: i18n.t('toolbar.save'),
+        labelCreateButton: i18n.t('toolbar.createFolder'),
+        placeholderInputField: i18n.t('toolbar.folderName'),
+        name: 'phantom_folder',
+        onError,
+        onReady,
+    },
+
+};
+
+const taskOpenFolderPhantom = {
+    id: 'open_folder_phantom',
+    func: openFolderByName,
+    args: {
+        name: 'phantom_folder',
+        page,
+        onError,
+        onReady,
+    },
+};
+
+const taskOpenParentFolderOfPhantom = {
+    id: 'open_parent_folder_of_phantom_folder',
+    func: openParentFolder,
+    args: {
+        currentFolder: 'phantom_folder',
+        page,
+        onError,
+        onReady,
+    },
+};
+
+const taskDeleteFolderPhantom = {
+    id: 'delete_folder',
+    func: deleteFolder,
+    args: {
+        name: 'phantom_folder',
+        page,
+        onError,
+        onReady,
+    },
+};
+
+const taskCloseServer = {
+    id: 'close_server',
+    func: closeServer,
+    args: {
+        page,
+        url,
+        onError,
+        onReady,
+    },
+};
 
 const tasks = [
-    {
-        id: 'open_page',
-        func: openPage,
-        args: {
-            url,
-            page,
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'rename_folder',
-        func: renameFolder,
-        args: {
-            name: 'folder 1',
-            newName: 'folder renamed',
-            page,
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'open_folder',
-        func: openFolder,
-        args: {
-            index: 0, // open the first folder
-            // name: 'folder 1', // open a folder by name
-            page,
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'upload_single_file',
-        func: uploadFiles,
-        args: {
-            page,
-            files: [`${config.MEDIA_PATH}/400x220.png`],
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'upload_multiple_files',
-        func: uploadFiles,
-        args: {
-            page,
-            files: [`${config.MEDIA_PATH}/240x760.png`, `${config.MEDIA_PATH}/1200x280.png`],
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'create_folder',
-        func: createFolder,
-        args: {
-            page,
-            labelSaveButton: i18n.t('toolbar.save'),
-            labelCreateButton: i18n.t('toolbar.createFolder'),
-            placeholderInputField: i18n.t('toolbar.folderName'),
-            name: 'phantom_folder',
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'open_folder_phantom',
-        func: openFolder,
-        args: {
-            name: 'phantom_folder',
-            page,
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'open_parent_folder',
-        func: openParentFolder,
-        args: {
-            page,
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'delete_folder',
-        func: deleteFolder,
-        args: {
-            name: 'phantom_folder',
-            page,
-            onError,
-            onReady,
-        },
-    }, {
-        id: 'close_server',
-        func: closeServer,
-        args: {
-            page,
-            url,
-            onError,
-            onReady,
-        },
-    }];
-
+    taskOpenPage,
+    taskRenameFolder,
+    taskOpenFirstFolder,
+    taskUploadSingleFile,
+    taskUploadMultipleFiles,
+    taskCreateFolderPhantom,
+    taskOpenFolderPhantom,
+    taskOpenParentFolderOfPhantom,
+    taskDeleteFolderPhantom,
+    taskCloseServer,
+];
 
 page.open(url, () => {
     page.evaluate(() => {
