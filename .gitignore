@@ -5,3 +5,4 @@ jasmine.api.js
 Resources/js/test/server/media/
 flow-typed/
 .vscode
+yarn.lock
