@@ -62,8 +62,8 @@ const openFolderByName = (conf) => {
                     return {
                         ready: true,
                         index,
-                        numFiles: document.querySelectorAll('tr.cutable').length,
-                        numFolders: folders.length,
+                        // numFiles: document.querySelectorAll('tr.cutable').length,
+                        // numFolders: folders.length,
                     };
                 }
                 return {
