@@ -29,7 +29,7 @@ const phantom = (script, ...params) => new Promise((resolve, reject) => {
         cmd += ` ${param}`;
     });
 
-    // console.log('[CMD]', cmd)
+    // console.log('[CMD]', cmd);
     exec(cmd, (err, stdout, stderr) => {
         if (err !== null) {
             console.log('err:', err);
@@ -87,10 +87,16 @@ describe('User interaction tests with phantomjs', () => {
         expect(subResult.title).toEqual('The Art of State');
     });
 
-    it('Open folder "folder 1"', () => {
+    it('Rename folder "folder 1" to "folder renamed', () => {
         subResult = result.open_folder;
         expect(subResult.error).not.toBeDefined();
-        expect(subResult.name).toEqual('folder 1');
+        expect(subResult.name).toEqual('folder renamed');
+    });
+
+    it('Open folder "folder renamed"', () => {
+        subResult = result.open_folder;
+        expect(subResult.error).not.toBeDefined();
+        expect(subResult.name).toEqual('folder renamed');
         expect(subResult.numFiles).toBe(0);
         expect(subResult.numFolders).toBe(2);
     });

@@ -7,4 +7,4 @@ branches:
   - develop
 script: npm test
 notifications:
-  email: false
+  email: true

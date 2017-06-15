@@ -18,6 +18,8 @@ const openFolderById = (conf) => {
                     return {
                         ready: true,
                         name,
+                        numFiles: document.querySelectorAll('tr.cutable').length,
+                        numFolders: folders.length,
                     };
                 }
                 return {
@@ -30,7 +32,7 @@ const openFolderById = (conf) => {
             if (R.isNil(data.name)) {
                 conf.onError({ id: conf.id, error: `could not find folder with index: ${conf.index}` });
             } else {
-                check({ ...conf, name: data.name });
+                check({ ...conf, ...data });
             }
         },
         onError(error) {
@@ -58,8 +60,10 @@ const openFolderByName = (conf) => {
                         folder.click();
                     }
                     return {
-                        index,
                         ready: true,
+                        index,
+                        numFiles: document.querySelectorAll('tr.cutable').length,
+                        numFolders: folders.length,
                     };
                 }
                 return {
@@ -72,7 +76,7 @@ const openFolderByName = (conf) => {
             if (R.isNil(data.index) || data.index === -1) {
                 conf.onError({ id: conf.id, error: `could not find folder named '${conf.name}'` });
             } else {
-                check(conf);
+                check({ conf, ...data });
             }
         },
         onError(error) {
@@ -103,7 +107,7 @@ check = (conf) => {
         },
         onReady() {
             conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-opened.png`);
-            conf.onReady({ id: conf.id, name, ...data });
+            conf.onReady({ id: conf.id, ...data });
         },
         onError(error) {
             conf.onError({ id: conf.id, error });

@@ -17,8 +17,7 @@ const {
 let undef; // is undefined
 
 describe('ui reducer', () => {
-    // #1
-    it('should set a correct initial state if none is defined', () => {
+    it('#1 should set a correct initial state if none is defined', () => {
         const action = {};
         const newState = reducer(undef, action);
         expect(newState).toEqual({
@@ -54,8 +53,7 @@ describe('ui reducer', () => {
         });
     });
 
-    // #2
-    describe('add folder', () => {
+    describe('#2 add folder', () => {
         it('should indicate a folder is being added', () => {
             const action = {
                 type: types.ADD_FOLDER,
@@ -66,8 +64,7 @@ describe('ui reducer', () => {
         });
     });
 
-    // #3
-    describe('folder added', () => {
+    describe('#3 folder added', () => {
         it('should disable the adding folder indication', () => {
             const action = {
                 type: types.FOLDER_ADDED,
@@ -95,8 +92,7 @@ describe('ui reducer', () => {
     });
     */
 
-    // #4
-    describe('confirm delete file', () => {
+    describe('#4 confirm delete file', () => {
         it('should show a confirmation popup if it was passed a string', () => {
             const action = {
                 type: types.CONFIRM_DELETE_FILE,
@@ -121,8 +117,7 @@ describe('ui reducer', () => {
     });
 
 
-    // #5
-    describe('delete file', () => {
+    describe('#5 delete file', () => {
         it('should show a progress indicator during the API call', () => {
             const action = {
                 type: types.DELETE_FILE,
@@ -135,20 +130,20 @@ describe('ui reducer', () => {
         });
     });
 
-
-    describe('file deleted', () => {
+    describe('#6 file deleted', () => {
         it('should remove the progress indicator', () => {
             const action = {
                 type: types.FILE_DELETED,
-                payload: {},
+                payload: {
+                    errors: [],
+                },
             };
             const newState = reducer(undef, action);
             expect(newState.deletingFileWithId).toBeNull();
         });
     });
 
-
-    describe('error deleting file', () => {
+    describe('#7 error deleting file', () => {
         it('should display errors', () => {
             const action = {
                 type: types.ERROR_DELETING_FILE,
@@ -162,7 +157,7 @@ describe('ui reducer', () => {
     });
 
 
-    describe('confirm delete folder', () => {
+    describe('#8 confirm delete folder', () => {
         it('should show a confirmation popup if it was passed a string', () => {
             const action = {
                 type: types.CONFIRM_DELETE_FOLDER,
@@ -187,7 +182,7 @@ describe('ui reducer', () => {
     });
 
 
-    describe('delete folder', () => {
+    describe('#9 delete folder', () => {
         it('should indicate which folder is being deleted', () => {
             const action = {
                 type: types.DELETE_FOLDER,
@@ -201,11 +196,13 @@ describe('ui reducer', () => {
     });
 
 
-    describe('folder deleted', () => {
+    describe('#10 folder deleted', () => {
         it('should disable the delete folder indication', () => {
             const action = {
                 type: types.FOLDER_DELETED,
-                payload: {},
+                payload: {
+                    errors: [],
+                },
             };
             const newState = reducer(undef, action);
             expect(newState.deletingFolderWithId).toBeNull();
