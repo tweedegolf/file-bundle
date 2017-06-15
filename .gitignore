@@ -3,3 +3,6 @@ npm-debug.log
 screenshots
 jasmine.api.js
 Resources/js/file-bundle/test/server/media/
+Resources/js/test/
+yarn.lock
+flow-typed/
