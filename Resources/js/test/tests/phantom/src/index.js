@@ -37,6 +37,7 @@ const page = webpage.create();
 page.viewportSize = { width: 1024, height: 768 };
 page.clipRect = { top: 0, left: 0, width: 1024, height: 768 };
 
+
 // put eslint at ease
 const phantom = global.phantom;
 // the return values of all tasks will be stored in the testResults array
@@ -86,7 +87,7 @@ const taskRenameFolder = {
     func: renameFolder,
     args: {
         name: 'folder 1',
-        newName: 'folder renamed',
+        newName: 'new_name',
         page,
         onError,
         onReady,
@@ -188,15 +189,15 @@ const taskCloseServer = {
 
 const tasks = [
     taskOpenPage,
-    // taskRenameFolder,
+    taskRenameFolder,
     taskOpenFirstFolder,
-    // taskUploadSingleFile,
-    // taskUploadMultipleFiles,
+    taskUploadSingleFile,
+    taskUploadMultipleFiles,
     // taskCreateFolderPhantom,
     // taskOpenFolderPhantom,
     // taskOpenParentFolderOfPhantom,
     // taskDeleteFolderPhantom,
-    // taskCloseServer,
+    taskCloseServer,
 ];
 
 page.open(url, () => {

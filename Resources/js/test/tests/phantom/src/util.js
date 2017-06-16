@@ -27,7 +27,7 @@ export function waitFor(conf) {
         onTest,
         onTestArgs = {},
         onReady = () => {},
-        onError = () => {},
+        onTimeout = () => {},
     } = conf;
 
     const start = Date.now();
@@ -38,17 +38,10 @@ export function waitFor(conf) {
         // console.log(elapsed)
         if (elapsed < timeout && stopTesting === false) {
             onCheck();
-            try {
-                stopTesting = onTest(onTestArgs);
-            } catch (error) {
-                clearInterval(interval);
-                stopTesting = true;
-                console.log('CATCH', error.toString());
-                onError(error.toString());
-            }
+            stopTesting = onTest(onTestArgs);
         } else if (elapsed >= timeout) {
             clearInterval(interval);
-            onError(`test timeout (${elapsed})`);
+            onTimeout(`test timeout (${elapsed})`);
         } else {
             clearInterval(interval);
             onReady();

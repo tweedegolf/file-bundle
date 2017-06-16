@@ -87,18 +87,18 @@ describe('User interaction tests with phantomjs', () => {
         expect(subResult.title).toEqual('The Art of State');
     });
 
-    it('Rename folder "folder 1" to "folder renamed', () => {
-        subResult = result.open_folder;
+    it('Rename folder "folder 1" to "new_name', () => {
+        subResult = result.rename_folder;
         expect(subResult.error).not.toBeDefined();
-        expect(subResult.name).toEqual('folder renamed');
+        expect(subResult.renamed).toBeTruthy();
     });
 
-    it('Open folder "folder renamed"', () => {
+    it('Open folder "new_name"', () => {
         subResult = result.open_folder;
         expect(subResult.error).not.toBeDefined();
-        expect(subResult.name).toEqual('folder renamed');
+        expect(subResult.name).toEqual('new_name');
         expect(subResult.numFiles).toBe(0);
-        expect(subResult.numFolders).toBe(2);
+        expect(subResult.numFolders).toBe(1);
     });
 
     it('Upload single file', () => {
@@ -115,19 +115,19 @@ describe('User interaction tests with phantomjs', () => {
         expect(subResult.numFiles).toBe(3);
     });
 
-    it('Add new folder', () => {
-        subResult = result.create_folder;
-        expect(subResult.error).not.toBeDefined();
-        expect(subResult.numFolders).toBe(3);
-    });
+    // it('Add new folder', () => {
+    //     subResult = result.create_folder;
+    //     expect(subResult.error).not.toBeDefined();
+    //     expect(subResult.numFolders).toBe(3);
+    // });
 
-    it('Open folder "phantom_folder"', () => {
-        subResult = result.open_folder_phantom;
-        expect(subResult.error).not.toBeDefined();
-        expect(subResult.name).toEqual('phantom_folder');
-        expect(subResult.numFiles).toBe(0);
-        expect(subResult.numFolders).toBe(1);
-    });
+    // it('Open folder "phantom_folder"', () => {
+    //     subResult = result.open_folder_phantom;
+    //     expect(subResult.error).not.toBeDefined();
+    //     expect(subResult.name).toEqual('phantom_folder');
+    //     expect(subResult.numFiles).toBe(0);
+    //     expect(subResult.numFolders).toBe(1);
+    // });
 
     it('Close server', () => {
         subResult = result.close_server;

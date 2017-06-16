@@ -54,7 +54,7 @@ export function openPage(conf) {
                 page.render(`${config.SCREENSHOTS_PATH}/page-opened.png`);
                 onReady({ id, title: data.title });
             },
-            onError(error) {
+            onTimeout(error) {
                 onError({ id, error });
             },
         });
