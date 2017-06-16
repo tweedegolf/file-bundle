@@ -3,16 +3,30 @@ import { waitFor } from './util';
 import config from './config';
 
 const filesInFolder = [];
-let confirmDelete;
-let checkList;
+let confirmDeleteFolder;
+let checkDeletedFolder;
 let openRecyleBin;
 let checkRecyleBin;
 
 const deleteFolder = (conf) => {
-    let data;
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `deleteFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM deleteFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((name) => {
+            data = page.evaluate((name) => {
                 // get the table row representing the folder by index or by folder name
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
@@ -32,37 +46,46 @@ const deleteFolder = (conf) => {
                     }
 
                     return {
-                        ready: true,
                         buttonClicked,
                         index,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.name);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (
-                R.isNil(data.buttonClicked) ||
-                R.isNil(data.index) ||
-                data.buttonClicked === false ||
-                data.index === -1) {
-                conf.onError({ id: conf.id, error: `deleteFolder: ${data.buttonClicked} ${data.index}` });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.buttonClicked === false || data.index === -1) {
+                onError({ id, error: `deleteFolder: ${data.buttonClicked} ${data.index}` });
             } else {
-                conf.page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}.png`);
-                confirmDelete({ ...conf, index: data.index });
+                page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}.png`);
+                confirmDeleteFolder({ ...conf, index: data.index });
             }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `deleteFolder: ${msg}` });
         },
     });
 };
 
-confirmDelete = (conf) => {
-    let data;
+confirmDeleteFolder = (conf) => {
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `confirmDeleteFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM confirmDeleteFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
             data = conf.page.evaluate((index) => {
@@ -88,23 +111,39 @@ confirmDelete = (conf) => {
             return data.ready === true;
         },
         onReady() {
-            if (
+            if (error !== null) {
+                onError({ id, error });
+            } else if (
                 R.isNil(data.buttonClicked) ||
                 data.buttonClicked === false) {
-                conf.onError({ id: conf.id, error: `confirmDelete: ${data.buttonClicked}` });
+                conf.onError({ id: conf.id, error: `confirmDeleteFolder: ${data.buttonClicked}` });
             } else {
                 // conf.page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-confirm.png`);
-                checkList(conf);
+                checkDeletedFolder(conf);
             }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `confirmDeleteFolder: ${msg}` });
         },
     });
 };
 
-checkList = (conf) => {
-    let data;
+checkDeletedFolder = (conf) => {
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `checkDeletedFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM checkDeletedFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
             data = conf.page.evaluate((name) => {
@@ -131,7 +170,9 @@ checkList = (conf) => {
             return data.ready === true;
         },
         onReady() {
-            if (
+            if (error !== null) {
+                onError({ id, error });
+            } else if (
                 R.isNil(data.deletedFromList) ||
                 data.deletedFromList === false) {
                 conf.onError({ id: conf.id, error: `checkList: ${data.deletedFromList}` });
@@ -140,15 +181,29 @@ checkList = (conf) => {
                 openRecyleBin(conf);
             }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `checkDeletedFolder: ${msg}` });
         },
     });
 };
 
 
 openRecyleBin = (conf) => {
-    let data;
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `openRecyleBin: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM openRecyleBin]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
             data = conf.page.evaluate(() => {
@@ -166,20 +221,39 @@ openRecyleBin = (conf) => {
             return data.ready === true;
         },
         onReady() {
-            conf.page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-recycle-bin.png`);
-            checkRecyleBin(conf);
+            if (error !== null) {
+                onError({ id, error });
+            } else {
+                conf.page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-recycle-bin.png`);
+                checkRecyleBin(conf);
+            }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `openRecyleBin: ${msg}` });
         },
     });
 };
 
 checkRecyleBin = (conf) => {
-    let data;
+    const {
+        id,
+        page,
+        onError,
+        onReady,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `checkRecyleBin: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM checkRecyleBin]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((name) => {
+            data = page.evaluate((name) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const index = folders.findIndex((f) => {
@@ -202,16 +276,18 @@ checkRecyleBin = (conf) => {
             return data.ready;
         },
         onReady() {
-            if (
+            if (error !== null) {
+                onError({ id, error });
+            } else if (
                 R.isNil(data.folderInRecycleBin) ||
                 data.folderInRecycleBin === false) {
-                conf.onError({ id: conf.id, error: `checkRecycleBin: folder "${conf.name}" not found in recycle bin! ${data.folderInRecycleBin}` });
+                onError({ id, error: `checkRecycleBin: folder "${conf.name}" not found in recycle bin! ${data.folderInRecycleBin}` });
             } else {
-                conf.onReady({ id: conf.id, deletedFolder: conf.name });
+                onReady({ id, deletedFolder: conf.name });
             }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `checkRecyleBin: ${msg}` });
         },
     });
 };

@@ -196,7 +196,7 @@ const tasks = [
     taskCreateFolderPhantom,
     taskOpenFolderPhantom,
     taskOpenParentFolderOfPhantom,
-    // taskDeleteFolderPhantom,
+    taskDeleteFolderPhantom,
     taskCloseServer,
 ];
 

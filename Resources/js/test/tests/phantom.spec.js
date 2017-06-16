@@ -130,12 +130,14 @@ describe('User interaction tests with phantomjs', () => {
     });
 
     it('Open parent folder of "phantom_folder"', () => {
-        subResult = result.open_parent_folder_phantom;
+        subResult = result.open_parent_folder_of_phantom_folder;
         expect(subResult.error).not.toBeDefined();
         expect(subResult.name).toEqual('..');
-        expect(subResult.numFiles).toBe(0);
+        expect(subResult.numFiles).toBe(3);
         expect(subResult.numFolders).toBe(2);
     });
+
+    // TODO: add spec delete folder
 
     it('Close server', () => {
         subResult = result.close_server;
