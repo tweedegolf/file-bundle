@@ -42,7 +42,7 @@ const phantom = global.phantom;
 // the return values of all tasks will be stored in the testResults array
 const testResults = [];
 const taskRunner = new TaskRunner();
-const debug = false;
+const debug = true;
 
 
 function printResults() {
@@ -57,17 +57,15 @@ function printResults() {
 function onError(error) {
     testResults.push(error);
     if (debug === true) {
-        console.log(JSON.stringify(error));
-    } else {
-        printResults();
+        console.error('[ERROR]:', JSON.stringify(error));
     }
-    phantom.exit(1);
+    taskRunner.runTask();
 }
 
 function onReady(data) {
     testResults.push(data);
     if (debug === true) {
-        console.log(JSON.stringify(data));
+        console.log('[DATA]:', JSON.stringify(data));
     }
     taskRunner.runTask();
 }
@@ -190,15 +188,15 @@ const taskCloseServer = {
 
 const tasks = [
     taskOpenPage,
-    taskRenameFolder,
+    // taskRenameFolder,
     taskOpenFirstFolder,
-    taskUploadSingleFile,
-    taskUploadMultipleFiles,
-    taskCreateFolderPhantom,
-    taskOpenFolderPhantom,
-    taskOpenParentFolderOfPhantom,
-    taskDeleteFolderPhantom,
-    taskCloseServer,
+    // taskUploadSingleFile,
+    // taskUploadMultipleFiles,
+    // taskCreateFolderPhantom,
+    // taskOpenFolderPhantom,
+    // taskOpenParentFolderOfPhantom,
+    // taskDeleteFolderPhantom,
+    // taskCloseServer,
 ];
 
 page.open(url, () => {
