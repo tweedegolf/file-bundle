@@ -115,19 +115,27 @@ describe('User interaction tests with phantomjs', () => {
         expect(subResult.numFiles).toBe(3);
     });
 
-    // it('Add new folder', () => {
-    //     subResult = result.create_folder;
-    //     expect(subResult.error).not.toBeDefined();
-    //     expect(subResult.numFolders).toBe(3);
-    // });
+    it('Create new folder with name "phantom"', () => {
+        subResult = result.create_folder;
+        expect(subResult.error).not.toBeDefined();
+        expect(subResult.numFolders).toBe(2);
+    });
 
-    // it('Open folder "phantom_folder"', () => {
-    //     subResult = result.open_folder_phantom;
-    //     expect(subResult.error).not.toBeDefined();
-    //     expect(subResult.name).toEqual('phantom_folder');
-    //     expect(subResult.numFiles).toBe(0);
-    //     expect(subResult.numFolders).toBe(1);
-    // });
+    it('Open folder "phantom_folder"', () => {
+        subResult = result.open_folder_phantom;
+        expect(subResult.error).not.toBeDefined();
+        expect(subResult.name).toEqual('phantom_folder');
+        expect(subResult.numFiles).toBe(0);
+        expect(subResult.numFolders).toBe(1);
+    });
+
+    it('Open parent folder of "phantom_folder"', () => {
+        subResult = result.open_parent_folder_phantom;
+        expect(subResult.error).not.toBeDefined();
+        expect(subResult.name).toEqual('..');
+        expect(subResult.numFiles).toBe(0);
+        expect(subResult.numFolders).toBe(2);
+    });
 
     it('Close server', () => {
         subResult = result.close_server;

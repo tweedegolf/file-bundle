@@ -20,6 +20,7 @@ const openFolderById = (conf) => {
     page.onConsoleMessage = (msg) => {
         console.log(`[PHANTOM openFolderById]: ${msg}`);
     };
+
     waitFor({
         onTest() {
             data = page.evaluate((index) => {
@@ -31,16 +32,14 @@ const openFolderById = (conf) => {
                     folder.click();
                     return {
                         name,
-                        numFiles: document.querySelectorAll('tr.cutable').length,
-                        numFolders: folders.length,
                     };
                 }
                 return null;
             }, conf.index);
-            return data !== null;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
             } else if (R.isNil(data.name)) {
                 onError({ id, error: `could not find folder with index: ${conf.index}` });
@@ -49,7 +48,7 @@ const openFolderById = (conf) => {
             }
         },
         onTimeout(msg) {
-            onError({ id, error: msg });
+            onError({ id, error: `openFolderById: ${msg}` });
         },
     });
 };
@@ -75,6 +74,7 @@ const openFolderByName = (conf) => {
             data = page.evaluate((name) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
+                    let clicked = false;
                     const index = folders.findIndex((f) => {
                         const td = f.querySelector('td:nth-child(3) > span');
                         if (td) {
@@ -84,29 +84,31 @@ const openFolderByName = (conf) => {
                     });
                     if (index !== -1) {
                         const folder = folders[index];
-                        folder.click();
+                        if (folder) {
+                            folder.click();
+                            clicked = true;
+                        }
                     }
                     return {
                         index,
-                        numFiles: document.querySelectorAll('tr.cutable').length,
-                        numFolders: folders.length,
+                        clicked,
                     };
                 }
                 return null;
             }, conf.name);
-            return data !== null;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
-            } else if (data.index === -1) {
+            } else if (data.index === -1 || data.clicked === false) {
                 onError({ id, error: `could not find folder with index: ${conf.name}` });
             } else {
-                checkFolder({ conf, ...data });
+                checkFolder({ ...conf, ...data });
             }
         },
         onTimeout(msg) {
-            onError({ id, error: msg });
+            onError({ id, error: `openFolderByName: ${msg}` });
         },
     });
 };
@@ -137,14 +139,16 @@ checkFolder = (conf) => {
                     const index = folderNames.findIndex(n => n === name);
                     return {
                         opened: index === -1,
+                        numFiles: document.querySelectorAll('tr.cutable').length,
+                        numFolders: document.querySelectorAll('tr.folder').length,
                     };
                 }
                 return null;
             }, conf.name);
-            return data !== null;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
             } else if (data.opened === false) {
                 const folder = R.isNil(conf.name) ? conf.index : conf.name;
@@ -153,13 +157,13 @@ checkFolder = (conf) => {
                 page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-opened.png`);
                 onReady({ id,
                     name: conf.name,
-                    numFiles: conf.numFiles,
-                    numFolders: conf.numFolders,
+                    numFiles: data.numFiles,
+                    numFolders: data.numFolders,
                 });
             }
         },
         onTimeout(msg) {
-            onError({ id, error: msg });
+            onError({ id, error: `checkFolder: ${msg}` });
         },
     });
 };

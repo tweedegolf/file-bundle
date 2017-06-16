@@ -193,9 +193,9 @@ const tasks = [
     taskOpenFirstFolder,
     taskUploadSingleFile,
     taskUploadMultipleFiles,
-    // taskCreateFolderPhantom,
-    // taskOpenFolderPhantom,
-    // taskOpenParentFolderOfPhantom,
+    taskCreateFolderPhantom,
+    taskOpenFolderPhantom,
+    taskOpenParentFolderOfPhantom,
     // taskDeleteFolderPhantom,
     taskCloseServer,
 ];
