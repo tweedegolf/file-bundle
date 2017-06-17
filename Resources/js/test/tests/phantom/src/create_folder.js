@@ -1,10 +1,11 @@
+// import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
 // declare functions
-let typeName; // type the name of the folder in the input field
-let submit; // press the "create folder" button
-let check; // check if the the new folder has been created succesfully
+let typeFolderName; // type the name of the folder in the input field
+let submitNewFolder; // press the "create folder" button
+let checkNewFolder; // check if the the new folder has been created succesfully
 
 
 /**
@@ -23,50 +24,55 @@ let check; // check if the the new folder has been created succesfully
 const createFolder = (conf) => {
     const {
         id,
-        labelCreateButton,
         page,
         onError,
+        labelCreateButton,
     } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `createFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM createFolder]: ${msg}`);
+    };
 
     waitFor({
         onTest() {
-            const data = page.evaluate((buttonLabel) => {
+            data = page.evaluate((buttonLabel) => {
                 // get the "create folder" button
-                const s = document.querySelectorAll('button[type=button] > span.text-label');
-                const buttons = [];
-                let clicked = false;
+                const buttonLabels = Array.from(document.querySelectorAll('button[type=button] > span.text-label'));
+                let buttonClicked = false;
                 // find the "create folder" button by reading the labels on the buttons,
                 // when found click on it
-                if (s) {
-                    Array.from(s).forEach((span) => {
-                        buttons.push(span.innerHTML);
-                        if (span.innerHTML === buttonLabel) {
-                            span.parentNode.click();
-                            clicked = true;
+                if (buttonLabels) {
+                    buttonLabels.forEach((label) => {
+                        if (label.innerHTML === buttonLabel) {
+                            label.parentNode.click();
+                            buttonClicked = true;
                         }
                     });
                     return {
-                        ready: clicked,
-                        buttons,
+                        buttonClicked,
                     };
                 }
-                return {
-                    ready: false,
-                    buttons: [],
-                };
+                return null;
             }, labelCreateButton);
-            // data.buttons.forEach(button => {
-            //   console.log(button)
-            // })
-            // console.log('create', data.ready);
-            return data.ready;
+            return data !== null || error !== null;
         },
         onReady() {
-            page.render(`${config.SCREENSHOTS_PATH}/new-folder-open-dialog.png`);
-            typeName(conf);
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.buttonClicked === false) {
+                onError({ id, error: 'could not find the "create folder" button' });
+            } else {
+                page.render(`${config.SCREENSHOTS_PATH}/new-folder-open-dialog.png`);
+                typeFolderName(conf);
+            }
         },
-        onError(error) {
-            onError({ id, error });
+        onTimeout(msg) {
+            onError({ id, error: `createFolder: ${msg}` });
         },
     });
 };
@@ -79,39 +85,44 @@ const createFolder = (conf) => {
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-typeName = (conf) => {
+typeFolderName = (conf) => {
     const {
         id,
-        placeholderInputField,
-        labelSaveButton,
         page,
-        name,
         onError,
     } = conf;
 
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `typeFolderName: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM typeFolderName]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            const data = page.evaluate((n, placeholder) => {
+            data = page.evaluate((name, placeholder) => {
                 const input = document.querySelector(`input[placeholder=${placeholder}]`);
                 if (input !== null) {
-                    input.value = n;
-                    return {
-                        ready: true,
-                    };
+                    input.value = name;
+                    return true;
                 }
-                return {
-                    ready: false,
-                };
-            }, name, placeholderInputField);
-            // console.log('type', data.ready, placeholderInputField);
-            return data.ready;
+                return null;
+            }, conf.name, conf.placeholderInputField);
+            return data !== null || error !== null;
         },
         onReady() {
-            page.render(`${config.SCREENSHOTS_PATH}/new-folder-input-name.png`);
-            submit(conf);
+            if (error !== null) {
+                onError({ id, error });
+            } else {
+                page.render(`${config.SCREENSHOTS_PATH}/new-folder-input-name.png`);
+                submitNewFolder(conf);
+            }
         },
-        onError(error) {
-            onError({ id, error, labelSaveButton });
+        onTimeout(msg) {
+            onError({ id, error: `typeFolderName: ${msg}` });
         },
     });
 };
@@ -124,7 +135,7 @@ typeName = (conf) => {
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-submit = (conf) => {
+submitNewFolder = (conf) => {
     const {
         id,
         labelSaveButton,
@@ -132,35 +143,47 @@ submit = (conf) => {
         onError,
     } = conf;
 
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `submitNewFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM submitNewFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            const data = page.evaluate((buttonLabel) => {
-                const s = document.querySelectorAll('button[type=button] > span.text-label');
-                let clicked = false;
-                if (s) {
-                    Array.from(s).forEach((span) => {
-                        if (span.innerHTML === buttonLabel) {
-                            span.parentNode.click();
-                            clicked = true;
+            data = page.evaluate((buttonLabel) => {
+                const buttonLabels = Array.from(document.querySelectorAll('button[type=button] > span.text-label'));
+                let buttonClicked = false;
+                if (buttonLabels) {
+                    buttonLabels.forEach((label) => {
+                        if (label.innerHTML === buttonLabel) {
+                            label.parentNode.click();
+                            buttonClicked = true;
                         }
                     });
                     return {
-                        ready: clicked,
+                        buttonClicked,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, labelSaveButton);
-            // console.log('save', data.ready);
-            return data.ready;
+            return data !== null || error !== null;
         },
         onReady() {
-            page.render(`${config.SCREENSHOTS_PATH}/new-folder-submit.png`);
-            check(conf);
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.buttonClicked === false) {
+                onError({ id, error: 'could not find the "save new folder" button' });
+            } else {
+                page.render(`${config.SCREENSHOTS_PATH}/new-folder-submit.png`);
+                checkNewFolder(conf);
+            }
         },
-        onError(error) {
-            onError({ id, error });
+        onTimeout(msg) {
+            onError({ id, error: `submitNewFolder: ${msg}` });
         },
     });
 };
@@ -174,7 +197,7 @@ submit = (conf) => {
  *                               object is that is passed for argument to the
  *                               createFolder() function.
  */
-check = (conf) => {
+checkNewFolder = (conf) => {
     const {
         id,
         page,
@@ -182,38 +205,49 @@ check = (conf) => {
         onReady,
     } = conf;
 
-    let data;
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `checkNewFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM checkNewFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
             data = page.evaluate(() => {
                 const form = document.querySelector('div.form-inline.pull-right');
-                const s = document.querySelector('button[type=button] > span.fa.fa-circle-o-notch.fa-spin');
-                if (form !== null && s === null) {
+                const spinner = document.querySelector('button[type=button] > span.fa.fa-circle-o-notch.fa-spin');
+                // const aap = R.isNil(spinner);
+                if (form !== null && spinner === null) {
                     return {
                         class: form.className,
                         ready: form.className.indexOf('hide') !== -1,
                         numFolders: document.querySelectorAll('tr.folder').length,
                     };
                 }
-                return {
-                    class: '',
-                    ready: false,
-                };
+                return null;
             });
-            return data.ready;
+            return data !== null || error !== null;
         },
         onReady() {
-            page.render(`${config.SCREENSHOTS_PATH}/new-folder-check.png`);
-            onReady({
-                id,
-                numFolders: data.numFolders,
-            });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.ready === false) {
+                onError({ id, error: `could not find the new folder with name "${conf.name}"` });
+            } else {
+                page.render(`${config.SCREENSHOTS_PATH}/new-folder-check.png`);
+                onReady({
+                    id,
+                    numFolders: data.numFolders,
+                });
+            }
         },
-        onError(error) {
-            onError({ id, error });
+        onTimeout(msg) {
+            onError({ id, error: `checkNewFolder: ${msg}` });
         },
     });
 };
-
 
 export default createFolder;

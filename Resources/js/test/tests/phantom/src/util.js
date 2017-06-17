@@ -21,41 +21,30 @@ const phantom = global.phantom;
  */
 export function waitFor(conf) {
     const {
-        timeout = 10000,
-        delay = 1000,
+        timeout = 5000,
+        delay = 50,
+        onCheck = () => {},
         onTest,
         onTestArgs = {},
-        onCheck = () => {},
         onReady = () => {},
-        onError = null,
+        onTimeout = () => {},
     } = conf;
 
-    const start = new Date().getTime();
-    let condition = false;
+    const start = Date.now();
+    let stopTesting = false;
 
     const interval = setInterval(() => {
-        const elapsed = new Date().getTime() - start;
+        const elapsed = Date.now() - start;
         // console.log(elapsed)
-        if (elapsed < timeout && condition === false) {
+        if (elapsed < timeout && stopTesting === false) {
             onCheck();
-            condition = onTest(onTestArgs);
-        } else if (condition === false && elapsed < timeout) {
-            if (typeof onError === 'function') {
-                onError('test returned false');
-            } else {
-                console.log(false);
-                phantom.exit(1);
-            }
-        } else if (elapsed > timeout) {
-            if (typeof onError === 'function') {
-                onError(`test timeout (${elapsed})`);
-            } else {
-                console.log(false);
-                phantom.exit(1);
-            }
-        } else {
-            onReady();
+            stopTesting = onTest(onTestArgs);
+        } else if (elapsed >= timeout) {
             clearInterval(interval);
+            onTimeout(`test timeout (${elapsed})`);
+        } else {
+            clearInterval(interval);
+            onReady();
         }
     }, delay);
 }

@@ -1,0 +1,1 @@
+{"api":{"openFolder":"/admin/file/list/","uploadFiles":"/admin/file/upload/","moveItems":"/admin/file/move/","deleteFile":"/admin/file/delete/","deleteFolder":"/admin/file/delete/folder/","addFolder":"/admin/file/create/folder/","renameFolder":"/admin/file/rename/folder/","getMetaData":"/admin/file/metadata/","emptyRecycleBin":"/admin/file/recycle-bin/empty"}}

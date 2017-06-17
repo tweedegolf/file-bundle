@@ -7,46 +7,46 @@ i18n
     .use(XHR)
 //   .use(Cache)
 //   .use(LanguageDetector)
-  .init({
-      fallbackLng: 'en-GB',
+    .init({
+        fallbackLng: 'en-GB',
 
     //   have a common namespace used around the full app
-      ns: ['common'],
-      defaultNS: 'common',
+        ns: ['common'],
+        defaultNS: 'common',
 
-      debug: false,
+        debug: false,
 
-      wait: false,
+        wait: false,
 
       // cache: {
       //   enabled: true
       // },
 
-      interpolation: {
-          escapeValue: false, // not needed for react!!
-          formatSeparator: ',',
-          format(value, format, lng) {
-              if (format === 'uppercase') {
-                  return value.toUpperCase();
-              }
-              return value;
-          },
-          interpolation: {
+        interpolation: {
+            escapeValue: false, // not needed for react!!
+            formatSeparator: ',',
+            format(value, format, lng) {
+                if (format === 'uppercase') {
+                    return value.toUpperCase();
+                }
+                return value;
+            },
+            interpolation: {
               // not used!
-              format(value, format, lng) {
-                  if (format === 'error.delete') {
-                      if (typeof value === 'undefined') {
-                          return 'bummer';
-                      }
-                  }
-                  return value;
-              },
-          },
-      },
+                format(value, format, lng) {
+                    if (format === 'error.delete') {
+                        if (typeof value === 'undefined') {
+                            return 'bummer';
+                        }
+                    }
+                    return value;
+                },
+            },
+        },
 
-      backend: {
-          loadPath: 'locales/{{lng}}/{{ns}}.json',
-      },
-  });
+        backend: {
+            loadPath: 'locales/{{lng}}/{{ns}}.json',
+        },
+    });
 
 export default i18n;

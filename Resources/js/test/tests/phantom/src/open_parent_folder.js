@@ -3,17 +3,27 @@ import { waitFor } from './util';
 import config from './config';
 
 // declare functions
-let check;
+let checkParentFolder;
 
 const openParentFolder = (conf) => {
     const {
+        id,
+        page,
         onError,
     } = conf;
 
-    let data;
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `openParentFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM openParentFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate(() => {
+            data = page.evaluate(() => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const folder = folders[0];
@@ -31,66 +41,77 @@ const openParentFolder = (conf) => {
                         parentFolderName,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             });
-            // console.log(data.parentFolderName);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(data.buttonClicked) ||
-                R.isNil(data.parentFolderName) ||
-                data.buttonClicked === false ||
-                data.parentFolderName === null) {
-                conf.page.render(`${config.SCREENSHOTS_PATH}/parent-folder-not-found.png`);
-                conf.onError({ id: conf.id, error: 'no parent folder found' });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.buttonClicked === false || data.parentFolderName === null) {
+                page.render(`${config.SCREENSHOTS_PATH}/parent-folder-not-found.png`);
+                onError({ id, error: 'no parent folder found' });
             } else {
-                check({ ...conf, ...data });
+                checkParentFolder({ ...conf, ...data });
             }
         },
-        onError(error) {
-            onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `openParentFolder: ${msg}` });
         },
     });
 };
 
-
-check = (conf) => {
+checkParentFolder = (conf) => {
     const {
-    onReady,
-    onError,
-  } = conf;
+        id,
+        page,
+        onReady,
+        onError,
+    } = conf;
 
-    let data;
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `openParentFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM openParentFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((parentFolderName) => {
+            data = page.evaluate((parentFolderName) => {
                 const folderNames = Array.from(document.querySelectorAll('tr.folder > td:nth-child(3) > span'));
                 const index = folderNames.findIndex(name => name === parentFolderName);
                 if (folderNames) {
                     return {
                         ready: true,
                         opened: index === -1,
-                        parentFolderName,
+                        numFiles: document.querySelectorAll('tr.cutable').length,
+                        numFolders: document.querySelectorAll('tr.folder').length,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.parentFolderName);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(data.opened) || data.opened === false) {
-                onError({ id: conf.id, error: `parent folder of ${conf.currentFolder} not opened` });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (R.isNil(data.opened) || data.opened === false) {
+                onError({ id, error: `parent folder of ${conf.currentFolder} not opened` });
             } else {
-                conf.page.render(`${config.SCREENSHOTS_PATH}/parent-folder-of-${conf.currentFolder}-opened.png`);
-                onReady({ id: conf.id, ...data });
+                page.render(`${config.SCREENSHOTS_PATH}/parent-folder-of-${conf.currentFolder}-opened.png`);
+                onReady({
+                    id,
+                    name: conf.parentFolderName,
+                    numFiles: data.numFiles,
+                    numFolders: data.numFolders,
+                });
             }
         },
-        onError(error) {
-            onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `checkParentFolder: ${msg}` });
         },
     });
 };

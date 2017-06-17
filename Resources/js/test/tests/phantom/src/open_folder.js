@@ -1,53 +1,80 @@
 import R from 'ramda';
-import { waitFor } from './util';
 import config from './config';
+import { waitFor } from './util';
 
 // declare functions
-let check; // check if the folder has been opened
+let checkFolder; // check if the folder has been opened
 
 const openFolderById = (conf) => {
-    let data;
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `openFolderById: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM openFolderById]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((index) => {
+            data = page.evaluate((index) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const folder = folders[index];
                     const name = folder.querySelector('td:nth-child(3) > span').innerHTML;
+                    // const aap = R.isNil(name);
                     folder.click();
                     return {
-                        ready: true,
                         name,
-                        numFiles: document.querySelectorAll('tr.cutable').length,
-                        numFolders: folders.length,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.index);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(data.name)) {
-                conf.onError({ id: conf.id, error: `could not find folder with index: ${conf.index}` });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (R.isNil(data.name)) {
+                onError({ id, error: `could not find folder with index: ${conf.index}` });
             } else {
-                check({ ...conf, ...data });
+                checkFolder({ ...conf, ...data });
             }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `openFolderById: ${msg}` });
         },
     });
 };
 
 const openFolderByName = (conf) => {
-    let data;
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `openFolderByName: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM openFolderByName]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((name) => {
+            data = page.evaluate((name) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
+                    let clicked = false;
                     const index = folders.findIndex((f) => {
                         const td = f.querySelector('td:nth-child(3) > span');
                         if (td) {
@@ -57,60 +84,86 @@ const openFolderByName = (conf) => {
                     });
                     if (index !== -1) {
                         const folder = folders[index];
-                        folder.click();
+                        if (folder) {
+                            folder.click();
+                            clicked = true;
+                        }
                     }
                     return {
-                        ready: true,
                         index,
-                        numFiles: document.querySelectorAll('tr.cutable').length,
-                        numFolders: folders.length,
+                        clicked,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.name);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(data.index) || data.index === -1) {
-                conf.onError({ id: conf.id, error: `could not find folder named '${conf.name}'` });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.index === -1 || data.clicked === false) {
+                onError({ id, error: `could not find folder with index: ${conf.name}` });
             } else {
-                check({ conf, ...data });
+                checkFolder({ ...conf, ...data });
             }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `openFolderByName: ${msg}` });
         },
     });
 };
 
+checkFolder = (conf) => {
+    const {
+        id,
+        page,
+        onError,
+        onReady,
+    } = conf;
 
-check = (conf) => {
-    let data;
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `checkFolder: ${err}`;
+    };
+
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM checkFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((name) => {
+            data = page.evaluate((name) => {
                 const folderNames = Array.from(document.querySelectorAll('tr.folder > td:nth-child(3) > span'));
                 if (folderNames) {
                     const index = folderNames.findIndex(n => n === name);
                     return {
-                        ready: true,
                         opened: index === -1,
+                        numFiles: document.querySelectorAll('tr.cutable').length,
+                        numFolders: document.querySelectorAll('tr.folder').length,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.name);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
-            conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-opened.png`);
-            conf.onReady({ id: conf.id, ...data });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.opened === false) {
+                const folder = R.isNil(conf.name) ? conf.index : conf.name;
+                onError({ id, error: `could not open folder: ${folder}` });
+            } else {
+                page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-opened.png`);
+                onReady({ id,
+                    name: conf.name,
+                    numFiles: data.numFiles,
+                    numFolders: data.numFolders,
+                });
+            }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: `checkFolder: ${msg}` });
         },
     });
 };

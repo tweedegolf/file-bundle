@@ -10,7 +10,7 @@ import config from './config';
  * @property   {string}    id       The id of the task that executes this
  *                                  function
  * @property   {Object}    page     The phantomjs WebPage object
- * @property   {functon}   onReady  The function called after the folder's
+ * @property   {function}  onReady  The function called after the folder's
  *                                  contents has been loaded
  * @property   {function}  onError  The function called if the onTest() function
  *                                  returns false or reaches the timeout.
@@ -54,7 +54,7 @@ export function openPage(conf) {
                 page.render(`${config.SCREENSHOTS_PATH}/page-opened.png`);
                 onReady({ id, title: data.title });
             },
-            onError(error) {
+            onTimeout(error) {
                 onError({ id, error });
             },
         });

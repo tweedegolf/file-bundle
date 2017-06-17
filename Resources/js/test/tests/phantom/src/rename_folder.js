@@ -1,16 +1,29 @@
-import R from 'ramda';
+// import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
-let sendEnter;
-let check;
+let pressEnterKey;
+let checkRenamedFolder;
 
 const renameFolder = (conf) => {
-    let data;
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `renameFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM renameFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((name, newName) => {
-                // get the table row representing the folder by index or by folder name
+            data = page.evaluate((name, newName) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const index = folders.findIndex((f) => {
@@ -27,7 +40,6 @@ const renameFolder = (conf) => {
                     const input = folder.querySelector('td:nth-child(3) > input');
                     input.value = newName;
 
-
                     let classNames = '';
                     if (input) {
                         classNames = input.classList.toString();
@@ -35,71 +47,109 @@ const renameFolder = (conf) => {
 
                     return {
                         index,
-                        ready: true,
                         numFolders: folders.length,
                         classNames,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.name, conf.newName);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
-            conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-rename-to-${conf.newName}.png`);
-            sendEnter({ ...conf, index: data.index });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.index === -1) {
+                onError({ id, error: `could not find folder with name "${conf.name}"` });
+            } else {
+                page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-rename-to-${conf.newName}.png`);
+                pressEnterKey({ ...conf, index: data.index });
+            }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: msg });
         },
     });
 };
 
 
-sendEnter = (conf) => {
+pressEnterKey = (conf) => {
+    const {
+        id,
+        page,
+        onError,
+    } = conf;
+
+    let error = null;
+    page.onError = (err) => {
+        error = `sendEnter: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM sendEnter]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
             // press <enter>, this will submit the new name to the server
-            conf.page.sendEvent('keypress', conf.page.event.key.Enter);
+            page.sendEvent('keypress', page.event.key.Enter);
             return true;
         },
         onReady() {
-            check(conf);
+            if (error !== null) {
+                onError({ id, error });
+            } else {
+                checkRenamedFolder(conf);
+            }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: msg });
         },
     });
 };
 
+checkRenamedFolder = (conf) => {
+    const {
+        id,
+        page,
+        onError,
+        onReady,
+    } = conf;
 
-check = (conf) => {
-    let data;
+    let data = null;
+    let error = null;
+    page.onError = (err) => {
+        error = `checkRenamedFolder: ${err}`;
+    };
+    page.onConsoleMessage = (msg) => {
+        console.log(`[PHANTOM checkRenamedFolder]: ${msg}`);
+    };
+
     waitFor({
         onTest() {
-            data = conf.page.evaluate((index, newName) => {
-                const spans = Array.from(document.querySelectorAll('tr.folder > td:nth-child(3) > span'));
-                if (spans) {
-                    const folderNames = spans.map(span => span.innerHTML);
+            data = page.evaluate((index, newName) => {
+                const folders = Array.from(document.querySelectorAll('tr.folder'));
+                if (folders) {
+                    const folder = folders[index];
+                    const renamed = folder.querySelector('td:nth-child(3) > span').innerHTML === newName;
                     return {
-                        numFolders: folderNames.length,
-                        ready: folderNames[index] === newName,
+                        renamed,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.index, conf.newName);
-            // console.log(data.numFolders, conf.index);
-            return data.ready;
+            return data !== null || error !== null;
         },
         onReady() {
-            conf.page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-renamed-to-${conf.newName}.png`);
-            conf.onReady({ id: conf.id, renamed: data.renamed, ready: data.ready });
+            if (error !== null) {
+                onError({ id, error });
+            } else if (data.renamed === false) {
+                onError({ id, error: `could not rename folder with index: ${conf.index} to "${conf.newName}"` });
+            } else {
+                page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-renamed-to-${conf.newName}.png`);
+                onReady({ id, renamed: data.renamed });
+            }
         },
-        onError(error) {
-            conf.onError({ id: conf.id, error });
+        onTimeout(msg) {
+            onError({ id, error: msg });
         },
     });
 };

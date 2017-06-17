@@ -37,12 +37,13 @@ const page = webpage.create();
 page.viewportSize = { width: 1024, height: 768 };
 page.clipRect = { top: 0, left: 0, width: 1024, height: 768 };
 
+
 // put eslint at ease
 const phantom = global.phantom;
 // the return values of all tasks will be stored in the testResults array
 const testResults = [];
 const taskRunner = new TaskRunner();
-const debug = false;
+const debug = true;
 
 
 function printResults() {
@@ -57,17 +58,15 @@ function printResults() {
 function onError(error) {
     testResults.push(error);
     if (debug === true) {
-        console.log(JSON.stringify(error));
-    } else {
-        printResults();
+        console.error('[ERROR]:', JSON.stringify(error));
     }
-    phantom.exit(1);
+    taskRunner.runTask();
 }
 
 function onReady(data) {
     testResults.push(data);
     if (debug === true) {
-        console.log(JSON.stringify(data));
+        console.log('[DATA]:', JSON.stringify(data));
     }
     taskRunner.runTask();
 }
@@ -88,7 +87,7 @@ const taskRenameFolder = {
     func: renameFolder,
     args: {
         name: 'folder 1',
-        newName: 'folder renamed',
+        newName: 'new_name',
         page,
         onError,
         onReady,
@@ -137,7 +136,7 @@ const taskCreateFolderPhantom = {
         labelSaveButton: i18n.t('toolbar.save'),
         labelCreateButton: i18n.t('toolbar.createFolder'),
         placeholderInputField: i18n.t('toolbar.folderName'),
-        name: 'phantom_folder',
+        name: 'phantom',
         onError,
         onReady,
     },
@@ -148,18 +147,18 @@ const taskOpenFolderPhantom = {
     id: 'open_folder_phantom',
     func: openFolderByName,
     args: {
-        name: 'phantom_folder',
+        name: 'phantom',
         page,
         onError,
         onReady,
     },
 };
 
-const taskOpenParentFolderOfPhantom = {
-    id: 'open_parent_folder_of_phantom_folder',
+const taskOpenParentFolderOfFolderPhantom = {
+    id: 'open_parent_folder_of_folder_phantom',
     func: openParentFolder,
     args: {
-        currentFolder: 'phantom_folder',
+        currentFolder: 'phantom',
         page,
         onError,
         onReady,
@@ -167,10 +166,10 @@ const taskOpenParentFolderOfPhantom = {
 };
 
 const taskDeleteFolderPhantom = {
-    id: 'delete_folder',
+    id: 'delete_folder_phantom',
     func: deleteFolder,
     args: {
-        name: 'phantom_folder',
+        name: 'phantom',
         page,
         onError,
         onReady,
@@ -196,7 +195,7 @@ const tasks = [
     taskUploadMultipleFiles,
     taskCreateFolderPhantom,
     taskOpenFolderPhantom,
-    taskOpenParentFolderOfPhantom,
+    taskOpenParentFolderOfFolderPhantom,
     taskDeleteFolderPhantom,
     taskCloseServer,
 ];
