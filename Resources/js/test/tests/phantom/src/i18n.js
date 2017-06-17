@@ -3,7 +3,7 @@ import enGB from '../../../../../locales/en-GB/common.json';
 import nlNL from '../../../../../locales/nl-NL/common.json';
 import deDE from '../../../../../locales/de-DE/common.json';
 
-console.log('i18n', __dirname);
+// console.log('i18n', __dirname);
 
 i18n
 .init({

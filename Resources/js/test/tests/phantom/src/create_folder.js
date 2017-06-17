@@ -1,4 +1,4 @@
-import R from 'ramda';
+// import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
@@ -43,18 +43,18 @@ const createFolder = (conf) => {
             data = page.evaluate((buttonLabel) => {
                 // get the "create folder" button
                 const buttonLabels = Array.from(document.querySelectorAll('button[type=button] > span.text-label'));
-                let clicked = false;
+                let buttonClicked = false;
                 // find the "create folder" button by reading the labels on the buttons,
                 // when found click on it
                 if (buttonLabels) {
                     buttonLabels.forEach((label) => {
                         if (label.innerHTML === buttonLabel) {
                             label.parentNode.click();
-                            clicked = true;
+                            buttonClicked = true;
                         }
                     });
                     return {
-                        clicked,
+                        buttonClicked,
                     };
                 }
                 return null;
@@ -62,9 +62,9 @@ const createFolder = (conf) => {
             return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
-            } else if (data.clicked === false) {
+            } else if (data.buttonClicked === false) {
                 onError({ id, error: 'could not find the "create folder" button' });
             } else {
                 page.render(`${config.SCREENSHOTS_PATH}/new-folder-open-dialog.png`);
@@ -156,16 +156,16 @@ submitNewFolder = (conf) => {
         onTest() {
             data = page.evaluate((buttonLabel) => {
                 const buttonLabels = Array.from(document.querySelectorAll('button[type=button] > span.text-label'));
-                let clicked = false;
+                let buttonClicked = false;
                 if (buttonLabels) {
                     buttonLabels.forEach((label) => {
                         if (label.innerHTML === buttonLabel) {
                             label.parentNode.click();
-                            clicked = true;
+                            buttonClicked = true;
                         }
                     });
                     return {
-                        clicked,
+                        buttonClicked,
                     };
                 }
                 return null;
@@ -175,7 +175,7 @@ submitNewFolder = (conf) => {
         onReady() {
             if (error !== null) {
                 onError({ id, error });
-            } else if (data.clicked === false) {
+            } else if (data.buttonClicked === false) {
                 onError({ id, error: 'could not find the "save new folder" button' });
             } else {
                 page.render(`${config.SCREENSHOTS_PATH}/new-folder-submit.png`);

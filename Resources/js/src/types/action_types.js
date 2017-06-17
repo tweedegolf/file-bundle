@@ -32,7 +32,7 @@ export type PayloadInitType = {
     allowDelete: boolean,
     allowEdit: boolean,
     selected: SelectedType,
-    errors: string[],
+    errors: ErrorType[],
     isUploadingFile: boolean,
     isAddingFolder: boolean,
     loadingFolderWithId: null | string,

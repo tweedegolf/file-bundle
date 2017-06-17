@@ -1,4 +1,4 @@
-import R from 'ramda';
+// import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
@@ -53,13 +53,13 @@ const renameFolder = (conf) => {
                 }
                 return null;
             }, conf.name, conf.newName);
-            return data !== null;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
-            } else if (R.isNil(data.index === -1)) {
-                onError({ id, error: `could not find folder with index: ${conf.index}` });
+            } else if (data.index === -1) {
+                onError({ id, error: `could not find folder with name "${conf.name}"` });
             } else {
                 page.render(`${config.SCREENSHOTS_PATH}/folder-${conf.name}-rename-to-${conf.newName}.png`);
                 pressEnterKey({ ...conf, index: data.index });
@@ -94,7 +94,7 @@ pressEnterKey = (conf) => {
             return true;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
             } else {
                 checkRenamedFolder(conf);
@@ -125,7 +125,7 @@ checkRenamedFolder = (conf) => {
 
     waitFor({
         onTest() {
-            data = conf.page.evaluate((index, newName) => {
+            data = page.evaluate((index, newName) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const folder = folders[index];
@@ -136,10 +136,10 @@ checkRenamedFolder = (conf) => {
                 }
                 return null;
             }, conf.index, conf.newName);
-            return data !== null;
+            return data !== null || error !== null;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
             } else if (data.renamed === false) {
                 onError({ id, error: `could not rename folder with index: ${conf.index} to "${conf.newName}"` });

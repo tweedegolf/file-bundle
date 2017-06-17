@@ -23,7 +23,7 @@ const openParentFolder = (conf) => {
 
     waitFor({
         onTest() {
-            data = conf.page.evaluate(() => {
+            data = page.evaluate(() => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const folder = folders[0];
@@ -47,10 +47,10 @@ const openParentFolder = (conf) => {
         },
         onReady() {
             if (error !== null) {
-                conf.onError({ id, error });
+                onError({ id, error });
             } else if (data.buttonClicked === false || data.parentFolderName === null) {
-                conf.page.render(`${config.SCREENSHOTS_PATH}/parent-folder-not-found.png`);
-                conf.onError({ id, error: 'no parent folder found' });
+                page.render(`${config.SCREENSHOTS_PATH}/parent-folder-not-found.png`);
+                onError({ id, error: 'no parent folder found' });
             } else {
                 checkParentFolder({ ...conf, ...data });
             }

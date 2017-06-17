@@ -1,4 +1,4 @@
-import R from 'ramda';
+// import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
@@ -51,7 +51,7 @@ const uploadFiles = (conf) => {
             return data !== null;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
             } else {
                 if (multiple === true) {
@@ -127,7 +127,7 @@ checkUpload = (conf) => {
             return files[0].indexOf(data.name) !== -1;
         },
         onReady() {
-            if (R.isNil(error) === false) {
+            if (error !== null) {
                 onError({ id, error });
             } else {
                 if (multiple === true) {

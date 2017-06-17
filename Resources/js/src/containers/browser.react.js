@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import R from 'ramda';
 import classNames from 'classnames';
+import { translate } from 'react-i18next';
 import List from '../containers/list.react';
 import SelectedFiles from '../components/selected_files.react';
 import SortHeader from '../components/sort_header.react';
@@ -20,6 +21,7 @@ import * as Actions from '../actions';
 type PassedPropsType = {
     browser: boolean,
     options: OptionsType,
+    t: (string) => string,
 };
 
 type OtherPropsType = {
@@ -152,7 +154,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
                 return;
             }
-            // Phantomjs' page object does not recognize SyntheticEvent nor DataTransfer
+            // Phantomjs' page object does not recognize SyntheticEvent nor DataTransfer, so this
+            // flow error can not be fixed
             if (typeof DataTransfer === 'undefined') {
                 Actions.uploadFiles(event.target.files);
                 return;
@@ -274,8 +277,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                   className="btn btn-default expand-button"
                   onClick={Actions.expandBrowser}
                 >
-                  Bladeren
-                  <span className="fa fa-folder-open-o" />
+                    {this.props.t('browse')}
+                    <span className="fa fa-folder-open-o" />
                 </button>
             </div>);
         }
@@ -329,4 +332,5 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Browser);
+export default translate('common')(connect(mapStateToProps, mapDispatchToProps)(Browser));
+

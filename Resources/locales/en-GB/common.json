@@ -37,6 +37,7 @@
   "words": {
      "file": "file"
   },
+  "browse": "Browse",
   "loading": "loading...",
   "noFilesSelected": "No selected file(s)",
   "recycleBin": "Recycle bin"

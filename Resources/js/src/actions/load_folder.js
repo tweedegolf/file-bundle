@@ -83,6 +83,8 @@ const loadFolder = (
         reject({
             errors: [err],
             currentFolderId: rootFolderId,
+            tree: null,
+            foldersById: null,
         });
         return;
     }

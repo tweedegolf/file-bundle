@@ -35,7 +35,7 @@ export type UIStateType = {
     deleteFolderWithId: null | string,
     renameFolderWithId: null | string,
     hover: number,
-    errors: Array<ErrorType>,
+    errors: ErrorType[],
     loadingFolderWithId: null | string,
     deletingFileWithId: null | string,
     deletingFolderWithId: null | string,
