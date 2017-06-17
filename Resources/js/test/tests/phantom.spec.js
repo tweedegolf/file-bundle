@@ -121,23 +121,29 @@ describe('User interaction tests with phantomjs', () => {
         expect(subResult.numFolders).toBe(2);
     });
 
-    it('Open folder "phantom_folder"', () => {
+    it('Open folder named "phantom"', () => {
         subResult = result.open_folder_phantom;
         expect(subResult.error).not.toBeDefined();
-        expect(subResult.name).toEqual('phantom_folder');
+        expect(subResult.name).toEqual('phantom');
         expect(subResult.numFiles).toBe(0);
         expect(subResult.numFolders).toBe(1);
     });
 
-    it('Open parent folder of "phantom_folder"', () => {
-        subResult = result.open_parent_folder_of_phantom_folder;
+    it('Open parent folder of folder "phantom"', () => {
+        subResult = result.open_parent_folder_of_folder_phantom;
         expect(subResult.error).not.toBeDefined();
         expect(subResult.name).toEqual('..');
         expect(subResult.numFiles).toBe(3);
         expect(subResult.numFolders).toBe(2);
     });
 
-    // TODO: add spec delete folder
+    it('Delete folder "phantom"', () => {
+        subResult = result.delete_folder_phantom;
+        expect(subResult.error).not.toBeDefined();
+        expect(subResult.deleted).toBeTruthy();
+        expect(subResult.numFiles).toBe(3);
+        expect(subResult.numFolders).toBe(1);
+    });
 
     it('Close server', () => {
         subResult = result.close_server;

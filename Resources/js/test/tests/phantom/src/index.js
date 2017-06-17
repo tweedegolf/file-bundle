@@ -136,7 +136,7 @@ const taskCreateFolderPhantom = {
         labelSaveButton: i18n.t('toolbar.save'),
         labelCreateButton: i18n.t('toolbar.createFolder'),
         placeholderInputField: i18n.t('toolbar.folderName'),
-        name: 'phantom_folder',
+        name: 'phantom',
         onError,
         onReady,
     },
@@ -147,18 +147,18 @@ const taskOpenFolderPhantom = {
     id: 'open_folder_phantom',
     func: openFolderByName,
     args: {
-        name: 'phantom_folder',
+        name: 'phantom',
         page,
         onError,
         onReady,
     },
 };
 
-const taskOpenParentFolderOfPhantom = {
-    id: 'open_parent_folder_of_phantom_folder',
+const taskOpenParentFolderOfFolderPhantom = {
+    id: 'open_parent_folder_of_folder_phantom',
     func: openParentFolder,
     args: {
-        currentFolder: 'phantom_folder',
+        currentFolder: 'phantom',
         page,
         onError,
         onReady,
@@ -166,10 +166,10 @@ const taskOpenParentFolderOfPhantom = {
 };
 
 const taskDeleteFolderPhantom = {
-    id: 'delete_folder',
+    id: 'delete_folder_phantom',
     func: deleteFolder,
     args: {
-        name: 'phantom_folder',
+        name: 'phantom',
         page,
         onError,
         onReady,
@@ -195,7 +195,7 @@ const tasks = [
     taskUploadMultipleFiles,
     taskCreateFolderPhantom,
     taskOpenFolderPhantom,
-    taskOpenParentFolderOfPhantom,
+    taskOpenParentFolderOfFolderPhantom,
     taskDeleteFolderPhantom,
     taskCloseServer,
 ];

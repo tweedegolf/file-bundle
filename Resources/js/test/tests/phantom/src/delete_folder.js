@@ -1,12 +1,12 @@
-import R from 'ramda';
+// import R from 'ramda';
 import { waitFor } from './util';
 import config from './config';
 
-const filesInFolder = [];
+const filesInFolder = []; // not use yet
 let confirmDeleteFolder;
 let checkDeletedFolder;
-let openRecyleBin;
-let checkRecyleBin;
+let openRecycleBin;
+let checkRecycleBin;
 
 const deleteFolder = (conf) => {
     const {
@@ -27,7 +27,6 @@ const deleteFolder = (conf) => {
     waitFor({
         onTest() {
             data = page.evaluate((name) => {
-                // get the table row representing the folder by index or by folder name
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const index = folders.findIndex((f) => {
@@ -44,7 +43,6 @@ const deleteFolder = (conf) => {
                         deleteBtn.parentNode.click();
                         buttonClicked = true;
                     }
-
                     return {
                         buttonClicked,
                         index,
@@ -88,7 +86,7 @@ confirmDeleteFolder = (conf) => {
 
     waitFor({
         onTest() {
-            data = conf.page.evaluate((index) => {
+            data = page.evaluate((index) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
                 if (folders) {
                     const folder = folders[index];
@@ -99,26 +97,20 @@ confirmDeleteFolder = (conf) => {
                         buttonClicked = true;
                     }
                     return {
-                        ready: true,
                         buttonClicked,
                     };
                 }
-
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.index);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
             if (error !== null) {
                 onError({ id, error });
-            } else if (
-                R.isNil(data.buttonClicked) ||
-                data.buttonClicked === false) {
-                conf.onError({ id: conf.id, error: `confirmDeleteFolder: ${data.buttonClicked}` });
+            } else if (data.buttonClicked === false) {
+                onError({ id, error: 'confirmDeleteFolder: could not find "confirm delete" button' });
             } else {
-                // conf.page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-confirm.png`);
+                // page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-confirm.png`);
                 checkDeletedFolder(conf);
             }
         },
@@ -146,9 +138,8 @@ checkDeletedFolder = (conf) => {
 
     waitFor({
         onTest() {
-            data = conf.page.evaluate((name) => {
+            data = page.evaluate((name) => {
                 const folders = Array.from(document.querySelectorAll('tr.folder'));
-
                 if (folders) {
                     const index = folders.findIndex((f) => {
                         const td = f.querySelector('td:nth-child(3) > span');
@@ -158,27 +149,27 @@ checkDeletedFolder = (conf) => {
                         return false;
                     });
                     return {
-                        ready: true,
                         deletedFromList: index === -1,
+                        numFiles: document.querySelectorAll('tr.cutable').length,
+                        numFolders: document.querySelectorAll('tr.folder').length,
                     };
                 }
-
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.name);
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
             if (error !== null) {
                 onError({ id, error });
-            } else if (
-                R.isNil(data.deletedFromList) ||
-                data.deletedFromList === false) {
-                conf.onError({ id: conf.id, error: `checkList: ${data.deletedFromList}` });
+            } else if (data.deletedFromList === false) {
+                onError({ id, error: `checkDeletedFolder: folder "${conf.name}" is still listed` });
             } else {
-                conf.page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-confirmed.png`);
-                openRecyleBin(conf);
+                page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-confirmed.png`);
+                openRecycleBin({
+                    ...conf,
+                    numFiles: data.numFiles,
+                    numFolders: data.numFolders,
+                });
             }
         },
         onTimeout(msg) {
@@ -188,7 +179,7 @@ checkDeletedFolder = (conf) => {
 };
 
 
-openRecyleBin = (conf) => {
+openRecycleBin = (conf) => {
     const {
         id,
         page,
@@ -198,43 +189,39 @@ openRecyleBin = (conf) => {
     let data = null;
     let error = null;
     page.onError = (err) => {
-        error = `openRecyleBin: ${err}`;
+        error = `openRecycleBin: ${err}`;
     };
     page.onConsoleMessage = (msg) => {
-        console.log(`[PHANTOM openRecyleBin]: ${msg}`);
+        console.log(`[PHANTOM openRecycleBin]: ${msg}`);
     };
 
     waitFor({
         onTest() {
-            data = conf.page.evaluate(() => {
+            data = page.evaluate(() => {
                 const recycleBinButton = document.querySelector('div.toolbar > button > span.fa-trash-o');
                 if (recycleBinButton) {
                     recycleBinButton.parentNode.click();
-                    return {
-                        ready: true,
-                    };
+                    return true;
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             });
-            return data.ready === true;
+            return data !== null || error !== null;
         },
         onReady() {
             if (error !== null) {
                 onError({ id, error });
             } else {
-                conf.page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-recycle-bin.png`);
-                checkRecyleBin(conf);
+                page.render(`${config.SCREENSHOTS_PATH}/delete-folder-${conf.name}-recycle-bin.png`);
+                checkRecycleBin(conf);
             }
         },
         onTimeout(msg) {
-            onError({ id, error: `openRecyleBin: ${msg}` });
+            onError({ id, error: `openRecycleBin: ${msg}` });
         },
     });
 };
 
-checkRecyleBin = (conf) => {
+checkRecycleBin = (conf) => {
     const {
         id,
         page,
@@ -248,7 +235,7 @@ checkRecyleBin = (conf) => {
         error = `checkRecyleBin: ${err}`;
     };
     page.onConsoleMessage = (msg) => {
-        console.log(`[PHANTOM checkRecyleBin]: ${msg}`);
+        console.log(`[PHANTOM checkRecycleBin]: ${msg}`);
     };
 
     waitFor({
@@ -265,29 +252,29 @@ checkRecyleBin = (conf) => {
                     });
 
                     return {
-                        ready: true,
                         folderInRecycleBin: index !== -1,
                     };
                 }
-                return {
-                    ready: false,
-                };
+                return null;
             }, conf.name);
-            return data.ready;
+            return data !== null || error !== null;
         },
         onReady() {
             if (error !== null) {
                 onError({ id, error });
-            } else if (
-                R.isNil(data.folderInRecycleBin) ||
-                data.folderInRecycleBin === false) {
-                onError({ id, error: `checkRecycleBin: folder "${conf.name}" not found in recycle bin! ${data.folderInRecycleBin}` });
+            } else if (data.folderInRecycleBin === false) {
+                onError({ id, error: `checkRecycleBin: folder "${conf.name}" not found in recycle bin!` });
             } else {
-                onReady({ id, deletedFolder: conf.name });
+                onReady({
+                    id,
+                    deleted: true,
+                    numFiles: conf.numFiles,
+                    numFolders: conf.numFolders,
+                });
             }
         },
         onTimeout(msg) {
-            onError({ id, error: `checkRecyleBin: ${msg}` });
+            onError({ id, error: `checkRecycleBin: ${msg}` });
         },
     });
 };
