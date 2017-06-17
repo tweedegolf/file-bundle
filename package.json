@@ -7,7 +7,7 @@
     "eslint": "./node_modules/.bin/eslint",
     "phantom": "./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs ./Resources/js/test/tests/phantom/tests.compiled.es5",
     "jasmine": "babel-node ./Resources/js/test/tests/index.js",
-    "test": "npm start | npm run jasmine",
+    "test": "npm build-phantom | npm start | npm run jasmine",
     "start": "babel-node ./Resources/js/test/server/src/index.js",
     "watch-server": "nodemon --exec babel-node ./Resources/js/test/server/src/index.js",
     "watch-css": "./node_modules/.bin/node-sass -w ./Resources/scss -o ./Resources/js/test/server/assets/css --include-path ./node_modules",
