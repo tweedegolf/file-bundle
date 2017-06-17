@@ -65,6 +65,7 @@ const init = (options: OptionsType, browser: boolean) => {
         type: INIT,
         payload: {
             browser,
+            expanded: browser === true,
             selected,
             multiple: options.multiple || true,
             language: options.language,

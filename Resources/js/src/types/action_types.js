@@ -26,6 +26,7 @@ export type PayloadInitType = {
     language: string,
     multiple: boolean,
     browser: boolean,
+    expanded: boolean,
     imagesOnly: boolean,
     allowNewFolder: boolean,
     allowUpload: boolean,
