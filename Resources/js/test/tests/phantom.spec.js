@@ -70,7 +70,8 @@ describe('User interaction tests with phantomjs', () => {
     // });
 
     beforeAll((done) => {
-        phantom(path.join(__dirname, './phantom/tests.compiled.es5'), 'url=http://localhost:5050')
+        const port = process.env.PORT || 5050;
+        phantom(path.join(__dirname, './phantom/tests.compiled.es5'), `url=http://localhost:${port}`)
         .then((data) => {
             const index1 = data.indexOf('$DATA') + 5;
             const index2 = data.lastIndexOf('$DATA');

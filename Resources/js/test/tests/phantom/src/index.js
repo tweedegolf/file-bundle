@@ -17,7 +17,8 @@ import deleteFolder from './delete_folder';
 import { args } from 'system';
 
 // default values for command line arguments
-let url = 'http://localhost:5050';
+const port = process.env.PORT || 5050;
+let url = `http://localhost:${port}`;
 // overrule the default values if set
 args.forEach((arg) => {
     if (arg.indexOf('url') === 0) {
