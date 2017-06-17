@@ -1,9 +1,15 @@
 language: node_js
 node_js:
   - "7"
+# safelist
 env:
   - CXX=g++-4.8
-# safelist
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 branches:
   only:
   - develop
