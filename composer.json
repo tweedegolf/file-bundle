@@ -9,7 +9,7 @@
             "email": "marlon@tweedegolf.com"
         }
     ],
-    "minimum-stability": "prod",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.6.0",
         "symfony/symfony": "^3.0",
