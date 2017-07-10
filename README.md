@@ -54,3 +54,11 @@ be selected. When the browser operated as a separate file manager clicking on a 
 selecting it to, for example, put it on the pasteboard.
 
 The table of files can be sorted by clicking on the table headers.
+
+# Compilation
+
+```bash
+sass -t compressed Resources/scss/file-bundle.scss Resources/public/file-bundle.css
+babel Resources/js/file-bundle/ --out-file Resources/public/file-bundle.js --presets=es2015,react --minified
+```
+
