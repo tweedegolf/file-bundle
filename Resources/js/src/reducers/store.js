@@ -4,8 +4,8 @@ import createLogger from 'redux-logger';
 import { autoRehydrate } from 'redux-persist';
 // import thunkMiddleware from 'redux-thunk'
 import type { CombinedReducer } from 'redux';
-import { ui, uiInitialState } from '../reducers/ui_reducer';
-import { tree, treeInitialState } from '../reducers/tree_reducer';
+import { ui, uiInitialState } from './ui_reducer';
+import { tree, treeInitialState } from './tree_reducer';
 
 const initialState: StateType = {
     ui: uiInitialState,
