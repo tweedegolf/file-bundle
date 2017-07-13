@@ -1,10 +1,7 @@
 node_modules
 npm-debug.log
 screenshots
-jasmine.api.js
-Resources/js/test/server/media/
-Resources/js/test/tests/phantom/tests.compiled.es5
+Resources/server/media/
+Resources/tests/phantom/tests.compiled.es5
 flow-typed/npm/
 .vscode
-yarn.lock
-tmp.json

@@ -16,7 +16,7 @@ For the javascript part, the following nodejs libraries are required:
 - redux-logger
 - superagent
 
-The scss file that is provided extends the Bootstrap 3 framework. The Bootstrap javascript components are not required.
+The scss file that is provided extends the Bootstrap 3 framework. The Bootstrap javascript components are not required. Also font awesome icons are used.
 
 
 ## Architecture
@@ -56,61 +56,59 @@ The selected files component is used when this plugin is used in a form; in that
 The table of files can be sorted by clicking on the table headers.
 
 
+## Flow
+
+This project uses Flow type-checker; you can find the flow types in the folder `./Resources/types`.
+
 
 
 ## Compiling javascript and scss
 
-When you add this bundle to your own project, the containing project should include its own compile scripts for javascript and scss; this way you can bundle the javascript and css that you use in your project with the javascript and css in this bundle into single build files.
+When you add this bundle to your own project you should ideally include your own compile scripts for javascript and scss; this way you can bundle the javascript and css that you use in your project with the javascript and css in this bundle into single build files.
 
-However, this bundle contains does compile scripts as well, but these are meant for testing and development. All build scripts are defined in the package.json file that you can find in the folder `Resources/js/file-bundle`.
+However, this bundle does contain compile scripts for testing and development and for creating production builds. All build scripts are defined in the package.json but for testing and development gulp is used.
 
 First you need to make sure that you have installed all dependencies needed for testing and development:
 
- - `cd Resources/js/file-bundle`
- - `npm install`
+ - `yarn install` (or `npm install`)
 
-Then, provided that still are in the `Resources/js/file-bundle` folder, you can start the test server:
+Then you can start the test server:
 
- - `npm start`
+ - `yarn start` (or `npm start`)
+
 
 The bundle contains the compiled javascript and css files so you can directly point your browser to:
 
- - [http://localhost:5050](http://localhost:5050) or [http://localhost:5050/browser](http://localhost:5050/browser) for browser mode
- - [http://localhost:5050/filepicker](http://localhost:5050/filepicker) for filepicker mode
+ - [http://localhost:5050/browser.html](http://localhost:5050/browser.html) for browser mode
+ - [http://localhost:5050/filepicker.html](http://localhost:5050/filepicker.html) for filepicker mode
 
 If you chose to make changes in the javascript and/or scss files, you can use these commands to compile the code anew:
 
- - `npm run build` builds both the javascript and the css
- - `npm run build-js` builds the javascript
- - `npm run build-css` builds the css
- - `npm run build-min` builds a minified version of the javascript
- - `npm run watch` starts watching for changes in both the javascript and the scss files and builds the code as soon as you've changed anything in the code
- - `npm run watch-js` starts watching for changes in the javascript and builds upon any change
- - `npm run watch-css` starts watching for changes in the scss files and builds upon any change
+ - `yarn run gulp:develop` builds and starts watching both the javascript and the css
+ - `yarn run gulp:production` builds production files
 
 If you want to make changes to the express test server note that you have to restart the server to effectuate the changes. You can circumvent this by installing [nodemon](https://nodemon.io) and running the server watch command:
 
- - `npm install -g nodemon`
- - `npm run watch-server'
+ - `yarn install -g nodemon`
+ - `yarn run watch-server`
 
 
 ## Testing
 
 This project comes with a test suite. If you haven't already done so in the previous step, first install the dependencies:
 
- - `cd Resources/js/file-bundle`
- - `npm install`
+ - `yarn install` (or `npm install`)
 
-In the directory `Resources/js/file-bundle/test` you will find a folder `tests` that contains all tests and a folder `server` that contains the test server. In the `tests` folder all test files have a .spec.js extension.
+The folder `Resources/tests` contains all Phantom and Jasmine tests and the folder `./Resources/server` contains the test server. All test files have a .spec.js extension.
 
-You can run all test scripts from the `Resources/js/file-bundle` folder:
+You can run all test scripts like so:
 
- - `npm test`
+ - `yarn test`
 
 
-User interaction tests are run by Phantomjs. The source of the tests are located in the folder `tests/phantom/src`. These tests are written in es6 and because Phantomjs only supports es5 scripts, they are compiled to the file `tests/phantom/tests.compiled.es5`
+User interaction tests are run by Phantomjs. The source of the tests are located in the folder `./Resources/tests/phantom/src`. These tests are written in es6 and because Phantomjs only supports es5 scripts, they are compiled to the file `./Resources/tests/phantom/tests.compiled.es5`
 
-Should you wich to change anything in the Phantomjs tests you need to recompile them using one of these commands:
+Should you wish to change anything in the Phantomjs tests you need to recompile them using one of these commands:
 
- - `npm run build-phantom`
- - `npm run watch-phantom` for compiling while you are editing the code
+ - `yarn run build-phantom`
+ - `yarn run watch-phantom` for compiling while you are editing the code

@@ -1,3 +1,8 @@
+$gray-base:     #000 !default;
+$brand-primary: darken(#428bca, 6.5%) !default;
+$gray-light:    lighten($gray-base, 46.7%) !default;
+$gray-lighter:  lighten($gray-base, 93.5%) !default;
+
 html, body {
   background-color: #aaa;
 }

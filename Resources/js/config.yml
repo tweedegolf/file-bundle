@@ -1,0 +1,10 @@
+api:
+  openFolder: /admin/file/list/ # {id: string}
+  uploadFiles: /admin/file/upload/ # {fileList: File[], parentFolderId: string}
+  moveItems: /admin/file/move/ # {fileIds: string[], folderIds: string []}
+  deleteFile: /admin/file/delete/ # {id :string}
+  deleteFolder: /admin/file/delete/folder/ # {id: string}
+  addFolder: /admin/file/create/folder/ # {name: string, parentFolderId: string}
+  renameFolder: /admin/file/rename/folder/ # {id: string}
+  getMetaData: /admin/file/metadata/  # {fileIds: string[], folderIds: string []}
+  emptyRecycleBin: /admin/file/recycle-bin/empty

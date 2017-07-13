@@ -1,0 +1,14 @@
+{
+  "spec_dir": "./Resources/tests/",
+  "spec_files": [
+    "ui-reducer.spec.js",
+    "phantom.spec.js"
+  ],
+  "helpers": [
+    "./node_modules/jasmine-es6/lib/install.js",
+    "helpers/**/*.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": false,
+  "showColors": true
+}

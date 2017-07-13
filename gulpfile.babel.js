@@ -20,16 +20,19 @@ const reload = livereload;
 const startsWith = R.invoker(1, 'startsWith');
 
 const sources = {
-    main_js: './Resources/js/src/index.js',
-    config_yaml: './Resources/js/src/config.yml',
-    config_json: './Resources/js/src/config.json',
-    js: './Resources/js/src/**/*.js',
-    css: './Resources/scss/**/*.scss',
+    main_js: './Resources/js/index.js',
+    config_yaml: './Resources/js/config.yml',
+    config_json: './Resources/js/config.json',
+    js: './Resources/js/**/*.js',
+    css: './Resources/scss/app.scss',
+    cssComplete: './Resources/scss/app-complete.scss',
+    cssBootstrap: './Resources/scss/app-only-bootstrap.scss',
+    cssFontAwesome: './Resources/scss/app-only-font-awesome.scss',
 };
 
 const targets = {
-    js: './Resources/js/test/server/assets/js/',
-    css: './Resources/js/test/server/assets/css/',
+    js: './Resources/public/',
+    css: './Resources/public/',
 };
 
 const logBrowserifyError = (e) => {
@@ -44,11 +47,11 @@ const logBrowserifyError = (e) => {
 };
 
 const rebundle = b => b.bundle()
-        .on('error', logBrowserifyError)
-        .pipe(source('app.js'))
-        .pipe(buffer())
-        .pipe(gulp.dest(path.join(targets.js)))
-        .pipe(reload());
+    .on('error', logBrowserifyError)
+    .pipe(source('file-bundle.js'))
+    .pipe(buffer())
+    .pipe(gulp.dest(path.join(targets.js)))
+    .pipe(reload());
 
 gulp.task('watch_js', () => {
     const opts = {
@@ -85,11 +88,11 @@ gulp.task('build_js', () => {
     b.transform(babelify.configure({
         compact: false,
         presets: ['es2015', 'react', 'stage-0'],
-        plugins: ['transform-decorators-legacy'],
+        // plugins: ['transform-decorators-legacy'],
     }));
     return b.bundle()
     .on('error', logBrowserifyError)
-    .pipe(source('app.js'))
+    .pipe(source('file-bundle.js'))
     .pipe(buffer())
         .pipe(sourcemaps.init({
             loadMaps: true,
@@ -100,12 +103,46 @@ gulp.task('build_js', () => {
 
 const buildCss = () => gulp.src(sources.css)
     .pipe(sass({
-        includePaths: ['node_modules'],
+        outputStyle: 'compressed',
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(concat('app.css'))
+    .pipe(concat('file-bundle.css'))
     .pipe(gulp.dest(targets.css));
 gulp.task('build_css', buildCss);
+
+
+const buildCssComplete = () => gulp.src(sources.cssComplete)
+    .pipe(sass({
+        includePaths: ['node_modules'],
+        outputStyle: 'compressed',
+    }).on('error', sass.logError))
+    .pipe(autoprefixer())
+    .pipe(concat('file-bundle-complete.css'))
+    .pipe(gulp.dest(targets.css));
+gulp.task('build_css_complete', buildCssComplete);
+
+
+const buildCssBootStrap = () => gulp.src(sources.cssBootstrap)
+    .pipe(sass({
+        includePaths: ['node_modules'],
+        outputStyle: 'compressed',
+    }).on('error', sass.logError))
+    .pipe(autoprefixer())
+    .pipe(concat('file-bundle-only-bootstrap.css'))
+    .pipe(gulp.dest(targets.css));
+gulp.task('build_css_bootstrap', buildCssBootStrap);
+
+
+const buildCssFontAwesome = () => gulp.src(sources.cssFontAwesome)
+    .pipe(sass({
+        includePaths: ['node_modules'],
+        outputStyle: 'compressed',
+    }).on('error', sass.logError))
+    .pipe(autoprefixer())
+    .pipe(concat('file-bundle-only-font-awesome.css'))
+    .pipe(gulp.dest(targets.css));
+gulp.task('build_css_font-awesome', buildCssFontAwesome);
+
 
 gulp.task('watch_css', () => gulp.watch(sources.css,
     () => buildCss().pipe(reload()),
@@ -125,10 +162,20 @@ gulp.task('generate_config', (done) => {
 
 gulp.task('develop', gulp.series(
     'generate_config',
-    'build_css',
+    'build_css_complete',
     'watch_js',
-    // 'live_reload',
+    'live_reload',
     gulp.parallel(
         'watch_css',
     ),
+));
+
+
+gulp.task('production', gulp.series(
+    'generate_config',
+    'build_js',
+    'build_css',
+    'build_css_complete',
+    'build_css_bootstrap',
+    'build_css_font-awesome',
 ));

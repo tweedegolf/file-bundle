@@ -14,7 +14,7 @@
     "rules": {
         "import/no-extraneous-dependencies": ["error", {
             "devDependencies": [
-                "./Resources/js/test/tests/**"
+                "./Resources/tests/**"
             ]
         }],
         "arrow-body-style": [1],
