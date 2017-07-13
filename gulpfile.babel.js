@@ -20,16 +20,16 @@ const reload = livereload;
 const startsWith = R.invoker(1, 'startsWith');
 
 const sources = {
-    main_js: './Resources/js/src/index.js',
-    config_yaml: './Resources/js/src/config.yml',
-    config_json: './Resources/js/src/config.json',
-    js: './Resources/js/src/**/*.js',
+    main_js: './Resources/js/index.js',
+    config_yaml: './Resources/js/config.yml',
+    config_json: './Resources/js/config.json',
+    js: './Resources/js/**/*.js',
     css: './Resources/scss/**/*.scss',
 };
 
 const targets = {
-    js: './Resources/js/test/server/assets/js/',
-    css: './Resources/js/test/server/assets/css/',
+    js: './Resources/server/assets/js/',
+    css: './Resources/server/assets/css/',
 };
 
 const logBrowserifyError = (e) => {
@@ -44,11 +44,11 @@ const logBrowserifyError = (e) => {
 };
 
 const rebundle = b => b.bundle()
-        .on('error', logBrowserifyError)
-        .pipe(source('app.js'))
-        .pipe(buffer())
-        .pipe(gulp.dest(path.join(targets.js)))
-        .pipe(reload());
+    .on('error', logBrowserifyError)
+    .pipe(source('file-bundle.js'))
+    .pipe(buffer())
+    .pipe(gulp.dest(path.join(targets.js)))
+    .pipe(reload());
 
 gulp.task('watch_js', () => {
     const opts = {
@@ -64,7 +64,7 @@ gulp.task('watch_js', () => {
     b.transform(babelify.configure({
         compact: false,
         presets: ['es2015', 'react', 'stage-0', 'flow'],
-        plugins: ['transform-decorators-legacy'],
+        // plugins: ['transform-decorators-legacy'],
     }));
 
     b.on('update', () => {
@@ -89,7 +89,7 @@ gulp.task('build_js', () => {
     }));
     return b.bundle()
     .on('error', logBrowserifyError)
-    .pipe(source('app.js'))
+    .pipe(source('file-bundle.js'))
     .pipe(buffer())
         .pipe(sourcemaps.init({
             loadMaps: true,
@@ -103,7 +103,7 @@ const buildCss = () => gulp.src(sources.css)
         includePaths: ['node_modules'],
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(concat('app.css'))
+    .pipe(concat('file-bundle.css'))
     .pipe(gulp.dest(targets.css));
 gulp.task('build_css', buildCss);
 
