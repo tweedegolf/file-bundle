@@ -55,6 +55,7 @@ class SelectedFiles extends
             </div>);
         }, this.props.selected.fileIds);
 
+        console.log('props', this.props);
         if (files.length === 0) {
             files = <span className="none-selected">{this.props.t('common.noFilesSelected')}</span>;
         }

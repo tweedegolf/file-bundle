@@ -7,10 +7,18 @@
  */
 
 import fs from 'fs';
+import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import busboy from 'connect-busboy';
 import api from './api';
+
+if (fs.existsSync(path.join(__dirname, '../', 'media')) === false) {
+    fs.mkdirSync(path.join(__dirname, '../', 'media'));
+    if (fs.existsSync(path.join(__dirname, '../', 'media', 'thumb')) === false) {
+        fs.mkdirSync(path.join(__dirname, '../', 'media', 'thumb'));
+    }
+}
 
 const app = express();
 app.use((req, res, next) => {
@@ -20,8 +28,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/', express.static('Resources/public'));
-app.use('/media', express.static('Resources/server/media'));
 app.use('/locales/', express.static('Resources/locales'));
+app.use('/media', express.static('Resources/server/media'));
 
 // bodyparser middleware so the client can post JSON
 app.use(bodyParser.json());
