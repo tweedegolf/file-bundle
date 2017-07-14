@@ -16,7 +16,7 @@ For the javascript part, the following nodejs libraries are required:
 - redux-logger
 - superagent
 
-The scss file that is provided extends the Bootstrap 3 framework. The Bootstrap javascript components are not required. Also font awesome icons are used.
+The scss file that is provided extends the Bootstrap 3 framework. The Bootstrap javascript components are not required. Also font-awesome icons are used.
 
 
 ## Architecture
@@ -62,38 +62,68 @@ This project uses Flow type-checker; you can find the flow types in the folder `
 
 ## Compiling javascript and scss
 
-When you add this bundle to your own project you should ideally include your own compile scripts for javascript and scss; this way you can bundle the javascript and css that you use in your project with the javascript and css in this bundle into single build files.
-
-However, this project provides compile scripts for testing and development and for creating production builds:
-
- - `yarn run gulp:develop` builds and starts watching both the javascript and the css
- - `yarn run gulp:production` builds production files
-
-The production files are:
-
-- `file-bundle.js` the javascript code
-- `file-bundle.css` css without bootstrap and font-awesome; use this if your project already includes bootstrap and font-awesome
-- `file-bundle-only-bootstrap.css` use this if your project already includes font-awesome
-- `file-bundle-only-font-awesome.css` use this if your project already includes bootstrap
-- `file-bundle-complete.css` complete css code
-
-For testing and development:
+First install all dependencies:
 
  - `yarn install` (or `npm install`)
 
-Then you can start the test server:
+When you add this bundle to your own project you should ideally include your own compile scripts for javascript and scss; this way you can bundle the javascript and css that you use in your project together with the javascript and css in this bundle into single build files.
 
- - `yarn start` (or `npm start`)
+However, this project provides compile scripts for testing and development and for creating production builds:
 
-Then point your browser to:
+ - `yarn run gulp:develop` builds and starts watching both the javascript and the css files
+ - `yarn run gulp:production` builds production files
+ - `yarn start` compiles and starts the test server
+
+After you have started the test server you can point your browser to:
 
  - [http://localhost:5050/browser.html](http://localhost:5050/browser.html) for browser mode
- - [http://localhost:5050/filepicker.html](http://localhost:5050/filepicker.html) for filepicker mode
+ - [http://localhost:5050/filepicker.html](http://localhost:5050/filepicker.html) for file-picker mode
 
 If you want to make changes to the express test server note that you have to restart the server to effectuate the changes. You can circumvent this by installing [nodemon](https://nodemon.io) and running the server watch command:
 
  - `yarn install -g nodemon`
  - `yarn run watch-server`
+
+## Production files
+
+The production files can be found in the `./Resources/public` folder and include:
+
+- `file-bundle.js` the javascript code
+- `file-bundle.css` css without bootstrap and font-awesome; use this if your project already includes bootstrap and font-awesome
+- `file-bundle-no-bootstrap.css` use this if your project already includes bootstrap
+- `file-bundle-no-font-awesome.css` use this if your project already includes font-awesome
+- `file-bundle-complete.css` the complete css code
+- `browser.html` example html file for browser mode
+- `filepicker.html` example html file for file-picker mode
+- `fonts` folder containing all bootstrap and font-awesome fonts
+
+In the html file you will notice that you can pass arguments to the file-bundle via the `data-options` attribute:
+
+- `rootFolderId: string`: Change the root (chroot) for this user, e.g. the top-most folder in the tree that this user is allowed to enter.
+- `language: string`: The default or fallback language, this project uses IETF language tags (e.g. `en-GB`) but you can use any standard you like. The locales are located in the folder `./Resources/locales`.
+- `imagesOnly: bool`: Whether or not the file-bundle should only display images.
+- `allowEdit: bool`: Whether of not the user is allowed to:
+    - cut & paste folders and files
+    - delete folders and files
+    - rename folders
+- `allowUpload: bool`: Whether or not the user is allowed to upload new files.
+- `allowDelete: bool`: Whether or not the user is allowed to delete files and folders.
+- `allowNewFolder: bool`: Whether or not the user is allowed to create new folders.
+
+Additionally in file-picker mode only you can add an array that holds the currently selected files:
+```javascript
+ selected: [{
+    id: string,
+    name: string
+    size_bytes: number,
+    size: string,
+    create_ts: number,
+    created: string,
+    thumb: string | null,
+    original: string,
+    type: string
+}];
+```
 
 
 ## Testing

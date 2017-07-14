@@ -26,8 +26,8 @@ const sources = {
     js: './Resources/js/**/*.js',
     css: './Resources/scss/app.scss',
     cssComplete: './Resources/scss/app-complete.scss',
-    cssBootstrap: './Resources/scss/app-only-bootstrap.scss',
-    cssFontAwesome: './Resources/scss/app-only-font-awesome.scss',
+    cssNoBootstrap: './Resources/scss/app-no-bootstrap.scss',
+    cssNoFontAwesome: './Resources/scss/app-no-font-awesome.scss',
 };
 
 const targets = {
@@ -122,26 +122,26 @@ const buildCssComplete = () => gulp.src(sources.cssComplete)
 gulp.task('build_css_complete', buildCssComplete);
 
 
-const buildCssBootStrap = () => gulp.src(sources.cssBootstrap)
+const buildCssNoBootStrap = () => gulp.src(sources.cssNoBootstrap)
     .pipe(sass({
         includePaths: ['node_modules'],
         outputStyle: 'compressed',
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(concat('file-bundle-only-bootstrap.css'))
+    .pipe(concat('file-bundle-no-bootstrap.css'))
     .pipe(gulp.dest(targets.css));
-gulp.task('build_css_bootstrap', buildCssBootStrap);
+gulp.task('build_css_no_bootstrap', buildCssNoBootStrap);
 
 
-const buildCssFontAwesome = () => gulp.src(sources.cssFontAwesome)
+const buildCssNoFontAwesome = () => gulp.src(sources.cssNoFontAwesome)
     .pipe(sass({
         includePaths: ['node_modules'],
         outputStyle: 'compressed',
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(concat('file-bundle-only-font-awesome.css'))
+    .pipe(concat('file-bundle-no-font-awesome.css'))
     .pipe(gulp.dest(targets.css));
-gulp.task('build_css_font-awesome', buildCssFontAwesome);
+gulp.task('build_css_no_font-awesome', buildCssNoFontAwesome);
 
 
 gulp.task('watch_css', () => gulp.watch(sources.css,
@@ -176,6 +176,6 @@ gulp.task('production', gulp.series(
     'build_js',
     'build_css',
     'build_css_complete',
-    'build_css_bootstrap',
-    'build_css_font-awesome',
+    'build_css_no_bootstrap',
+    'build_css_no_font-awesome',
 ));
