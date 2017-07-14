@@ -69,7 +69,7 @@ However, this project provides compile scripts for testing and development and f
  - `yarn run gulp:develop` builds and starts watching both the javascript and the css
  - `yarn run gulp:production` builds production files
 
-The production files contains:
+The production files are:
 
 - `file-bundle.js` the javascript code
 - `file-bundle.css` css without bootstrap and font-awesome; use this if your project already includes bootstrap and font-awesome
