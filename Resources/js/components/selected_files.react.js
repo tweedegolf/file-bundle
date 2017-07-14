@@ -8,10 +8,7 @@ import R from 'ramda';
 import { translate } from 'react-i18next';
 
 type PropsType = {
-    clipboard: ClipboardType,
-    selected: ClipboardType,
-    multiple: boolean,
-    browser: boolean,
+    selectedFiles: FileType[],
     selectFile: (file: string) => void,
     showPreview: (id: null | string) => void,
     t: (string) => string,
@@ -23,12 +20,12 @@ type SelectedFilesStateType = {};
 // export default class SelectedFiles extends React.Component<EmptyType, PropsType, EmptyType> {
 class SelectedFiles extends
     React.Component<DefaultPropsType, PropsType, SelectedFilesStateType> {
-    props: PropsType
-    state: SelectedFilesStateType
     static defaultProps = {}
+    state: SelectedFilesStateType
+    props: PropsType
 
     render(): null | React$Element<*> {
-        if (this.props.browser === true || this.props.selected.fileIds.length === 0) {
+        if (this.props.selectedFiles.length === 0) {
             return null;
         }
 
@@ -53,9 +50,8 @@ class SelectedFiles extends
                 <span className="remove">&times;</span>
                 <input type="hidden" name={file.name} value={file.id} />
             </div>);
-        }, this.props.selected.fileIds);
+        }, this.props.selectedFiles);
 
-        console.log('props', this.props);
         if (files.length === 0) {
             files = <span className="none-selected">{this.props.t('common.noFilesSelected')}</span>;
         }

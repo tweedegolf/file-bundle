@@ -16,6 +16,7 @@ import SortHeader from '../components/sort_header.react';
 import Toolbar from '../components/toolbar.react';
 import Preview from '../components/preview.react';
 import Errors from '../components/errors.react';
+import getSelectedFiles from '../reducers/get_selected_files';
 import * as Actions from '../actions';
 
 type PassedPropsType = {
@@ -46,6 +47,7 @@ type PropsType = {
     errors: ErrorType[],
     clipboard: ClipboardType,
     selected: ClipboardType,
+    selectedFiles: FileType[],
     showingRecycleBin: boolean,
     currentFolderName: string,
 };
@@ -88,6 +90,8 @@ const mapStateToProps = (state: StateType): PropsType => {
         }],
     ])(state.ui.currentFolderId);
 
+    const selectedFiles: FileType[] = getSelectedFiles(state);
+
     let currentFolderName = '';
     if (currentFolderId !== null && state.tree.foldersById !== null) {
         const currentFolder = state.tree.foldersById[currentFolderId];
@@ -107,6 +111,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         // ui props
         sort,
         ascending,
+        selectedFiles,
         previewUrl: state.ui.previewUrl,
         expanded: state.ui.expanded,
         selected: state.ui.selected,
@@ -256,15 +261,15 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           currentFolderName={this.props.currentFolderName}
         />);
 
-        // selected files for filepicker mode
-        const selected = (<SelectedFiles
-          browser={this.props.browser}
-          multiple={this.props.multiple}
-          selected={this.props.selected}
-          clipboard={this.props.clipboard}
-          selectFile={Actions.selectFile}
-          showPreview={Actions.showPreview}
-        />);
+        let selected = null;
+        if (this.props.browser === false) {
+            // selected files for filepicker mode
+            selected = (<SelectedFiles
+              selectedFiles={this.props.selectedFiles}
+              selectFile={Actions.selectFile}
+              showPreview={Actions.showPreview}
+            />);
+        }
 
         const preview = <Preview url={this.props.previewUrl} />;
 
