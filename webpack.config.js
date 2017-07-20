@@ -9,20 +9,20 @@ module.exports = {
         path: path.resolve(__dirname, 'public'),
         filename: 'file-bundle.js',
     },
-    context: path.resolve(__dirname, 'js'),
+    context: path.resolve(__dirname, 'src/js'),
     module: {
         loaders: [
             {
                 test: /\.jsx?$/,
                 loader: 'babel-loader',
                 exclude: /node_modules/,
-                include: path.resolve(__dirname, 'js'),
+                include: path.resolve(__dirname, 'src/js'),
             },
         ],
     },
     resolve: {
         modules: [
-            path.resolve(__dirname, 'js'),
+            path.resolve(__dirname, 'src/js'),
             'node_modules',
         ],
         extensions: ['.js', '.jsx'],
