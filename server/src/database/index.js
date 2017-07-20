@@ -7,7 +7,7 @@
 import R from 'ramda';
 import data from './data.json';
 import { createFolderDescription, RECYCLE_BIN_ID } from '../util';
-import { getFileCount, getFolderCount, getItemIds } from '../../../js/util/util';
+import { getFileCount, getFolderCount, getItemIds } from '../../../src/js/util/util';
 
 type ReturnType = {
     error: boolean | string,

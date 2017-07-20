@@ -20,19 +20,19 @@ const reload = livereload;
 const startsWith = R.invoker(1, 'startsWith');
 
 const sources = {
-    main_js: './Resources/js/index.js',
-    config_yaml: './Resources/js/config.yml',
-    config_json: './Resources/js/config.json',
-    js: './Resources/js/**/*.js',
-    css: './Resources/scss/app.scss',
-    cssComplete: './Resources/scss/app-complete.scss',
-    cssNoBootstrap: './Resources/scss/app-no-bootstrap.scss',
-    cssNoFontAwesome: './Resources/scss/app-no-font-awesome.scss',
+    main_js: './src/js/index.js',
+    config_yaml: './src/js/config.yml',
+    config_json: './src/js/config.json',
+    js: './src/js/**/*.js',
+    css: './src/scss/app.scss',
+    cssComplete: './src/scss/app-complete.scss',
+    cssNoBootstrap: './src/scss/app-no-bootstrap.scss',
+    cssNoFontAwesome: './src/scss/app-no-font-awesome.scss',
 };
 
 const targets = {
-    js: './Resources/public/',
-    css: './Resources/public/',
+    js: './public/',
+    css: './public/',
 };
 
 const logBrowserifyError = (e) => {
