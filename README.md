@@ -21,7 +21,7 @@ The scss file that is provided extends the Bootstrap 3 framework. The Bootstrap 
 
 ## Architecture
 
-The gross of the code in this bundle resides in the folder `js/file-bundle` and is written
+The gross of the code in this bundle resides in the folder `src/js/` and is written
 in ECMAscript 6 / JSX. The diagram below depicts the architecture of the react components in place.
 
     +------------------------------+   +-----------------+
@@ -49,7 +49,7 @@ in ECMAscript 6 / JSX. The diagram below depicts the architecture of the react c
     |                              |
     +------------------------------+
 
-The browser react component contains all state en propagates this state to the subcomponents. The file and directory information is stored in the cache module - which will query the php backend when new folders are opened.
+The browser react component contains all state en propagates this state to the sub-components. The file and directory information is stored in the cache module - which will query the php backend when new folders are opened.
 
 The selected files component is used when this plugin is used in a form; in that case the files can be selected (filepicker mode). When the browser operates as a separate file manager, clicking on a file means selecting it in order to, for example, put it on the clipboard.
 
@@ -59,6 +59,12 @@ The table of files can be sorted by clicking on the table headers.
 ## Flow
 
 This project uses Flow type-checker; you can find the flow types in the folder `./types`. The `.flowconfig` is in the root folder.
+
+
+## Internationalization
+
+The interface supports internationalization by using [i18next](https://www.i18next.com/). Currently the project has translations for English and Dutch; you can find the translation files in `./src/js/locales`. You can use these files as a starting point for your own translation. Don't forget to import your translation file at the top of `./src/js/util/i18n.js`.
+
 
 ## Compiling javascript and scss
 
@@ -70,14 +76,14 @@ When you add this bundle to your own project you should ideally include your own
 
 However, this project provides compile scripts for testing and development and for creating production builds:
 
- - `yarn run gulp:develop` builds and starts watching both the javascript and the css files
- - `yarn run gulp:production` builds production files
+ - `yarn run develop` builds and starts watching both the javascript and the css files
+ - `yarn run production` builds production files
  - `yarn start` compiles and starts the test server
 
 After you have started the test server you can point your browser to:
 
- - [http://localhost:5050/browser.html](http://localhost:5050/browser.html) for browser mode
- - [http://localhost:5050/filepicker.html](http://localhost:5050/filepicker.html) for file-picker mode
+ - [http://localhost:8080/browser.html](http://localhost:8080/browser.html) for browser mode
+ - [http://localhost:8080/filepicker.html](http://localhost:8080/filepicker.html) for file-picker mode
 
 If you want to make changes to the express test server note that you have to restart the server to effectuate the changes. You can circumvent this by installing [nodemon](https://nodemon.io) and running the server watch command:
 
@@ -100,7 +106,7 @@ The production files can be found in the `./public` folder and include:
 In the html file you will notice that you can pass arguments to the file-bundle via the `data-options` attribute:
 
 - `rootFolderId: string`: Change the root (chroot) for this user, e.g. the top-most folder in the tree that this user is allowed to enter.
-- `language: string`: The default or fallback language, this project uses IETF language tags (e.g. `en-GB`) but you can use any standard you like. The locales are located in the folder `./locales`.
+- `language: string`: The default or fallback language, this project uses IETF language tags (e.g. `en-GB`) but you can use any standard you like. The locales are located in the folder `./src/js/locales`. The locales are bundled with the javascript files to avoid extra http calls.
 - `imagesOnly: bool`: Whether or not the file-bundle should only display images.
 - `allowEdit: bool`: Whether of not the user is allowed to:
     - cut & paste folders and files
