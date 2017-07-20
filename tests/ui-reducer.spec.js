@@ -1,5 +1,5 @@
-import * as types from '../js/util/constants';
-import { ui as reducer } from '../js/reducers/ui_reducer';
+import * as types from '../src/js/util/constants';
+import { ui as reducer } from '../src/js/reducers/ui_reducer';
 import jasmine from './index';
 
 const {

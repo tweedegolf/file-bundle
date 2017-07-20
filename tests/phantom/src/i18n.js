@@ -1,7 +1,7 @@
 import i18n from 'i18next';
-import enGB from '../../../locales/en-GB/common.json';
-import nlNL from '../../../locales/nl-NL/common.json';
-import deDE from '../../../locales/de-DE/common.json';
+import enGB from '../../../src/js/locales/en/common.json';
+import nlNL from '../../../src/js/locales/nl/common.json';
+import deDE from '../../../src/js/locales/de/common.json';
 
 // console.log('i18n', __dirname);
 

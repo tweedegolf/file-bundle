@@ -21,7 +21,7 @@ The scss file that is provided extends the Bootstrap 3 framework. The Bootstrap 
 
 ## Architecture
 
-The gross of the code in this bundle resides in the folder `Resources/js/file-bundle` and is written
+The gross of the code in this bundle resides in the folder `js/file-bundle` and is written
 in ECMAscript 6 / JSX. The diagram below depicts the architecture of the react components in place.
 
     +------------------------------+   +-----------------+
@@ -58,7 +58,7 @@ The table of files can be sorted by clicking on the table headers.
 
 ## Flow
 
-This project uses Flow type-checker; you can find the flow types in the folder `./Resources/types`. The `.flowconfig` is in the root folder.
+This project uses Flow type-checker; you can find the flow types in the folder `./types`. The `.flowconfig` is in the root folder.
 
 ## Compiling javascript and scss
 
@@ -86,7 +86,7 @@ If you want to make changes to the express test server note that you have to res
 
 ## Production files
 
-The production files can be found in the `./Resources/public` folder and include:
+The production files can be found in the `./public` folder and include:
 
 - `file-bundle.js` the javascript code
 - `file-bundle.css` css without bootstrap and font-awesome; use this if your project already includes bootstrap and font-awesome
@@ -100,7 +100,7 @@ The production files can be found in the `./Resources/public` folder and include
 In the html file you will notice that you can pass arguments to the file-bundle via the `data-options` attribute:
 
 - `rootFolderId: string`: Change the root (chroot) for this user, e.g. the top-most folder in the tree that this user is allowed to enter.
-- `language: string`: The default or fallback language, this project uses IETF language tags (e.g. `en-GB`) but you can use any standard you like. The locales are located in the folder `./Resources/locales`.
+- `language: string`: The default or fallback language, this project uses IETF language tags (e.g. `en-GB`) but you can use any standard you like. The locales are located in the folder `./locales`.
 - `imagesOnly: bool`: Whether or not the file-bundle should only display images.
 - `allowEdit: bool`: Whether of not the user is allowed to:
     - cut & paste folders and files
@@ -132,14 +132,14 @@ This project comes with a test suite. If you haven't already done so in the prev
 
  - `yarn install` (or `npm install`)
 
-The folder `Resources/tests` contains all Phantom and Jasmine tests and the folder `./Resources/server` contains the test server. All test files have a .spec.js extension.
+The folder `tests` contains all Phantom and Jasmine tests and the folder `./server` contains the test server. All test files have a .spec.js extension.
 
 You can run all test scripts like so:
 
  - `yarn test`
 
 
-User interaction tests are run by Phantomjs. The source of the tests are located in the folder `./Resources/tests/phantom/src`. These tests are written in es6 and because Phantomjs only supports es5 scripts, they are compiled to the file `./Resources/tests/phantom/tests.compiled.es5`
+User interaction tests are run by Phantomjs. The source of the tests are located in the folder `./tests/phantom/src`. These tests are written in es6 and because Phantomjs only supports es5 scripts, they are compiled to the file `./tests/phantom/tests.compiled.es5`
 
 Should you wish to change anything in the Phantomjs tests you need to recompile them using one of these commands:
 

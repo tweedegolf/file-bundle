@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/', express.static('public'));
-app.use('/locales/', express.static('locales'));
+app.use('/locales/', express.static('src/js/locales'));
 app.use('/media', express.static('server/media'));
 
 // bodyparser middleware so the client can post JSON

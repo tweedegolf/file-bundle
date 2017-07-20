@@ -42,7 +42,7 @@
  * @param      {string}  type       Type of the file, any of: pdf, doc, docx,
  *                                  ppt, pptx, xls, xlsx
  */
-
+import R from 'ramda';
 import request from 'superagent';
 import config from '../config.json';
 
@@ -330,13 +330,12 @@ const openFolder = (
     rootFolderId: string,
     onSuccess: (boolean | string, FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
-
     let url = `${server}${api.openFolder}`;
     if (folderId) {
-      url += folderId;
+        url += folderId;
     }
     if (rootFolderId) {
-      url += `${rootFolderId}`;
+        url += `/${rootFolderId}`;
     }
     // let url = '/admin/file/list/999'
     // const req = request.post(url).type('form');
