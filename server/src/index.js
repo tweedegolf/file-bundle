@@ -54,7 +54,7 @@ app.post('/admin/file/metadata', api.getMetaData);
 app.get('/data', api.getData);
 app.get('/close', api.closeServer);
 
-const port = process.env.PORT || 5050;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`server listening at port ${port}`);
 });

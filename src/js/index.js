@@ -1,4 +1,10 @@
 // @flow
+
+// polyfills
+import 'core-js/es6/promise';
+import 'core-js/fn/array/from';
+import 'core-js/fn/array/find-index';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -23,8 +29,8 @@ if (browser !== null) {
     if (options !== null) {
         language = options.language;
     }
-    // language = 'nl-NL';
-    // language = 'de-DE';
+    // language = 'nl';
+    // language = 'de';
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
             <Provider store={store} >

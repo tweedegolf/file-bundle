@@ -19885,8 +19885,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
-    MEDIA_PATH: './Resources/tests/phantom/media',
-    SCREENSHOTS_PATH: './Resources/tests/phantom/screenshots'
+    MEDIA_PATH: './server/testimages',
+    SCREENSHOTS_PATH: './tests/phantom/screenshots'
 };
 
 },{}],627:[function(require,module,exports){
@@ -20548,7 +20548,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // default values for command line arguments
 
 // import all necessary tasks
-var port = process.env.PORT || 5050;
+var port = process.env.PORT || 8080;
 // get arguments from command line
 
 // taskrunner is a simple class that executes functions (tasks) consecutively

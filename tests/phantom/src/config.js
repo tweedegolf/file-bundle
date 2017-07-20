@@ -1,4 +1,4 @@
 export default {
-    MEDIA_PATH: './Resources/tests/phantom/media',
-    SCREENSHOTS_PATH: './Resources/tests/phantom/screenshots',
+    MEDIA_PATH: './server/testimages',
+    SCREENSHOTS_PATH: './tests/phantom/screenshots',
 };

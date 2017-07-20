@@ -1,7 +1,7 @@
 import i18n from 'i18next';
-import en from '../locales/en/common.json';
-import de from '../locales/de/common.json';
-import nl from '../locales/nl/common.json';
+import enCommon from '../locales/en/common.json';
+import deCommon from '../locales/de/common.json';
+import nlCommon from '../locales/nl/common.json';
 
 i18n
     .init({
@@ -9,13 +9,13 @@ i18n
         fallbackLng: 'en',
         resources: {
             en: {
-                common: en,
+                common: enCommon,
             },
             de: {
-                common: de,
+                common: deCommon,
             },
             nl: {
-                common: nl,
+                common: nlCommon,
             },
         },
         ns: ['common'],

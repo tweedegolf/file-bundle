@@ -1907,7 +1907,7 @@ core-js@^1.0.0:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
-core-js@^2.4.0:
+core-js@^2.4.0, core-js@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.4.1.tgz#4de911e667b0eae9124e34254b53aea6fc618d3e"
 
@@ -3492,10 +3492,6 @@ https-browserify@0.0.1, https-browserify@~0.0.0:
 i18next-browser-languagedetector@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/i18next-browser-languagedetector/-/i18next-browser-languagedetector-1.0.1.tgz#73e43aa46fc1c909cac6178b9d1b803d02610faa"
-
-i18next-xhr-backend@^1.4.1:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/i18next-xhr-backend/-/i18next-xhr-backend-1.4.2.tgz#7aa766292c46ca83ff6477bb55074b363a646a62"
 
 i18next@^8.2.1:
   version "8.4.3"

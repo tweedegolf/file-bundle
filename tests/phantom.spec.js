@@ -70,7 +70,7 @@ describe('User interaction tests with phantomjs', () => {
     // });
 
     beforeAll((done) => {
-        const port = process.env.PORT || 5050;
+        const port = process.env.PORT || 8080;
         phantom(path.join(__dirname, './phantom/tests.compiled.es5'), `url=http://localhost:${port}/browser.html`)
         .then((data) => {
             const index1 = data.indexOf('$DATA') + 5;
