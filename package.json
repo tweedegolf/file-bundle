@@ -13,7 +13,8 @@
     "watch-phantom": "watchify --exclude webpage --exclude system --exclude fs ./Resources/tests/phantom/src/index.js -t [ babelify ] -o ./Resources/tests/phantom/tests.compiled.es5 --debug --verbose",
     "gulp:develop": "NODE_ENV=develop ./node_modules/.bin/gulp develop",
     "gulp:production": "NODE_ENV=develop ./node_modules/.bin/gulp production",
-    "build": "webpack --display-error-details"
+    "build": "webpack --display-error-details",
+    "build:production": "webpack -p --display-error-details"
   },
   "author": "tweede golf",
   "license": "MIT",

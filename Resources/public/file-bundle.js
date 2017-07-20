@@ -1304,6 +1304,12 @@ function getStore() {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+;
+/**
+ * @name       ActionConstants
+ * @type       {string}
+ * @file       constants that describe actions
+ */
 var INIT = exports.INIT = 'INIT';
 
 /**
@@ -2870,7 +2876,6 @@ var openFolder = function openFolder(folderId, rootFolderId, onSuccess, onError)
     if (folderId) {
         url += folderId;
     }
-
     if (rootFolderId) {
         url += '' + rootFolderId;
     }
