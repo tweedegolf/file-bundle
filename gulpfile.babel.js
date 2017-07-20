@@ -173,7 +173,6 @@ gulp.task('develop', gulp.series(
 
 gulp.task('production', gulp.series(
     'generate_config',
-    'build_js',
     'build_css',
     'build_css_complete',
     'build_css_no_bootstrap',

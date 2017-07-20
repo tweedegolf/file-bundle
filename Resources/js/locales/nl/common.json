@@ -1,0 +1,44 @@
+{
+  "columns": {
+    "name": "Naam",
+    "size": "Grootte",
+    "date": "Aangemaakt",
+    "type": "Type"
+  },
+  "toolbar": {
+    "cut": "Knippen",
+    "paste": "Plakken",
+    "cancel": "Annuleren",
+    "upload": "Upload",
+    "createFolder": "Nieuwe map",
+    "folderName": "Mapnaam",
+    "save": "Opslaan",
+    "back": "Terug",
+    "purge": "Prullenbak leegmaken",
+    "restore": "Geselecteerde items terugplaatsen"
+  },
+  "remove": {
+    "cancel": "Annuleren",
+    "permanently": "Definitief verwijderen"
+  },
+  "error": {
+    "upload": "Uploaden niet gelukt {{files}}",
+    "deleteFile":  "Verwijderen van de file {{name}} niet gelukt.",
+    "deleteFile2":  "Verwijderen van file met id {{id}} niet gelukt.",
+    "deleteFolder": "Verwijderen van de folder {{name}} is niet gelukt.",
+    "deleteFolder2": "Verwijderen van folder met id {{id}} is niet gelukt.",
+    "createFolder": "Aanmaken van de folder {{name}} is niet gelukt.",
+    "openFolder": "Kan de folder {{name}} niet openen.",
+    "renameFolder": "Kan de folder met id {{id}} niet hernoemen naar {{name}}.",
+    "moveItems1": "Kan de files {{files}} niet verplaatsen.",
+    "moveItems2": "Kan de folders {{folders}} niet verplaatsen.",
+    "moveItems3": "Kan de files {{files}} en de folders {{folders}} niet verplaatsen."
+  },
+  "words": {
+     "file": "bestand"
+  },
+  "browse": "Bladeren",
+  "loading": "laden...",
+  "noFilesSelected": "Geen bestand(en) geselecteerd.",
+  "recycleBin": "Prullenbak"
+}

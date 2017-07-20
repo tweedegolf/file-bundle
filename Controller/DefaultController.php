@@ -18,6 +18,7 @@ class DefaultController extends Controller
     public function indexAction()
     {
         return $this->render('TGFileBundle:Default:index.html.twig', [
+            'options' => [],
             'templates' => $this->getParameter('tg_file.templates'),
         ]);
     }

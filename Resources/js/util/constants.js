@@ -1,4 +1,4 @@
-// @flow
+;// @flow
 /**
  * @name       ActionConstants
  * @type       {string}

@@ -330,7 +330,14 @@ const openFolder = (
     rootFolderId: string,
     onSuccess: (boolean | string, FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.openFolder}${folderId}/${rootFolderId}`;
+
+    let url = `${server}${api.openFolder}`;
+    if (folderId) {
+      url += folderId;
+    }
+    if (rootFolderId) {
+      url += `${rootFolderId}`;
+    }
     // let url = '/admin/file/list/999'
     // const req = request.post(url).type('form');
     const req = request.get(url);
