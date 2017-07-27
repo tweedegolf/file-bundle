@@ -22,7 +22,7 @@ export default class SelectedFiles extends React.Component {
         });
 
         if (files.length === 0) {
-            files = <span className="none-selected">Geen bestand(en) geselecteerd.</span>;
+            files = <span className="none-selected">No file(s) selected.</span>;
         }
 
         return (

@@ -63,9 +63,9 @@ export default class Browser extends React.Component {
 
     render() {
         let headers = _.map({
-            name: "Naam",
-            size_bytes: "Grootte",
-            create_ts: "Aangemaakt"
+            name: "Name",
+            size_bytes: "Size",
+            create_ts: "Created"
         }, (name, column) =>
             <SortHeader
                 key={column}
@@ -169,7 +169,7 @@ export default class Browser extends React.Component {
                     type="button"
                     className="btn btn-default expand-button"
                     onClick={this.toggleExpand.bind(this)}>
-                    Bladeren
+                    Browse
                     <span className="fa fa-folder-open-o" />
                 </button>
             </div>

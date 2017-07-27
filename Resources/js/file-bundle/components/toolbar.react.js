@@ -24,7 +24,7 @@ export default class Toolbar extends React.Component {
                     disabled={this.props.selected.length === 0}
                     onClick={this.props.onCut.bind(this)}>
                     <span className="fa fa-cut" />
-                    <span className="text-label">Knippen</span>
+                    <span className="text-label">Cut</span>
                     {this.props.selected.length > 0 ? ' (' + this.props.selected.length + ')' : null}
                 </button>
                 <button
@@ -33,7 +33,7 @@ export default class Toolbar extends React.Component {
                     disabled={this.props.clipboard.length === 0}
                     onClick={this.props.onPaste.bind(this)}>
                     <span className="fa fa-paste" />
-                    <span className="text-label">Plakken</span>
+                    <span className="text-label">Paste</span>
                     {this.props.clipboard.length > 0 ? ' (' + this.props.clipboard.length + ')' : null}
                 </button>
                 <button
@@ -42,7 +42,7 @@ export default class Toolbar extends React.Component {
                     disabled={this.props.clipboard.length + this.props.selected.length === 0}
                     onClick={this.props.onCancel.bind(this)}>
                     <span className="fa fa-times-circle-o" />
-                    <span className="text-label">Annuleren</span>
+                    <span className="text-label">Cancel</span>
                 </button>
             </div>;
         }
@@ -54,7 +54,7 @@ export default class Toolbar extends React.Component {
                 onClick={this.onShowForm.bind(this)}
                 disabled={this.state.folder_loading}>
                 <span className="fa fa-folder-o" />
-                <span className="text-label">Nieuwe map</span>
+                <span className="text-label">New folder</span>
                 {this.state.folder_loading ? <span className="fa fa-circle-o-notch fa-spin" /> : null}
             </button>
         );
@@ -65,14 +65,14 @@ export default class Toolbar extends React.Component {
                     className="form-control input-sm"
                     ref="folder_name"
                     type="text"
-                    placeholder="Mapnaam"
+                    placeholder="Folder name"
                     onKeyPress={this.onKeyPress.bind(this)} />
                 <button
                     type="button"
                     className="btn btn-sm btn-success pull-right"
                     onClick={this.onAddFolder.bind(this)}>
                     <span className="fa fa-save" />
-                    <span className="text-label">Opslaan</span>
+                    <span className="text-label">Save</span>
                 </button>
             </div>
         );

@@ -40,11 +40,11 @@ export default class File extends React.Component {
         if (this.props.confirm_delete === file.id) {
             confirm = <div className="confirm">
                 <button type="button" className="btn btn-sm btn-primary" onClick={this.onCancelDelete}>
-                    <span className="text-label">Annuleren</span>
+                    <span className="text-label">Cancel</span>
                     <span className="fa fa-times"/>
                 </button>
                 <button type="button" className="btn btn-sm btn-danger" onClick={this.onDelete}>
-                    <span className="text-label">Definitief verwijderen</span>
+                    <span className="text-label">Delete</span>
                     <span className="fa fa-trash-o"/>
                 </button>
             </div>;
