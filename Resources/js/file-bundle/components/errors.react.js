@@ -9,18 +9,18 @@ export default class UploadErrors extends React.Component {
 
             if (error.type === 'upload') {
                 message = <span>
-                    <strong>Uploaden van "{error.file}" niet gelukt.</strong>
+                    <strong>Could not upload "{error.file}"</strong>
                     {error.messages.join(' ')}
                 </span>
             } else if (error.type === 'delete') {
                 message = <span>
-                    <strong>Verwijderen van "{error.file}" niet gelukt.</strong>
-                    Het bestand is in gebruik.
+                    <strong>Could not delete "{error.file}"</strong>
+                    The file is in use.
                 </span>
             } else if (error.type === 'delete_folder') {
                 message = <span>
-                    <strong>Verwijderen van "{error.folder}" niet gelukt.</strong>
-                    De map is niet helemaal leeg.
+                    <strong>Could not delete "{error.folder}"</strong>
+                    This folder is not empty.
                 </span>
             } else {
                 message = <span>
