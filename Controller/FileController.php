@@ -13,11 +13,6 @@ use Symfony\Component\Serializer\Serializer;
 use TweedeGolf\FileBundle\Entity\File;
 use TweedeGolf\FileBundle\Entity\Folder;
 
-/**
- * Class FileController.
- *
- * @Route("/admin/file")
- */
 class FileController extends Controller
 {
     /**
@@ -25,7 +20,7 @@ class FileController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
-     * 
+     *
      * @Route("/move/{id}", defaults={"id" = null})
      */
     public function indexAction(Request $request, Folder $folder = null)

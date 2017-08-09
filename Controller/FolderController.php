@@ -11,18 +11,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Serializer;
 use TweedeGolf\FileBundle\Entity\Folder;
 
-/**
- * Class FolderController.
- *
- * @Route("/admin/file")
- */
 class FolderController extends Controller
 {
     /**
      * @param Folder $folder
      *
      * @return JsonResponse
-     * 
+     *
      * @Route("/list/{id}", defaults={"id" = null})
      */
     public function indexAction(Folder $folder = null)

@@ -134,7 +134,7 @@ export default class Toolbar extends React.Component {
 
     onAddFolder() {
         this.setState({folder_loading: true});
-        api.addFolder(this.refs.folder_name.value, this.props.current_folder.id, (errors) => {
+        api.addFolder(this.props.apiUrl, this.refs.folder_name.value, this.props.current_folder.id, (errors) => {
             // success
             this.reset();
             this.props.onAddFolder(errors);

@@ -8,8 +8,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Serializer;
 use TweedeGolf\FileBundle\Entity\File;
+use TweedeGolf\FileBundle\Helper\ApiUrlHelperInterface;
 use TweedeGolf\FileBundle\Normalizer\FileNormalizer;
 
 /**
@@ -18,18 +20,25 @@ use TweedeGolf\FileBundle\Normalizer\FileNormalizer;
 class FileType extends AbstractType
 {
     /**
-     * @var
+     * @var FileNormalizer
      */
     private $normalizer;
+
+    /**
+     * @var ApiUrlHelperInterface
+     */
+    private $urlHelper;
 
     /**
      * FileType constructor.
      *
      * @param FileNormalizer $normalizer
+     * @param ApiUrlHelperInterface $urlHelper
      */
-    public function __construct(FileNormalizer $normalizer)
+    public function __construct(FileNormalizer $normalizer, ApiUrlHelperInterface $urlHelper)
     {
         $this->normalizer = $normalizer;
+        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -69,6 +78,7 @@ class FileType extends AbstractType
             'allow_delete' => $options['allow_delete'],
             'allow_new_folder' => $options['allow_new_folder']
         ]);
+        $view->vars['api_url'] = $this->urlHelper->getApiUrl();
     }
 
     /**

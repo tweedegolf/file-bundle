@@ -78,6 +78,7 @@ export default class Browser extends React.Component {
         );
 
         let toolbar =  <Toolbar
+            apiUrl={this.props.apiUrl}
             selected={this.state.selected}
             clipboard={this.state.clipboard}
             current_folder={this.state.current_folder}
@@ -207,7 +208,7 @@ export default class Browser extends React.Component {
     }
 
     onDelete(id) {
-        api.deleteFile(id, () => {
+        api.deleteFile(this.props.apiUrl, id, () => {
             // success
             this.setState({
                 files: _.sortBy(cache.getFiles(this.state.current_folder.id), this.state.sort),
@@ -227,7 +228,7 @@ export default class Browser extends React.Component {
     }
 
     onDeleteFolder(id) {
-        api.deleteFolder(id, () => {
+        api.deleteFolder(this.props.ApiUrl, id, () => {
             // success
             this.setState({
                 folders: _.sortBy(cache.getFolders(this.state.current_folder.id), this.state.sort)
@@ -260,7 +261,7 @@ export default class Browser extends React.Component {
     }
 
     onPaste() {
-        api.paste(this.state.clipboard, this.state.current_folder.id, () => {
+        api.paste(this.props.apiUrl, this.state.clipboard, this.state.current_folder.id, () => {
             // success
             this.setState({
                 files: _.sortBy(cache.getFiles(this.state.current_folder.id), this.state.sort),
@@ -341,7 +342,7 @@ export default class Browser extends React.Component {
         let folder = cache.findFolder(id);
 
         this.setState({loading_folder: id});
-        api.openFolder(id, () => {
+        api.openFolder(this.props.apiUrl, id, () => {
             // success
             this.setState({
                 hover: -1,
@@ -373,7 +374,7 @@ export default class Browser extends React.Component {
         }
 
         this.setState({uploading:true});
-        api.upload(file_list, this.state.current_folder.id, (errors) => {
+        api.upload(this.props.apiUrl, file_list, this.state.current_folder.id, (errors) => {
             // success
             this.setState({
                 files: _.sortBy(cache.getFiles(this.state.current_folder.id), this.state.sort),
