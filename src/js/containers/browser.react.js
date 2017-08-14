@@ -225,8 +225,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
     selectFile: (file: string) => void
 
     // render() {
-    // render(): ?React$Element<*> {
-    render(): ?React$Element<any> {
+    render(): ?React$Element<*> {
+    // render(): ?React$Element<any> {
         if (R.isNil(this.props.currentFolderId)) {
             return <div>initializing...</div>;
         }
