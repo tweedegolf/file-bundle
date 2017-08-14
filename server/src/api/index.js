@@ -4,7 +4,7 @@
  */
 import R from 'ramda';
 import database from '../database';
-import { getIdFromUrl, getIdAndRootFromUrl } from '../util';
+import { getIdFromUrl } from '../util';
 import { uploadFiles } from './upload_files';
 
 // const delay = (func, amount = 2000) => setTimeout(() => {
@@ -12,15 +12,7 @@ import { uploadFiles } from './upload_files';
 // }, amount);
 
 const openFolder = (req, res) => {
-    const { folderId, rootFolderId } = getIdAndRootFromUrl(req.url);
-    if (rootFolderId !== 'null') {
-        console.log(`[API] checking chroot; root folder: "${rootFolderId}"`);
-        if (folderId === '101') {
-            res.setHeader('Content-Type', 'application/json');
-            res.send({ error: `Fake error; not allowed to get contents of folder with id "${folderId}"` });
-            return;
-        }
-    }
+    const folderId = getIdFromUrl(req.url);
     console.log(`[API] getting contents of folder "${folderId}"`);
 
     setTimeout(() => {
@@ -30,6 +22,9 @@ const openFolder = (req, res) => {
         } else if (folderId === '104') {
             res.setHeader('Content-Type', 'application/json');
             res.send({ error: 'Fake error; could not open folder 104' });
+        } else if (folderId === '105') {
+            res.setHeader('Content-Type', 'application/json');
+            res.send({ error: `Fake error; not allowed to get contents of folder with id "${folderId}"` });
         } else {
             const data = database.openFolder(folderId);
             res.setHeader('Content-Type', 'application/json');

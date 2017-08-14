@@ -8,12 +8,24 @@
             "type": "folder",
             "name": "recycle bin"
         },
+        "null": {
+            "file_count": 0,
+            "folder_count": 1,
+            "id": null,
+            "type": "folder",
+            "name": ".."
+        },
         "0": {
+            "create_ts": 1470914525,
+            "created": "11-08-2016 13:22",
             "file_count": 0,
             "folder_count": 1,
             "id": "0",
-            "type": "folder",
-            "name": ".."
+            "name": "folder 1",
+            "parent": 0,
+            "size": "",
+            "size_bytes": 0,
+            "type": "folder"
         },
         "1": {
             "create_ts": 1470914525,
@@ -21,7 +33,7 @@
             "file_count": 0,
             "folder_count": 1,
             "id": "1",
-            "name": "folder 1",
+            "name": "folder 2",
             "parent": 0,
             "size": "",
             "size_bytes": 0,
@@ -31,20 +43,8 @@
             "create_ts": 1470914525,
             "created": "11-08-2016 13:22",
             "file_count": 0,
-            "folder_count": 1,
-            "id": "2",
-            "name": "folder 2",
-            "parent": 0,
-            "size": "",
-            "size_bytes": 0,
-            "type": "folder"
-        },
-        "3": {
-            "create_ts": 1470914525,
-            "created": "11-08-2016 13:22",
-            "file_count": 0,
             "folder_count": 0,
-            "id": "3",
+            "id": "2",
             "name": "folder 3",
             "parent": 0,
             "size": "",
@@ -56,6 +56,12 @@
         "-1": {
             "fileIds": [],
             "folderIds": []
+        },
+        "null": {
+            "fileIds": [],
+            "folderIds": [
+                "0"
+            ]
         },
         "0": {
             "fileIds": [],
@@ -70,12 +76,6 @@
             ]
         },
         "2": {
-            "fileIds": [],
-            "folderIds": [
-                "3"
-            ]
-        },
-        "3": {
             "fileIds": [],
             "folderIds": []
         }

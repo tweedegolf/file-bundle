@@ -2,14 +2,6 @@
 /* eslint-disable */
 import R from 'ramda';
 import * as Constants from '../util/constants';
-// import {
-//     FolderType,
-//     FileType,
-//     FoldersByIdType,
-//     FilesByIdType,
-//     ErrorType,
-// } from './state_types';
-
 
 // init
 export type ActionInitType = {
@@ -66,7 +58,7 @@ export type ActionErrorOpenFolderType = {
 
 export type PayloadErrorOpenFolderType = {
     errors: ErrorType[],
-    currentFolderId: string,
+    currentFolderId: null | string,
     foldersById: null | FoldersByIdType,
     tree: null | TreeType,
 };

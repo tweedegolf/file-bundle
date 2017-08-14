@@ -1,47 +1,8 @@
 // @flow
 /**
  * @file       server REST API; updates and queries database
- *
- *
  */
 
-/**
- * @name       FolderDescr
- * @type       {Object}
- * @param      {number}  create_ts     Creation time stamp in Unix time
- * @param      {string}  created       Creation date in format: 'DD-MM-YYYY
- *                                     HH:mm'
- * @param      {number}  file_count    Number of files in this folder
- * @param      {number}  folder_count  Number of sub folders in this folder
- * @param      {number}  id            Unique id of this folder: there is and
- *                                     will be no other file or folder that uses
- *                                     this id
- * @param      {string}  name          Folder name
- * @param      {number}  parent        Parent folder id
- * @param      {string}  size          Size in human friendly format, e.g. 54.1
- *                                     kB
- * @param      {number}  size_bytes    Size in bytes
- * @param      {string}  thumb         Remains a mystery, probably superfluous
- * @param      {string}  type          Always "folder"
- */
-
-/**
- * @name       FileDescr
- * @type       {Object}
- * @param      {number}  create_ts  Creation time stamp in Unix time
- * @param      {string}  created    Creation date in format: 'DD-MM-YYYY
- * @param      {number}  id         Unique id of this folder: there is and will
- *                                  be no other file or folder that uses this
- *                                  id
- * @param      {string}  name       Name of the file
- * @param      {string}  original   Url of the original file, i.e. not the url
- *                                  of the thumbnail in case the file is an
- *                                  image
- * @param      {string}  thumb      Url of the thumbnail, only set if the file
- *                                  is an image
- * @param      {string}  type       Type of the file, any of: pdf, doc, docx,
- *                                  ppt, pptx, xls, xlsx
- */
 import R from 'ramda';
 import request from 'superagent';
 import config from '../config.json';
@@ -64,7 +25,7 @@ type ErrorsType =
     | Errors1Type
     | Errors2Type
     | Errors3Type
-;
+    ;
 
 type ResponseType = {
     text: string,
@@ -113,7 +74,8 @@ if (typeof port !== 'undefined' && port !== null && port !== 80 && port !== 8080
 const deleteFile = (
     fileId: string,
     onSuccess: (error: string) => void,
-    onError: (string[]) => void) => {
+    onError: (string[]) => void,
+) => {
     const url = `${server}${api.deleteFile}${fileId}`;
     const req = request.post(url);
     req.end((err: RequestErrorType, res: ResponseType) => {
@@ -327,18 +289,13 @@ const upload = (
  */
 const openFolder = (
     folderId: string,
-    rootFolderId: string,
     onSuccess: (boolean | string, FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     let url = `${server}${api.openFolder}`;
-    if (folderId) {
+    if (folderId !== 'null') {
         url += folderId;
     }
-    if (rootFolderId) {
-        url += `/${rootFolderId}`;
-    }
-    // let url = '/admin/file/list/999'
-    // const req = request.post(url).type('form');
+
     const req = request.get(url);
     req.end((err: ErrorType, res: ResponseType) => {
         if (err) {

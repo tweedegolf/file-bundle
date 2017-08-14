@@ -1,18 +1,18 @@
 // @flow
-import {compose, applyMiddleware, createStore, combineReducers} from 'redux';
+import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
-import {autoRehydrate} from 'redux-persist';
+import { autoRehydrate } from 'redux-persist';
 // import thunkMiddleware from 'redux-thunk'
-import type {CombinedReducer} from 'redux';
-import {ui, uiInitialState} from './ui_reducer';
-import {tree, treeInitialState} from './tree_reducer';
+import type { CombinedReducer } from 'redux';
+import { ui, uiInitialState } from './ui_reducer';
+import { tree, treeInitialState } from './tree_reducer';
 
 const initialState: StateType = {
-  ui: uiInitialState,
-  tree: treeInitialState,
+    ui: uiInitialState,
+    tree: treeInitialState,
 };
 
-const combinedReducers: CombinedReducer<StateType, ActionUnionType> = combineReducers({ui, tree});
+const combinedReducers: CombinedReducer<StateType, ActionUnionType> = combineReducers({ ui, tree });
 // create dummy store to prevent a null value, use the boolean initialized instead of a null check
 // to see if a store has already been created (singleton-ish)
 let store: StoreType<StateType, ActionUnionType> = createStore(combinedReducers, initialState);
@@ -22,18 +22,18 @@ export const getNewStore = (): StoreType<StateType, ActionUnionType> => createSt
   combinedReducers,
   initialState,
   compose(
-    autoRehydrate(),
+    // autoRehydrate(),
     applyMiddleware(
       // thunkMiddleware,
-      createLogger({collapsed: true}),
+      createLogger({ collapsed: true }),
     ),
   ),
 );
 
 export function getStore(): StoreType<StateType, ActionUnionType> {
-  if (initialized === false) {
-    initialized = true;
-    store = getNewStore();
-  }
-  return store;
+    if (initialized === false) {
+        initialized = true;
+        store = getNewStore();
+    }
+    return store;
 }

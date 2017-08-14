@@ -1,24 +1,51 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8" />
-        <title>The Art of State</title>
-        <link rel="stylesheet" href="./file-bundle-complete.css">
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  </head>
-  <body>
-        <div class="container">
-            <h1>The Art of State</h1>
-            <div id="tg_file_browser" data-options='{
-              "rootFolderId": "0",
-              "language": "nl",
-              "imagesOnly": false,
-              "allowEdit": true,
-              "allowUpload": true,
-              "allowDelete": true,
-              "allowNewFolder": true
-            }'></div>
+    <title>The Art of State</title>
+    <link rel="stylesheet" href="./file-bundle-complete.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+    <div class="container">
+        <h1>The Art of State</h1>
+        <div id="tg_file_browser" data-options='{
+            "language": "nl",
+            "imagesOnly": false,
+            "allowEdit": true,
+            "allowUpload": true,
+            "allowDelete": true,
+            "allowNewFolder": true
+        }'>
         </div>
-  <script src="./file-bundle.js"></script>
-  </body>
+    </div>
+    <script src="./file-bundle.js"></script>
+</body>
+
 </html>
+
+<!--
+or:
+        <div id="tg_file_browser" data-options='{
+            "rootFolderId": null,
+            "language": "nl",
+            "imagesOnly": false,
+            "allowEdit": true,
+            "allowUpload": true,
+            "allowDelete": true,
+            "allowNewFolder": true
+        }'></div>
+or:
+        <div id="tg_file_browser" data-options='{
+            "rootFolderId": "null",
+            "language": "nl",
+            "imagesOnly": false,
+            "allowEdit": true,
+            "allowUpload": true,
+            "allowDelete": true,
+            "allowNewFolder": true
+        }'></div>
+
+-->

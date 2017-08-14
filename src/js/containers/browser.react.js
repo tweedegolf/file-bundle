@@ -82,6 +82,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         [R.isNil, R.always([null, 0])],
         [R.isEmpty, R.always([null, 0])],
         [R.T, (id: string): [null | string, number] => {
+            // folder has not been loaded / cached yet
             const cf: TreeFolderType = state.tree.tree[id];
             if (typeof cf === 'undefined') {
                 return [null, 0];

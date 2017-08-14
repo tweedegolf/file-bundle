@@ -10,7 +10,7 @@ const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
 
 const init = (options: OptionsType, browser: boolean) => {
-    const rootFolderId: string = options.rootFolderId;
+    const rootFolderId: string = R.isNil(options.rootFolderId) ? 'null' : options.rootFolderId;
     const rootFolder: FolderType = {
         id: rootFolderId,
         name: '..',
@@ -60,7 +60,6 @@ const init = (options: OptionsType, browser: boolean) => {
         allowEdit = true,
     } = options;
 
-    const checkRootFolder = rootFolderId !== uiState.rootFolderId;
     const action: ActionInitType = {
         type: INIT,
         payload: {
@@ -91,11 +90,7 @@ const init = (options: OptionsType, browser: boolean) => {
         currentFolderId = uiState.currentFolderId;
     }
 
-    if (checkRootFolder === true) {
-        openFolder({ id: currentFolderId, checkRootFolder });
-    } else {
-        openFolder({ id: currentFolderId });
-    }
+    openFolder({ id: currentFolderId });
 
     if (selected.fileIds.length + selected.folderIds.length > 0) {
         getMetaData();
@@ -103,8 +98,8 @@ const init = (options: OptionsType, browser: boolean) => {
 };
 
 export default (options: OptionsType, browser: boolean) => {
-    // init(options, browser);
-    persistStore(store, {}, () => {
-        init(options, browser);
-    });
+    init(options, browser);
+    // persistStore(store, {}, () => {
+    //     init(options, browser);
+    // });
 };

@@ -119,6 +119,9 @@ export const cleanup = (callback) => {
  */
 export const getIdFromUrl = (url) => {
     const id = url.substring(url.lastIndexOf('/') + 1);
+    if (id === '') {
+        return null;
+    }
     return id;
 };
 

@@ -68,47 +68,38 @@ const reject = (payload: PayloadErrorOpenFolderType) => {
 };
 
 const loadFolder = (
-    folderId: string,
-    checkRootFolder: boolean) => {
+    folderId: string) => {
     const state = store.getState();
     const uiState: UIStateType = state.ui;
     const treeState: TreeStateType = state.tree;
-    const tmp1 = state.ui.rootFolderId;
-    const tmp2 = R.clone(treeState.filesById);
-    const tmp3 = R.clone(treeState.foldersById);
+    const tmp1 = R.clone(treeState.filesById);
+    const tmp2 = R.clone(treeState.foldersById);
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null) {
+    if (tmp1 === null || tmp2 === null) {
         const err = createError(ERROR_OPENING_FOLDER, ['invalid state'], { id: folderId });
-        const rootFolderId = uiState.rootFolderId !== null ? uiState.rootFolderId : folderId;
+        // const rootFolderId = uiState.rootFolderId !== null ? uiState.rootFolderId : folderId;
         reject({
             errors: [err],
-            currentFolderId: rootFolderId,
+            // currentFolderId: rootFolderId,
+            currentFolderId: folderId,
             tree: null,
             foldersById: null,
         });
         return;
     }
-    const rootFolderId: string = tmp1;
-    const filesById: FilesByIdType = tmp2;
-    const foldersById: FoldersByIdType = tmp3;
+    const filesById: FilesByIdType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
     const tree: TreeType = R.clone(treeState.tree);
     const currentFolder = foldersById[folderId];
-    let parentFolderId = rootFolderId;
+    // const rootFolderId: string = uiState.rootFolderId === null ? 'null' : uiState.rootFolderId;
+    const rootFolderId: null | string = uiState.rootFolderId;
+    let parentFolderId: null | string = rootFolderId;
     if (currentFolder.parent !== null) {
         parentFolderId = currentFolder.parent;
     }
 
-    // check if the current user is allowed to open this folder
-    // -> happens only during initialization
-    let rfCheck = 'null';
-    // let rfCheck = rootFolderId;
-    if (checkRootFolder === true) {
-        rfCheck = rootFolderId;
-    }
-
     api.openFolder(
         folderId,
-        rfCheck,
         (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
             if (error !== false) {
                 const messages = [];
@@ -177,15 +168,15 @@ const loadFolder = (
     );
 };
 
-export const openFolder = (data: { id: string, checkRootFolder?: boolean, forceLoad?: boolean }) => {
-    const { id, checkRootFolder = false, forceLoad = false } = data;
+export const openFolder = (data: { id: string, forceLoad?: boolean }) => {
+    const { id, forceLoad = false } = data;
     let delay = 0;
     dispatch({
         type: OPEN_FOLDER,
         payload: { id },
     });
 
-    if (forceLoad === false || checkRootFolder !== false) {
+    if (forceLoad === false) {
         const fromCache = optimisticUpdate(id);
         if (fromCache) {
             delay = DELAY;
@@ -197,7 +188,7 @@ export const openFolder = (data: { id: string, checkRootFolder?: boolean, forceL
             type: OPEN_FOLDER,
             payload: { id },
         });
-        loadFolder(id, checkRootFolder);
+        loadFolder(id);
     }, delay);
 };
 
