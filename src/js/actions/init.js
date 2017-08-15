@@ -8,8 +8,17 @@ import { openFolder, getMetaData } from '../actions';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
+const defaultOptions = {
+    rootFolderId: 'null',
+    language: 'nl',
+    imagesOnly: false,
+    allowEdit: true,
+    allowUpload: true,
+    allowDelete: true,
+    allowNewFolder: true,
+};
 
-const init = (options: OptionsType, browser: boolean) => {
+const init = (options: OptionsType = defaultOptions, browser: boolean = true) => {
     const rootFolderId: string = R.isNil(options.rootFolderId) ? 'null' : options.rootFolderId;
     const rootFolder: FolderType = {
         id: rootFolderId,
