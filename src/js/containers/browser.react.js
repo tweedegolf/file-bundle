@@ -94,7 +94,7 @@ const mapStateToProps = (state: StateType): PropsType => {
     const selectedFiles: FileType[] = getSelectedFiles(state);
 
     let currentFolderName = '';
-    if (currentFolderId !== null && state.tree.foldersById !== null) {
+    if (state.tree.foldersById !== null) {
         const currentFolder = state.tree.foldersById[currentFolderId];
         currentFolderName = currentFolder.name;
         // if (currentFolder.name === '..') {
@@ -225,11 +225,11 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
     selectFile: (file: string) => void
 
     // render() {
-    render(): ?React$Element<*> {
-    // render(): ?React$Element<any> {
-        if (R.isNil(this.props.currentFolderId)) {
-            return <div>initializing...</div>;
-        }
+    // render(): ?React$Element<*> {
+    render(): ?React$Element<any> {
+        // if (typeof this.props.currentFolderId === 'undefined') {
+        //     return <div>initializing...</div>;
+        // }
 
         const headers = R.map((columnId: string): SortHeader =>
             <SortHeader

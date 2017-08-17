@@ -1,18 +1,24 @@
 /* eslint no-use-before-define: 0 */
 import type { Store, Dispatch } from 'redux';
 
+// redux
+export type StoreType<S, A> = Store<S, A>;
+// export type DispatchType = (action: ActionUnionType) => void;
+export type DispatchType = Dispatch;
+
+
 export type TreeFolderType = {
     fileIds: string[],
-    folderIds: string[],
+    folderIds: (null | string)[],
 };
 
 export type TreeType = {
-    [id: string]: TreeFolderType,
+    [id: null | string]: TreeFolderType,
 };
 
 export type ClipboardType = {
     fileIds: string[],
-    folderIds: string[],
+    folderIds: (null | string)[],
 };
 
 // state
@@ -60,19 +66,12 @@ export type StateType = {
     ui: UIStateType,
 };
 
-
-// redux
-export type StoreType<S, A> = Store<S, A>;
-// export type DispatchType = (action: ActionUnionType) => void;
-export type DispatchType = Dispatch;
-
-
 // data
-export type FoldersByIdType = { [id: string]: FolderType };
+export type FoldersByIdType = { [id: null | string]: FolderType };
 export type FilesByIdType = { [id: string]: FileType };
 
 export type FolderType = {
-    id: string,
+    id: null | string,
     name: string,
     create_ts?: number,
     created?: string,
@@ -113,7 +112,7 @@ export type ErrorType = {
 // options passed via HTML element's data-options attribute
 export type OptionsType = {
     language: string,
-    rootFolderId: string,
+    rootFolderId: null | string,
     selected?: Array<FileType>,
     multiple?: boolean,
     imagesOnly?: boolean,

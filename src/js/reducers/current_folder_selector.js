@@ -33,10 +33,10 @@ export default createSelector(
             foldersById,
         } = treeState;
 
-        if (tree === null ||
+        if (
             filesById === null ||
             foldersById === null ||
-            currentFolderId === null
+            typeof tree[currentFolderId] === 'undefined'
         ) {
             return {
                 files: [],
@@ -64,7 +64,7 @@ export default createSelector(
             foldersById[folderId], tree[currentFolderId].folderIds);
         folders = R.compose(sortFunc, filterFunc)(folders);
 
-        if (currentFolder.parent !== null) {
+        if (currentFolder.parent !== currentFolderId) {
             parentFolder = foldersById[currentFolder.parent];
         }
 

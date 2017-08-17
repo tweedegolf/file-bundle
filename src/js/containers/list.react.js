@@ -40,6 +40,7 @@ type PropsType = {
     renamingFolderWithId: null | string,
     parentFolder: null | FolderType,
     showingRecycleBin: boolean,
+    currentFolderId: null | string,
 };
 
 type DefaultPropsType = {
@@ -69,6 +70,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         parentFolder,
 
         // ui props
+        currentFolderId: state.ui.currentFolderId,
         sort: state.ui.sort,
         ascending: state.ui.ascending,
         preview: state.ui.previewUrl,
@@ -167,7 +169,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         // sorted folder listing
         let folders = R.map((folder: FolderType): React$Element<*> => (<Folder
           hovering={this.props.hover === (i -= 1)}
-          key={`folder-${folder.id}`}
+          key={`folder-${folder.id === null ? 'null' : folder.id}`}
           folder={folder}
           allowEdit={this.props.allowEdit}
           allowDelete={this.props.allowDelete}
@@ -194,7 +196,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
 
         // show button that leads back to parent directory
         let backToParent = null;
-        if (this.props.parentFolder !== null) {
+        if (this.props.parentFolder !== this.props.currentFolderId) {
             backToParent = (<ParentFolder
               key={`folder-${this.props.parentFolder.name}`}
               folder={this.props.parentFolder}

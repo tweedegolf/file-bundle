@@ -10,6 +10,7 @@ import autoprefixer from 'gulp-autoprefixer';
 import buffer from 'vinyl-buffer';
 import source from 'vinyl-source-stream';
 import browserify from 'browserify';
+import envify from 'envify';
 import watchify from 'watchify';
 import babelify from 'babelify';
 import path from 'path';
@@ -64,12 +65,14 @@ gulp.task('watch_js', () => {
 
     const b = watchify(browserify(opts));
     b.add(sources.main_js);
-    b.transform(babelify.configure({
-        compact: false,
-        presets: ['es2015', 'react', 'stage-0', 'flow'],
-        // plugins: ['transform-decorators-legacy'],
-    }));
-
+    b.transform(
+        babelify.configure({
+            compact: false,
+            presets: ['es2015', 'react', 'stage-0', 'flow'],
+            // plugins: ['transform-decorators-legacy'],
+        }),
+    );
+    b.transform(envify);
     b.on('update', () => {
         gutil.log('update js bundle');
         rebundle(b);
@@ -91,14 +94,14 @@ gulp.task('build_js', () => {
         // plugins: ['transform-decorators-legacy'],
     }));
     return b.bundle()
-    .on('error', logBrowserifyError)
-    .pipe(source('file-bundle.js'))
-    .pipe(buffer())
+        .on('error', logBrowserifyError)
+        .pipe(source('file-bundle.js'))
+        .pipe(buffer())
         .pipe(sourcemaps.init({
             loadMaps: true,
         }))
         .pipe(sourcemaps.write(path.join('./')))
-    .pipe(gulp.dest(targets.js));
+        .pipe(gulp.dest(targets.js));
 });
 
 const buildCss = () => gulp.src(sources.css)

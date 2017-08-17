@@ -8,18 +8,18 @@ import { openFolder, getMetaData } from '../actions';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
-const defaultOptions = {
-    rootFolderId: 'null',
-    language: 'nl',
-    imagesOnly: false,
-    allowEdit: true,
-    allowUpload: true,
-    allowDelete: true,
-    allowNewFolder: true,
-};
 
-const init = (options: OptionsType = defaultOptions, browser: boolean = true) => {
-    const rootFolderId: string = R.isNil(options.rootFolderId) ? 'null' : options.rootFolderId;
+const init = (options: OptionsType | {}, browser: boolean = true) => {
+    const {
+        rootFolderId = null,
+        language = 'nl',
+        imagesOnly = false,
+        allowEdit = true,
+        allowUpload = true,
+        allowDelete = true,
+        allowNewFolder = true,
+    } = options;
+
     const rootFolder: FolderType = {
         id: rootFolderId,
         name: '..',
@@ -41,11 +41,17 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
     if (foldersById === null) {
         foldersById = {};
     }
-    if (R.isNil(foldersById[rootFolderId])) {
-        foldersById = { ...foldersById, [rootFolderId]: rootFolder };
+    if (typeof foldersById[rootFolderId] === 'undefined') {
+        foldersById = {
+            ...foldersById,
+            [rootFolderId]: rootFolder,
+        };
     }
-    if (R.isNil(foldersById[RECYCLE_BIN_ID])) {
-        foldersById = { ...foldersById, [RECYCLE_BIN_ID]: recycleBin };
+    if (typeof foldersById[RECYCLE_BIN_ID] === 'undefined') {
+        foldersById = {
+            ...foldersById,
+            [RECYCLE_BIN_ID]: recycleBin,
+        };
     }
     let filesById = treeState.filesById;
     if (filesById === null) {
@@ -60,14 +66,6 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
             selected.fileIds.push(f.id);
         });
     }
-
-    const {
-        imagesOnly = false,
-        allowNewFolder = true,
-        allowUpload = true,
-        allowDelete = true,
-        allowEdit = true,
-    } = options;
 
     const action: ActionInitType = {
         type: INIT,
@@ -94,7 +92,7 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
     };
     dispatch(action);
 
-    let currentFolderId: string = rootFolderId;
+    let currentFolderId: null | string = rootFolderId;
     if (uiState.currentFolderId !== null) {
         currentFolderId = uiState.currentFolderId;
     }

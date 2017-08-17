@@ -19,7 +19,7 @@ const DELAY: number = 100;
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-const optimisticUpdate = (folderId: string): boolean => {
+const optimisticUpdate = (folderId: null | string): boolean => {
     const treeState: TreeStateType = store.getState().tree;
     const tmp1 = R.clone(treeState.tree);
     const tmp2 = R.clone(treeState.filesById);
@@ -91,17 +91,16 @@ const loadFolder = (
     const foldersById: FoldersByIdType = tmp2;
     const tree: TreeType = R.clone(treeState.tree);
     const currentFolder = foldersById[folderId];
-    // const rootFolderId: string = uiState.rootFolderId === null ? 'null' : uiState.rootFolderId;
     const rootFolderId: null | string = uiState.rootFolderId;
     let parentFolderId: null | string = rootFolderId;
-    if (currentFolder.parent !== null) {
+    if (currentFolder.parent !== rootFolderId) {
         parentFolderId = currentFolder.parent;
     }
 
     api.openFolder(
         folderId,
         (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
-            if (error !== false) {
+            if (typeof error !== 'undefined') {
                 const messages = [];
                 if (typeof error === 'string') {
                     messages.push(error);
@@ -109,8 +108,10 @@ const loadFolder = (
                 const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
                 delete tree[folderId];
                 delete foldersById[folderId];
-                const folderIds = tree[parentFolderId].folderIds;
-                tree[parentFolderId].folderIds = folderIds.filter((id: string): boolean => id !== folderId);
+                if (typeof tree[parentFolderId] !== 'undefined') {
+                    const folderIds = tree[parentFolderId].folderIds;
+                    tree[parentFolderId].folderIds = folderIds.filter((id: null | string): boolean => id !== folderId);
+                }
                 reject({
                     errors: [err],
                     currentFolderId: parentFolderId,
@@ -125,7 +126,7 @@ const loadFolder = (
                 tree[folderId].fileIds.forEach((id: string) => {
                     delete filesById[id];
                 });
-                tree[folderId].folderIds.forEach((id: string) => {
+                tree[folderId].folderIds.forEach((id: null | string) => {
                     delete foldersById[id];
                 });
             }

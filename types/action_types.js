@@ -10,7 +10,7 @@ export type ActionInitType = {
 };
 
 export type PayloadInitType = {
-    rootFolderId: string,
+    rootFolderId: null | string,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
     tree: TreeType,
@@ -45,7 +45,7 @@ export type ActionFolderOpenedType = {
 };
 
 export type PayloadFolderOpenedType = {
-    currentFolderId: string,
+    currentFolderId: null | string,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
     tree: TreeType,

@@ -57,12 +57,9 @@ type ResponseType = {
  */
 let server = ''; // if no environment variable has been set, we don't need to specify a server url
 const port = process.env.PORT;
-// console.log(process.env.PORT)
-if (typeof port !== 'undefined' && port !== null && port !== 80 && port !== 8080) {
+if (typeof port !== 'undefined' && port !== null && port !== '80') {
     server = `http://localhost:${port}`;
 }
-
-
 /**
  * Deletes a file
  *
@@ -288,12 +285,14 @@ const upload = (
  * the server will check if the requested folder is inside the chroot folder
  */
 const openFolder = (
-    folderId: string,
+    folderId: null | string,
     onSuccess: (boolean | string, FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     let url = `${server}${api.openFolder}`;
-    if (folderId !== 'null') {
+    if (folderId !== null) {
         url += folderId;
+    } else {
+        url = url.substring(0, url.length - 1);
     }
 
     const req = request.get(url);
