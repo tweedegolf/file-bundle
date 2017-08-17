@@ -12,6 +12,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import busboy from 'connect-busboy';
 import request from 'request';
+import proxy from 'http-proxy-middleware';
 import api from './api';
 
 if (fs.existsSync(path.join(__dirname, '../', 'media')) === false) {
@@ -29,23 +30,41 @@ app.use((req, res, next) => {
 });
 
 app.use('/', express.static('public'));
-app.use('/locales/', express.static('src/js/locales'));
-app.use('/media', express.static('server/media'));
 
 console.log('API', process.env.API);
 console.log('PORT', process.env.PORT);
 
 if (process.env.API === '1') {
-    app.get('/admin/*', (req, res) => {
-        const url = `http://localhost:8080${req.originalUrl}`;
-        request(url, (error, response, body) => {
-            if (!error && response.statusCode === 200) {
-                res.setHeader('content-type', 'application/json');
-                res.send(body);
-            }
-        });
-    });
+    // app.get('/admin/*', (req, res) => {
+    //     const url = `http://localhost:8080${req.originalUrl}`;
+    //     request(url, (error, response, body) => {
+    //         if (!error && response.statusCode === 200) {
+    //             res.setHeader('content-type', 'application/json');
+    //             res.send(body);
+    //         }
+    //     });
+    // });
+
+    // app.get('/media/*', (req, res) => {
+    //     const url = `http://localhost:8080${req.originalUrl}`;
+    //     request(url, (error, response, body) => {
+    //         if (!error && response.statusCode === 200) {
+    //             // res.setHeader(response.getHeaders());
+    //             // console.log(response.getHeaders());
+    //             res.send(body);
+    //         }
+    //     });
+    // });
+
+    const apiProxy = proxy('/admin', { target: 'http://localhost:8080' });
+    app.use('/admin', apiProxy);
+
+    const mediaProxy = proxy('/media', { target: 'http://localhost:8080' });
+    app.use('/media', mediaProxy);
 } else {
+    app.use('/locales/', express.static('src/js/locales'));
+    app.use('/media', express.static('server/media'));
+
     // bodyparser middleware so the client can post JSON
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
