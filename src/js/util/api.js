@@ -132,10 +132,15 @@ const moveItems = (
  */
 const addFolder = (
     name: string,
-    folderId: string,
+    folderId: null | string,
     onSuccess: (FolderType[], string[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.addFolder}${folderId}`;
+    let url;
+    if (folderId === null) {
+        url = `${server}${api.addFolder}`;
+    } else {
+        url = `${server}${api.addFolder}${folderId}`;
+    }
     const req = request.post(url).type('form');
     req.send({ name });
     req.end((err: RequestErrorType, res: ResponseType) => {
@@ -154,16 +159,17 @@ const addFolder = (
 const renameFolder = (
     folderId: string,
     newName: string,
-    onSuccess: (boolean | string) => void,
+    onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.renameFolder}${folderId}`;
+    const url = `${server}${api.renameFolder}/${folderId}`;
     const req = request.post(url).type('form');
     req.send({ name: newName });
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.error);
+            const e: string[] = res.body.errors;
+            onSuccess(e);
         }
     });
 };
@@ -211,7 +217,7 @@ const emptyRecycleBin = (
 
 const getMetaData = (
     fileIds: string[],
-    folderIds: string[],
+    folderIds: (null | string)[],
     // onSuccess: (filesById: FilesByIdType, foldersById: FoldersByIdType) => void,
     onSuccess: (files: FileType[], folders: FolderType[]) => void,
     onError: (string[]) => void) => {
@@ -286,13 +292,13 @@ const upload = (
  */
 const openFolder = (
     folderId: null | string,
-    onSuccess: (boolean | string, FolderType[], FileType[]) => void,
+    onSuccess: (string, FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
-    let url = `${server}${api.openFolder}`;
+    let url;
     if (folderId !== null) {
-        url += folderId;
+        url = `${server}${api.openFolder}/${folderId}`;
     } else {
-        url = url.substring(0, url.length - 1);
+        url = `${server}${api.openFolder}`;
     }
 
     const req = request.get(url);

@@ -13,15 +13,14 @@ const addFolder = (folderName: string,
     reject: (payload: PayloadErrorType) => mixed) => {
     const state = store.getState();
     const treeState: TreeStateType = state.tree;
-    const tmp1 = state.ui.currentFolderId;
-    const tmp2 = R.clone(treeState.foldersById);
-    if (tmp1 === null || tmp2 === null) {
+    const tmp = R.clone(treeState.foldersById);
+    if (tmp === null) {
         const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, ['invalid state'], { name: `"${folderName}"` });
         reject({ errors: [error] });
         return;
     }
-    const currentFolderId: string = tmp1;
-    const foldersById: FoldersByIdType = tmp2;
+    const currentFolderId: null | string = state.ui.currentFolderId;
+    const foldersById: FoldersByIdType = tmp;
     const tree: TreeType = R.clone(treeState.tree);
 
     api.addFolder(

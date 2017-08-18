@@ -99,13 +99,9 @@ const loadFolder = (
 
     api.openFolder(
         folderId,
-        (error: boolean | string, folders: Array<FolderType>, files: Array<FileType>) => {
+        (error: string, folders: Array<FolderType>, files: Array<FileType>) => {
             if (typeof error !== 'undefined') {
-                const messages = [];
-                if (typeof error === 'string') {
-                    messages.push(error);
-                }
-                const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
+                const err = createError(ERROR_OPENING_FOLDER, [error], { id: folderId });
                 delete tree[folderId];
                 delete foldersById[folderId];
                 if (typeof tree[parentFolderId] !== 'undefined') {

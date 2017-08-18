@@ -31,17 +31,12 @@ const renameFolder = (folderId: string,
     api.renameFolder(
         folderId,
         newName,
-        (error: boolean | string) => {
-            if (error !== false) {
-                const errors = [];
+        (errors: string[]) => {
+            if (errors.length > 0) {
                 const interpolation = { folder: folderId, name: newName };
-                if (typeof error === 'string') {
-                    errors.push(createError(ERROR_RENAMING_FOLDER, [error], interpolation));
-                } else {
-                    errors.push(createError(ERROR_RENAMING_FOLDER, [], interpolation));
-                }
+                const err = createError(ERROR_RENAMING_FOLDER, errors, interpolation);
                 reject({
-                    errors,
+                    errors: [err],
                 });
                 return;
             }
