@@ -9,7 +9,7 @@ const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const getItemIds = (folderId: string,
-    collectedItemIds: { files: string[], folders: string[] },
+    collectedItemIds: { files: string[], folders: (null | string)[] },
     tree: TreeType,
 ) => {
     const folder: TreeFolderType = tree[folderId];
@@ -19,7 +19,7 @@ const getItemIds = (folderId: string,
     collectedItemIds.files.push(...folder.fileIds);
     const subFolderIds = folder.folderIds;
     collectedItemIds.folders.push(folderId, ...subFolderIds);
-    subFolderIds.forEach((id: string) => {
+    subFolderIds.forEach((id: (null | string)) => {
         getItemIds(id, collectedItemIds, tree);
     });
 };
@@ -29,26 +29,24 @@ const deleteFolder = (folderId: string,
     reject: (payload: PayloadErrorType) => mixed) => {
     const state = store.getState();
     const treeState: TreeStateType = state.tree;
-    const tmp1 = state.ui.currentFolderId;
-    const tmp2 = R.clone(treeState.filesById);
-    const tmp3 = R.clone(treeState.foldersById);
+    const tmp1 = R.clone(treeState.filesById);
+    const tmp2 = R.clone(treeState.foldersById);
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        const err = createError(Constants.ERROR_DELETING_FOLDER, ['invalid state'], { id: `"${folderId}"` });
+    if (tmp1 === null || tmp2 === null) {
+        const err = createError(Constants.ERROR_DELETING_FOLDER, ['invalid state'], { id: `${folderId}` });
         reject({ errors: [err] });
         return;
     }
-    const currentFolderId: string = tmp1;
-    const filesById: FilesByIdType = tmp2;
-    const foldersById: FoldersByIdType = tmp3;
+    const currentFolderId: string = state.ui.currentFolderId;
+    const filesById: FilesByIdType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
     const tree: TreeType = R.clone(treeState.tree);
 
     api.deleteFolder(
         folderId,
-        (error: boolean | string) => {
-            const errors = [];
-
-            if (error === false) {
+        (errors: string[]) => {
+            let error = null;
+            if (errors.length === 0) {
                 const collectedItemIds = {
                     files: [],
                     folders: [],
@@ -85,31 +83,27 @@ const deleteFolder = (folderId: string,
                     };
                 }
             } else {
-                const messages = [];
-                if (typeof error === 'string') {
-                    messages.push(error);
-                }
                 const folder = foldersById[folderId];
                 const interpolation = {};
                 if (typeof folder === 'undefined') {
-                    interpolation.id = `"${folderId}"`;
+                    interpolation.id = `${folderId}`;
                 } else {
-                    interpolation.name = `"${folder.name}"`;
+                    interpolation.name = `${folder.name}`;
                 }
-                const err = createError(Constants.ERROR_DELETING_FOLDER, messages, interpolation);
-                errors.push(err);
+                error = createError(Constants.ERROR_DELETING_FOLDER, errors, interpolation);
             }
 
             resolve({
                 tree,
-                errors,
+                errors: error === null ? [] : [error],
                 filesById,
                 foldersById,
             });
         },
         (messages: Array<string>) => {
+            console.log('HIER3', messages);
             const folder = foldersById[folderId];
-            const name = typeof folder === 'undefined' ? `"${folderId}"` : `"${folder.name}"`;
+            const name = typeof folder === 'undefined' ? `${folderId}` : `${folder.name}`;
             const err = createError(Constants.ERROR_DELETING_FOLDER, messages, { name });
             reject({ errors: [err] });
         },

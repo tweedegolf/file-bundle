@@ -13,23 +13,22 @@ const deleteFile = (fileId: string,
     reject: (payload: PayloadErrorType) => mixed) => {
     const state = store.getState();
     const treeState: TreeStateType = state.tree;
-    const tmp1 = state.ui.currentFolderId;
-    const tmp2 = R.clone(treeState.filesById);
-    const tmp3 = R.clone(treeState.foldersById);
+    const tmp1 = R.clone(treeState.filesById);
+    const tmp2 = R.clone(treeState.foldersById);
 
-    if (tmp1 !== null || tmp2 === null || tmp3 === null) {
+    if (tmp1 === null || tmp2 === null) {
         const error = createError(Constants.ERROR_DELETING_FILE, ['invalid state'], { id: `"${fileId}"` });
         reject({ errors: [error] });
         return;
     }
 
-    const currentFolderId: string = tmp1;
-    const filesById: FilesByIdType = tmp2;
-    const foldersById: FoldersByIdType = tmp3;
+    const currentFolderId: string = state.ui.currentFolderId;
+    const filesById: FilesByIdType = tmp1;
+    const foldersById: FoldersByIdType = tmp2;
     const tree: TreeType = R.clone(treeState.tree);
 
     api.deleteFile(fileId,
-        (error: boolean | string) => {
+        (error: boolean) => {
             const errors = [];
             if (error === false) {
                 const file = filesById[fileId];
@@ -53,9 +52,9 @@ const deleteFile = (fileId: string,
                 const file = filesById[fileId];
                 const interpolation = {};
                 if (typeof file === 'undefined') {
-                    interpolation.id = `"${fileId}"`;
+                    interpolation.id = `${fileId}`;
                 } else {
-                    interpolation.name = `"${file.name}"`;
+                    interpolation.name = `${file.name}`;
                 }
                 const err = createError(Constants.ERROR_DELETING_FILE, messages, interpolation);
                 errors.push(err);
@@ -70,7 +69,7 @@ const deleteFile = (fileId: string,
         },
         (messages: Array<string>) => {
             const file: FileType = filesById[fileId];
-            const name: string = typeof file === 'undefined' ? '"no name"' : `"${file.name}`;
+            const name: string = typeof file === 'undefined' ? 'no name' : `${file.name}`;
             const error = createError(Constants.ERROR_DELETING_FILE, messages, { name });
             reject({ errors: [error] });
         },

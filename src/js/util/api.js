@@ -73,7 +73,7 @@ const deleteFile = (
     onSuccess: (error: string) => void,
     onError: (string[]) => void,
 ) => {
-    const url = `${server}${api.deleteFile}${fileId}`;
+    const url = `${server}${api.deleteFile}/${fileId}`;
     const req = request.post(url);
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
@@ -139,7 +139,7 @@ const addFolder = (
     if (folderId === null) {
         url = `${server}${api.addFolder}`;
     } else {
-        url = `${server}${api.addFolder}${folderId}`;
+        url = `${server}${api.addFolder}/${folderId}`;
     }
     const req = request.post(url).type('form');
     req.send({ name });
@@ -184,17 +184,22 @@ const renameFolder = (
  * @return     {void}      Calls success or error callback
  */
 const deleteFolder = (
-    folderId: string,
-    onSuccess: (boolean | string) => void,
+    folderId: null | string,
+    onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.deleteFolder}${folderId}`;
+    let url;
+    if (folderId === null) {
+        url = `${server}${api.deleteFolder}`;
+    } else {
+        url = `${server}${api.deleteFolder}/${folderId}`;
+    }
     const req = request.post(url).type('form');
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.error);
+            onSuccess(res.body.errors);
         }
     });
 };

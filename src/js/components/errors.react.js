@@ -14,7 +14,7 @@ const mapIndexed = R.addIndex(R.map);
 type PropsType = {
     errors: ErrorType[],
     onDismiss: (id: string) => void,
-    t: (string) => string,
+    t: (string, ?{[string]: (null | string)}) => string,
 };
 
 const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =>
