@@ -15,7 +15,7 @@ const addFolder = (folderName: string,
     const treeState: TreeStateType = state.tree;
     const tmp = R.clone(treeState.foldersById);
     if (tmp === null) {
-        const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, ['invalid state'], { name: `"${folderName}"` });
+        const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, ['invalid state'], { name: `${folderName}` });
         reject({ errors: [error] });
         return;
     }
@@ -26,35 +26,29 @@ const addFolder = (folderName: string,
     api.addFolder(
         folderName,
         currentFolderId,
-        (folders: FolderType[], errorMessages: string[]) => {
-            if (folders.length > 0) {
-                folders.forEach((f: FolderType) => {
-                    foldersById[f.id] = R.merge(f, { isNew: true });
-                });
-                const newFolderIds = R.map((f: FolderType): string => f.id, folders);
-                tree[currentFolderId].folderIds.push(...newFolderIds);
+        (newFolder: FolderType | null, errors: string[]) => {
+            let error = null;
+            if (newFolder !== null) {
+                // add new folder
+                tree[currentFolderId].folderIds.push(newFolder.id);
+                foldersById[newFolder.id] = { ...newFolder, isNew: true };
+                // update current folder
                 const currentFolder = foldersById[currentFolderId];
                 currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
                 foldersById[currentFolderId] = currentFolder;
-            }
-
-            // const errors = errorMessages.map((msg: string): ErrorType =>
-            //     createError(Constants.ERROR_ADDING_FOLDER, [msg], folderName),
-            // );
-            const errors = [];
-            if (errorMessages.length > 0) {
-                errors.push(createError(Constants.ERROR_ADDING_FOLDER, errorMessages, { name: `"${folderName}"` }));
+            } else {
+                error = createError(Constants.ERROR_ADDING_FOLDER, errors, { name: `${folderName}` });
             }
 
             const payload: PayloadFolderAddedType = {
                 foldersById,
-                errors,
+                errors: error === null ? [] : [error],
                 tree,
             };
             resolve(payload);
         },
         (messages: string[]) => {
-            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, { name: `"${folderName}"` });
+            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, { name: `${folderName}` });
             reject({ errors: [error] });
         },
     );

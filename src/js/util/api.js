@@ -133,7 +133,7 @@ const moveItems = (
 const addFolder = (
     name: string,
     folderId: null | string,
-    onSuccess: (FolderType[], string[]) => void,
+    onSuccess: (FolderType | null, string[]) => void,
     onError: (string[]) => void) => {
     let url;
     if (folderId === null) {
@@ -147,11 +147,12 @@ const addFolder = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            let errors2: Errors2Type = [];
-            if (res.body.errors instanceof Array) {
-                errors2 = res.body.errors;
-            }
-            onSuccess(res.body.new_folders, errors2);
+            // let errors2: Errors2Type = [];
+            // if (res.body.errors instanceof Array) {
+            //     errors2 = res.body.errors;
+            // }
+            // onSuccess(res.body.new_folders, errors2);
+            onSuccess(res.body.new_folder, res.body.errors);
         }
     });
 };
@@ -297,7 +298,7 @@ const upload = (
  */
 const openFolder = (
     folderId: null | string,
-    onSuccess: (string, FolderType[], FileType[]) => void,
+    onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     let url;
     if (folderId !== null) {
@@ -316,7 +317,7 @@ const openFolder = (
                 onError([err.toString()]);
             }
         } else {
-            onSuccess(res.body.error, res.body.folders, res.body.files);
+            onSuccess(res.body.folders, res.body.files);
         }
     });
 };

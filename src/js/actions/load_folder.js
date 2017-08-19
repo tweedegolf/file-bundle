@@ -77,11 +77,9 @@ const loadFolder = (
 
     if (tmp1 === null || tmp2 === null) {
         const err = createError(ERROR_OPENING_FOLDER, ['invalid state'], { id: folderId });
-        // const rootFolderId = uiState.rootFolderId !== null ? uiState.rootFolderId : folderId;
         reject({
             errors: [err],
-            // currentFolderId: rootFolderId,
-            currentFolderId: folderId,
+            currentFolderId: uiState.rootFolderId,
             tree: null,
             foldersById: null,
         });
@@ -99,25 +97,8 @@ const loadFolder = (
 
     api.openFolder(
         folderId,
-        (error: string, folders: Array<FolderType>, files: Array<FileType>) => {
-            if (typeof error !== 'undefined') {
-                const err = createError(ERROR_OPENING_FOLDER, [error], { id: folderId });
-                delete tree[folderId];
-                delete foldersById[folderId];
-                if (typeof tree[parentFolderId] !== 'undefined') {
-                    const folderIds = tree[parentFolderId].folderIds;
-                    tree[parentFolderId].folderIds = folderIds.filter((id: null | string): boolean => id !== folderId);
-                }
-                reject({
-                    errors: [err],
-                    currentFolderId: parentFolderId,
-                    foldersById,
-                    tree,
-                });
-                return;
-            }
-
-            // remove deleted files and folders
+        (folders: Array<FolderType>, files: Array<FileType>) => {
+            // remove possibly deleted files and folders
             if (typeof tree[folderId] !== 'undefined') {
                 tree[folderId].fileIds.forEach((id: string) => {
                     delete filesById[id];

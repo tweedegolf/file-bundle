@@ -1,13 +1,9 @@
 ## API
 
-General: folder and file ids are strings and can *not* be `null` anymore!
-
 #### open folder
 
-This endpoint now contains 2 parameters; the id of the folder to be opened and the id of the chroot folder for this user. The server should check if the folder is inside the chroot folder tree. A chroot check can be bypassed by passing the value `'null'`, i.e. a *string* null.
-
-- GET      /url/id:string/root:string (note that id may not be `null` anymore!)
-- RESPONSE{ error: string, files?: FileType[], folders?: FolderType[] } (`error` must be added, for instance if the folder has been deleted or if the user has no rights to view the folder's content. If `error` is false `files` and `folders` may be omitted)
+- GET      /url/id:string
+- RESPONSE { files: FileType[], folders: FolderType[] }
 - ERROR   error: string (server error code, e.g. 500)
 
 
@@ -29,14 +25,14 @@ This endpoint now contains 2 parameters; the id of the folder to be opened and t
 #### delete file
 
 - POST       /url/id:string
-- RESPONSE  { error: boolean | string }
+- RESPONSE  { error: boolean }
 - ERROR     error: string
 
 
 #### delete folder
 
 - POST       /url/id:string
-- RESPONSE  { error: boolean | string }
+- RESPONSE  { errors: string[] }
 - ERROR     error: string
 
 
@@ -44,7 +40,7 @@ This endpoint now contains 2 parameters; the id of the folder to be opened and t
 
 - POST      /url/id:string (parent folder id)
 - FORM     name: string
-- RESPONSE { errors: string[], new_folders: string[] } (Why are this arrays? You can only add one folder at the time. Why not use the type { [id: string]: string })
+- RESPONSE { errors: string[], new_folder: FolderType | null }
 - ERROR    error: string
 
 
@@ -52,14 +48,14 @@ This endpoint now contains 2 parameters; the id of the folder to be opened and t
 
 - POST      /url/id:string
 - FORM      { name: string } (the new name of the folder)
-- RESPONSE  { error: boolean | string }
+- RESPONSE  { errors: string[] }
 - ERROR     error: string
 
 
 #### empty recycle bin
 
 - DELETE    /url
-- RESPONSE  { error: boolean | string }
+- RESPONSE  { error: boolean }
 - ERROR    error: string
 
 
