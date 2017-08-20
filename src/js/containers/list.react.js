@@ -205,7 +205,6 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
               openFolder={this.openFolder}
             />);
         }
-        console.log(backToParent, this.props.parentFolder, this.props.parentFolder === null, this.props.parentFolder === 'null');
 
         const loadingList = this.props.loadingFolderWithId === null ? 'loaded' : 'loading';
 

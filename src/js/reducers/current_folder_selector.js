@@ -37,7 +37,7 @@ export default createSelector(
             return {
                 files: [],
                 folders: [],
-                rootFolderId: null,
+                rootFolderId,
                 parentFolder: null,
             };
         }
@@ -58,7 +58,7 @@ export default createSelector(
         folders = R.map((folderId: string): FolderType => foldersById[folderId], tree[currentFolderId].folderIds);
         folders = R.compose(sortFunc, filterFunc)(folders);
 
-        if (currentFolder.parent !== rootFolderId && currentFolder.parent !== null) {
+        if (currentFolder.parent !== null) {
             parentFolder = foldersById[currentFolder.parent];
         }
         return {

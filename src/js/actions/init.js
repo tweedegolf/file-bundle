@@ -115,7 +115,7 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
 
 export default (options: OptionsType, browser: boolean) => {
     init(options, browser);
-    // persistStore(store, {}, () => {
-    //     init(options, browser);
-    // });
+    persistStore(store, {}, () => {
+        init(options, browser);
+    });
 };

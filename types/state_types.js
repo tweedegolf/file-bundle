@@ -27,6 +27,10 @@ export type TreeStateType = {
     foldersById: {} | FoldersByIdType,
     errors: Array<ErrorType>,
     tree: {} | TreeType,
+    recycleBin: {} | {
+        files: FileType[],
+        folders: FolderType[],
+    },
 };
 
 export type UIStateType = {

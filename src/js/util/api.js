@@ -132,12 +132,11 @@ const moveItems = (
  */
 const addFolder = (
     name: string,
-    folderId: null | string,
+    folderId: string,
     onSuccess: (FolderType | null, string[]) => void,
     onError: (string[]) => void) => {
     let url;
-    if (folderId === null || folderId === 'null') {
-        console.warn('null', folderId === null);
+    if (folderId === 'null') {
         url = `${server}${api.addFolder}`;
     } else {
         url = `${server}${api.addFolder}/${folderId}`;
@@ -186,12 +185,11 @@ const renameFolder = (
  * @return     {void}      Calls success or error callback
  */
 const deleteFolder = (
-    folderId: null | string,
+    folderId: string,
     onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
     let url;
-    if (folderId === null || folderId === 'null') {
-        console.warn('null', folderId === null);
+    if (folderId === 'null') {
         url = `${server}${api.deleteFolder}`;
     } else {
         url = `${server}${api.deleteFolder}/${folderId}`;
@@ -206,6 +204,23 @@ const deleteFolder = (
         }
     });
 };
+
+
+const getRecycleBin = (
+    onSuccess: (FolderType[], FileType[]) => void,
+    onError: (string[]) => void) => {
+    const url = `${server}${api.getRecycleBin}`;
+    const req = request.delete(url);
+    req.end((err: RequestErrorType, res: ResponseType) => {
+        if (err) {
+            // console.log(err)
+            onError([res.text, res.error.message, err.toString()]);
+        } else {
+            onSuccess(res.body.folders, res.body.files);
+        }
+    });
+};
+
 
 const emptyRecycleBin = (
     onSuccess: (boolean | string) => void,
@@ -225,7 +240,7 @@ const emptyRecycleBin = (
 
 const getMetaData = (
     fileIds: string[],
-    folderIds: (null | string)[],
+    folderIds: string[],
     // onSuccess: (filesById: FilesByIdType, foldersById: FoldersByIdType) => void,
     onSuccess: (files: FileType[], folders: FolderType[]) => void,
     onError: (string[]) => void) => {
@@ -271,7 +286,12 @@ const upload = (
     folderId: string,
     onSuccess: (FileType[], { [id: string]: string }) => void,
         onError: (string[]) => void) => {
-    const url = `${server}${api.uploadFiles}${folderId ? `/${folderId}` : ''}`;
+    let url;
+    if (folderId === 'null') {
+        url = `${server}${api.uploadFiles}`;
+    } else {
+        url = `${server}${api.uploadFiles}/${folderId}`;
+    }
     const req = request.post(url);
     fileList.forEach((file: File) => {
         // console.log(file)
@@ -299,12 +319,11 @@ const upload = (
  * the server will check if the requested folder is inside the chroot folder
  */
 const openFolder = (
-    folderId: null | string,
+    folderId: string,
     onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     let url;
-    if (folderId === null || folderId === 'null') {
-        console.warn('null', folderId === null);
+    if (folderId === 'null') {
         url = `${server}${api.openFolder}`;
     } else {
         url = `${server}${api.openFolder}/${folderId}`;
@@ -333,6 +352,7 @@ export default {
     deleteFolder,
     upload,
     openFolder,
+    getRecycleBin,
     emptyRecycleBin,
     restoreFromRecycleBin,
     getMetaData,

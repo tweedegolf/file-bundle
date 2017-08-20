@@ -11,16 +11,12 @@ const dispatch: DispatchType = store.dispatch;
 const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed) => {
-    const state = store.getState();
-    const treeState: TreeStateType = state.tree;
-    const tmp = R.clone(treeState.foldersById);
-    if (tmp === null) {
-        const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, ['invalid state'], { name: `${folderName}` });
-        reject({ errors: [error] });
-        return;
-    }
-    const currentFolderId: null | string = state.ui.currentFolderId;
-    const foldersById: FoldersByIdType = tmp;
+    const {
+        ui: uiState,
+        tree: treeState,
+    } = store.getState();
+    const currentFolderId: string = uiState.currentFolderId;
+    const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
 
     api.addFolder(
@@ -31,7 +27,8 @@ const addFolder = (folderName: string,
             if (newFolder !== null) {
                 // add new folder
                 tree[currentFolderId].folderIds.push(newFolder.id);
-                foldersById[newFolder.id] = { ...newFolder, isNew: true };
+                const parent = newFolder.parent === null ? 'null' : newFolder.parent;
+                foldersById[newFolder.id] = { ...newFolder, parent, isNew: true };
                 // update current folder
                 const currentFolder = foldersById[currentFolderId];
                 currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
