@@ -31,10 +31,10 @@ const emptyRecycleBin = (
             const errors = [];
             if (error === false) {
                 const fileIds = R.filter((id: string): boolean =>
-                    filesById[id].isTrashed === true, R.keys(filesById));
+                    filesById[id].is_trashed === true, R.keys(filesById));
 
                 const folderIds = R.filter((id: string): boolean =>
-                    foldersById[id].isTrashed === true, R.keys(foldersById));
+                    foldersById[id].is_trashed === true, R.keys(foldersById));
 
                 R.forEach((id: string) => {
                     delete filesById[id];

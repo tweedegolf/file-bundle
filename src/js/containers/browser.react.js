@@ -76,32 +76,15 @@ const mapStateToProps = (state: StateType): PropsType => {
     const {
         sort,
         ascending,
+        currentFolderId,
     } = state.ui;
 
-    const [currentFolderId: null | string, numItemsInCurrentFolder: number] = R.cond([
-        [R.isNil, R.always([null, 0])],
-        [R.isEmpty, R.always([null, 0])],
-        [R.T, (id: string): [null | string, number] => {
-            // folder has not been loaded / cached yet
-            const cf: TreeFolderType = state.tree.tree[id];
-            if (typeof cf === 'undefined') {
-                return [null, 0];
-            }
-            return [id, R.length(cf.folderIds) + R.length(cf.fileIds)];
-        }],
-    ])(state.ui.currentFolderId);
-
-    const selectedFiles: FileType[] = getSelectedFiles(state);
-
+    const currentFolder: TreeFolderType = state.tree.tree[currentFolderId];
+    let numItemsInCurrentFolder = 0;
     let currentFolderName = '';
-    if (state.tree.foldersById !== null) {
-        const currentFolder = state.tree.foldersById[currentFolderId];
-        currentFolderName = currentFolder.name;
-        // if (currentFolder.name === '..') {
-        //     currentFolderName = 'root';
-        // } else {
-        //     currentFolderName = currentFolder.name;
-        // }
+    if (typeof currentFolder !== 'undefined') {
+        numItemsInCurrentFolder = R.length(currentFolder.folderIds) + R.length(currentFolder.fileIds);
+        currentFolderName = state.tree.foldersById[currentFolderId].name;
     }
 
     return {
@@ -112,7 +95,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         // ui props
         sort,
         ascending,
-        selectedFiles,
+        selectedFiles: getSelectedFiles(state),
         previewUrl: state.ui.previewUrl,
         expanded: state.ui.expanded,
         selected: state.ui.selected,

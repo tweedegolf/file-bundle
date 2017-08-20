@@ -19,10 +19,11 @@
 // import R from 'ramda';
 
 export const treeInitialState: TreeStateType = {
-    filesById: null,
-    foldersById: null,
+    filesById: {},
+    foldersById: {},
     errors: [],
     tree: {},
+    recycleBin: {},
 };
 
 export const tree = (state: TreeStateType = treeInitialState,
@@ -55,14 +56,6 @@ export const tree = (state: TreeStateType = treeInitialState,
             foldersById: action.payload.foldersById,
         };
 
-    case 'ERROR_OPENING_FOLDER':
-        // console.log(R.clone(action.payload.foldersById));
-        return {
-            ...state,
-            tree: action.payload.tree === null ? state.tree : action.payload.tree,
-            foldersById: action.payload.foldersById === null ? state.foldersById : action.payload.foldersById,
-        };
-
     /**
      * A file has been deleted from a folder, we need to update the
      * currentFolder object and update the files array containing all files in
@@ -74,19 +67,21 @@ export const tree = (state: TreeStateType = treeInitialState,
             tree: action.payload.tree,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
+            recycleBin: action.payload.recycleBin,
         };
 
-    /**
-     * An empty folder has been removed from the current folder: currentFolder
-     * needs to be updated as well as the folders array containing all folders
-     * in the current folder
-     */
+        /**
+         * An empty folder has been removed from the current folder: currentFolder
+         * needs to be updated as well as the folders array containing all folders
+         * in the current folder
+         */
     case 'FOLDER_DELETED':
         return {
             ...state,
             tree: action.payload.tree,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
+            recycleBin: action.payload.recycleBin,
         };
 
     case 'FOLDER_RENAMED':

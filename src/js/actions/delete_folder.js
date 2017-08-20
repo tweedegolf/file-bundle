@@ -54,12 +54,12 @@ const deleteFolder = (folderId: string,
                 getItemIds(folderId, collectedItemIds, tree);
                 collectedItemIds.files.forEach((id: string) => {
                     const file = filesById[id];
-                    filesById[id] = { ...file, isTrashed: true };
+                    filesById[id] = { ...file, is_trashed: true };
                 });
 
                 collectedItemIds.folders.forEach((id: string) => {
                     const folder = foldersById[id];
-                    foldersById[id] = { ...folder, isTrashed: true };
+                    foldersById[id] = { ...folder, is_trashed: true };
                 });
 
                 const currentFolder: FolderType = foldersById[currentFolderId];
@@ -73,7 +73,7 @@ const deleteFolder = (folderId: string,
 
                 const deletedFolder = foldersById[folderId];
                 // deletedFolder.parent = Constants.RECYCLE_BIN_ID;
-                deletedFolder.isTrashed = true;
+                deletedFolder.is_trashed = true;
                 foldersById[folderId] = deletedFolder;
 
                 if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
@@ -101,7 +101,6 @@ const deleteFolder = (folderId: string,
             });
         },
         (messages: Array<string>) => {
-            console.log('HIER3', messages);
             const folder = foldersById[folderId];
             const name = typeof folder === 'undefined' ? `${folderId}` : `${folder.name}`;
             const err = createError(Constants.ERROR_DELETING_FOLDER, messages, { name });

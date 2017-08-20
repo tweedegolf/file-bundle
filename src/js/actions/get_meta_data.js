@@ -1,4 +1,5 @@
 // @flow
+// get meta data for files and folders that are selected; only used once during initialization
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
@@ -72,12 +73,12 @@ export default () => {
 
             const fileIdsF = fileIds.filter((id: string): boolean => {
                 const f = filesById[id];
-                return R.isNil(f) === false && f.isTrashed !== true;
+                return R.isNil(f) === false && f.is_trashed !== true;
             });
 
             const folderIdsF = folderIds.filter((id: string): boolean => {
                 const f = foldersById[id];
-                return R.isNil(f) === false && f.isTrashed !== true;
+                return R.isNil(f) === false && f.is_trashed !== true;
             });
 
             // console.log(fileIdsF, folderIdsF);

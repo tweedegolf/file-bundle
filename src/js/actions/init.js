@@ -8,11 +8,23 @@ import { openFolder, getMetaData } from '../actions';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
+const defaultOptions: OptionsType = {
+    language: 'nl',
+    multiple: true,
+    rootFolderId: 'null',
+    imagesOnly: false,
+    allowEdit: true,
+    allowUpload: true,
+    allowDelete: true,
+    allowNewFolder: true,
+    selected: [],
+};
 
-const init = (options: OptionsType | {}, browser: boolean = true) => {
+const init = (options: OptionsType = defaultOptions, browser: boolean = true) => {
     const {
-        rootFolderId = null,
         language = 'nl',
+        multiple = true,
+        rootFolderId = 'null',
         imagesOnly = false,
         allowEdit = true,
         allowUpload = true,
@@ -20,8 +32,9 @@ const init = (options: OptionsType | {}, browser: boolean = true) => {
         allowNewFolder = true,
     } = options;
 
+    const rfId = rootFolderId === null ? 'null' : rootFolderId;
     const rootFolder: FolderType = {
-        id: rootFolderId,
+        id: rfId,
         name: '..',
         file_count: 0,
         folder_count: 0,
@@ -37,14 +50,12 @@ const init = (options: OptionsType | {}, browser: boolean = true) => {
     const state = store.getState();
     const uiState = state.ui;
     const treeState = state.tree;
+
     let foldersById = treeState.foldersById;
-    if (foldersById === null) {
-        foldersById = {};
-    }
-    if (typeof foldersById[rootFolderId] === 'undefined') {
+    if (typeof foldersById[rfId] === 'undefined') {
         foldersById = {
             ...foldersById,
-            [rootFolderId]: rootFolder,
+            [rfId]: rootFolder,
         };
     }
     if (typeof foldersById[RECYCLE_BIN_ID] === 'undefined') {
@@ -53,18 +64,20 @@ const init = (options: OptionsType | {}, browser: boolean = true) => {
             [RECYCLE_BIN_ID]: recycleBin,
         };
     }
-    let filesById = treeState.filesById;
-    if (filesById === null) {
-        filesById = {};
-    }
 
+    const filesById = treeState.filesById;
     const selected = { ...uiState.selected };
-    const s = options.selected;
-    if (typeof s !== 'undefined' && s.length > 0) {
+    if (typeof options.selected !== 'undefined') {
+        const s: FileType[] = options.selected;
         s.forEach((f: FileType) => {
             filesById[f.id] = f;
             selected.fileIds.push(f.id);
         });
+    }
+
+    let currentFolderId = rfId;
+    if (uiState.currentFolderId !== null) {
+        currentFolderId = uiState.currentFolderId;
     }
 
     const action: ActionInitType = {
@@ -73,8 +86,8 @@ const init = (options: OptionsType | {}, browser: boolean = true) => {
             browser,
             expanded: browser === true,
             selected,
-            multiple: options.multiple || true,
-            language: options.language,
+            multiple,
+            language,
             imagesOnly,
             allowNewFolder,
             allowUpload,
@@ -86,16 +99,12 @@ const init = (options: OptionsType | {}, browser: boolean = true) => {
             isUploadingFile: false,
             isAddingFolder: false,
             loadingFolderWithId: null,
+            currentFolderId,
             errors: [],
             tree: treeState.tree,
         },
     };
     dispatch(action);
-
-    let currentFolderId: null | string = rootFolderId;
-    if (uiState.currentFolderId !== null) {
-        currentFolderId = uiState.currentFolderId;
-    }
 
     openFolder({ id: currentFolderId });
 

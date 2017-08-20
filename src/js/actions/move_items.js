@@ -77,16 +77,16 @@ const moveFiles = (
             tree[currentFolderId].fileIds = R.uniq(tree[currentFolderId].fileIds);
             tree[currentFolderId].folderIds = R.uniq(tree[currentFolderId].folderIds);
 
-            // set isTrashed flag to false
+            // set is_trashed flag to false
             R.forEach((id: string) => {
                 const file = filesById[id];
-                filesById[id] = { ...file, isTrashed: false };
+                filesById[id] = { ...file, is_trashed: false };
             }, [...fileIds, ...R.uniq(collectedItemIds.files)]);
             currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
 
             R.forEach((id: string) => {
                 const folder = foldersById[id];
-                foldersById[id] = { ...folder, parent: currentFolderId, isTrashed: false };
+                foldersById[id] = { ...folder, parent: currentFolderId, is_trashed: false };
             }, [...folderIds, ...R.uniq(collectedItemIds.folders)]);
             currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
 

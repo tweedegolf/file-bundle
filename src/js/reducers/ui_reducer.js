@@ -1,9 +1,9 @@
 // @flow
 
 export const uiInitialState: UIStateType = {
-    currentFolderId: null,
+    rootFolderId: 'null',
+    currentFolderId: 'null',
     currentFolderIdTmp: null,
-    rootFolderId: null,
     sort: 'create_ts',
     ascending: false,
     expanded: false,
@@ -47,6 +47,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             allowDelete: action.payload.allowDelete,
             allowEdit: action.payload.allowEdit,
             rootFolderId: action.payload.rootFolderId,
+            currentFolderId: action.payload.currentFolderId,
             errors: action.payload.errors,
             isUploadingFile: action.payload.isUploadingFile,
             isAddingFolder: action.payload.isAddingFolder,

@@ -21,7 +21,7 @@ export function getUUID() {
 }
 
 // type ItemType = {
-//     isTrashed?: boolean,
+//     is_trashed?: boolean,
 // };
 type ItemType = FolderType | FileType;
 
@@ -30,11 +30,11 @@ type ItemType = FolderType | FileType;
 // Note that files and folders can be undefined during the first run when the state get
 // rehydrated from the local storage: see updates.md
 const filterTrashed = (array: ItemType[]): ItemType[] =>
-    R.filter((f: ItemType): boolean => (R.isNil(f) === false && f.isTrashed !== true), array);
-// R.filter((f: ItemType): boolean => (f.isTrashed !== true), array);
+    R.filter((f: ItemType): boolean => (R.isNil(f) === false && f.is_trashed !== true), array);
+// R.filter((f: ItemType): boolean => (f.is_trashed !== true), array);
 const filterTrashedInverted = (array: ItemType[]): ItemType[] =>
-    R.filter((f: ItemType): boolean => (R.isNil(f) === false && f.isTrashed === true), array);
-// R.filter((f: ItemType): boolean => (f.isTrashed === true), array);
+    R.filter((f: ItemType): boolean => (R.isNil(f) === false && f.is_trashed === true), array);
+// R.filter((f: ItemType): boolean => (f.is_trashed === true), array);
 
 const sortAscendingBy = (key: string, array: ItemType[]): ItemType[] =>
     R.sortBy(R.prop(key), array);
@@ -116,7 +116,7 @@ const reduceToMap = (arr: ItemType[]): { [id: string]: ItemType } =>
     R.reduce((acc: { [id: string]: ItemType }, item: ItemType): { [id: string]: ItemType } =>
         ({ ...acc, [item.id]: item }), {}, arr);
 
-const createError = (type: string, messages?: string[], data?: { [string]: string }): ErrorType => ({
+const createError = (type: string, messages?: string[], data?: { [string]: null | string }): ErrorType => ({
     id: getUID(),
     data,
     type,

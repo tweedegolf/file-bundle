@@ -2,7 +2,8 @@
 import * as Constants from '../util/constants';
 import { getStore } from '../reducers/store';
 
-export { openFolder, showRecycleBin } from './load_folder';
+export { default as openFolder } from './open_folder';
+export { default as showRecycleBin } from './show_recycle_bin';
 export { default as init } from './init';
 export { default as getMetaData } from './get_meta_data';
 export { default as addFolder } from './add_folder';

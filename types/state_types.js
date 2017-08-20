@@ -9,30 +9,30 @@ export type DispatchType = Dispatch;
 
 export type TreeFolderType = {
     fileIds: string[],
-    folderIds: (null | string)[],
+    folderIds: string[],
 };
 
 export type TreeType = {
-    [id: null | string]: TreeFolderType,
+    [id: string]: TreeFolderType,
 };
 
 export type ClipboardType = {
     fileIds: string[],
-    folderIds: (null | string)[],
+    folderIds: string[],
 };
 
 // state
 export type TreeStateType = {
-    filesById: null | FilesByIdType,
-    foldersById: null | FoldersByIdType,
+    filesById: {} | FilesByIdType,
+    foldersById: {} | FoldersByIdType,
     errors: Array<ErrorType>,
     tree: {} | TreeType,
 };
 
 export type UIStateType = {
-    currentFolderId: null | string,
+    rootFolderId: string,
+    currentFolderId: string,
     currentFolderIdTmp: null | string,
-    rootFolderId: null | string,
     sort: string,
     ascending: boolean,
     expanded: boolean,
@@ -67,11 +67,11 @@ export type StateType = {
 };
 
 // data
-export type FoldersByIdType = { [id: null | string]: FolderType };
+export type FoldersByIdType = { [id: string]: FolderType };
 export type FilesByIdType = { [id: string]: FileType };
 
 export type FolderType = {
-    id: null | string,
+    id: string,
     name: string,
     create_ts?: number,
     created?: string,
@@ -112,14 +112,14 @@ export type ErrorType = {
 // options passed via HTML element's data-options attribute
 export type OptionsType = {
     language: string,
-    rootFolderId: null | string,
-    selected?: Array<FileType>,
-    multiple?: boolean,
-    imagesOnly?: boolean,
-    allowNewFolder?: boolean,
-    allowUpload?: boolean,
-    allowDelete?: boolean,
-    allowEdit?: boolean, // rename and cut & paste
+    rootFolderId: string,
+    selected: FileType[],
+    multiple: boolean,
+    imagesOnly: boolean,
+    allowNewFolder: boolean,
+    allowUpload: boolean,
+    allowDelete: boolean,
+    allowEdit: boolean, // rename and cut & paste
 };
 
 export type SortEnumType = 'name' | 'size_bytes' | 'create_ts' | 'type';

@@ -17,7 +17,7 @@ const deleteFile = (fileId: string,
     const tmp2 = R.clone(treeState.foldersById);
 
     if (tmp1 === null || tmp2 === null) {
-        const error = createError(Constants.ERROR_DELETING_FILE, ['invalid state'], { id: `"${fileId}"` });
+        const error = createError(Constants.ERROR_DELETING_FILE, ['invalid state'], { id: `${fileId}` });
         reject({ errors: [error] });
         return;
     }
@@ -32,7 +32,7 @@ const deleteFile = (fileId: string,
             const errors = [];
             if (error === false) {
                 const file = filesById[fileId];
-                filesById[fileId] = R.merge(file, { isTrashed: true });
+                filesById[fileId] = R.merge(file, { is_trashed: true });
 
                 const currentFolder: FolderType = foldersById[currentFolderId];
                 currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);

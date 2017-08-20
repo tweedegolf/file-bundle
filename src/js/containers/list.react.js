@@ -40,6 +40,7 @@ type PropsType = {
     renamingFolderWithId: null | string,
     parentFolder: null | FolderType,
     showingRecycleBin: boolean,
+    rootFolderId: null | string,
     currentFolderId: null | string,
 };
 
@@ -70,6 +71,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         parentFolder,
 
         // ui props
+        rootFolderId: state.ui.rootFolderId,
         currentFolderId: state.ui.currentFolderId,
         sort: state.ui.sort,
         ascending: state.ui.ascending,
@@ -196,13 +198,14 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
 
         // show button that leads back to parent directory
         let backToParent = null;
-        if (this.props.parentFolder !== this.props.currentFolderId) {
+        if (this.props.parentFolder !== null) {
             backToParent = (<ParentFolder
               key={`folder-${this.props.parentFolder.name}`}
               folder={this.props.parentFolder}
               openFolder={this.openFolder}
             />);
         }
+        console.log(backToParent, this.props.parentFolder, this.props.parentFolder === null, this.props.parentFolder === 'null');
 
         const loadingList = this.props.loadingFolderWithId === null ? 'loaded' : 'loading';
 

@@ -1,4 +1,4 @@
-;// @flow
+// @flow
 /**
  * @name       ActionConstants
  * @type       {string}
@@ -47,6 +47,8 @@ export const OPEN_FOLDER: 'OPEN_FOLDER' = 'OPEN_FOLDER';
  * @type       {string}
  */
 export const FOLDER_OPENED: 'FOLDER_OPENED' = 'FOLDER_OPENED';
+
+export const FOLDER_FROM_CACHE: 'FOLDER_FROM_CACHE' = 'FOLDER_FROM_CACHE';
 
 /**
  * Server error, processed by:
@@ -262,5 +264,4 @@ export const GET_META_DATA: 'GET_META_DATA' = 'GET_META_DATA';
 export const META_DATA_RECEIVED: 'META_DATA_RECEIVED' = 'META_DATA_RECEIVED';
 export const ERROR_GETTING_META_DATA: 'ERROR_GETTING_META_DATA' = 'ERROR_GETTING_META_DATA';
 
-export const RECYCLE_BIN_ID: string = '-1';
-
+export const RECYCLE_BIN_ID: 'RECYCLE_BIN_ID' = 'RECYCLE_BIN_ID';

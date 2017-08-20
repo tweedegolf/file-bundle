@@ -136,7 +136,8 @@ const addFolder = (
     onSuccess: (FolderType | null, string[]) => void,
     onError: (string[]) => void) => {
     let url;
-    if (folderId === null) {
+    if (folderId === null || folderId === 'null') {
+        console.warn('null', folderId === null);
         url = `${server}${api.addFolder}`;
     } else {
         url = `${server}${api.addFolder}/${folderId}`;
@@ -189,7 +190,8 @@ const deleteFolder = (
     onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
     let url;
-    if (folderId === null) {
+    if (folderId === null || folderId === 'null') {
+        console.warn('null', folderId === null);
         url = `${server}${api.deleteFolder}`;
     } else {
         url = `${server}${api.deleteFolder}/${folderId}`;
@@ -301,10 +303,11 @@ const openFolder = (
     onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     let url;
-    if (folderId !== null) {
-        url = `${server}${api.openFolder}/${folderId}`;
-    } else {
+    if (folderId === null || folderId === 'null') {
+        console.warn('null', folderId === null);
         url = `${server}${api.openFolder}`;
+    } else {
+        url = `${server}${api.openFolder}/${folderId}`;
     }
 
     const req = request.get(url);

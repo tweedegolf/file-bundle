@@ -39,6 +39,13 @@ export type ActionOpenFolderType = {
     },
 };
 
+export type ActionFolderFromCacheType = {
+    type: 'FOLDER_FROM_CACHE',
+    payload: {
+        id: string,
+    },
+};
+
 export type ActionFolderOpenedType = {
     type: 'FOLDER_OPENED',
     payload: PayloadFolderOpenedType,
@@ -59,8 +66,6 @@ export type ActionErrorOpenFolderType = {
 export type PayloadErrorOpenFolderType = {
     errors: ErrorType[],
     currentFolderId: null | string,
-    foldersById: null | FoldersByIdType,
-    tree: null | TreeType,
 };
 
 // rename folder
@@ -166,13 +171,13 @@ type errorTypes =
     | 'ERROR_DELETING_FOLDER'
     | 'ERROR_ADDING_FOLDER'
     | 'ERROR_UPLOADING_FILE'
-//    | 'ERROR_OPENING_FOLDER'
+    //    | 'ERROR_OPENING_FOLDER'
     | 'ERROR_MOVING_ITEMS'
     | 'ERROR_RENAMING_FOLDER'
     | 'ERROR_EMPTY_RECYCLE_BIN'
     | 'ERROR_RESTORE_FROM_RECYCLE_BIN'
     | 'ERROR_GETTING_META_DATA'
-;
+    ;
 export type ActionErrorType = {
     type: errorTypes;
     payload: PayloadErrorType,
@@ -185,10 +190,10 @@ export type PayloadErrorType = {
 // initiate delete file or folder
 export type ActionDeleteType = {
     type:
-        | 'DELETE_FOLDER'
-        | 'CONFIRM_DELETE_FOLDER'
-        | 'DELETE_FILE'
-        | 'CONFIRM_DELETE_FILE',
+    | 'DELETE_FOLDER'
+    | 'CONFIRM_DELETE_FOLDER'
+    | 'DELETE_FILE'
+    | 'CONFIRM_DELETE_FILE',
     payload: PayloadDeleteType
 };
 
@@ -200,10 +205,10 @@ export type PayloadDeleteType = {
 // file or folder deleted
 export type ActionDeletedType = {
     type:
-        | 'FOLDER_DELETED'
-        | 'FILE_DELETED'
-        | 'RECYCLE_BIN_EMPTIED'
-        | 'RESTORED_FROM_RECYCLE_BIN',
+    | 'FOLDER_DELETED'
+    | 'FILE_DELETED'
+    | 'RECYCLE_BIN_EMPTIED'
+    | 'RESTORED_FROM_RECYCLE_BIN',
     payload: PayloadDeletedType
 };
 
@@ -212,6 +217,7 @@ export type PayloadDeletedType = {
     errors: ErrorType[],
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
+    recycleBin: TreeType,
 };
 
 
@@ -255,7 +261,7 @@ export type ActionUnionType =
     | ActionItemsMovedType
     | ActionDismissErrorType
     | ActionChangeSortingType
-;
+    ;
 /*
 const actions = {
     INIT: 'INIT',

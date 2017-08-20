@@ -33,11 +33,7 @@ export default createSelector(
             foldersById,
         } = treeState;
 
-        if (
-            filesById === null ||
-            foldersById === null ||
-            typeof tree[currentFolderId] === 'undefined'
-        ) {
+        if (typeof tree[currentFolderId] === 'undefined') {
             return {
                 files: [],
                 folders: [],
@@ -56,18 +52,15 @@ export default createSelector(
         let files: FileType[] = [];
         let folders: FolderType[] = [];
 
-        files = R.map((fileId: string): FileType =>
-            filesById[fileId], tree[currentFolderId].fileIds);
+        files = R.map((fileId: string): FileType => filesById[fileId], tree[currentFolderId].fileIds);
         files = R.compose(sortFunc, filterFunc)(files);
 
-        folders = R.map((folderId: string): FolderType =>
-            foldersById[folderId], tree[currentFolderId].folderIds);
+        folders = R.map((folderId: string): FolderType => foldersById[folderId], tree[currentFolderId].folderIds);
         folders = R.compose(sortFunc, filterFunc)(folders);
 
-        if (currentFolder.parent !== currentFolderId) {
+        if (currentFolder.parent !== rootFolderId && currentFolder.parent !== null) {
             parentFolder = foldersById[currentFolder.parent];
         }
-
         return {
             files,
             folders,
