@@ -3,7 +3,7 @@ import * as Constants from '../util/constants';
 import { getStore } from '../reducers/store';
 
 export { default as openFolder } from './open_folder';
-export { default as showRecycleBin } from './show_recycle_bin';
+export { default as openRecycleBin } from './open_recycle_bin';
 export { default as init } from './init';
 export { default as getMetaData } from './get_meta_data';
 export { default as addFolder } from './add_folder';
@@ -168,9 +168,9 @@ export const expandBrowser = () => {
 };
 
 
-export const hideRecycleBin = () => {
+export const closeRecycleBin = () => {
     dispatch({
-        type: Constants.HIDE_RECYCLE_BIN,
+        type: Constants.CLOSE_RECYCLE_BIN,
     });
 };
 

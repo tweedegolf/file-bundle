@@ -4,7 +4,7 @@ import { persistStore } from 'redux-persist';
 import i18next from 'i18next';
 import { getStore } from '../reducers/store';
 import { INIT, RECYCLE_BIN_ID } from '../util/constants';
-import { openFolder, getMetaData } from '../actions';
+import { openFolder, openRecycleBin, getMetaData } from '../actions';
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
@@ -40,13 +40,6 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
         folder_count: 0,
         parent: null,
     };
-    const recycleBin: FolderType = {
-        id: RECYCLE_BIN_ID,
-        name: i18next.getResource(i18next.language, 'common', 'recycleBin'),
-        file_count: 0,
-        folder_count: 0,
-        parent: null,
-    };
     const state = store.getState();
     const uiState = state.ui;
     const treeState = state.tree;
@@ -56,12 +49,6 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
         foldersById = {
             ...foldersById,
             [rfId]: rootFolder,
-        };
-    }
-    if (typeof foldersById[RECYCLE_BIN_ID] === 'undefined') {
-        foldersById = {
-            ...foldersById,
-            [RECYCLE_BIN_ID]: recycleBin,
         };
     }
 
@@ -106,7 +93,12 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
     };
     dispatch(action);
 
-    openFolder({ id: currentFolderId });
+    if (currentFolderId === RECYCLE_BIN_ID) {
+        openRecycleBin();
+    } else {
+        openFolder({ id: currentFolderId });
+    }
+
 
     if (selected.fileIds.length + selected.folderIds.length > 0) {
         getMetaData();
@@ -114,7 +106,7 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
 };
 
 export default (options: OptionsType, browser: boolean) => {
-    init(options, browser);
+    // init(options, browser);
     persistStore(store, {}, () => {
         init(options, browser);
     });

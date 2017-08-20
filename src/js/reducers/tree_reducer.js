@@ -23,7 +23,10 @@ export const treeInitialState: TreeStateType = {
     foldersById: {},
     errors: [],
     tree: {},
-    recycleBin: {},
+    recycleBin: {
+        files: [],
+        folders: [],
+    },
 };
 
 export const tree = (state: TreeStateType = treeInitialState,
@@ -54,6 +57,12 @@ export const tree = (state: TreeStateType = treeInitialState,
             tree: action.payload.tree,
             filesById: action.payload.filesById,
             foldersById: action.payload.foldersById,
+        };
+
+    case 'RECYCLE_BIN_OPENED':
+        return {
+            ...state,
+            recycleBin: action.payload.recycleBin,
         };
 
     /**

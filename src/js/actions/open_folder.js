@@ -95,10 +95,12 @@ const openFolder = (folderId: string) => {
             });
         },
         (messages: Array<string>) => {
+            const rootFolder = store.getState().ui.rootFolderId;
+            const fallback = currentFolder.parent === null ? rootFolder : currentFolder.parent;
             const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
             reject({
                 errors: [err],
-                currentFolderId: currentFolder.parent,
+                currentFolderId: fallback,
             });
         },
     );

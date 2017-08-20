@@ -21,16 +21,18 @@ export type ClipboardType = {
     folderIds: string[],
 };
 
+export type RecycleBinType = {
+    files: FileType[],
+    folders: FolderType[],
+};
+
 // state
 export type TreeStateType = {
     filesById: {} | FilesByIdType,
     foldersById: {} | FoldersByIdType,
     errors: Array<ErrorType>,
     tree: {} | TreeType,
-    recycleBin: {} | {
-        files: FileType[],
-        folders: FolderType[],
-    },
+    recycleBin: RecycleBinType,
 };
 
 export type UIStateType = {

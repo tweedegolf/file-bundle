@@ -18,6 +18,7 @@ import Preview from '../components/preview.react';
 import Errors from '../components/errors.react';
 import getSelectedFiles from '../reducers/get_selected_files';
 import * as Actions from '../actions';
+import { RECYCLE_BIN_ID } from '../util/constants';
 
 type PassedPropsType = {
     browser: boolean,
@@ -79,12 +80,19 @@ const mapStateToProps = (state: StateType): PropsType => {
         currentFolderId,
     } = state.ui;
 
-    const currentFolder: TreeFolderType = state.tree.tree[currentFolderId];
     let numItemsInCurrentFolder = 0;
     let currentFolderName = '';
-    if (typeof currentFolder !== 'undefined') {
-        numItemsInCurrentFolder = R.length(currentFolder.folderIds) + R.length(currentFolder.fileIds);
-        currentFolderName = state.tree.foldersById[currentFolderId].name;
+
+    if (currentFolderId === RECYCLE_BIN_ID) {
+        const bin = state.tree.recycleBin;
+        numItemsInCurrentFolder = R.length(bin.folders) + R.length(bin.files);
+        currentFolderName = translate('recycleBin');
+    } else {
+        const currentFolder: TreeFolderType = state.tree.tree[currentFolderId];
+        if (typeof currentFolder !== 'undefined') {
+            numItemsInCurrentFolder = R.length(currentFolder.folderIds) + R.length(currentFolder.fileIds);
+            currentFolderName = state.tree.foldersById[currentFolderId].name;
+        }
     }
 
     return {
@@ -236,8 +244,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
           onCancel={Actions.cancelMoveItems}
           uploadFiles={this.uploadFiles}
           onAddFolder={Actions.addFolder}
-          showRecycleBin={Actions.showRecycleBin}
-          hideRecycleBin={Actions.hideRecycleBin}
+          showRecycleBin={Actions.openRecycleBin}
+          hideRecycleBin={Actions.closeRecycleBin}
           emptyRecycleBin={Actions.emptyRecycleBin}
           isUploadingFiles={this.props.isUploadingFiles}
           loadingFolderWithId={this.props.loadingFolderWithId}

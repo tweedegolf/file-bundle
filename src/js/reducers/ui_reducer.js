@@ -204,31 +204,28 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         };
 
 
-        /**
-         * User has clicked on a folder to open it; first we try to load its contents
-         * from the local storage and if not present or outdated we retrieve it from
-         * the server. This action is also processed by the tree reducer.
-         */
-    } else if (action.type === 'OPEN_FOLDER') {
+    /**
+     * User has clicked on a folder to open it; first we try to load its contents
+     * from the local storage and if not present or outdated we retrieve it from
+     * the server. This action is also processed by the tree reducer.
+     */
+    } else if (action.type === 'OPEN_FOLDER' || action.type === 'OPEN_RECYCLE_BIN') {
         return {
             ...state,
             loadingFolderWithId: action.payload.id,
         };
-
-        /**
-         * Folder contents has been successfully retrieved from local storage or
-         * server. We can hide the progress animation (if any)
-         */
+    } else if (action.type === 'FOLDER_FROM_CACHE') {
+        return {
+            ...state,
+            currentFolderId: action.payload.currentFolderId,
+            loadingFolderWithId: null,
+        };
     } else if (action.type === 'FOLDER_OPENED') {
         return {
             ...state,
             currentFolderId: action.payload.currentFolderId,
             loadingFolderWithId: null,
         };
-
-        /**
-         * Something went wrong opening the folder; show error messages
-         */
     } else if (action.type === 'ERROR_OPENING_FOLDER') {
         return {
             ...state,
@@ -236,6 +233,42 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             currentFolderId: action.payload.currentFolderId,
             errors: [...state.errors, ...action.payload.errors],
         };
+    } else if (action.type === 'RECYCLE_BIN_FROM_CACHE' || action.type === 'RECYCLE_BIN_OPENED') {
+        return {
+            ...state,
+            showingRecycleBin: true,
+            loadingFolderWithId: null,
+            currentFolderId: action.payload.currentFolderId,
+            currentFolderIdTmp: action.payload.currentFolderIdTmp,
+        };
+    } else if (action.type === 'CLOSE_RECYCLE_BIN') {
+        return {
+            ...state,
+            showingRecycleBin: false,
+            currentFolderId: state.currentFolderIdTmp,
+            currentFolderIdTmp: null,
+        };
+    } else if (action.type === 'EMPTY_RECYCLE_BIN') {
+        return {
+            ...state,
+            showingRecycleBin: false,
+            currentFolderId: state.currentFolderIdTmp,
+        };
+    } else if (action.type === 'ERROR_EMPTY_RECYCLE_BIN') {
+        return {
+            ...state,
+            errors: [...state.errors, ...action.payload.errors],
+        };
+    // } else if (action.type === 'RESTORED_FROM_RECYCLE_BIN') {
+    //     return {
+    //         ...state,
+    //         showingRecycleBin: false,
+    //         currentFolderId: state.currentFolderIdTmp,
+    //         selected: {
+    //             fileIds: [],
+    //             folderIds: [],
+    //         },
+    //     };
 
 
         /**
@@ -505,41 +538,6 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
                 folderIds: [],
             },
             errors: [...state.errors, ...action.payload.errors],
-        };
-    } else if (action.type === 'SHOW_RECYCLE_BIN') {
-        return {
-            ...state,
-            showingRecycleBin: true,
-            currentFolderId: action.payload.id,
-            currentFolderIdTmp: state.currentFolderId,
-        };
-    } else if (action.type === 'HIDE_RECYCLE_BIN') {
-        return {
-            ...state,
-            showingRecycleBin: false,
-            currentFolderId: state.currentFolderIdTmp,
-            currentFolderIdTmp: null,
-        };
-    } else if (action.type === 'EMPTY_RECYCLE_BIN') {
-        return {
-            ...state,
-            showingRecycleBin: false,
-            currentFolderId: state.currentFolderIdTmp,
-        };
-    } else if (action.type === 'ERROR_EMPTY_RECYCLE_BIN') {
-        return {
-            ...state,
-            errors: [...state.errors, ...action.payload.errors],
-        };
-    } else if (action.type === 'RESTORED_FROM_RECYCLE_BIN') {
-        return {
-            ...state,
-            showingRecycleBin: false,
-            currentFolderId: state.currentFolderIdTmp,
-            selected: {
-                fileIds: [],
-                folderIds: [],
-            },
         };
     }
     return state;

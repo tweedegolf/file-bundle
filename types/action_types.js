@@ -10,7 +10,7 @@ export type ActionInitType = {
 };
 
 export type PayloadInitType = {
-    rootFolderId: null | string,
+    rootFolderId: string,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
     tree: TreeType,
@@ -42,7 +42,7 @@ export type ActionOpenFolderType = {
 export type ActionFolderFromCacheType = {
     type: 'FOLDER_FROM_CACHE',
     payload: {
-        id: string,
+        currentFolderId: string,
     },
 };
 
@@ -52,7 +52,7 @@ export type ActionFolderOpenedType = {
 };
 
 export type PayloadFolderOpenedType = {
-    currentFolderId: null | string,
+    currentFolderId: string,
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
     tree: TreeType,
@@ -65,7 +65,7 @@ export type ActionErrorOpenFolderType = {
 
 export type PayloadErrorOpenFolderType = {
     errors: ErrorType[],
-    currentFolderId: null | string,
+    currentFolderId: string,
 };
 
 // rename folder

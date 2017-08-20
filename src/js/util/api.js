@@ -210,7 +210,7 @@ const getRecycleBin = (
     onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.getRecycleBin}`;
-    const req = request.delete(url);
+    const req = request.get(url);
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             // console.log(err)

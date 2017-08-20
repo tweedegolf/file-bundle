@@ -6,9 +6,12 @@ import {
     sortAscendingBy,
     sortDescendingBy,
 } from '../util/util';
+import {
+    RECYCLE_BIN_ID,
+} from '../util/constants';
 
 type ReturnType = {
-    rootFolderId: null | string,
+    rootFolderId: string,
     parentFolder: null | FolderType,
     folders: FolderType[],
     files: FileType[],
@@ -31,9 +34,15 @@ export default createSelector(
             tree,
             filesById,
             foldersById,
+            recycleBin,
         } = treeState;
 
-        if (typeof tree[currentFolderId] === 'undefined') {
+        if (currentFolderId === RECYCLE_BIN_ID) {
+            return {
+                files: recycleBin.files,
+                folders: recycleBin.folders,
+            };
+        } else if (typeof tree[currentFolderId] === 'undefined') {
             return {
                 files: [],
                 folders: [],
