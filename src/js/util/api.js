@@ -34,14 +34,16 @@ type ResponseType = {
     },
     body: {
         error: string,
-        errors: ErrorsType,
-        new_folders: FolderType[],
+        errors: string[] | {[id: string]: string},
+        new_folder: FolderType,
         folder: FolderType,
         uploads: FileType[],
         folders: FolderType[],
         files: FileType[],
         filesById: FilesByIdType[],
         foldersById: FoldersByIdType[],
+        file_errors: string[],
+        folder_errors: string[],
         data: DataType,
     },
 };
@@ -98,24 +100,25 @@ const moveItems = (
     fileIds: string[],
     folderIds: string[],
     folderId: string,
-    onSuccess: (string[], string[]) => void,
-    onError: (string[]) => void) => {
-    const url = `${server}${api.moveItems}${folderId}`;
+    onSuccess: (string) => void,
+    onError: (string[]) => void,
+) => {
+    let url;
+    if (folderId === 'null') {
+        url = `${server}${api.moveItems}`;
+    } else {
+        url = `${server}${api.moveItems}/${folderId}`;
+    }
     const req = request.post(url).type('form');
-    req.send({ 'fileIds[]': fileIds, 'folderIds[]': folderIds });
+    req.send({
+        'fileIds[]': fileIds,
+        'folderIds[]': folderIds,
+    });
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            const fileIds2 = [];
-            const folderIds2 = [];
-            if (res.body.errors.fileIds instanceof Array) {
-                fileIds2.push(...res.body.errors.fileIds);
-            }
-            if (res.body.errors.folderIds instanceof Array) {
-                folderIds2.push(...res.body.errors.folderIds);
-            }
-            onSuccess(fileIds2, folderIds2);
+            onSuccess(res.body.error, res.body.file_errors, res.body.folder_errors);
         }
     });
 };
@@ -232,7 +235,11 @@ const emptyRecycleBin = (
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.errors);
+            let errorsCasted: Errors2Type = [];
+            if (res.body.errors instanceof Array) {
+                errorsCasted = res.body.errors;
+            }
+            onSuccess(errorsCasted);
         }
     });
 };
@@ -284,8 +291,9 @@ const restoreFromRecycleBin = (
 const upload = (
     fileList: File[],
     folderId: string,
-    onSuccess: (FileType[], { [id: string]: string }) => void,
-        onError: (string[]) => void) => {
+    onSuccess: (FileType[], { [string]: string }) => void,
+    onError: (string[]) => void,
+) => {
     let url;
     if (folderId === 'null') {
         url = `${server}${api.uploadFiles}`;
@@ -301,11 +309,11 @@ const upload = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            let errors1: Errors1Type = {};
+            let errorsCasted: Errors1Type = {};
             if (res.body.errors instanceof Object) {
-                errors1 = res.body.errors;
+                errorsCasted = res.body.errors;
             }
-            onSuccess(res.body.uploads, errors1);
+            onSuccess(res.body.uploads, errorsCasted);
         }
     });
 };

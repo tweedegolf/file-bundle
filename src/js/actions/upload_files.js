@@ -5,34 +5,50 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import { createError } from '../util/util';
 
+type PayloadUploadDoneType = {
+    foldersById: FoldersByIdType,
+    filesById: FilesByIdType,
+    tree: TreeType,
+    errors: ErrorType[],
+};
+
+export type ActionUploadStartType = {
+    type: 'UPLOAD_START',
+    payload: {
+        files: File[],
+    },
+};
+
+export type ActionUploadDoneType = {
+    type: 'UPLOAD_DONE',
+    payload: PayloadUploadDoneType,
+};
+
+
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const uploadFiles = (files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
-    reject: (payload: PayloadErrorType) => mixed) => {
-    const state = store.getState();
-    const treeState: TreeStateType = state.tree;
-    const tmp1 = state.ui.currentFolderId;
-    const tmp2 = R.clone(treeState.filesById);
-    const tmp3 = R.clone(treeState.foldersById);
+    reject: (payload: PayloadErrorType) => mixed,
+) => {
+    const {
+        ui: uiState,
+        tree: treeState,
+    } = store.getState();
 
-    if (tmp1 === null || tmp2 === null || tmp3 === null) {
-        reject({ errors: [createError('uploading files', ['invalid state'])] });
-        return;
-    }
-    const currentFolderId: string = tmp1;
-    const filesById: FilesByIdType = tmp2;
-    const foldersById: FoldersByIdType = tmp3;
+    const tree: TreeType = R.clone(treeState.tree);
+    const filesById: FilesByIdType = R.clone(treeState.filesById);
+    const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
+    const currentFolderId: string = uiState.currentFolderId;
     const currentFolder: FolderType = foldersById[currentFolderId];
-    const tree: TreeType = treeState.tree;
 
     api.upload(files, currentFolder.id,
-        (newFiles: FileType[], rejected: { [id: string]: string }) => {
+        (newFiles: FileType[], rejected: { [string]: string }) => {
             R.forEach((f: FileType) => {
-                const f1: FileType = { ...f, isNew: true };
-                filesById[f1.id] = f1;
-                tree[currentFolderId].fileIds.push(f1.id);
+                const fc: FileType = { ...f, isNew: true };
+                filesById[fc.id] = fc;
+                tree[currentFolderId].fileIds.push(fc.id);
             }, newFiles);
 
             currentFolder.file_count = R.length(tree[currentFolderId].fileIds);

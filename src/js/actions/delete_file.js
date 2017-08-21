@@ -30,7 +30,7 @@ const deleteFile = (fileId: string,
     api.deleteFile(fileId,
         (error: boolean) => {
             const errors = [];
-            if (error === false) {
+            if (error === 'false') {
                 const file = filesById[fileId];
                 filesById[fileId] = R.merge(file, { is_trashed: true });
 

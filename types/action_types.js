@@ -110,38 +110,7 @@ export type PayloadFolderAddedType = {
 };
 
 
-// upload files
-export type ActionUploadStartType = {
-    type: 'UPLOAD_START',
-    payload: {
-        files: File[],
-    },
-};
 
-export type ActionUploadDoneType = {
-    type: 'UPLOAD_DONE',
-    payload: PayloadUploadDoneType,
-};
-
-export type PayloadUploadDoneType = {
-    foldersById: FoldersByIdType,
-    filesById: FilesByIdType,
-    tree: TreeType,
-    errors: ErrorType[],
-};
-
-// move files
-export type ActionItemsMovedType = {
-    type: 'ITEMS_MOVED',
-    payload: PayloadUploadDoneType,
-};
-
-export type PayloadItemsMovedType = {
-    foldersById: FoldersByIdType,
-    filesById: FilesByIdType,
-    errors: ErrorType[],
-    tree: TreeType,
-};
 
 // change sorting
 export type ActionChangeSortingType = {
@@ -248,6 +217,7 @@ export type ActionUnionTreeReducerType =
     | ActionErrorType
 ;
 */
+
 export type ActionUnionType =
     | ActionInitType
     | ActionDeleteType
@@ -261,7 +231,14 @@ export type ActionUnionType =
     | ActionItemsMovedType
     | ActionDismissErrorType
     | ActionChangeSortingType
-    ;
+    | ActionItemsMovedType
+;
+
+
+
+
+
+
 /*
 const actions = {
     INIT: 'INIT',
