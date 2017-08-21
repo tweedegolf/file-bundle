@@ -3,7 +3,7 @@
 export const uiInitialState: UIStateType = {
     rootFolderId: 'null',
     currentFolderId: 'null',
-    currentFolderIdTmp: null,
+    currentFolderIdTmp: '',
     sort: 'create_ts',
     ascending: false,
     expanded: false,
@@ -246,13 +246,17 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             ...state,
             showingRecycleBin: false,
             currentFolderId: state.currentFolderIdTmp,
-            currentFolderIdTmp: null,
         };
     } else if (action.type === 'EMPTY_RECYCLE_BIN') {
         return {
             ...state,
-            showingRecycleBin: false,
-            currentFolderId: state.currentFolderIdTmp,
+            // showingRecycleBin: false,
+            // currentFolderId: state.currentFolderIdTmp,
+        };
+    } else if (action.type === 'RECYCLE_BIN_EMPTIED') {
+        return {
+            ...state,
+            currentFolderId: action.payload.currentFolderId,
         };
     } else if (action.type === 'ERROR_EMPTY_RECYCLE_BIN') {
         return {
@@ -308,12 +312,12 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             errors: [...state.errors, ...action.payload.errors],
         };
 
-        /**
-         * User has clicked on one of the columns of the tool bar. If the chosen
-         * column is the same as the sort column in the state we invert the selection.
-         * Otherwise a new sorting column will be set and the current sort order
-         * (ascending or descending) will be left unaffected.
-         */
+    /**
+     * User has clicked on one of the columns of the tool bar. If the chosen
+     * column is the same as the sort column in the state we invert the selection.
+     * Otherwise a new sorting column will be set and the current sort order
+     * (ascending or descending) will be left unaffected.
+     */
     } else if (action.type === 'CHANGE_SORTING') {
         const sort = action.payload.sort;
         let ascending = state.ascending;
@@ -331,11 +335,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             // }],
         };
 
-        /**
-         * User dismisses an error message. Error messages don't disappear
-         * automatically; every new error message is added to the existing error
-         * messages.
-         */
+    /**
+     * User dismisses an error message. Error messages don't disappear
+     * automatically; every new error message is added to the existing error
+     * messages.
+     */
     } else if (action.type === 'DISMISS_ERROR') {
         const dismissId = action.payload.id;
         const errors: Array<ErrorType> = state.errors.filter((error: ErrorType): boolean =>
@@ -345,29 +349,24 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             errors,
         };
 
-        /**
-         * User has clicked on a file to show its full screen preview: currently only
-         * implemented for images.
-         */
+    /**
+     * User has clicked on a file to show its full screen preview: currently only
+     * implemented for images.
+     */
     } else if (action.type === 'SHOW_PREVIEW') {
         return {
             ...state,
             previewUrl: action.payload.imageUrl,
         };
 
-        /**
-         * The user can select files by using the up and down arrow keys of her
-         * keyboard. We calculate the new index with 'diff' and 'max':
-         *
-         * @param      {number}  diff    Direction: -1 for arrow down or +1 for arrow
-         *                               up
-         * @param      {number}  max     Number of items (files and folders) in the
-         *                               current folder
-         */
+    /**
+     * The user can select files by using the up and down arrow keys of her
+     * keyboard. We calculate the new index with 'diff' and 'max':
+     */
     } else if (action.type === 'SET_HOVER') {
         const {
-            diff = 0,
-            max = state.hover,
+            diff = 0,          // direction: -1 = down, 1 = up
+            max = state.hover, // number of items (files and folders) in the current folder
         } = action.payload;
 
         let hover = state.hover + diff;
@@ -382,11 +381,11 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
             hover,
         };
 
-        /**
-         * Sometimes we need to be able to set the scroll position of the browser list
-         * by code, for instance if new files have been added we want to show them on
-         * top of the list and scroll the list to the top.
-         */
+    /**
+     * Sometimes we need to be able to set the scroll position of the browser list
+     * by code, for instance if new files have been added we want to show them on
+     * top of the list and scroll the list to the top.
+     */
     } else if (action.type === 'SET_SCROLL_POSITION') {
         return {
             ...state,
@@ -394,10 +393,10 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
         };
 
 
-        /**
-         * In filepicker mode the user can collapse and expand the browser window. In
-         * browser mode the browser is always expanded.
-         */
+    /**
+     * In filepicker mode the user can collapse and expand the browser window. In
+     * browser mode the browser is always expanded.
+     */
     } else if (action.type === 'EXPAND_BROWSER') {
         return {
             ...state,
@@ -406,9 +405,7 @@ export const ui = (state: UIStateType = uiInitialState, action: ActionUnionType,
 
         /**
          * User has clicked the checkbox of a file: if this file is not already
-         * selected it will be selected, otherwise it will be deselected. In
-         * filepicker mode you can set a boolean property 'multiple'; if this value
-         * is set to false only one file at the time can be selected.
+         * selected it will be selected, otherwise it will be deselected.
          *
          * @param      {file}     file      The file whose select checkbox has been
          *                                  clicked

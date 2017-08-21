@@ -40,7 +40,6 @@ type PropsType = {
     renamingFolderWithId: null | string,
     parentFolder: null | FolderType,
     showingRecycleBin: boolean,
-    rootFolderId: null | string,
     currentFolderId: null | string,
 };
 
@@ -71,7 +70,6 @@ const mapStateToProps = (state: StateType): PropsType => {
         parentFolder,
 
         // ui props
-        rootFolderId: state.ui.rootFolderId,
         currentFolderId: state.ui.currentFolderId,
         sort: state.ui.sort,
         ascending: state.ui.ascending,

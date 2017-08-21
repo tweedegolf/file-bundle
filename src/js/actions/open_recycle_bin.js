@@ -17,20 +17,24 @@ const DELAY: number = 100;
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-const optimisticUpdate = (): boolean => {
-    // const recycleBin = store.getState().tree.recycleBin;
-    // // recycle bin has not been loaded earlier so not in cache
-    // if (typeof recycleBin.folders === 'undefined') {
-    //     return false;
-    // }
 
+const getCurrentFolder = (): [string, string] => {
     let currentFolderId = store.getState().ui.currentFolderId;
     let currentFolderIdTmp = store.getState().ui.currentFolderIdTmp;
     if (currentFolderId !== RECYCLE_BIN_ID) {
         currentFolderIdTmp = currentFolderId;
         currentFolderId = RECYCLE_BIN_ID;
     }
+    return [currentFolderId, currentFolderIdTmp];
+};
 
+const optimisticUpdate = (): boolean => {
+    // const recycleBin = store.getState().tree.recycleBin;
+    // // recycle bin has not been loaded earlier so not in cache
+    // if (typeof recycleBin.folders === 'undefined') {
+    //     return false;
+    // }
+    const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
     type ActionRecycleBinFromCacheType = {
         type: 'RECYCLE_BIN_FROM_CACHE',
         payload: {
@@ -72,12 +76,7 @@ const reject = (payload: RejectPayloadType) => {
 const getRecycleBin = () => {
     api.getRecycleBin(
         (folders: Array<FolderType>, files: Array<FileType>) => {
-            let currentFolderId = store.getState().ui.currentFolderId;
-            let currentFolderIdTmp = store.getState().ui.currentFolderIdTmp;
-            if (currentFolderId !== RECYCLE_BIN_ID) {
-                currentFolderIdTmp = currentFolderId;
-                currentFolderId = RECYCLE_BIN_ID;
-            }
+            const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
             resolve({
                 recycleBin: {
                     files,

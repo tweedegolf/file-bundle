@@ -3,6 +3,7 @@ import R from 'ramda';
 import { createSelector } from 'reselect';
 import {
     filterTrashed,
+    filterTrashedInverted,
     sortAscendingBy,
     sortDescendingBy,
 } from '../util/util';
@@ -11,7 +12,6 @@ import {
 } from '../util/constants';
 
 type ReturnType = {
-    rootFolderId: string,
     parentFolder: null | FolderType,
     folders: FolderType[],
     files: FileType[],
@@ -26,7 +26,6 @@ export default createSelector(
         const {
             sort,
             ascending,
-            rootFolderId,
             currentFolderId,
             showingRecycleBin,
         } = uiState;
@@ -41,12 +40,12 @@ export default createSelector(
             return {
                 files: recycleBin.files,
                 folders: recycleBin.folders,
+                parentFolder: null,
             };
         } else if (typeof tree[currentFolderId] === 'undefined') {
             return {
                 files: [],
                 folders: [],
-                rootFolderId,
                 parentFolder: null,
             };
         }
@@ -54,7 +53,8 @@ export default createSelector(
         //    (FileType[] | FolderType[]) = ascending ? sortAscendingBy : sortDescendingBy;
         const sortBy = ascending ? sortAscendingBy : sortDescendingBy;
         const sortFunc = R.curry(sortBy)(sort);
-        const filterFunc = showingRecycleBin === true ? (items: ItemType[]): ItemType[] => items : filterTrashed;
+        // const filterFunc = showingRecycleBin === true ? (items: ItemType[]): ItemType[] => items : filterTrashed;
+        const filterFunc = showingRecycleBin === true ? filterTrashedInverted : filterTrashed;
 
         const currentFolder = foldersById[currentFolderId];
         let parentFolder = null;
@@ -74,7 +74,6 @@ export default createSelector(
             files,
             folders,
             parentFolder,
-            rootFolderId,
         };
     },
 );

@@ -223,7 +223,7 @@ const getRecycleBin = (
 
 
 const emptyRecycleBin = (
-    onSuccess: (boolean | string) => void,
+    onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.emptyRecycleBin}`;
     const req = request.delete(url);
@@ -232,7 +232,7 @@ const emptyRecycleBin = (
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.error);
+            onSuccess(res.body.errors);
         }
     });
 };

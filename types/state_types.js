@@ -38,7 +38,7 @@ export type TreeStateType = {
 export type UIStateType = {
     rootFolderId: string,
     currentFolderId: string,
-    currentFolderIdTmp: null | string,
+    currentFolderIdTmp: string,
     sort: string,
     ascending: boolean,
     expanded: boolean,
@@ -88,7 +88,7 @@ export type FolderType = {
     size?: string,
     size_bytes?: number,
     isNew?: boolean,
-    isTrashed?: boolean,
+    is_trashed?: boolean,
 };
 
 export type FileType = {
@@ -102,7 +102,7 @@ export type FileType = {
     original: string,
     thumb: null | string,
     isNew?: boolean,
-    isTrashed?: boolean,
+    is_trashed?: boolean,
 };
 
 export type ItemType = FolderType | FileType;

@@ -88,13 +88,13 @@ const getFolders = (ids: string[], foldersById: FoldersByIdType): FolderType[] =
 const getFileCount = (fileIds: string[], filesById: FilesByIdType): number =>
     R.compose(R.length, filterTrashed, getFiles)(fileIds, filesById);
 
-const getFolderCount = (folderIds: (null | string)[], foldersById: FoldersByIdType): number =>
+const getFolderCount = (folderIds: (string)[], foldersById: FoldersByIdType): number =>
     R.compose(R.length, filterTrashed, getFolders)(folderIds, foldersById);
 
 
 // recurse into sub folders and retrieve the ids of all files and folders
 const getItemIds = (folderId: string,
-    collectedItemIds: { files: string[], folders: (null | string)[] },
+    collectedItemIds: { files: string[], folders: (string)[] },
     tree: TreeType) => {
     const folder: TreeFolderType = tree[folderId];
     if (typeof folder === 'undefined') {
@@ -116,7 +116,7 @@ const reduceToMap = (arr: ItemType[]): { [id: string]: ItemType } =>
     R.reduce((acc: { [id: string]: ItemType }, item: ItemType): { [id: string]: ItemType } =>
         ({ ...acc, [item.id]: item }), {}, arr);
 
-const createError = (type: string, messages?: string[], data?: { [string]: null | string }): ErrorType => ({
+const createError = (type: string, messages?: string[], data?: { [string]: string }): ErrorType => ({
     id: getUID(),
     data,
     type,

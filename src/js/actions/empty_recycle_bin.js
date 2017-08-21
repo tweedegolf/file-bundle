@@ -8,33 +8,45 @@ import { createError } from '../util/util';
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
+
+type PayloadEmptyRecycleBinType = {
+    tree: TreeType,
+    filesById: FilesByIdType,
+    recycleBin: RecycleBinType,
+    foldersById: FoldersByIdType,
+    currentFolderId: string,
+};
+
 const emptyRecycleBin = (
-    resolve: (payload: PayloadDeletedType) => mixed,
-    reject: (payload: PayloadErrorType) => mixed) => {
-    const state = store.getState();
-    const treeState: TreeStateType = state.tree;
-    const tmp1 = R.clone(treeState.filesById);
-    const tmp2 = R.clone(treeState.foldersById);
+    resolve: (payload: PayloadEmptyRecycleBinType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed,
+) => {
+    const {
+        tree: treeState,
+     } = store.getState();
 
-    if (tmp1 === null || tmp2 === null) {
-        const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, ['invalid state']);
-        reject({ errors: [err] });
-        return;
-    }
-
-    const filesById: FilesByIdType = tmp1;
-    const foldersById: FoldersByIdType = tmp2;
+    const filesById: FilesByIdType = R.clone(treeState.filesById);
+    const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
+    const {
+        files,
+        folders,
+    } = R.clone(treeState.recycleBin);
+    const recycleBin = {
+        files: [],
+        folders: [],
+    };
 
     api.emptyRecycleBin(
-        (error: boolean | string) => {
-            const errors = [];
-            if (error === false) {
-                const fileIds = R.filter((id: string): boolean =>
-                    filesById[id].is_trashed === true, R.keys(filesById));
-
-                const folderIds = R.filter((id: string): boolean =>
-                    foldersById[id].is_trashed === true, R.keys(foldersById));
+        (errors: string[]) => {
+            if (errors.length > 0) {
+                const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, errors);
+                reject({
+                    errors: [err],
+                });
+            } else {
+                const fileIds = R.map((file: FileType): string => file.id, files);
+                const folderIds = R.map((folder: FolderType): string => folder.id, folders);
 
                 R.forEach((id: string) => {
                     delete filesById[id];
@@ -45,26 +57,20 @@ const emptyRecycleBin = (
                     delete foldersById[id];
                 }, folderIds);
 
-                // clean up tree, this cleans up the recycle bin as well
+                // clean up tree
                 R.forEach((id: string) => {
                     tree[id].fileIds = R.without(fileIds, tree[id].fileIds);
                     tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
                 }, R.keys(tree));
-            } else {
-                const messages = [];
-                if (typeof error === 'string') {
-                    messages.push(error);
-                }
-                const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, messages);
-                errors.push(err);
-            }
 
-            resolve({
-                tree,
-                errors,
-                filesById,
-                foldersById,
-            });
+                resolve({
+                    tree,
+                    filesById,
+                    recycleBin,
+                    foldersById,
+                    currentFolderId: Constants.RECYCLE_BIN_ID,
+                });
+            }
         },
         (messages: string[]) => {
             const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, messages);

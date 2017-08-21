@@ -142,6 +142,7 @@ export const tree = (state: TreeStateType = treeInitialState,
             ...state,
             tree: action.payload.tree,
             filesById: action.payload.filesById,
+            recycleBin: action.payload.recycleBin,
             foldersById: action.payload.foldersById,
         };
 
