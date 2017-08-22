@@ -10,45 +10,21 @@ const dispatch: DispatchType = store.dispatch;
 
 const deleteFile = (fileId: string,
     resolve: (payload: PayloadDeletedType) => mixed,
-    reject: (payload: PayloadErrorType) => mixed) => {
-    const state = store.getState();
-    const treeState: TreeStateType = state.tree;
-    const tmp1 = R.clone(treeState.filesById);
-    const tmp2 = R.clone(treeState.foldersById);
-
-    if (tmp1 === null || tmp2 === null) {
-        const error = createError(Constants.ERROR_DELETING_FILE, ['invalid state'], { id: `${fileId}` });
-        reject({ errors: [error] });
-        return;
-    }
-
-    const currentFolderId: string = state.ui.currentFolderId;
-    const filesById: FilesByIdType = tmp1;
-    const foldersById: FoldersByIdType = tmp2;
+    reject: (payload: PayloadErrorType) => mixed,
+) => {
+    const {
+        ui: uiState,
+        tree: treeState,
+    } = store.getState();
+    const currentFolderId: string = uiState.currentFolderId;
+    const filesById: FilesByIdType = R.clone(treeState.filesById);
+    const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
+    let recycleBin = { ...tree[Constants.RECYCLE_BIN_ID] };
 
     api.deleteFile(fileId,
-        (error: boolean) => {
-            const errors = [];
-            if (error === 'false') {
-                const file = filesById[fileId];
-                filesById[fileId] = R.merge(file, { is_trashed: true });
-
-                const currentFolder: FolderType = foldersById[currentFolderId];
-                currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
-                foldersById[currentFolderId] = currentFolder;
-
-                if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
-                    tree[Constants.RECYCLE_BIN_ID] = {
-                        fileIds: [...tree[Constants.RECYCLE_BIN_ID].fileIds, fileId],
-                        folderIds: tree[Constants.RECYCLE_BIN_ID].folderIds,
-                    };
-                }
-            } else {
-                const messages = [];
-                if (typeof error === 'string') {
-                    messages.push(error);
-                }
+        (error: string) => {
+            if (error !== 'false') {
                 const file = filesById[fileId];
                 const interpolation = {};
                 if (typeof file === 'undefined') {
@@ -56,14 +32,33 @@ const deleteFile = (fileId: string,
                 } else {
                     interpolation.name = `${file.name}`;
                 }
-                const err = createError(Constants.ERROR_DELETING_FILE, messages, interpolation);
-                errors.push(err);
+                const err = createError(Constants.ERROR_DELETING_FILE, [error], interpolation);
+                reject({ errors: [err] });
+                return;
             }
+            const file = filesById[fileId];
+            filesById[fileId] = R.merge(file, { is_trashed: true });
+
+            const currentFolder: FolderType = foldersById[currentFolderId];
+            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
+            foldersById[currentFolderId] = currentFolder;
+
+            if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
+                tree[Constants.RECYCLE_BIN_ID] = {
+                    fileIds: [...tree[Constants.RECYCLE_BIN_ID].fileIds, fileId],
+                    folderIds: tree[Constants.RECYCLE_BIN_ID].folderIds,
+                };
+            }
+
+            recycleBin = {
+                ...recycleBin,
+                fileIds: [...recycleBin.fileIds, fileId],
+            };
 
             resolve({
                 tree,
-                errors,
                 filesById,
+                recycleBin,
                 foldersById,
             });
         },

@@ -183,7 +183,6 @@ export type ActionDeletedType = {
 
 export type PayloadDeletedType = {
     tree: TreeType,
-    errors: ErrorType[],
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
     recycleBin: TreeType,

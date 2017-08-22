@@ -44,33 +44,33 @@ const emptyRecycleBin = (
                 reject({
                     errors: [err],
                 });
-            } else {
-                const fileIds = R.map((file: FileType): string => file.id, files);
-                const folderIds = R.map((folder: FolderType): string => folder.id, folders);
-
-                R.forEach((id: string) => {
-                    delete filesById[id];
-                }, fileIds);
-
-                R.forEach((id: string) => {
-                    delete tree[id];
-                    delete foldersById[id];
-                }, folderIds);
-
-                // clean up tree
-                R.forEach((id: string) => {
-                    tree[id].fileIds = R.without(fileIds, tree[id].fileIds);
-                    tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
-                }, R.keys(tree));
-
-                resolve({
-                    tree,
-                    filesById,
-                    recycleBin,
-                    foldersById,
-                    currentFolderId: Constants.RECYCLE_BIN_ID,
-                });
+                return;
             }
+            const fileIds = R.map((file: FileType): string => file.id, files);
+            const folderIds = R.map((folder: FolderType): string => folder.id, folders);
+
+            R.forEach((id: string) => {
+                delete filesById[id];
+            }, fileIds);
+
+            R.forEach((id: string) => {
+                delete tree[id];
+                delete foldersById[id];
+            }, folderIds);
+
+            // clean up tree
+            R.forEach((id: string) => {
+                tree[id].fileIds = R.without(fileIds, tree[id].fileIds);
+                tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
+            }, R.keys(tree));
+
+            resolve({
+                tree,
+                filesById,
+                recycleBin,
+                foldersById,
+                currentFolderId: Constants.RECYCLE_BIN_ID,
+            });
         },
         (messages: string[]) => {
             const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, messages);
