@@ -100,7 +100,7 @@ const moveItems = (
     fileIds: string[],
     folderIds: string[],
     folderId: string,
-    onSuccess: (string) => void,
+    onSuccess: (string, string[], string[]) => void,
     onError: (string[]) => void,
 ) => {
     let url;
@@ -136,7 +136,7 @@ const moveItems = (
 const addFolder = (
     name: string,
     folderId: string,
-    onSuccess: (FolderType | null, string[]) => void,
+    onSuccess: (FolderType, string[]) => void,
     onError: (string[]) => void) => {
     let url;
     if (folderId === 'null') {
@@ -150,12 +150,11 @@ const addFolder = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            // let errors2: Errors2Type = [];
-            // if (res.body.errors instanceof Array) {
-            //     errors2 = res.body.errors;
-            // }
-            // onSuccess(res.body.new_folders, errors2);
-            onSuccess(res.body.new_folder, res.body.errors);
+            let errorsCasted: Errors2Type = [];
+            if (res.body.errors instanceof Array) {
+                errorsCasted = res.body.errors;
+            }
+            onSuccess(res.body.new_folder, errorsCasted);
         }
     });
 };
@@ -172,8 +171,11 @@ const renameFolder = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            const e: string[] = res.body.errors;
-            onSuccess(e);
+            let errorsCasted: Errors2Type = [];
+            if (res.body.errors instanceof Array) {
+                errorsCasted = res.body.errors;
+            }
+            onSuccess(errorsCasted);
         }
     });
 };
@@ -189,7 +191,7 @@ const renameFolder = (
  */
 const deleteFolder = (
     folderId: string,
-    onSuccess: (string[]) => void,
+    onSuccess: (string) => void,
     onError: (string[]) => void) => {
     let url;
     if (folderId === 'null') {
@@ -203,7 +205,7 @@ const deleteFolder = (
             // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            onSuccess(res.body.errors);
+            onSuccess(res.body.error);
         }
     });
 };

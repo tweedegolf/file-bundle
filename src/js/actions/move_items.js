@@ -1,15 +1,15 @@
 // @flow
-/* eslint no-param-reassignment: 0 */
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import {
     createError,
-    getItemIds,
     getFileCount,
     getFolderCount,
 } from '../util/util';
+
+// START FLOW TYPES
 
 type PayloadItemsMovedType = {
     foldersById: FoldersByIdType,
@@ -22,6 +22,8 @@ export type ActionItemsMovedType = {
     type: 'ITEMS_MOVED',
     payload: PayloadItemsMovedType,
 };
+
+// END FLOW TYPES
 
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;

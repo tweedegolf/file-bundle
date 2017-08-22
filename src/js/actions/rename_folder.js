@@ -1,5 +1,4 @@
 // @flow
-// import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
@@ -10,24 +9,45 @@ import {
 } from '../util/constants';
 import { createError } from '../util/util';
 
+// START FLOW TYPES
+
+type PayloadFolderRenamedType = {
+    foldersById: FoldersByIdType,
+};
+
+export type ActionRenameFolderType = {
+    type: 'RENAME_FOLDER',
+    payload: {
+        id: string,
+    },
+};
+
+export type ActionConfirmRenameFolderType = {
+    type: 'CONFIRM_RENAME_FOLDER',
+    payload: {
+        id: string,
+    },
+};
+
+export type ActionFolderRenamedType = {
+    type: 'FOLDER_RENAMED',
+    payload: PayloadFolderRenamedType,
+};
+
+// END FLOW TYPES
+
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const renameFolder = (folderId: string,
     newName: string,
     resolve: (payload: PayloadFolderRenamedType) => mixed,
-    reject: (payload: PayloadErrorType) => mixed) => {
-    const tree: TreeStateType = store.getState().tree;
-    const tmp1 = tree.foldersById;
-
-    if (tmp1 === null) {
-        const err = createError(ERROR_RENAMING_FOLDER, ['invalid state'], { folder: folderId, name: newName });
-        reject({ errors: [err] });
-        return;
-    }
-    const foldersById: FoldersByIdType = tmp1;
-    const folder: FolderType = { ...foldersById[folderId], name: newName };
-
+    reject: (payload: PayloadErrorType) => mixed,
+) => {
+    const {
+        tree: treeState,
+    } = store.getState();
+    const foldersById: FoldersByIdType = { ...treeState.foldersById };
     api.renameFolder(
         folderId,
         newName,
@@ -40,7 +60,7 @@ const renameFolder = (folderId: string,
                 });
                 return;
             }
-            foldersById[folderId] = folder;
+            foldersById[folderId] = { ...foldersById[folderId], name: newName };
             const a: ActionFolderRenamedType = {
                 type: FOLDER_RENAMED,
                 payload: {
@@ -50,8 +70,7 @@ const renameFolder = (folderId: string,
             dispatch(a);
         },
         (errorMessages: string[]) => {
-            const err = createError(ERROR_RENAMING_FOLDER, errorMessages,
-                { folder: folderId, name: newName });
+            const err = createError(ERROR_RENAMING_FOLDER, errorMessages, { folder: folderId, name: newName });
             reject({
                 errors: [err],
             });

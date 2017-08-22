@@ -1,2 +1,5 @@
+# all=error
+# untyped-type-import=error
+# sketchy-null-bool=off
 [libs]
 ./types/

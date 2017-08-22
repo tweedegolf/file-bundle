@@ -2,14 +2,42 @@
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
-import * as Constants from '../util/constants';
+import {
+    DELETE_FILE,
+    FILE_DELETED,
+    ERROR_DELETING_FILE,
+    RECYCLE_BIN_ID,
+} from '../util/constants';
 import { createError, getFileCount } from '../util/util';
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+// START FLOW TYPES
+
+export type PayloadFileDeletedType = {
+    tree: TreeType,
+    recycleBin: RecycleBinType,
+    filesById: FilesByIdType,
+    foldersById: FoldersByIdType,
+};
+
+export type ActionDeleteFileType = {
+    type: 'DELETE_FILE',
+    payload: {
+        id: string
+    }
+};
+
+export type ActionFileDeletedType = {
+    type: 'FILE_DELETED',
+    payload: PayloadFileDeletedType,
+};
+
+// END FLOW TYPES
+
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const deleteFile = (fileId: string,
-    resolve: (payload: PayloadDeletedType) => mixed,
+    resolve: (payload: PayloadFileDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
@@ -20,7 +48,7 @@ const deleteFile = (fileId: string,
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
-    let recycleBin = { ...tree[Constants.RECYCLE_BIN_ID] };
+    let recycleBin = { ...treeState[RECYCLE_BIN_ID] };
 
     api.deleteFile(fileId,
         (error: string) => {
@@ -32,7 +60,7 @@ const deleteFile = (fileId: string,
                 } else {
                     interpolation.name = `${file.name}`;
                 }
-                const err = createError(Constants.ERROR_DELETING_FILE, [error], interpolation);
+                const err = createError(ERROR_DELETING_FILE, [error], interpolation);
                 reject({ errors: [err] });
                 return;
             }
@@ -43,16 +71,9 @@ const deleteFile = (fileId: string,
             currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
             foldersById[currentFolderId] = currentFolder;
 
-            if (typeof tree[Constants.RECYCLE_BIN_ID] !== 'undefined') {
-                tree[Constants.RECYCLE_BIN_ID] = {
-                    fileIds: [...tree[Constants.RECYCLE_BIN_ID].fileIds, fileId],
-                    folderIds: tree[Constants.RECYCLE_BIN_ID].folderIds,
-                };
-            }
-
             recycleBin = {
-                ...recycleBin,
-                fileIds: [...recycleBin.fileIds, fileId],
+                files: [...recycleBin.files, file],
+                folders: [...recycleBin.folders],
             };
 
             resolve({
@@ -65,31 +86,31 @@ const deleteFile = (fileId: string,
         (messages: Array<string>) => {
             const file: FileType = filesById[fileId];
             const name: string = typeof file === 'undefined' ? 'no name' : `${file.name}`;
-            const error = createError(Constants.ERROR_DELETING_FILE, messages, { name });
+            const error = createError(ERROR_DELETING_FILE, messages, { name });
             reject({ errors: [error] });
         },
     );
 };
 
 export default (fileId: string) => {
-    const a: ActionDeleteType = {
-        type: Constants.DELETE_FILE,
+    const a: ActionDeleteFileType = {
+        type: DELETE_FILE,
         payload: { id: fileId },
     };
     dispatch(a);
 
     deleteFile(
         fileId,
-        (payload: PayloadDeletedType) => {
-            const a1: ActionDeletedType = {
-                type: Constants.FILE_DELETED,
+        (payload: PayloadFileDeletedType) => {
+            const a1: ActionFileDeletedType = {
+                type: FILE_DELETED,
                 payload,
             };
             dispatch(a1);
         },
         (payload: PayloadErrorType) => {
             const a1: ActionErrorType = {
-                type: Constants.ERROR_DELETING_FILE,
+                type: ERROR_DELETING_FILE,
                 payload,
             };
             dispatch(a1);

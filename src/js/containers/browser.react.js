@@ -19,6 +19,7 @@ import Errors from '../components/errors.react';
 import getSelectedFiles from '../reducers/get_selected_files';
 import * as Actions from '../actions';
 import { RECYCLE_BIN_ID } from '../util/constants';
+import type { OptionsType } from '../actions/init';
 
 type PassedPropsType = {
     browser: boolean,

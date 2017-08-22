@@ -1,4 +1,6 @@
 /* eslint no-use-before-define: 0 */
+/* eslint-disable */
+
 import type { Store, Dispatch } from 'redux';
 
 // redux
@@ -30,7 +32,7 @@ export type RecycleBinType = {
 export type TreeStateType = {
     filesById: {} | FilesByIdType,
     foldersById: {} | FoldersByIdType,
-    errors: Array<ErrorType>,
+    errors: ErrorType[],
     tree: {} | TreeType,
     recycleBin: RecycleBinType,
 };
@@ -112,20 +114,6 @@ export type ErrorType = {
     data?: {[string]: string},
     type: string,
     messages: Array<string>,
-};
-
-
-// options passed via HTML element's data-options attribute
-export type OptionsType = {
-    language: string,
-    rootFolderId: string,
-    selected: FileType[],
-    multiple: boolean,
-    imagesOnly: boolean,
-    allowNewFolder: boolean,
-    allowUpload: boolean,
-    allowDelete: boolean,
-    allowEdit: boolean, // rename and cut & paste
 };
 
 export type SortEnumType = 'name' | 'size_bytes' | 'create_ts' | 'type';

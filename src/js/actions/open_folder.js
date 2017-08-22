@@ -14,6 +14,43 @@ import {
     getFolderCount,
 } from '../util/util';
 
+type PayloadFolderOpenedType = {
+    currentFolderId: string,
+    foldersById: FoldersByIdType,
+    filesById: FilesByIdType,
+    tree: TreeType,
+};
+
+type PayloadErrorOpenFolderType = {
+    errors: ErrorType[],
+    currentFolderId: string,
+};
+
+export type ActionOpenFolderType = {
+    type: 'OPEN_FOLDER',
+    payload: {
+        id: string,
+    },
+};
+
+export type ActionFolderFromCacheType = {
+    type: 'FOLDER_FROM_CACHE',
+    payload: {
+        currentFolderId: string,
+    },
+};
+
+export type ActionFolderOpenedType = {
+    type: 'FOLDER_OPENED',
+    payload: PayloadFolderOpenedType,
+};
+
+export type ActionErrorOpenFolderType = {
+    type: 'ERROR_OPENING_FOLDER',
+    payload: PayloadErrorOpenFolderType,
+};
+
+
 const DELAY: number = 100;
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;

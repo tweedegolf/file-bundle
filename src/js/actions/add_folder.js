@@ -2,15 +2,38 @@
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
-import * as Constants from '../util/constants';
+import {
+    ADD_FOLDER,
+    FOLDER_ADDED,
+    ERROR_ADDING_FOLDER,
+} from '../util/constants';
 import { getFolderCount, createError } from '../util/util';
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+// START FLOW TYPES
+
+type PayloadFolderAddedType = {
+    tree: TreeType,
+    foldersById: FoldersByIdType,
+};
+
+export type ActionAddFolderType = {
+    type: 'ADD_FOLDER',
+};
+
+export type ActionFolderAddedType = {
+    type: 'FOLDER_ADDED',
+    payload: PayloadFolderAddedType,
+};
+
+// END FLOW TYPES
+
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const addFolder = (folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
-    reject: (payload: PayloadErrorType) => mixed) => {
+    reject: (payload: PayloadErrorType) => mixed,
+) => {
     const {
         ui: uiState,
         tree: treeState,
@@ -22,55 +45,55 @@ const addFolder = (folderName: string,
     api.addFolder(
         folderName,
         currentFolderId,
-        (newFolder: FolderType | null, errors: string[]) => {
-            let error = null;
-            if (newFolder !== null) {
-                // add new folder
-                tree[currentFolderId].folderIds.push(newFolder.id);
-                const parent = newFolder.parent === null ? 'null' : newFolder.parent;
-                foldersById[newFolder.id] = { ...newFolder, parent, is_new: true };
-                // update current folder
-                const currentFolder = foldersById[currentFolderId];
-                currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
-                foldersById[currentFolderId] = currentFolder;
-            } else {
-                error = createError(Constants.ERROR_ADDING_FOLDER, errors, { name: `${folderName}` });
+        (newFolder: FolderType, errors: string[]) => {
+            if (errors.length > 0) {
+                const error = createError(ERROR_ADDING_FOLDER, errors, { name: `${folderName}` });
+                reject({ errors: [error] });
+                return;
             }
+            // add new folder
+            tree[currentFolderId].folderIds.push(newFolder.id);
+            const parent = newFolder.parent === null ? 'null' : newFolder.parent;
+            foldersById[newFolder.id] = { ...newFolder, parent, is_new: true };
+            // update current folder
+            const currentFolder = foldersById[currentFolderId];
+            currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
+            foldersById[currentFolderId] = currentFolder;
 
             const payload: PayloadFolderAddedType = {
-                foldersById,
-                errors: error === null ? [] : [error],
                 tree,
+                foldersById,
             };
             resolve(payload);
         },
         (messages: string[]) => {
-            const error: ErrorType = createError(Constants.ERROR_ADDING_FOLDER, messages, { name: `${folderName}` });
+            const error: ErrorType = createError(ERROR_ADDING_FOLDER, messages, { name: `${folderName}` });
             reject({ errors: [error] });
         },
     );
 };
 
 export default (folderName: string) => {
-    dispatch({
-        type: Constants.ADD_FOLDER,
-    });
+    const a: ActionAddFolderType = {
+        type: ADD_FOLDER,
+    };
+    dispatch(a);
 
     addFolder(
         folderName,
         (payload: PayloadFolderAddedType) => {
-            const a: ActionFolderAddedType = {
-                type: Constants.FOLDER_ADDED,
+            const a1: ActionFolderAddedType = {
+                type: FOLDER_ADDED,
                 payload,
             };
-            dispatch(a);
+            dispatch(a1);
         },
         (payload: PayloadErrorType) => {
-            const a: ActionErrorType = {
-                type: Constants.ERROR_ADDING_FOLDER,
+            const a1: ActionErrorType = {
+                type: ERROR_ADDING_FOLDER,
                 payload,
             };
-            dispatch(a);
+            dispatch(a1);
         },
     );
 };

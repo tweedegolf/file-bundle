@@ -1,6 +1,4 @@
 // @flow
-// import * as Constants from '../util/constants';
-
 /**
  * Initial tree state
  *
@@ -16,7 +14,25 @@
  * @see        description of {@link FileDescr File} {@link FolderDescr Folder} in the file ./api.js
  */
 
-// import R from 'ramda';
+import type { ActionInitType } from '../actions/init';
+import type { ActionFileDeletedType } from '../actions/delete_file';
+import type { ActionFolderDeletedType } from '../actions/delete_folder';
+import type { ActionRecycleBinEmptiedType } from '../actions/empty_recycle_bin';
+
+type ActionUnionType =
+| ActionInitType
+| ActionFileDeletedType
+| ActionFolderDeletedType
+| ActionRecycleBinEmptiedType
+
+// | ActionFolderOpenedType
+
+// | ActionAddFolderType
+// | ActionFolderAddedType
+| ActionErrorType
+// | ActionItemsMovedType
+// | ActionItemsMovedType
+;
 
 export const treeInitialState: TreeStateType = {
     filesById: {},
@@ -29,8 +45,10 @@ export const treeInitialState: TreeStateType = {
     },
 };
 
-export const tree = (state: TreeStateType = treeInitialState,
-    action: ActionUnionType): TreeStateType => {
+export const tree = (
+    state: TreeStateType = treeInitialState,
+    action: ActionUnionType,
+): TreeStateType => {
     switch (action.type) {
     case 'INIT':
         return {
@@ -121,8 +139,8 @@ export const tree = (state: TreeStateType = treeInitialState,
     case 'FOLDER_ADDED':
         return {
             ...state,
-            foldersById: action.payload.foldersById,
             tree: action.payload.tree,
+            foldersById: action.payload.foldersById,
         };
 
     /**

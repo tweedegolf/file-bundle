@@ -9,16 +9,26 @@ import {
 } from '../util/constants';
 import { createError } from '../util/util';
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
+// START FLOW TYPES
 
-type MetaDataReceivedType = {
+type PayloadActionMetaDataReceivedType = {
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
-    selected: ClipboardType,
+    selected: string[],
 };
-const resolve = (payload: MetaDataReceivedType) => {
-    const a: ActionMetaDataType = {
+
+export type ActionMetaDataReceivedType = {
+    type: 'META_DATA_RECEIVED',
+    payload: PayloadActionMetaDataReceivedType,
+};
+
+// END FLOW TYPES
+
+const store: StoreType<StateType, GenericActionType> = getStore();
+const dispatch: DispatchType = store.dispatch;
+
+const resolve = (payload: PayloadActionMetaDataReceivedType) => {
+    const a: ActionMetaDataReceivedType = {
         type: META_DATA_RECEIVED,
         payload,
     };

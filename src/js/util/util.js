@@ -95,7 +95,8 @@ const getFolderCount = (folderIds: (string)[], foldersById: FoldersByIdType): nu
 // recurse into sub folders and retrieve the ids of all files and folders
 const getItemIds = (folderId: string,
     collectedItemIds: { files: string[], folders: (string)[] },
-    tree: TreeType) => {
+    tree: TreeType,
+) => {
     const folder: TreeFolderType = tree[folderId];
     if (typeof folder === 'undefined') {
         return;
@@ -105,7 +106,7 @@ const getItemIds = (folderId: string,
     const subFolderIds = folder.folderIds;
     collectedItemIds.folders.push(folderId, ...subFolderIds);
     // collectedItemIds.folders = R.uniq(collectedItemIds.folders);
-    subFolderIds.forEach((id: (null | string)) => {
+    subFolderIds.forEach((id: string) => {
         getItemIds(id, collectedItemIds, tree);
     });
 };

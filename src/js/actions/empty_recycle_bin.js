@@ -2,20 +2,36 @@
 import R from 'ramda';
 import { getStore } from '../reducers/store';
 import api from '../util/api';
-import * as Constants from '../util/constants';
+import {
+    EMPTY_RECYCLE_BIN,
+    RECYCLE_BIN_EMPTIED,
+    RECYCLE_BIN_FROM_CACHE,
+    ERROR_EMPTY_RECYCLE_BIN,
+} from '../util/constants';
 import { createError } from '../util/util';
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
+// START FLOW TYPES
 
 type PayloadEmptyRecycleBinType = {
     tree: TreeType,
     filesById: FilesByIdType,
     recycleBin: RecycleBinType,
     foldersById: FoldersByIdType,
-    currentFolderId: string,
 };
+
+export type ActionEmptyRecycleBinType = {
+    type: 'EMPTY_RECYCLE_BIN'
+};
+
+export type ActionRecycleBinEmptiedType = {
+    type: 'RECYCLE_BIN_EMPTIED',
+    payload: PayloadEmptyRecycleBinType
+};
+
+// END FLOW TYPES
 
 const emptyRecycleBin = (
     resolve: (payload: PayloadEmptyRecycleBinType) => mixed,
@@ -40,7 +56,7 @@ const emptyRecycleBin = (
     api.emptyRecycleBin(
         (errors: string[]) => {
             if (errors.length > 0) {
-                const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, errors);
+                const err = createError(ERROR_EMPTY_RECYCLE_BIN, errors);
                 reject({
                     errors: [err],
                 });
@@ -69,33 +85,32 @@ const emptyRecycleBin = (
                 filesById,
                 recycleBin,
                 foldersById,
-                currentFolderId: Constants.RECYCLE_BIN_ID,
             });
         },
         (messages: string[]) => {
-            const err = createError(Constants.ERROR_EMPTY_RECYCLE_BIN, messages);
+            const err = createError(ERROR_EMPTY_RECYCLE_BIN, messages);
             reject({ errors: [err] });
         },
     );
 };
 
 export default () => {
-    const a: ActionSimpleType = {
-        type: Constants.EMPTY_RECYCLE_BIN,
+    const a: ActionEmptyRecycleBinType = {
+        type: EMPTY_RECYCLE_BIN,
     };
     dispatch(a);
 
     emptyRecycleBin(
-        (payload: PayloadDeletedType) => {
-            const a1: ActionDeletedType = {
-                type: Constants.RECYCLE_BIN_EMPTIED,
+        (payload: PayloadEmptyRecycleBinType) => {
+            const a1: ActionRecycleBinEmptiedType = {
+                type: RECYCLE_BIN_EMPTIED,
                 payload,
             };
             dispatch(a1);
         },
         (payload: PayloadErrorType) => {
             const a1: ActionErrorType = {
-                type: Constants.ERROR_EMPTY_RECYCLE_BIN,
+                type: ERROR_EMPTY_RECYCLE_BIN,
                 payload,
             };
             dispatch(a1);

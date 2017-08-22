@@ -13,10 +13,28 @@ import {
     createError,
 } from '../util/util';
 
+// START FLOW TYPES
+
+export type ActionRecycleBinFromCacheType = {
+    type: 'RECYCLE_BIN_FROM_CACHE',
+    payload: {
+        currentFolderId: string,
+        currentFolderIdTmp: string
+    }
+};
+
+export type ActionRecycleBinOpenedType = {
+    type: 'RECYCLE_BIN_OPENED',
+    payload: {
+        recycleBin: RecycleBinType,
+    }
+};
+
+// END FLOW TYPES
+
 const DELAY: number = 100;
 const store: StoreType<StateType, ActionUnionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
 
 const getCurrentFolder = (): [string, string] => {
     let currentFolderId = store.getState().ui.currentFolderId;
@@ -35,13 +53,6 @@ const optimisticUpdate = (): boolean => {
     //     return false;
     // }
     const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
-    type ActionRecycleBinFromCacheType = {
-        type: 'RECYCLE_BIN_FROM_CACHE',
-        payload: {
-            currentFolderId: string,
-            currentFolderIdTmp: string
-        }
-    };
     const a: ActionRecycleBinFromCacheType = {
         type: RECYCLE_BIN_FROM_CACHE,
         payload: {
