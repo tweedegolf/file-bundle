@@ -90,7 +90,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
     render(): React$Element<*> {
         const folder = this.props.folder;
         let className = classNames('folder',
-            { success: folder.isNew === true },
+            { success: folder.is_new === true },
             { selected: this.props.hovering },
             { 'fa fa-circle-o-notch fa-spin': this.props.loadingFolderWithId === folder.id },
         );

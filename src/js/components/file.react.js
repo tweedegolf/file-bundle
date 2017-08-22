@@ -140,7 +140,7 @@ const File = (props: PropsType): React$Element<*> => {
         className += ' danger';
     }
 
-    if (file.isNew === true) {
+    if (file.is_new === true) {
         className += ' success';
     }
 

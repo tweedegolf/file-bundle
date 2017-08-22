@@ -25,7 +25,7 @@ export function getUUID() {
 // };
 type ItemType = FolderType | FileType;
 
-// const resetNew = array => R.map(f => ({ ...f, isNew: false }), array);
+// const resetNew = array => R.map(f => ({ ...f, is_new: false }), array);
 
 // Note that files and folders can be undefined during the first run when the state get
 // rehydrated from the local storage: see updates.md

@@ -28,7 +28,7 @@ const addFolder = (folderName: string,
                 // add new folder
                 tree[currentFolderId].folderIds.push(newFolder.id);
                 const parent = newFolder.parent === null ? 'null' : newFolder.parent;
-                foldersById[newFolder.id] = { ...newFolder, parent, isNew: true };
+                foldersById[newFolder.id] = { ...newFolder, parent, is_new: true };
                 // update current folder
                 const currentFolder = foldersById[currentFolderId];
                 currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);

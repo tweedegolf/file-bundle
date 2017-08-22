@@ -46,7 +46,7 @@ const uploadFiles = (files: Array<File>,
     api.upload(files, currentFolder.id,
         (newFiles: FileType[], rejected: { [string]: string }) => {
             R.forEach((f: FileType) => {
-                const fc: FileType = { ...f, isNew: true };
+                const fc: FileType = { ...f, is_new: true };
                 filesById[fc.id] = fc;
                 tree[currentFolderId].fileIds.push(fc.id);
             }, newFiles);

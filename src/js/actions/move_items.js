@@ -50,8 +50,22 @@ const moveFiles = (
     const currentFolderId: string = uiState.currentFolderId;
     const currentFolder: FolderType = foldersById[currentFolderId];
 
-    let fileIds: string[] = uiState.clipboard.fileIds;
-    let folderIds: string[] = uiState.clipboard.folderIds;
+    // filter files and folders that have been pasted into their original folder
+    let fileIds: string[] = R.filter((id: string): boolean =>
+        !R.contains(id, tree[currentFolderId].fileIds), uiState.clipboard.fileIds);
+
+    let folderIds: string[] = R.filter((id: string): boolean =>
+        !R.contains(id, tree[currentFolderId].folderIds), uiState.clipboard.folderIds);
+
+    if (fileIds.length === 0 && folderIds.length === 0) {
+        resolve({
+            foldersById,
+            filesById,
+            tree,
+            errors: [],
+        });
+        return;
+    }
 
     api.moveItems(fileIds, folderIds, currentFolderId,
         (error: string, errorFileIds: string[], errorFolderIds: string[]) => {
@@ -72,15 +86,9 @@ const moveFiles = (
                 });
             }
 
-            const collectedItemIds = {
-                files: [],
-                folders: [],
-            };
-
-            // exclude the file and folders that couldn't be moved
+            // exclude the file and folders that couldn't be moved for some reason
             fileIds = excludeIds(fileIds, errorFileIds);
             folderIds = excludeIds(folderIds, errorFolderIds);
-
 
             fileIds.forEach((id: string) => {
                 tree[currentFolderId].fileIds.push(id);
@@ -88,36 +96,30 @@ const moveFiles = (
 
             folderIds.forEach((id: string) => {
                 tree[currentFolderId].folderIds.push(id);
-                getItemIds(id, collectedItemIds, tree);
             });
 
-            tree[currentFolderId].fileIds = R.uniq(tree[currentFolderId].fileIds);
-            tree[currentFolderId].folderIds = R.uniq(tree[currentFolderId].folderIds);
-
-
-            // set is_trashed flag to false
+            // set is_trashed flag to false and is_new flag to true
             R.forEach((id: string) => {
                 const file = filesById[id];
-                filesById[id] = { ...file, is_trashed: false };
-            }, [...fileIds, ...R.uniq(collectedItemIds.files)]);
-            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
+                filesById[id] = { ...file, is_trashed: false, is_new: true };
+            }, fileIds);
 
             R.forEach((id: string) => {
                 const folder = foldersById[id];
-                foldersById[id] = { ...folder, parent: currentFolderId, is_trashed: false };
-            }, [...folderIds, ...R.uniq(collectedItemIds.folders)]);
-            currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
+                foldersById[id] = { ...folder, parent: currentFolderId, is_trashed: false, is_new: true };
+            }, folderIds);
 
+            // update count files and folders
+            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
+            currentFolder.folder_count = getFolderCount(tree[currentFolderId].folderIds, foldersById);
             foldersById[currentFolderId] = currentFolder;
 
             // remove files and folders from original location
-            const removeCurrentFolder = ([key]: [string]): boolean => key !== currentFolderId;
+            const removeCurrentFolder = ([key]: [string]): boolean => key !== `${currentFolderId}`;
             R.forEach(([key, treeFolder]: [string, TreeFolderType]) => {
                 tree[key].fileIds = R.without(fileIds, treeFolder.fileIds);
                 tree[key].folderIds = R.without(folderIds, treeFolder.folderIds);
             }, R.compose(R.filter(removeCurrentFolder), R.toPairs)(tree));
-
-            console.log(currentFolderId, R.compose(R.filter(removeCurrentFolder), R.toPairs)(tree));
 
             resolve({
                 foldersById,
