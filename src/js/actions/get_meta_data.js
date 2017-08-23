@@ -62,6 +62,8 @@ const getMetaData = (
                 foldersById[f.id] = f;
             });
 
+            // filter out selected files and folders that have been deleted by meanwhile
+            // by other users for instance
             const fileIdsF = fileIds.filter((id: string): boolean => {
                 const f = filesById[id];
                 return R.isNil(f) === false;

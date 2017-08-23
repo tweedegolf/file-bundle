@@ -211,7 +211,7 @@ const deleteFolder = (
 };
 
 
-const getRecycleBin = (
+const openRecycleBin = (
     onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.getRecycleBin}`;
@@ -362,7 +362,7 @@ export default {
     deleteFolder,
     upload,
     openFolder,
-    getRecycleBin,
+    openRecycleBin,
     emptyRecycleBin,
     restoreFromRecycleBin,
     getMetaData,

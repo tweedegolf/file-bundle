@@ -5,6 +5,8 @@ import api from '../util/api';
 import * as Constants from '../util/constants';
 import { createError } from '../util/util';
 
+// START FLOW TYPES
+
 type PayloadUploadDoneType = {
     foldersById: FoldersByIdType,
     filesById: FilesByIdType,
@@ -24,8 +26,9 @@ export type ActionUploadDoneType = {
     payload: PayloadUploadDoneType,
 };
 
+// END FLOW TYPES
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const uploadFiles = (files: Array<File>,

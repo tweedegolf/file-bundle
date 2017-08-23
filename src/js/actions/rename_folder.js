@@ -36,7 +36,7 @@ export type ActionFolderRenamedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const renameFolder = (folderId: string,

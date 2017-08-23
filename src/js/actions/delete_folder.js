@@ -12,11 +12,18 @@ import { createError, getItemIds } from '../util/util';
 
 // START FLOW TYPES
 
-export type PayloadFolderDeletedType = {
+type PayloadFolderDeletedType = {
     tree: TreeType,
     recycleBin: RecycleBinType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
+};
+
+export type ActionConfirmDeleteFolderType = {
+    type: 'CONFIRM_DELETE_FOLDER',
+    payload: {
+        id: string,
+    },
 };
 
 export type ActionDeleteFolderType = {

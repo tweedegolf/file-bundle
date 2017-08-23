@@ -15,22 +15,29 @@
  */
 
 import type { ActionInitType } from '../actions/init';
-import type { ActionFileDeletedType } from '../actions/delete_file';
-import type { ActionFolderDeletedType } from '../actions/delete_folder';
-import type { ActionRecycleBinEmptiedType } from '../actions/empty_recycle_bin';
 import type { ActionMetaDataReceivedType } from '../actions/get_meta_data';
+import type { ActionFileDeletedType } from '../actions/delete_file';
+import type { ActionFolderAddedType } from '../actions/add_folder';
+import type { ActionFolderDeletedType } from '../actions/delete_folder';
+import type { ActionFolderOpenedType, ActionFolderFromCacheType } from '../actions/open_folder';
+import type { ActionFolderRenamedType } from '../actions/rename_folder';
+import type { ActionRecycleBinEmptiedType } from '../actions/empty_recycle_bin';
+import type { ActionRecycleBinOpenedType, ActionRecycleBinFromCacheType } from '../actions/open_recycle_bin';
+import type { ActionItemsMovedType } from '../actions/move_items';
 
 type ActionUnionType =
 | ActionInitType
-| ActionFileDeletedType
+| ActionFolderOpenedType
+| ActionFolderFromCacheType
+| ActionFolderRenamedType
+| ActionFolderAddedType
 | ActionFolderDeletedType
-| ActionRecycleBinEmptiedType
+| ActionFileDeletedType
 | ActionMetaDataReceivedType
-
-// | ActionFolderOpenedType
-// | ActionFolderAddedType
-// | ActionItemsMovedType
-// | ActionItemsMovedType
+| ActionRecycleBinOpenedType
+| ActionRecycleBinFromCacheType
+| ActionRecycleBinEmptiedType
+| ActionItemsMovedType
 ;
 
 export const treeInitialState: TreeStateType = {
@@ -76,6 +83,7 @@ export const tree = (
             foldersById: action.payload.foldersById,
         };
 
+    case 'RECYCLE_BIN_FROM_CACHE':
     case 'RECYCLE_BIN_OPENED':
         return {
             ...state,
@@ -163,12 +171,12 @@ export const tree = (
             foldersById: action.payload.foldersById,
         };
 
-    case 'RESTORED_FROM_RECYCLE_BIN':
-        return {
-            ...state,
-            filesById: action.payload.filesById,
-            foldersById: action.payload.foldersById,
-        };
+    // case 'RESTORED_FROM_RECYCLE_BIN':
+    //     return {
+    //         ...state,
+    //         filesById: action.payload.filesById,
+    //         foldersById: action.payload.foldersById,
+    //     };
 
     default:
         return state;

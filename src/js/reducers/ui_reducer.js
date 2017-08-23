@@ -2,8 +2,13 @@
 /* eslint no-case-declarations: 0 */
 import type { ActionInitType } from '../actions/init';
 import type { ActionDeleteFileType, ActionFileDeletedType } from '../actions/delete_file';
-import type { ActionDeleteFolderType, ActionFolderDeletedType } from '../actions/delete_folder';
+import type { ActionDeleteFolderType, ActionConfirmDeleteFolderType, ActionFolderDeletedType } from '../actions/delete_folder';
 import type { ActionAddFolderType, ActionFolderAddedType } from '../actions/add_folder';
+import type { ActionRenameFolderType, ActionConfirmRenameFolderType, ActionFolderRenamedType } from '../actions/rename_folder';
+import type { ActionChangeSortingType, ActionDismissErrorType } from '../actions/index';
+import type { ActionOpenFolderType, ActionFolderOpenedType } from '../actions/open_folder';
+import type { ActionUploadStartType, ActionUploadDoneType } from '../actions/upload_files';
+import type { ActionItemsMovedType } from '../actions/move_items';
 
 type ActionUnionType =
     | ActionInitType
@@ -12,23 +17,33 @@ type ActionUnionType =
     | ActionFileDeletedType
 
     | ActionDeleteFolderType
+    | ActionConfirmDeleteFolderType
     | ActionFolderDeletedType
 
+    | ActionOpenFolderType
     | ActionFolderOpenedType
 
     | ActionAddFolderType
     | ActionFolderAddedType
 
     | ActionErrorType
+
     | ActionUploadStartType
     | ActionUploadDoneType
-    | ActionItemsMovedType
+
     | ActionDismissErrorType
+
     | ActionChangeSortingType
+
     | ActionItemsMovedType
+
+    | ActionRenameFolderType
+    | ActionConfirmRenameFolderType
+    | ActionFolderRenamedType
 ;
 
 export const uiInitialState: UIStateType = {
+    browser: true,
     rootFolderId: 'null',
     currentFolderId: 'null',
     currentFolderIdTmp: '',
@@ -65,6 +80,7 @@ export const ui = (
     action: ActionUnionType,
 ): UIStateType => {
     switch (action.type) {
+
     case 'INIT':
         return {
             ...state,
@@ -286,6 +302,7 @@ export const ui = (
             showingRecycleBin: false,
             currentFolderId: state.currentFolderIdTmp,
         };
+
     case 'EMPTY_RECYCLE_BIN':
         return {
             ...state,

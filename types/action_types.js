@@ -6,26 +6,6 @@ export type GenericActionType = {
     payload: *,
 };
 
-// change sorting
-export type ActionChangeSortingType = {
-    type: 'CHANGE_SORTING',
-    payload: PayloadChangeSortingType,
-};
-
-export type PayloadChangeSortingType = {
-    sort: SortEnumType,
-};
-
-// dismiss error
-export type ActionDismissErrorType = {
-    type: 'DISMISS_ERROR',
-    payload: PayloadDismissErrorType,
-};
-
-export type PayloadDismissErrorType = {
-    id: string,
-};
-
 export type ActionErrorType = {
     type: 'ERROR_DELETING_FILE'
     | 'ERROR_DELETING_FOLDER'

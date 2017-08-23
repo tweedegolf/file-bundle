@@ -7,6 +7,7 @@ import {
     createError,
     getFileCount,
     getFolderCount,
+    excludeIds,
 } from '../util/util';
 
 // START FLOW TYPES
@@ -25,17 +26,8 @@ export type ActionItemsMovedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
-
-const excludeIds = (arr: string[], exclude: string[]): string[] => {
-    const filtered = arr.filter(
-        (id: string): boolean => {
-            const index = exclude.findIndex((e: string): boolean => e === id);
-            return index === -1;
-        });
-    return filtered;
-};
 
 const moveFiles = (
     resolve: (payload: PayloadItemsMovedType) => mixed,

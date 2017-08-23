@@ -116,5 +116,3 @@ export type ErrorType = {
     type: string,
     messages: Array<string>,
 };
-
-export type SortEnumType = 'name' | 'size_bytes' | 'create_ts' | 'type';

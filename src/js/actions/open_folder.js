@@ -71,23 +71,11 @@ const optimisticUpdate = (folderId: string): boolean => {
     return true;
 };
 
-const resolve = (payload: PayloadFolderOpenedType) => {
-    const a: ActionFolderOpenedType = {
-        type: FOLDER_OPENED,
-        payload,
-    };
-    dispatch(a);
-};
-
-const reject = (payload: PayloadErrorOpenFolderType) => {
-    const a: ActionErrorOpenFolderType = {
-        type: ERROR_OPENING_FOLDER,
-        payload,
-    };
-    dispatch(a);
-};
-
-const openFolder = (folderId: string) => {
+const openFolder = (
+    folderId: string,
+    resolve: (PayloadFolderOpenedType) => mixed,
+    reject: (PayloadErrorOpenFolderType) => mixed,
+) => {
     const {
         tree: treeState,
     } = store.getState();
@@ -163,7 +151,21 @@ export default (data: { id: string, forceLoad?: boolean }) => {
             type: OPEN_FOLDER,
             payload: { id },
         });
-        openFolder(id);
+        openFolder(
+            id,
+            (payload: PayloadFolderOpenedType) => {
+                dispatch({
+                    type: FOLDER_OPENED,
+                    payload,
+                });
+            },
+            (payload: PayloadErrorOpenFolderType) => {
+                dispatch({
+                    type: ERROR_OPENING_FOLDER,
+                    payload,
+                });
+            },
+        );
     }, delay);
 };
 

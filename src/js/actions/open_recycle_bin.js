@@ -15,25 +15,27 @@ import {
 
 // START FLOW TYPES
 
+type PayloadRecycleBinOpenedType = {
+    currentFolderId: string,
+    currentFolderIdTmp: string,
+    recycleBin: RecycleBinType,
+};
+
 export type ActionRecycleBinFromCacheType = {
     type: 'RECYCLE_BIN_FROM_CACHE',
-    payload: {
-        currentFolderId: string,
-        currentFolderIdTmp: string
-    }
+    payload: PayloadRecycleBinOpenedType,
 };
+
 
 export type ActionRecycleBinOpenedType = {
     type: 'RECYCLE_BIN_OPENED',
-    payload: {
-        recycleBin: RecycleBinType,
-    }
+    payload: PayloadRecycleBinOpenedType,
 };
 
 // END FLOW TYPES
 
 const DELAY: number = 100;
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const getCurrentFolder = (): [string, string] => {
@@ -47,45 +49,26 @@ const getCurrentFolder = (): [string, string] => {
 };
 
 const optimisticUpdate = (): boolean => {
-    // const recycleBin = store.getState().tree.recycleBin;
-    // // recycle bin has not been loaded earlier so not in cache
-    // if (typeof recycleBin.folders === 'undefined') {
-    //     return false;
-    // }
+    const recycleBin = store.getState().tree[RECYCLE_BIN_ID];
     const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
+    const payload: PayloadRecycleBinOpenedType = {
+        recycleBin,
+        currentFolderId,
+        currentFolderIdTmp,
+    };
     const a: ActionRecycleBinFromCacheType = {
         type: RECYCLE_BIN_FROM_CACHE,
-        payload: {
-            currentFolderId,
-            currentFolderIdTmp,
-        },
+        payload,
     };
     dispatch(a);
     return true;
 };
 
-const resolve = (payload: {
-    recycleBin: RecycleBinType,
-    currentFolderId: string,
-}) => {
-    dispatch({
-        type: RECYCLE_BIN_OPENED,
-        payload,
-    });
-};
-
-type RejectPayloadType = {
-    errors: ErrorType[],
-};
-const reject = (payload: RejectPayloadType) => {
-    dispatch({
-        type: ERROR_OPENING_RECYCLE_BIN,
-        payload,
-    });
-};
-
-const getRecycleBin = () => {
-    api.getRecycleBin(
+const openRecycleBin = (
+    resolve: (PayloadRecycleBinOpenedType) => mixed,
+    reject: (PayloadErrorType) => mixed,
+) => {
+    api.openRecycleBin(
         (folders: Array<FolderType>, files: Array<FileType>) => {
             const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
             resolve({
@@ -123,6 +106,19 @@ export default () => {
     }
 
     setTimeout(() => {
-        getRecycleBin();
+        openRecycleBin(
+            (payload: PayloadRecycleBinOpenedType) => {
+                dispatch({
+                    type: RECYCLE_BIN_OPENED,
+                    payload,
+                });
+            },
+            (payload: PayloadErrorType) => {
+                dispatch({
+                    type: ERROR_OPENING_RECYCLE_BIN,
+                    payload,
+                });
+            },
+        );
     }, delay);
 };

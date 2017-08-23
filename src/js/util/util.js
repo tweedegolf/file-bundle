@@ -147,6 +147,15 @@ const shakeTree = (tree: TreeType, filesById: FilesByIdType, foldersById: Folder
     return treeClone;
 };
 
+const excludeIds = (arr: string[], exclude: string[]): string[] => {
+    const filtered = arr.filter(
+        (id: string): boolean => {
+            const index = exclude.findIndex((e: string): boolean => e === id);
+            return index === -1;
+        });
+    return filtered;
+};
+
 export {
     filterTrashed,
     filterTrashedInverted,
@@ -158,4 +167,5 @@ export {
     reduceToMap,
     createError,
     shakeTree,
+    excludeIds,
 };

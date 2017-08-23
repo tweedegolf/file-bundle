@@ -1,5 +1,4 @@
 // @flow
-import * as Constants from '../util/constants';
 import { getStore } from '../reducers/store';
 
 export { default as openFolder } from './open_folder';
@@ -14,20 +13,55 @@ export { default as emptyRecycleBin } from './empty_recycle_bin';
 export { default as uploadFiles } from './upload_files';
 export { default as moveItems } from './move_items';
 
+// START FLOW TYPES
+
+type SortEnumType = 'name' | 'size_bytes' | 'create_ts' | 'type';
+
+type PayloadChangeSortingType = {
+    sort: SortEnumType,
+};
+
+export type ActionChangeSortingType = {
+    type: 'CHANGE_SORTING',
+    payload: PayloadChangeSortingType,
+};
+
+type PayloadDismissErrorType = {
+    id: string,
+};
+
+export type ActionDismissErrorType = {
+    type: 'DISMISS_ERROR',
+    payload: PayloadDismissErrorType,
+};
+
+export type ActionWithPayloadIdType = {
+    type: 'SELECT_FILE'
+    | 'SELECT_FOLDER'
+    | 'DISMISS_ERROR',
+    payload: {
+        id: string
+    }
+};
+
+// END FLOW TYPES
+
 const dispatch: Dispatch = getStore().dispatch;
 
 export const selectFile = (id: string) => {
-    dispatch({
-        type: Constants.SELECT_FILE,
+    const a: ActionWithPayloadIdType = {
+        type: 'SELECT_FILE',
         payload: { id },
-    });
+    };
+    dispatch(a);
 };
 
 export const selectFolder = (id: string) => {
-    dispatch({
-        type: Constants.SELECT_FOLDER,
+    const a: ActionWithPayloadIdType = {
+        type: 'SELECT_FOLDER',
         payload: { id },
-    });
+    };
+    dispatch(a);
 };
 
 /**
@@ -35,7 +69,7 @@ export const selectFolder = (id: string) => {
  */
 export const cutFiles = () => {
     dispatch({
-        type: Constants.CUT_ITEMS,
+        type: 'CUT_ITEMS',
     });
 };
 
@@ -44,7 +78,7 @@ export const cutFiles = () => {
  */
 export const cancelMoveItems = () => {
     dispatch({
-        type: Constants.CANCEL_MOVE_ITEMS,
+        type: 'CANCEL_MOVE_ITEMS',
     });
 };
 
@@ -57,7 +91,7 @@ export const cancelMoveItems = () => {
  */
 export const changeSorting = (sort: string) => {
     dispatch({
-        type: Constants.CHANGE_SORTING,
+        type: 'CHANGE_SORTING',
         payload: { sort },
     });
 };
@@ -69,10 +103,11 @@ export const changeSorting = (sort: string) => {
  * @param      {number}  error_id  The unique identifier of the error.
  */
 export const dismissError = (id: string) => {
-    dispatch({
-        type: Constants.DISMISS_ERROR,
+    const a: ActionWithPayloadIdType = {
+        type: 'DISMISS_ERROR',
         payload: { id },
-    });
+    };
+    dispatch(a);
 };
 
 
@@ -83,7 +118,7 @@ export const dismissError = (id: string) => {
  */
 export const showPreview = (imageUrl: null | string) => {
     dispatch({
-        type: Constants.SHOW_PREVIEW,
+        type: 'SHOW_PREVIEW',
         payload: { imageUrl },
     });
 };
@@ -98,14 +133,14 @@ export const showPreview = (imageUrl: null | string) => {
  */
 export const confirmDeleteFile = (id: null | string) => {
     dispatch({
-        type: Constants.CONFIRM_DELETE_FILE,
+        type: 'CONFIRM_DELETE_FILE',
         payload: { id },
     });
 };
 
 export const confirmDeleteFolder = (id: null | string) => {
     dispatch({
-        type: Constants.CONFIRM_DELETE_FOLDER,
+        type: 'CONFIRM_DELETE_FOLDER',
         payload: { id },
     });
 };
@@ -115,7 +150,7 @@ export const confirmDeleteFolder = (id: null | string) => {
  */
 export const confirmRenameFolder = (id: null | string) => {
     dispatch({
-        type: Constants.CONFIRM_RENAME_FOLDER,
+        type: 'CONFIRM_RENAME_FOLDER',
         payload: { id },
     });
 };
@@ -137,7 +172,7 @@ export const confirmRenameFolder = (id: null | string) => {
  */
 export const setHover = (diff: number, max: number) => {
     dispatch({
-        type: Constants.SET_HOVER,
+        type: 'SET_HOVER',
         payload: { diff, max },
     });
 };
@@ -151,7 +186,7 @@ export const setHover = (diff: number, max: number) => {
  */
 export const setScrollPosition = (scroll: null | number) => {
     dispatch({
-        type: Constants.SET_SCROLL_POSITION,
+        type: 'SET_SCROLL_POSITION',
         payload: { scroll },
     });
 };
@@ -163,14 +198,14 @@ export const setScrollPosition = (scroll: null | number) => {
  */
 export const expandBrowser = () => {
     dispatch({
-        type: Constants.EXPAND_BROWSER,
+        type: 'EXPAND_BROWSER',
     });
 };
 
 
 export const closeRecycleBin = () => {
     dispatch({
-        type: Constants.CLOSE_RECYCLE_BIN,
+        type: 'CLOSE_RECYCLE_BIN',
     });
 };
 

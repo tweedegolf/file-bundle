@@ -33,6 +33,8 @@ export type ActionRecycleBinEmptiedType = {
 
 // END FLOW TYPES
 
+// @TODO: clear selected files and folders that were in the recycle bin!
+
 const emptyRecycleBin = (
     resolve: (payload: PayloadEmptyRecycleBinType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
