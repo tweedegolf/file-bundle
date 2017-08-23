@@ -20,6 +20,7 @@ type PayloadEmptyRecycleBinType = {
     filesById: FilesByIdType,
     recycleBin: RecycleBinType,
     foldersById: FoldersByIdType,
+    selected: ClipboardType,
 };
 
 export type ActionEmptyRecycleBinType = {
@@ -40,6 +41,7 @@ const emptyRecycleBin = (
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
+        ui: uiState,
         tree: treeState,
      } = store.getState();
 
@@ -54,6 +56,10 @@ const emptyRecycleBin = (
         files: [],
         folders: [],
     };
+    const {
+        fileIds: selectedFileIds,
+        folderIds: selectedFolderIds,
+    } = { ...uiState.selected };
 
     api.emptyRecycleBin(
         (errors: string[]) => {
@@ -82,11 +88,19 @@ const emptyRecycleBin = (
                 tree[id].folderIds = R.without(folderIds, tree[id].folderIds);
             }, R.keys(tree));
 
+            // remove the items that were selected in the recycle bin from the
+            // selected object in the uiState
+            const selected = {
+                fileIds: R.without(fileIds, selectedFileIds),
+                folderIds: R.without(folderIds, selectedFolderIds),
+            };
+
             resolve({
                 tree,
                 filesById,
                 recycleBin,
                 foldersById,
+                selected,
             });
         },
         (messages: string[]) => {

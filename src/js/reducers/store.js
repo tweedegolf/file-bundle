@@ -12,13 +12,13 @@ const initialState: StateType = {
     tree: treeInitialState,
 };
 
-const combinedReducers: CombinedReducer<StateType, ActionUnionType> = combineReducers({ ui, tree });
+const combinedReducers: CombinedReducer<StateType, GenericActionType> = combineReducers({ ui, tree });
 // create dummy store to prevent a null value, use the boolean initialized instead of a null check
 // to see if a store has already been created (singleton-ish)
-let store: StoreType<StateType, ActionUnionType> = createStore(combinedReducers, initialState);
+let store: StoreType<StateType, GenericActionType> = createStore(combinedReducers, initialState);
 let initialized: boolean = false;
 
-export const getNewStore = (): StoreType<StateType, ActionUnionType> => createStore(
+export const getNewStore = (): StoreType<StateType, GenericActionType> => createStore(
   combinedReducers,
   initialState,
   compose(
@@ -30,7 +30,7 @@ export const getNewStore = (): StoreType<StateType, ActionUnionType> => createSt
   ),
 );
 
-export function getStore(): StoreType<StateType, ActionUnionType> {
+export function getStore(): StoreType<StateType, GenericActionType> {
     if (initialized === false) {
         initialized = true;
         store = getNewStore();

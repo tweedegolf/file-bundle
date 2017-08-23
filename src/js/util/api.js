@@ -234,14 +234,9 @@ const emptyRecycleBin = (
     const req = request.delete(url);
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
-            // console.log(err)
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            let errorsCasted: Errors2Type = [];
-            if (res.body.errors instanceof Array) {
-                errorsCasted = res.body.errors;
-            }
-            onSuccess(errorsCasted);
+            onSuccess(res.body.errors);
         }
     });
 };
@@ -250,7 +245,6 @@ const emptyRecycleBin = (
 const getMetaData = (
     fileIds: string[],
     folderIds: string[],
-    // onSuccess: (filesById: FilesByIdType, foldersById: FoldersByIdType) => void,
     onSuccess: (files: FileType[], folders: FolderType[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.getMetaData}`;
@@ -260,7 +254,6 @@ const getMetaData = (
         if (err) {
             onError([res.text, res.error.message, err.toString()]);
         } else {
-            // onSuccess(res.body.filesById, res.body.foldersById);
             onSuccess(res.body.files, res.body.folders);
         }
     });

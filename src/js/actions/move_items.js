@@ -46,10 +46,10 @@ const moveFiles = (
 
     // filter files and folders that have been pasted into their original folder
     let fileIds: string[] = R.filter((id: string): boolean =>
-        !R.contains(id, tree[currentFolderId].fileIds), uiState.clipboard.fileIds);
+        (R.contains(id, tree[currentFolderId].fileIds) === false || filesById[id].is_trashed === true), uiState.clipboard.fileIds);
 
     let folderIds: string[] = R.filter((id: string): boolean =>
-        !R.contains(id, tree[currentFolderId].folderIds), uiState.clipboard.folderIds);
+        (R.contains(id, tree[currentFolderId].folderIds) === false || foldersById[id].is_trashed === true), uiState.clipboard.folderIds);
 
     if (fileIds.length === 0 && folderIds.length === 0) {
         resolve({
@@ -87,10 +87,12 @@ const moveFiles = (
             fileIds.forEach((id: string) => {
                 tree[currentFolderId].fileIds.push(id);
             });
+            tree[currentFolderId].fileIds = R.uniq(tree[currentFolderId].fileIds);
 
             folderIds.forEach((id: string) => {
                 tree[currentFolderId].folderIds.push(id);
             });
+            tree[currentFolderId].folderIds = R.uniq(tree[currentFolderId].folderIds);
 
             // set is_trashed flag to false and is_new flag to true
             R.forEach((id: string) => {

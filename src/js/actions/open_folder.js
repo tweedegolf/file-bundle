@@ -7,6 +7,7 @@ import {
     FOLDER_OPENED,
     FOLDER_FROM_CACHE,
     ERROR_OPENING_FOLDER,
+    RECYCLE_BIN_ID,
 } from '../util/constants';
 import {
     createError,
@@ -108,9 +109,11 @@ const openFolder = (
                 tree[folderId].fileIds.push(f.id);
             }, files);
 
-            currentFolder.file_count = getFileCount(tree[folderId].fileIds, filesById);
-            currentFolder.folder_count = getFolderCount(tree[folderId].folderIds, foldersById);
-            foldersById[currentFolder.id] = currentFolder;
+            if (folderId !== RECYCLE_BIN_ID) {
+                currentFolder.file_count = getFileCount(tree[folderId].fileIds, filesById);
+                currentFolder.folder_count = getFolderCount(tree[folderId].folderIds, foldersById);
+                foldersById[currentFolder.id] = currentFolder;
+            }
 
             resolve({
                 currentFolderId: folderId,

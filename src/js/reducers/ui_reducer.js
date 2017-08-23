@@ -9,6 +9,7 @@ import type { ActionChangeSortingType, ActionDismissErrorType } from '../actions
 import type { ActionOpenFolderType, ActionFolderOpenedType } from '../actions/open_folder';
 import type { ActionUploadStartType, ActionUploadDoneType } from '../actions/upload_files';
 import type { ActionItemsMovedType } from '../actions/move_items';
+import type { ActionRecycleBinEmptiedType } from '../actions/empty_recycle_bin';
 
 type ActionUnionType =
     | ActionInitType
@@ -40,6 +41,8 @@ type ActionUnionType =
     | ActionRenameFolderType
     | ActionConfirmRenameFolderType
     | ActionFolderRenamedType
+
+    | ActionRecycleBinEmptiedType
 ;
 
 export const uiInitialState: UIStateType = {
@@ -313,7 +316,7 @@ export const ui = (
     case 'RECYCLE_BIN_EMPTIED':
         return {
             ...state,
-            currentFolderId: action.payload.currentFolderId,
+            selected: action.payload.selected,
         };
 
     case 'ERROR_EMPTY_RECYCLE_BIN':

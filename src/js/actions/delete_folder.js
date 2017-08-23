@@ -56,7 +56,10 @@ const deleteFolder = (folderId: string,
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
     const folder = foldersById[folderId];
-    let recycleBin = { ...treeState[RECYCLE_BIN_ID] };
+    const {
+         files: filesInRecycleBin,
+         folders: foldersInRecycleBin,
+    } = { ...treeState[RECYCLE_BIN_ID] };
 
     api.deleteFolder(
         folderId,
@@ -79,11 +82,13 @@ const deleteFolder = (folderId: string,
             getItemIds(folderId, collectedItemIds, tree);
             collectedItemIds.files.forEach((id: string) => {
                 const f = filesById[id];
+                filesInRecycleBin.push(f);
                 filesById[id] = { ...f, is_trashed: true };
             });
 
             collectedItemIds.folders.forEach((id: string) => {
                 const f = foldersById[id];
+                foldersInRecycleBin.push(f);
                 foldersById[id] = { ...f, is_trashed: true };
             });
 
@@ -97,16 +102,14 @@ const deleteFolder = (folderId: string,
             deletedFolder.is_trashed = true;
             foldersById[folderId] = deletedFolder;
 
-            recycleBin = {
-                files: [...recycleBin.files],
-                folders: [...recycleBin.folders, folder],
-            };
-
             resolve({
                 tree,
                 filesById,
-                recycleBin,
                 foldersById,
+                recycleBin: {
+                    files: filesInRecycleBin,
+                    folders: foldersInRecycleBin,
+                },
             });
         },
         (messages: Array<string>) => {
