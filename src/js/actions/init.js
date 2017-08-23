@@ -50,7 +50,7 @@ export type OptionsType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
 const defaultOptions: OptionsType = {
     language: 'nl',
@@ -99,8 +99,13 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
     }
 
     const filesById = treeState.filesById;
-    const allSelected: ClipboardType = { ...uiState.selected };
-    if (selected.length > 0) {
+    let allSelected: ClipboardType = {
+        fileIds: [],
+        folderIds: [],
+    };
+    if (browser === true) {
+        allSelected = { ...uiState.selected };
+    } else if (selected.length > 0) {
         selected.forEach((f: FileType) => {
             filesById[f.id] = f;
             allSelected.fileIds.push(f.id);
@@ -146,7 +151,7 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
         openFolder({ id: currentFolderId });
     }
 
-    if (allSelected.fileIds.length + allSelected.folderIds.length > 0) {
+    if (browser === true && allSelected.fileIds.length + allSelected.folderIds.length > 0) {
         getMetaData();
     }
 };

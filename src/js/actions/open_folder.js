@@ -52,7 +52,7 @@ export type ActionErrorOpenFolderType = {
 
 
 const DELAY: number = 100;
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
 const optimisticUpdate = (folderId: string): boolean => {

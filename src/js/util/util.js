@@ -124,6 +124,29 @@ const createError = (type: string, messages?: string[], data?: { [string]: strin
     messages: messages || [],
 });
 
+// remove entries from the tree that don't exist anymore in filesById and foldersById
+const shakeTree = (tree: TreeType, filesById: FilesByIdType, foldersById: FoldersByIdType): TreeType => {
+    const treeClone = { ...tree };
+    R.forEach((id: string) => {
+        if (typeof foldersById[id] === 'undefined') {
+            console.log('shaking folder', id, 'from tree');
+            delete treeClone[id];
+        } else {
+            const files = tree[id].fileIds;
+            const filtered = R.filter((id2: string): boolean => {
+                if (typeof filesById[id2] === 'undefined') {
+                    console.log('shaking file', id2, 'from tree');
+                    return false;
+                }
+                return true;
+            }, files);
+            treeClone[id].fileIds = filtered;
+        }
+    }, R.keys(tree));
+
+    return treeClone;
+};
+
 export {
     filterTrashed,
     filterTrashedInverted,
@@ -134,4 +157,5 @@ export {
     getItemIds,
     reduceToMap,
     createError,
+    shakeTree,
 };

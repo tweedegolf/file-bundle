@@ -14,7 +14,7 @@ import { createError } from '../util/util';
 type PayloadActionMetaDataReceivedType = {
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
-    selected: string[],
+    selected: ClipboardType,
 };
 
 export type ActionMetaDataReceivedType = {
@@ -27,39 +27,20 @@ export type ActionMetaDataReceivedType = {
 const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: DispatchType = store.dispatch;
 
-const resolve = (payload: PayloadActionMetaDataReceivedType) => {
-    const a: ActionMetaDataReceivedType = {
-        type: META_DATA_RECEIVED,
-        payload,
-    };
-    dispatch(a);
-};
-
-const reject = (payload: PayloadErrorType) => {
-    const a: ActionErrorType = {
-        type: ERROR_GETTING_META_DATA,
-        payload,
-    };
-    dispatch(a);
-};
-
-export default () => {
-    const state = store.getState();
-    const uiState: UIStateType = state.ui;
-    const treeState: TreeStateType = state.tree;
-    const tmp1 = R.clone(treeState.filesById);
-    const tmp2 = R.clone(treeState.foldersById);
-
-    if (tmp1 === null || tmp2 === null) {
-        const err = createError(ERROR_GETTING_META_DATA, ['invalid state']);
-        reject({ errors: [err] });
-        return;
-    }
-    const filesById: FilesByIdType = tmp1;
-    const foldersById: FoldersByIdType = tmp2;
-    const selected: ClipboardType = { ...uiState.selected };
-    const fileIds = selected.fileIds;
-    const folderIds = selected.folderIds;
+const getMetaData = (
+    resolve: (payload: PayloadActionMetaDataReceivedType) => mixed,
+    reject: (payload: PayloadErrorType) => mixed,
+) => {
+    const {
+        ui: uiState,
+        tree: treeState,
+    } = store.getState();
+    const filesById: FilesByIdType = { ...treeState.filesById };
+    const foldersById: FoldersByIdType = { ...treeState.foldersById };
+    const {
+        fileIds,
+        folderIds,
+    } = uiState.selected;
 
     api.getMetaData(
         fileIds,
@@ -83,19 +64,18 @@ export default () => {
 
             const fileIdsF = fileIds.filter((id: string): boolean => {
                 const f = filesById[id];
-                return R.isNil(f) === false && f.is_trashed !== true;
+                return R.isNil(f) === false;
             });
 
             const folderIdsF = folderIds.filter((id: string): boolean => {
                 const f = foldersById[id];
-                return R.isNil(f) === false && f.is_trashed !== true;
+                return R.isNil(f) === false;
             });
-
             // console.log(fileIdsF, folderIdsF);
 
             resolve({
-                foldersById,
                 filesById,
+                foldersById,
                 selected: {
                     fileIds: fileIdsF,
                     folderIds: folderIdsF,
@@ -104,10 +84,29 @@ export default () => {
         },
         (messages: Array<string>) => {
             const err = createError(ERROR_GETTING_META_DATA, messages, {
-                fileIds: selected.fileIds.join(','),
-                folderIds: selected.folderIds.join(','),
+                fileIds: fileIds.join(','),
+                folderIds: folderIds.join(','),
             });
             reject({ errors: [err] });
+        },
+    );
+};
+
+export default () => {
+    getMetaData(
+        (payload: PayloadActionMetaDataReceivedType) => {
+            const a: ActionMetaDataReceivedType = {
+                type: META_DATA_RECEIVED,
+                payload,
+            };
+            dispatch(a);
+        },
+        (payload: PayloadErrorType) => {
+            const a: ActionErrorType = {
+                type: ERROR_GETTING_META_DATA,
+                payload,
+            };
+            dispatch(a);
         },
     );
 };

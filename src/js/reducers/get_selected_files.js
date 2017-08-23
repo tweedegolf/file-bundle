@@ -19,8 +19,13 @@ export default createSelector(
             return [];
         }
 
-        const files: FileType[] = R.map((fileId: string): FileType =>
-            filesById[fileId], selected.fileIds);
+        const files: FileType[] = [];
+        R.forEach((fileId: string) => {
+            const file = filesById[fileId];
+            if (typeof file !== 'undefined') {
+                files.push(file);
+            }
+        }, selected.fileIds);
 
         return files;
     },

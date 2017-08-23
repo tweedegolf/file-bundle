@@ -38,6 +38,7 @@ export type TreeStateType = {
 };
 
 export type UIStateType = {
+    browser: boolean,
     rootFolderId: string,
     currentFolderId: string,
     currentFolderIdTmp: string,

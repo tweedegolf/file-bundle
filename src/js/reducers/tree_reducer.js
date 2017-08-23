@@ -18,18 +18,17 @@ import type { ActionInitType } from '../actions/init';
 import type { ActionFileDeletedType } from '../actions/delete_file';
 import type { ActionFolderDeletedType } from '../actions/delete_folder';
 import type { ActionRecycleBinEmptiedType } from '../actions/empty_recycle_bin';
+import type { ActionMetaDataReceivedType } from '../actions/get_meta_data';
 
 type ActionUnionType =
 | ActionInitType
 | ActionFileDeletedType
 | ActionFolderDeletedType
 | ActionRecycleBinEmptiedType
+| ActionMetaDataReceivedType
 
 // | ActionFolderOpenedType
-
-// | ActionAddFolderType
 // | ActionFolderAddedType
-| ActionErrorType
 // | ActionItemsMovedType
 // | ActionItemsMovedType
 ;

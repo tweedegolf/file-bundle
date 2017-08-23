@@ -36,7 +36,8 @@ class SelectedFiles extends
                 const p = { onClick: () => { this.props.showPreview(original); } };
                 preview = (<img
                   src={file.thumb}
-                  alt={file.name}
+                  // alt={file.name}
+                  alt={'no thumb'}
                   {...p}
                 />);
             }
