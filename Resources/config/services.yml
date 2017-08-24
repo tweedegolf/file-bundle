@@ -1,0 +1,16 @@
+parameters:
+    normalize_image_filter_name: "admin_thumb"
+
+services:
+    tg_file.normalizer:
+        class: TweedeGolf\FileBundle\Normalizer\FileNormalizer
+        arguments:
+            - "@vich_uploader.templating.helper.uploader_helper"
+            - "@liip_imagine.cache.manager"
+            - "%normalize_image_filter_name%"
+    tg_file.form.type.task:
+        class: TweedeGolf\FileBundle\Form\FileType
+        arguments:
+          - "@tg_file.normalizer"
+        tags:
+            - { name: form.type }
