@@ -32,8 +32,8 @@ const sources = {
 };
 
 const targets = {
-    js: './public/',
-    css: './public/',
+    js: './public/scripts/',
+    css: './public/styles/',
 };
 
 const logBrowserifyError = (e) => {
