@@ -13,8 +13,9 @@ import R from 'ramda';
 import Browser from './containers/browser.react';
 import { getStore } from './reducers/store';
 import i18n from './util/i18n';
+import type { OptionsType } from './actions/init';
 
-const store: StoreType<StateType, ActionUnionType> = getStore();
+const store: StoreType<StateType, GenericActionType> = getStore();
 const getOptions = (element: HTMLElement): OptionsType | null => R.cond([
     [R.isNil, R.always(null)],
     [R.T, (data: string): OptionsType => JSON.parse(data)],

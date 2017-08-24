@@ -64,7 +64,8 @@ const defaultOptions: OptionsType = {
     rootFolderId: 'null',
 };
 
-const init = (options: OptionsType = defaultOptions, browser: boolean = true) => {
+const init = (options: OptionsType, browser: boolean = true) => {
+    const opts = options === null ? defaultOptions : options;
     const {
         language = defaultOptions.language,
         multiple = defaultOptions.multiple,
@@ -75,7 +76,7 @@ const init = (options: OptionsType = defaultOptions, browser: boolean = true) =>
         allowDelete = defaultOptions.allowDelete,
         allowNewFolder = defaultOptions.allowNewFolder,
         rootFolderId = defaultOptions.rootFolderId,
-    } = options;
+    } = opts;
 
     const {
         ui: uiState,
