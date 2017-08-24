@@ -6,4 +6,3 @@ tests/result.json
 tests/phantom/tests.compiled.es5
 flow-typed/
 .vscode
-.travis.yml
