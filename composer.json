@@ -26,5 +26,8 @@
         "psr-4": {
             "TweedeGolf\\FileBundle\\": ""
         }
-    }
+    },
+    "post-install-cmd": [
+        "npm install"
+    ]
 }
