@@ -27,7 +27,9 @@
             "TweedeGolf\\FileBundle\\": ""
         }
     },
-    "post-install-cmd": [
-        "npm install"
-    ]
+    "scripts": {
+        "post-install-cmd": [
+            "npm install"
+        ]
+    }
 }
