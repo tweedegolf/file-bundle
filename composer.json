@@ -12,6 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.6.0",
+        "npm": ">=4.0.0",
         "symfony/symfony": "^3.0",
         "symfony/form": "^3.0",
         "doctrine/orm": "^2.5",
