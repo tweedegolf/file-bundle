@@ -30,6 +30,9 @@
     "scripts": {
         "post-install-cmd": [
             "npm install"
+        ],
+        "post-package-install": [
+            "npm install"
         ]
     }
 }
