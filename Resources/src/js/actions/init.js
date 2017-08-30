@@ -158,8 +158,11 @@ const init = (options: OptionsType, browser: boolean = true) => {
 };
 
 export default (options: OptionsType, browser: boolean) => {
-    // init(options, browser);
-    persistStore(store, {}, () => {
+    if (browser === true) {
+        persistStore(store, {}, () => {
+            init(options, browser);
+        });
+    } else {
         init(options, browser);
-    });
+    }
 };
