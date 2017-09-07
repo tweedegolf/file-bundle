@@ -12,5 +12,6 @@ services:
         class: TweedeGolf\FileBundle\Form\FileType
         arguments:
           - "@tg_file.normalizer"
+          - "%locale%"
         tags:
             - { name: form.type }

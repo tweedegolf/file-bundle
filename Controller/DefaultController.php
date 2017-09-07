@@ -19,6 +19,9 @@ class DefaultController extends Controller
     {
         return $this->render('TGFileBundle:Default:index.html.twig', [
             'templates' => $this->getParameter('tg_file.templates'),
+            'options' => [
+                'language' => $this->getParameter('locale'),
+            ]
         ]);
     }
 }

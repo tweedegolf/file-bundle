@@ -23,13 +23,20 @@ class FileType extends AbstractType
     private $normalizer;
 
     /**
+     * @var
+     */
+    private $locale;
+
+    /**
      * FileType constructor.
      *
      * @param FileNormalizer $normalizer
+     * @param $locale
      */
-    public function __construct(FileNormalizer $normalizer)
+    public function __construct(FileNormalizer $normalizer, $locale)
     {
         $this->normalizer = $normalizer;
+        $this->locale = $locale;
     }
 
     /**
@@ -62,6 +69,7 @@ class FileType extends AbstractType
             'name' => $view->vars['full_name'],
             'images_only' => $options['images_only'],
             'selected' => $serializer->normalize($data),
+            'language' => $this->locale,
         ]);
     }
 
