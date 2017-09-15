@@ -49,6 +49,10 @@ class FileType extends AbstractType
             'images_only' => false,
             'required' => true,
             'multiple' => false,
+            'allow_upload' => true,
+            'allow_delete' => true,
+            'allow_new_folder' => true,
+            'allow_delete_folder' => true,
         ]);
     }
 
@@ -70,6 +74,10 @@ class FileType extends AbstractType
             'images_only' => $options['images_only'],
             'selected' => $serializer->normalize($data),
             'language' => $this->locale,
+            'allow_upload' => $options['allow_upload'],
+            'allow_delete' => $options['allow_delete'],
+            'allow_new_folder' => $options['allow_new_folder'],
+            'allow_delete_folder' => $options['allow_delete_folder'],
         ]);
     }
 
