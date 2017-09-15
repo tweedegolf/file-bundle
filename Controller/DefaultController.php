@@ -21,6 +21,10 @@ class DefaultController extends Controller
             'templates' => $this->getParameter('tg_file.templates'),
             'options' => [
                 'language' => $this->getParameter('locale'),
+                'allow_upload' => true,
+                'allow_delete' => true,
+                'allow_new_folder' => true,
+                'allow_delete_folder' => true,
             ]
         ]);
     }
