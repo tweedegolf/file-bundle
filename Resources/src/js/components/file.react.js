@@ -75,7 +75,7 @@ const File = (props: PropsType): React$Element<*> => {
                 <span className="text-label">{props.t('remove.cancel')}</span>
                 <span className="fa fa-times" />
             </button>
-
+            &nbsp;
             <button
                 type="button"
                 className="btn btn-xs btn-danger"
@@ -121,9 +121,10 @@ const File = (props: PropsType): React$Element<*> => {
         if (props.allowEdit) {
             checkbox = <input type="checkbox" checked={isSelected} readOnly />;
         }
+        const separator = buttonDelete !== null && buttonDownload !== null ? '\ ' : null;
         actions = (<div className="actions">
             {buttonDelete}
-            {'\ '}
+            {separator}
             {buttonDownload}
             {confirmPane}
         </div>);

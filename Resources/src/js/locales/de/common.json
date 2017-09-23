@@ -21,6 +21,10 @@
         "cancel": "Annullieren",
         "permanently": "Definitiv entfernen"
     },
+    "rename": {
+        "cancel": "Annullieren",
+        "ok": "Umbenennen"
+    },
     "error": {
         "upload": "Fehler hochladen {{files}}",
         "deleteFile": "de-DE: Verwijderen van file \"{{name}}\" niet gelukt.",

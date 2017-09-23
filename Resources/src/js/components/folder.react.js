@@ -45,6 +45,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             if (name !== '' && name !== this.props.folder.name) {
                 e.preventDefault();
                 this.props.renameFolder(this.props.folder.id, name);
+            } else if (name === this.props.folder.name) {
+                e.preventDefault();
+                this.props.confirmRenameFolder(null);
             }
         };
         this.cancelRename = (e: SyntheticEvent) => {
@@ -198,7 +201,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                         <span className="text-label">{this.props.t('remove.cancel')}</span>
                         <span className="fa fa-times" />
                     </button>
-
+                    &nbsp;
                     <button
                         type="button"
                         ref={(button: HTMLButtonElement) => { this.buttonDelete = button; }}
@@ -247,7 +250,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                         <span className="text-label">{this.props.t('rename.cancel')}</span>
                         <span className="fa fa-times" />
                     </button>
-
+                    &nbsp;
                     <button
                         type="button"
                         className="btn btn-xs btn-success"
@@ -275,7 +278,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             folderNameTD = (<td>
                 <span className={`${isRenamingFolder ? 'hide' : ''}`}>{folder.name}</span>
                 <input
-                    className={`form-control input-sm ${isRenamingFolder ? '' : 'hide'}`}
+                    className={`form-control input-sm rename ${isRenamingFolder ? '' : 'hide'}`}
                     ref={(input: HTMLInputElement) => { this.inputRename = input; }}
                     type="text"
                     onKeyUp={this.onKeyUp}
@@ -283,6 +286,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             </td>);
         }
 
+        const separator = buttonDelete !== null && renameIcon !== null ? '\ ' : null;
 
         return (
             <tr {...p}>
@@ -297,8 +301,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 <td>
                     <div className="actions">
                         {buttonDelete}
-                        {confirmPane}
+                        {separator}
                         {renameIcon}
+                        {confirmPane}
                         {renamePane}
                     </div>
                 </td>

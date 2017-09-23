@@ -21,6 +21,10 @@
         "cancel": "Cancel",
         "permanently": "Remove permanently"
     },
+    "rename": {
+        "cancel": "Cancel",
+        "ok": "Rename"
+    },
     "error": {
         "upload": "Error uploading {{files}}",
         "deleteFile": "Error deleting \"{{name}}\".",

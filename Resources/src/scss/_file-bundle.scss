@@ -128,11 +128,16 @@ body {
         outline: none !important;
         border: 0;
         font-size: 14px;
-        margin: 0 0 0 4px;
+        margin: 0;
         padding: 0px 3px 1px 5px;
         span {
             vertical-align: middle;
         }
+    }
+    .rename {
+        padding: 0 4px;
+        font-size: 14px;
+        height: 22px;
     }
     table {
         margin: 0;
@@ -148,6 +153,11 @@ body {
             max-height: 350px;
             overflow-y: auto;
             border-top: 2px solid #ddd;
+            tr {
+                td {
+                    vertical-align: middle;
+                }
+            }
         }
     }
     &.fullpage {
@@ -187,7 +197,6 @@ body {
         }
         td,
         th {
-            vertical-align: middle;
             &.sort {
                 cursor: pointer;
                 user-select: none;
@@ -210,9 +219,8 @@ body {
             .actions {
                 .confirm {
                     width: 250px;
-                    text-align: right;
                     button {
-                        margin: 0 0.5em;
+                        margin: 0;
                         .fa {
                             margin-left: 0.5em;
                         }
@@ -285,6 +293,9 @@ body {
         }
         td:nth-child(5) {
             padding-left: 10px;
+        }
+        td:nth-child(6) {
+            text-align: right;
         }
     }
 }
