@@ -235,6 +235,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             />, columnHeaderIds);
 
         const toolbar = (<Toolbar
+            multiple={this.props.multiple}
             allowUpload={this.props.allowUpload}
             allowDelete={this.props.allowDelete}
             allowNewFolder={this.props.allowNewFolder}

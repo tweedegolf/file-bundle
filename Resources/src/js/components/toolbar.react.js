@@ -9,6 +9,7 @@ import { translate } from 'react-i18next';
 import classNames from 'classnames';
 
 type PropsType = {
+    multiple: boolean,
     allowUpload: boolean,
     allowDelete: boolean,
     allowNewFolder: boolean,
@@ -165,7 +166,7 @@ class Toolbar
                     {loader}
                     <input
                         type="file"
-                        multiple="multiple"
+                        multiple={this.props.multiple}
                         onChange={this.props.uploadFiles}
                     />
                 </span>);
