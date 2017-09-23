@@ -159,13 +159,13 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         };
 
 
-        let checkboxTD;
+        let checkboxTD = null;
         if (hasSelectedItems) {
             checkboxTD = <td><span className={onClipboard ? 'fa fa-thumb-tack' : ''} /></td>;
             if (onClipboard) {
                 className += ' cut';
             }
-        } else {
+        } else if (this.props.allowEdit === true) {
             const p1 = {
                 onClick: (e: SyntheticEvent) => {
                     e.stopPropagation();
