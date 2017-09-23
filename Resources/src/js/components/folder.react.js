@@ -159,7 +159,7 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         };
 
 
-        let checkboxTD = null;
+        let checkboxTD = <td />;
         if (hasSelectedItems) {
             checkboxTD = <td><span className={onClipboard ? 'fa fa-thumb-tack' : ''} /></td>;
             if (onClipboard) {
