@@ -114,7 +114,8 @@ const init = (options: OptionsType, browser: boolean = true) => {
     }
 
     let currentFolderId = rfId;
-    if (uiState.currentFolderId !== null) {
+    // if (uiState.currentFolderId !== null) {
+    if (browser === true) {
         currentFolderId = uiState.currentFolderId;
     }
 

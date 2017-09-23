@@ -141,7 +141,6 @@ export default (data: { id: string, forceLoad?: boolean }) => {
         type: OPEN_FOLDER,
         payload: { id },
     });
-
     if (forceLoad === false) {
         const fromCache = optimisticUpdate(id);
         if (fromCache) {

@@ -36,8 +36,8 @@ if (browser !== null) {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
             <Provider store={store} >
                 <Browser
-                  browser={true}
-                  options={options}
+                    browser={true}
+                    options={options}
                 />
             </Provider>
         </I18nextProvider>, browser);
@@ -60,8 +60,8 @@ R.forEach((element: HTMLElement) => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
             <Provider store={store} >
                 <Browser
-                  browser={false}
-                  options={options}
+                    browser={false}
+                    options={options}
                 />
             </Provider>
         </I18nextProvider>, element);

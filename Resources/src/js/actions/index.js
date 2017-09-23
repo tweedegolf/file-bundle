@@ -145,9 +145,6 @@ export const confirmDeleteFolder = (id: null | string) => {
     });
 };
 
-/**
- * Currently not in use: folder components maintain their own 'showForm' state
- */
 export const confirmRenameFolder = (id: null | string) => {
     dispatch({
         type: 'CONFIRM_RENAME_FOLDER',

@@ -73,7 +73,7 @@ type BrowserStateType = {};
 //     key: ?string;
 // };
 
-const columnHeaderIds: [string, string, string, string] = ['name', 'size_bytes', 'create_ts', 'type'];
+const columnHeaderIds: [string, string, string] = ['name', 'size_bytes', 'create_ts'];
 
 const mapStateToProps = (state: StateType): PropsType => {
     const {
@@ -125,7 +125,7 @@ const mapStateToProps = (state: StateType): PropsType => {
     };
 };
 
-const mapDispatchToProps = (dispatch: DispatchType): {dispatch: () => void} => ({ dispatch });
+const mapDispatchToProps = (dispatch: DispatchType): { dispatch: () => void } => ({ dispatch });
 
 class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserStateType> {
     static defaultProps = {
@@ -227,43 +227,44 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
 
         const headers = R.map((columnId: string): SortHeader =>
             <SortHeader
-              key={columnId}
-              sortBy={Actions.changeSorting}
-              sort={this.props.sort}
-              ascending={this.props.ascending}
-              columnId={columnId}
+                key={columnId}
+                sortBy={Actions.changeSorting}
+                sort={this.props.sort}
+                ascending={this.props.ascending}
+                columnId={columnId}
             />, columnHeaderIds);
 
         const toolbar = (<Toolbar
-          allowUpload={this.props.allowUpload}
-          allowDelete={this.props.allowDelete}
-          allowNewFolder={this.props.allowNewFolder}
-          selected={this.props.selected}
-          clipboard={this.props.clipboard}
-          currentFolderId={this.props.currentFolderId}
-          isAddingFolder={this.props.isAddingFolder}
-          browser={this.props.browser}
-          onCut={Actions.cutFiles}
-          onPaste={Actions.moveItems}
-          onCancel={Actions.cancelMoveItems}
-          uploadFiles={this.uploadFiles}
-          onAddFolder={Actions.addFolder}
-          showRecycleBin={Actions.openRecycleBin}
-          hideRecycleBin={Actions.closeRecycleBin}
-          emptyRecycleBin={Actions.emptyRecycleBin}
-          isUploadingFiles={this.props.isUploadingFiles}
-          loadingFolderWithId={this.props.loadingFolderWithId}
-          showingRecycleBin={this.props.showingRecycleBin}
-          currentFolderName={this.props.currentFolderName}
+            allowUpload={this.props.allowUpload}
+            allowDelete={this.props.allowDelete}
+            allowNewFolder={this.props.allowNewFolder}
+            selected={this.props.selected}
+            clipboard={this.props.clipboard}
+            currentFolderId={this.props.currentFolderId}
+            isAddingFolder={this.props.isAddingFolder}
+            browser={this.props.browser}
+            openFolder={Actions.openFolder}
+            onCut={Actions.cutFiles}
+            onPaste={Actions.moveItems}
+            onCancel={Actions.cancelMoveItems}
+            uploadFiles={this.uploadFiles}
+            onAddFolder={Actions.addFolder}
+            showRecycleBin={Actions.openRecycleBin}
+            hideRecycleBin={Actions.closeRecycleBin}
+            emptyRecycleBin={Actions.emptyRecycleBin}
+            isUploadingFiles={this.props.isUploadingFiles}
+            loadingFolderWithId={this.props.loadingFolderWithId}
+            showingRecycleBin={this.props.showingRecycleBin}
+            currentFolderName={this.props.currentFolderName}
         />);
 
         let selected = null;
         if (this.props.browser === false) {
             // selected files for filepicker mode
             selected = (<SelectedFiles
-              selectedFiles={this.props.selectedFiles}
-              selectFile={Actions.selectFile}
-              showPreview={Actions.showPreview}
+                selectedFiles={this.props.selectedFiles}
+                selectFile={Actions.selectFile}
+                showPreview={Actions.showPreview}
             />);
         }
 
@@ -274,9 +275,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                 {selected}
                 {preview}
                 <button
-                  type="button"
-                  className="btn btn-default expand-button"
-                  onClick={Actions.expandBrowser}
+                    type="button"
+                    className="btn btn-default expand-button"
+                    onClick={Actions.expandBrowser}
                 >
                     {this.props.t('browse')}
                     <span className="fa fa-folder-open-o" />
@@ -287,9 +288,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         let buttonExpand = null;
         if (this.props.browser === false) {
             buttonExpand = (<button
-              type="button"
-              className="btn btn-default btn-xs collapse-button"
-              onClick={Actions.expandBrowser}
+                type="button"
+                className="btn btn-default btn-xs collapse-button"
+                onClick={Actions.expandBrowser}
             >
                 <span className="fa fa-chevron-up" />
             </button>);
@@ -307,8 +308,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                     <FileDragAndDrop onDrop={this.uploadFiles}>
                         {toolbar}
                         <Errors
-                          errors={this.props.errors}
-                          onDismiss={Actions.dismissError}
+                            errors={this.props.errors}
+                            onDismiss={Actions.dismissError}
                         />
                         <div ref={(div: HTMLElement) => { this.containerRef = div; }} className="table-container">
                             <table className="table table-condensed">
@@ -317,11 +318,12 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                         <th />
                                         <th />
                                         {headers}
+                                        <th />
                                     </tr>
                                 </thead>
                                 <List
-                                  // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
-                                  browser={this.props.browser}
+                                    // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
+                                    browser={this.props.browser}
                                 />
                             </table>
                         </div>

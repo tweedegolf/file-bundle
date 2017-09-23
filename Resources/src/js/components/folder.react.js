@@ -16,6 +16,7 @@ type PropsType = {
     browser: boolean,
     allowEdit: boolean,
     allowDelete: boolean,
+    allowRename: boolean,
     selected: ClipboardType,
     clipboard: ClipboardType,
     openFolder: (id: string) => void,
@@ -37,180 +38,72 @@ type FolderStateType = {};
 
 class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateType> {
     static defaultProps = {}
-    state: FolderStateType
-    componentDidMount() {
-        this.mouseDownListener = (e: MouseEvent) => {
-            // console.log('mousedown', this.props.folder.id);
-            if (e.target !== this.folderName && this.props.renameFolderWithId === this.props.folder.id) {
-                e.preventDefault();
-                this.props.confirmRenameFolder(null);
-            }
-        };
-    }
-    componentWillUpdate(nextProps: PropsType, nextState: FolderStateType) {
-        if (this.props.renameFolderWithId !== null && nextProps.renameFolderWithId === null) {
-            this.closeRenameMenu = true;
-            // console.log(this.closeRenameMenu, this.props.renameFolderWithId, nextProps.renameFolderWithId);
-        } else {
-            this.closeRenameMenu = false;
-        }
-    }
-    componentDidUpdate() {
-        if (this.props.renameFolderWithId === this.props.folder.id) {
-            if (this.folderName.value === '') {
-                this.folderName.value = this.props.folder.name;
-            }
-            this.folderName.focus();
-            this.folderName.select();
-        }
-    }
-    componentWillUnmount() {
-        document.removeEventListener('mousedown', this.mouseDownListener);
-    }
-
-    onKeyUp = (e: SyntheticEvent) => {
-        // <enter> submits new name
-        if (e.which === 13) {
-            const name = this.folderName.value;
+    constructor() {
+        super();
+        this.rename = (e: SyntheticEvent) => {
+            const name = this.inputRename.value;
             if (name !== '' && name !== this.props.folder.name) {
                 e.preventDefault();
                 this.props.renameFolder(this.props.folder.id, name);
             }
-        // <escape> cancels rename
-        } else if (e.keyCode === 27) {
+        };
+        this.cancelRename = (e: SyntheticEvent) => {
             e.preventDefault();
+            // this.props.confirmDelete(null);
             this.props.confirmRenameFolder(null);
+        };
+    }
+    state: FolderStateType
+    componentDidMount() {
+        // close confirm rename of delete pane when the user clicks somewhere outside the pane
+        // this.mouseDownListener = (e: MouseEvent) => {
+        //     if (e.target !== this.inputRename && e.target !== this.buttonRename && e.target !== this.buttonDelete) {
+        //         e.preventDefault();
+        //         this.props.confirmRenameFolder(null);
+        //         this.props.confirmDelete(null);
+        //     }
+        // };
+        // document.addEventListener('mousedown', this.mouseDownListener);
+    }
+    componentDidUpdate() {
+        if (this.props.renameFolderWithId === this.props.folder.id) {
+            // if (this.inputRename.value === '') {
+            //     this.inputRename.value = this.props.folder.name;
+            // }
+            this.inputRename.value = this.props.folder.name;
+            this.inputRename.focus();
+            this.inputRename.select();
+        }
+    }
+    componentWillUnmount() {
+        // document.removeEventListener('mousedown', this.mouseDownListener);
+    }
+    onKeyUp = (e: SyntheticEvent) => {
+        if (e.which === 13) {
+            // <enter> submits new name
+            this.rename(e);
+        } else if (e.keyCode === 27) {
+            // <escape> cancels rename
+            this.cancelRename(e);
         }
     };
-    closeRenameMenu: boolean
-    folderName: HTMLInputElement
+    buttonDelete: HTMLButtonElement
+    buttonRename: HTMLButtonElement
+    inputRename: HTMLInputElement
     props: PropsType
-    mouseDownListener: (MouseEvent) => mixed
+    mouseDownListener: (MouseEvent) => void
+    rename: (SyntheticEvent) => mixed
+    cancelRename: (SyntheticEvent) => void
 
     render(): React$Element<*> {
+        // console.log(this.props.renameFolderWithId);
         const folder = this.props.folder;
         let className = classNames('folder',
             { success: folder.is_new === true },
             { selected: this.props.hovering },
             { 'fa fa-circle-o-notch fa-spin': this.props.loadingFolderWithId === folder.id },
+            { danger: this.props.deleteFolderWithId === folder.id },
         );
-        // @TODO: spinner is never shown, instead a message 'loading' is displayed in the file browser -> is this okay?
-        // console.log(this.props.loadingFolderWithId, folder.id, this.props.loadingFolderWithId === folder.id, className);
-        let p1 = {};
-        let checkbox = null;
-        let confirmPane = null;
-        let buttonDelete = null;
-        let folderNameTD = <td className="name">{folder.name}</td>;
-        const icon = <span className="fa fa-folder" />;
-
-        if (this.props.browser === true) {
-            const clipboardFolderIds = this.props.clipboard.folderIds;
-            const selectedFolderIds = this.props.selected.folderIds;
-
-            let onClipboard = false;
-            if (clipboardFolderIds.length > 0) {
-                const index = R.find((folderId: string): boolean =>
-                    folder.id === folderId, clipboardFolderIds);
-                onClipboard = R.isNil(index) === false;
-            }
-
-            let isSelected = false;
-            if (selectedFolderIds.length > 0) {
-                const index = R.find((folderId: string): boolean =>
-                    folder.id === folderId, selectedFolderIds);
-                isSelected = R.isNil(index) === false;
-            }
-
-            if (this.props.allowEdit) {
-                checkbox = <input type="checkbox" checked={isSelected} readOnly />;
-                if (clipboardFolderIds.length + this.props.clipboard.fileIds.length > 0) {
-                    checkbox = <span className={onClipboard ? 'fa fa-thumb-tack' : ''} />;
-                    if (onClipboard) {
-                        className += ' cut';
-                    }
-                } else {
-                    p1 = {
-                        onClick: (e: SyntheticEvent) => {
-                            e.stopPropagation();
-                            if (clipboardFolderIds.length === 0) {
-                                this.props.selectFolder(folder.id);
-                            }
-                        },
-                    };
-                }
-            }
-
-            // user has clicked the delete button; show the confirm pane
-            if (this.props.deleteFolderWithId === folder.id &&
-                this.props.allowDelete === true
-            ) {
-                const confirmDelete = this.props.confirmDelete;
-                const deleteFolder = this.props.deleteFolder;
-                confirmPane = (<div className="confirm">
-                    <button
-                      type="button"
-                      className="btn btn-xs btn-primary"
-                      onClick={(e: SyntheticEvent) => {
-                          e.stopPropagation();
-                          confirmDelete(null);
-                      }}
-                    >
-                        <span className="text-label">{this.props.t('remove.cancel')}</span>
-                        <span className="fa fa-times" />
-                    </button>
-
-                    <button
-                      type="button"
-                      className="btn btn-xs btn-danger"
-                      onClick={(e: SyntheticEvent) => {
-                          e.stopPropagation();
-                          deleteFolder(folder.id);
-                      }}
-                    >
-                        <span className="text-label">{this.props.t('remove.permanently')}</span>
-                        <span className="fa fa-trash-o" />
-                    </button>
-                </div>);
-            // no delete action has started yet: show the delete button
-            } else if (
-                selectedFolderIds.length + clipboardFolderIds.length === 0 &&
-                this.props.allowDelete === true &&
-                this.props.showingRecycleBin === false
-            ) {
-                const confirmDelete = this.props.confirmDelete;
-                buttonDelete = (<button
-                  type="button"
-                  className="btn btn-xs btn-danger"
-                  onClick={(e: SyntheticEvent) => {
-                      e.stopPropagation();
-                      confirmDelete(folder.id);
-                  }}
-                >
-                    <span className="fa fa-trash-o" />
-                </button>);
-            }
-
-            if (this.props.showingRecycleBin === false) {
-                const p2 = {
-                    onClick: (e: SyntheticEvent) => {
-                        e.stopPropagation();
-                        if (this.props.renameFolderWithId !== folder.id) {
-                            this.props.confirmRenameFolder(folder.id);
-                        }
-                    },
-                };
-                const show: boolean = this.props.renameFolderWithId === folder.id;
-                folderNameTD = (<td {...p2}>
-                    <span className={`${show ? 'hide' : ''}`}>{folder.name}</span>
-                    <input
-                      className={`form-control input-sm ${show ? '' : 'hide'}`}
-                      ref={(input: HTMLInputElement) => { this.folderName = input; }}
-                      type="text"
-                      onKeyUp={this.onKeyUp}
-                    />
-                </td>);
-            }
-        }
 
         let fileCount = null;
         if (typeof folder.file_count !== 'undefined' && folder.file_count > 0) {
@@ -228,29 +121,175 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             </span>);
         }
 
+        const clipboardFolderIds = this.props.clipboard.folderIds;
+        const selectedFolderIds = this.props.selected.folderIds;
+        const hasSelectedItems = selectedFolderIds.length + clipboardFolderIds.length > 0;
+        const isDeletingFolder = this.props.deleteFolderWithId === folder.id;
+        const isRenamingFolder = this.props.renameFolderWithId === folder.id;
+
+        // console.log('hasSelectedItems', hasSelectedItems);
+        // console.log('isDeletingFolder', isDeletingFolder);
+        // console.log('isRenamingFolder', isRenamingFolder);
+
+        let onClipboard = false;
+        if (clipboardFolderIds.length > 0) {
+            const index = R.find((folderId: string): boolean =>
+                folder.id === folderId, clipboardFolderIds);
+            onClipboard = R.isNil(index) === false;
+        }
+
+        let isSelected = false;
+        if (selectedFolderIds.length > 0) {
+            const index = R.find((folderId: string): boolean =>
+                folder.id === folderId, selectedFolderIds);
+            isSelected = R.isNil(index) === false;
+        }
+
+        // click handler for folder row <tr>
         const p = {
             onClick: () => {
-                if (this.closeRenameMenu === false) {
+                if (isRenamingFolder === false) {
                     this.props.openFolder(folder.id);
-                } else {
-                    this.closeRenameMenu = false;
                 }
             },
             className,
         };
 
-        if (this.props.renameFolderWithId === folder.id) {
-            document.addEventListener('mousedown', this.mouseDownListener);
+
+        let checkboxTD;
+        if (hasSelectedItems) {
+            checkboxTD = <td><span className={onClipboard ? 'fa fa-thumb-tack' : ''} /></td>;
+            if (onClipboard) {
+                className += ' cut';
+            }
         } else {
-            document.removeEventListener('mousedown', this.mouseDownListener);
+            const p1 = {
+                onClick: (e: SyntheticEvent) => {
+                    e.stopPropagation();
+                    if (clipboardFolderIds.length === 0) {
+                        this.props.selectFolder(folder.id);
+                    }
+                },
+            };
+            checkboxTD = <td {...p1}><span><input type="checkbox" checked={isSelected} readOnly /></span></td>;
         }
+
+
+        let confirmPane = null;
+        let buttonDelete = null;
+        if (
+            this.props.allowDelete === true &&
+            this.props.showingRecycleBin === false &&
+            isRenamingFolder === false
+        ) {
+            if (isDeletingFolder === true) {
+                // user has clicked the delete button; show the confirm pane
+                const confirmDelete = this.props.confirmDelete;
+                const deleteFolder = this.props.deleteFolder;
+                confirmPane = (<div className="confirm">
+                    <button
+                        type="button"
+                        className="btn btn-xs btn-primary"
+                        onClick={(e: SyntheticEvent) => {
+                            e.stopPropagation();
+                            confirmDelete(null);
+                        }}
+                    >
+                        <span className="text-label">{this.props.t('remove.cancel')}</span>
+                        <span className="fa fa-times" />
+                    </button>
+
+                    <button
+                        type="button"
+                        ref={(button: HTMLButtonElement) => { this.buttonDelete = button; }}
+                        className="btn btn-xs btn-danger"
+                        onClick={(e: SyntheticEvent) => {
+                            e.stopPropagation();
+                            deleteFolder(folder.id);
+                        }}
+                    >
+                        <span className="text-label">{this.props.t('remove.permanently')}</span>
+                        <span className="fa fa-trash-o" />
+                    </button>
+                </div>);
+            } else if (hasSelectedItems === false) {
+                // no delete action has started yet: show the delete button
+                const confirmDelete = this.props.confirmDelete;
+                buttonDelete = (<button
+                    type="button"
+                    className="btn btn-xs btn-danger"
+                    onClick={(e: SyntheticEvent) => {
+                        e.stopPropagation();
+                        confirmDelete(folder.id);
+                    }}
+                >
+                    <span className="fa fa-trash-o" />
+                </button>);
+            }
+        }
+
+        let renameIcon = null;
+        let renamePane = null;
+        let folderNameTD = <td className="name">{folder.name}</td>;
+        if (
+            this.props.allowEdit === true &&
+            this.props.showingRecycleBin === false &&
+            isDeletingFolder === false
+        ) {
+            if (isRenamingFolder === true) {
+                renamePane = (<div className="confirm">
+                    <button
+                        type="button"
+                        className="btn btn-xs btn-primary"
+                        onClick={this.cancelRename}
+                        ref={(button: HTMLButtonElement) => { this.buttonRename = button; }}
+                    >
+                        <span className="text-label">{this.props.t('rename.cancel')}</span>
+                        <span className="fa fa-times" />
+                    </button>
+
+                    <button
+                        type="button"
+                        className="btn btn-xs btn-success"
+                        onClick={this.rename}
+                    >
+                        <span className="text-label">{this.props.t('rename.ok')}</span>
+                        <span className="fa fa-check" />
+                    </button>
+                </div >);
+            } else {
+                renameIcon = (<button
+                    type="button"
+                    className="btn btn-xs btn-primary icon-rename"
+                    onClick={(e: SyntheticEvent) => {
+                        e.stopPropagation();
+                        if (isRenamingFolder === false) {
+                            this.props.confirmRenameFolder(folder.id);
+                        }
+                    }}
+                >
+                    <span className="fa fa-1x fa-pencil-square-o" />
+                </button>);
+            }
+
+            folderNameTD = (<td>
+                <span className={`${isRenamingFolder ? 'hide' : ''}`}>{folder.name}</span>
+                <input
+                    className={`form-control input-sm ${isRenamingFolder ? '' : 'hide'}`}
+                    ref={(input: HTMLInputElement) => { this.inputRename = input; }}
+                    type="text"
+                    onKeyUp={this.onKeyUp}
+                />
+            </td>);
+        }
+
 
         return (
             <tr {...p}>
-                <td {...p1}>{checkbox}</td>
-                <td>{icon}</td>
+                {checkboxTD}
+                <td><span className="fa fa-folder" /></td>
                 {folderNameTD}
-                <td>
+                <td >
                     {folderCount}
                     {fileCount}
                 </td>
@@ -259,6 +298,8 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                     <div className="actions">
                         {buttonDelete}
                         {confirmPane}
+                        {renameIcon}
+                        {renamePane}
                     </div>
                 </td>
             </tr>

@@ -204,15 +204,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             />);
         }
 
-        const loadingList = this.props.loadingFolderWithId === null ? 'loaded' : 'loading';
-
-        let loadingMessage = null;
-        if (loadingList === 'loading') {
-            loadingMessage = <tr><td>{this.props.t('loading')}</td></tr>;
-        }
-
-        return (<tbody className={loadingList}>
-            {loadingMessage}
+        return (<tbody>
             {backToParent}
             {folders}
             {files}

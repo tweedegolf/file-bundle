@@ -65,24 +65,24 @@ const File = (props: PropsType): React$Element<*> => {
     if (props.deleteFileWithId === file.id) {
         confirmPane = (<div className="confirm">
             <button
-              type="button"
-              className="btn btn-xs btn-primary"
-              onClick={(e: SyntheticEvent) => {
-                  e.stopPropagation();
-                  props.confirmDelete(null);
-              }}
+                type="button"
+                className="btn btn-xs btn-primary"
+                onClick={(e: SyntheticEvent) => {
+                    e.stopPropagation();
+                    props.confirmDelete(null);
+                }}
             >
                 <span className="text-label">{props.t('remove.cancel')}</span>
                 <span className="fa fa-times" />
             </button>
 
             <button
-              type="button"
-              className="btn btn-xs btn-danger"
-              onClick={(e: SyntheticEvent) => {
-                  e.stopPropagation();
-                  props.deleteFile(file.id);
-              }}
+                type="button"
+                className="btn btn-xs btn-danger"
+                onClick={(e: SyntheticEvent) => {
+                    e.stopPropagation();
+                    props.deleteFile(file.id);
+                }}
             >
                 <span className="text-label">{props.t('remove.permanently')}</span>
                 <span className="fa fa-trash-o" />
@@ -94,12 +94,12 @@ const File = (props: PropsType): React$Element<*> => {
         props.showingRecycleBin === false
     ) {
         buttonDelete = (<button
-          type="button"
-          className="btn btn-xs btn-danger"
-          onClick={(e: SyntheticEvent) => {
-              e.stopPropagation();
-              props.confirmDelete(file.id);
-          }}
+            type="button"
+            className="btn btn-xs btn-danger"
+            onClick={(e: SyntheticEvent) => {
+                e.stopPropagation();
+                props.confirmDelete(file.id);
+            }}
         >
             <span className="fa fa-trash-o" />
         </button>);
@@ -109,11 +109,11 @@ const File = (props: PropsType): React$Element<*> => {
         if (props.deleteFileWithId !== file.id && props.showingRecycleBin === false) {
             buttonDownload =
                 (<a
-                  className="btn btn-xs btn-primary"
-                  title="Download"
-                  download={file.name}
-                  href={file.original}
-                  onClick={(e: SyntheticEvent): void => e.stopPropagation()}
+                    className="btn btn-xs btn-primary"
+                    title="Download"
+                    download={file.name}
+                    href={file.original}
+                    onClick={(e: SyntheticEvent): void => e.stopPropagation()}
                 >
                     <span className="fa fa-download" />
                 </a>);
@@ -123,6 +123,7 @@ const File = (props: PropsType): React$Element<*> => {
         }
         actions = (<div className="actions">
             {buttonDelete}
+            {'\ '}
             {buttonDownload}
             {confirmPane}
         </div>);

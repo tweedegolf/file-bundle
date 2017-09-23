@@ -43,7 +43,7 @@ type ActionUnionType =
     | ActionFolderRenamedType
 
     | ActionRecycleBinEmptiedType
-;
+    ;
 
 export const uiInitialState: UIStateType = {
     browser: true,
@@ -84,67 +84,69 @@ export const ui = (
 ): UIStateType => {
     switch (action.type) {
 
-    case 'INIT':
-        return {
-            ...state,
-            language: action.payload.language,
-            imagesOnly: action.payload.imagesOnly,
-            multiple: action.payload.multiple,
-            browser: action.payload.browser,
-            expanded: action.payload.expanded,
-            allowNewFolder: action.payload.allowNewFolder,
-            allowUpload: action.payload.allowUpload,
-            allowDelete: action.payload.allowDelete,
-            allowEdit: action.payload.allowEdit,
-            rootFolderId: action.payload.rootFolderId,
-            currentFolderId: action.payload.currentFolderId,
-            errors: action.payload.errors,
-            isUploadingFile: action.payload.isUploadingFile,
-            isAddingFolder: action.payload.isAddingFolder,
-            loadingFolderWithId: action.payload.loadingFolderWithId,
-            selected: action.payload.selected,
-        };
+        case 'INIT':
+            return {
+                ...state,
+                language: action.payload.language,
+                imagesOnly: action.payload.imagesOnly,
+                multiple: action.payload.multiple,
+                browser: action.payload.browser,
+                expanded: action.payload.expanded,
+                allowNewFolder: action.payload.allowNewFolder,
+                allowUpload: action.payload.allowUpload,
+                allowDelete: action.payload.allowDelete,
+                allowEdit: action.payload.allowEdit,
+                rootFolderId: action.payload.rootFolderId,
+                currentFolderId: action.payload.currentFolderId,
+                errors: action.payload.errors,
+                isUploadingFile: action.payload.isUploadingFile,
+                isAddingFolder: action.payload.isAddingFolder,
+                loadingFolderWithId: action.payload.loadingFolderWithId,
+                selected: action.payload.selected,
+            };
 
-    case 'META_DATA_RECEIVED':
-        return {
-            ...state,
-            selected: action.payload.selected,
-        };
+        case 'META_DATA_RECEIVED':
+            return {
+                ...state,
+                selected: action.payload.selected,
+            };
 
         /**
          * User has added a folder, we can show a progress indicator while we make
          * an API call to the server
          */
-    case 'ADD_FOLDER':
-        return {
-            ...state,
-            isAddingFolder: true,
-        };
+        case 'ADD_FOLDER':
+            return {
+                ...state,
+                isAddingFolder: true,
+            };
 
-    case 'CONFIRM_RENAME_FOLDER':
-        return {
-            ...state,
-            renameFolderWithId: action.payload.id,
-        };
+        case 'CONFIRM_RENAME_FOLDER':
+            return {
+                ...state,
+                renameFolderWithId: action.payload.id,
+                deleteFolderWithId: null,
+                deleteFileWithId: null,
+            };
 
-    case 'RENAME_FOLDER':
-        return {
-            ...state,
-            renamingFolderWithId: action.payload.id,
-        };
+        case 'RENAME_FOLDER':
+            return {
+                ...state,
+                renamingFolderWithId: action.payload.id,
+            };
 
-    case 'FOLDER_RENAMED':
-        return {
-            ...state,
-            renameFolderWithId: null,
-            renamingFolderWithId: null,
-        };
+        case 'FOLDER_RENAMED':
+            return {
+                ...state,
+                renameFolderWithId: null,
+                renamingFolderWithId: null,
+            };
 
-    case 'ERROR_RENAMING_FOLDER':
-        return {
-            ...state,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_RENAMING_FOLDER':
+            return {
+                ...state,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
         /**
          * Response from the server; folder has been created, we can remove the
@@ -152,22 +154,22 @@ export const ui = (
          * this is the case they will be displayed. This action is processed by the
          * tree reducer as well.
          */
-    case 'FOLDER_ADDED':
-        return {
-            ...state,
-            isAddingFolder: false,
-        };
+        case 'FOLDER_ADDED':
+            return {
+                ...state,
+                isAddingFolder: false,
+            };
 
         /**
          * Something went wrong during connection or at the server, we can remove the
          * progress indicator and show the error(s)
          */
-    case 'ERROR_ADDING_FOLDER':
-        return {
-            ...state,
-            isAddingFolder: false,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_ADDING_FOLDER':
+            return {
+                ...state,
+                isAddingFolder: false,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
         /**
          * User wants to delete a file, if the id in the payload is a number this
@@ -175,50 +177,54 @@ export const ui = (
          * confirmation popup was already showing and that the user has clicked on the
          * 'cancel' button, or has clicked anywhere outside the popup.
          */
-    case 'CONFIRM_DELETE_FILE':
-        return {
-            ...state,
-            deleteFileWithId: action.payload.id,
-        };
+        case 'CONFIRM_DELETE_FILE':
+            return {
+                ...state,
+                deleteFileWithId: action.payload.id,
+                deleteFolderWithId: null,
+                renameFolderWithId: null,
+            };
 
-    case 'CONFIRM_DELETE_FOLDER':
-        return {
-            ...state,
-            deleteFolderWithId: action.payload.id,
-        };
+        case 'CONFIRM_DELETE_FOLDER':
+            return {
+                ...state,
+                deleteFolderWithId: action.payload.id,
+                deleteFileWithId: null,
+                renameFolderWithId: null,
+            };
 
 
         /**
          * User really has confirmed to delete the file, show progress indicator during API call
          */
-    case 'DELETE_FILE':
-        return {
-            ...state,
-            deletingFileWithId: action.payload.id,
-        };
+        case 'DELETE_FILE':
+            return {
+                ...state,
+                deletingFileWithId: action.payload.id,
+            };
 
         /**
          * Response from the server: file has been deleted successfully. This action
          * is also processed by the tree reducer.
          */
-    case 'FILE_DELETED':
-        return {
-            ...state,
-            deleteFileWithId: null,
-            deletingFileWithId: null,
-        };
+        case 'FILE_DELETED':
+            return {
+                ...state,
+                deleteFileWithId: null,
+                deletingFileWithId: null,
+            };
 
         /**
          * Something went wrong, for instance the file has already been deleted by
          * another user or a network error occurred.
          */
-    case 'ERROR_DELETING_FILE':
-        return {
-            ...state,
-            deleteFileWithId: null,
-            deletingFileWithId: null,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_DELETING_FILE':
+            return {
+                ...state,
+                deleteFileWithId: null,
+                deletingFileWithId: null,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
 
         /**
@@ -226,33 +232,33 @@ export const ui = (
          * call. Note that no confirmation popup will be showed; the folder will be
          * deleted right away (if it is empty)
          */
-    case 'DELETE_FOLDER':
-        return {
-            ...state,
-            deletingFolderWithId: action.payload.id,
-        };
+        case 'DELETE_FOLDER':
+            return {
+                ...state,
+                deletingFolderWithId: action.payload.id,
+            };
 
         /**
          * Response from server: folder has been deleted successfully. This action is
          * also processed by the tree reducer.
          */
-    case 'FOLDER_DELETED':
-        return {
-            ...state,
-            deleteFolderWithId: null,
-            deletingFolderWithId: null,
-        };
+        case 'FOLDER_DELETED':
+            return {
+                ...state,
+                deleteFolderWithId: null,
+                deletingFolderWithId: null,
+            };
 
         /**
          * Something went wrong: network error, etc.
          */
-    case 'ERROR_DELETING_FOLDER':
-        return {
-            ...state,
-            deleteFolderWithId: null,
-            deletingFolderWithId: null,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_DELETING_FOLDER':
+            return {
+                ...state,
+                deleteFolderWithId: null,
+                deletingFolderWithId: null,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
 
         /**
@@ -260,70 +266,73 @@ export const ui = (
          * from the local storage and if not present or outdated we retrieve it from
          * the server. This action is also processed by the tree reducer.
          */
-    case 'OPEN_FOLDER':
-    case 'OPEN_RECYCLE_BIN':
-        return {
-            ...state,
-            loadingFolderWithId: action.payload.id,
-        };
+        case 'OPEN_FOLDER':
+        case 'OPEN_RECYCLE_BIN':
+            return {
+                ...state,
+                loadingFolderWithId: action.payload.id,
+                deleteFileWithId: null,
+                deleteFolderWithId: null,
+                renameFolderWithId: null,
+            };
 
-    case 'FOLDER_FROM_CACHE':
-        return {
-            ...state,
-            currentFolderId: action.payload.currentFolderId,
-            loadingFolderWithId: null,
-        };
+        case 'FOLDER_FROM_CACHE':
+            return {
+                ...state,
+                currentFolderId: action.payload.currentFolderId,
+                loadingFolderWithId: null,
+            };
 
-    case 'FOLDER_OPENED':
-        return {
-            ...state,
-            currentFolderId: action.payload.currentFolderId,
-            loadingFolderWithId: null,
-        };
+        case 'FOLDER_OPENED':
+            return {
+                ...state,
+                currentFolderId: action.payload.currentFolderId,
+                loadingFolderWithId: null,
+            };
 
-    case 'ERROR_OPENING_FOLDER':
-        return {
-            ...state,
-            loadingFolderWithId: null,
-            currentFolderId: action.payload.currentFolderId,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_OPENING_FOLDER':
+            return {
+                ...state,
+                loadingFolderWithId: null,
+                currentFolderId: action.payload.currentFolderId,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
-    case 'RECYCLE_BIN_FROM_CACHE':
-    case 'RECYCLE_BIN_OPENED':
-        return {
-            ...state,
-            showingRecycleBin: true,
-            loadingFolderWithId: null,
-            currentFolderId: action.payload.currentFolderId,
-            currentFolderIdTmp: action.payload.currentFolderIdTmp,
-        };
+        case 'RECYCLE_BIN_FROM_CACHE':
+        case 'RECYCLE_BIN_OPENED':
+            return {
+                ...state,
+                showingRecycleBin: true,
+                loadingFolderWithId: null,
+                currentFolderId: action.payload.currentFolderId,
+                currentFolderIdTmp: action.payload.currentFolderIdTmp,
+            };
 
-    case 'CLOSE_RECYCLE_BIN':
-        return {
-            ...state,
-            showingRecycleBin: false,
-            currentFolderId: state.currentFolderIdTmp,
-        };
+        case 'CLOSE_RECYCLE_BIN':
+            return {
+                ...state,
+                showingRecycleBin: false,
+                currentFolderId: state.currentFolderIdTmp,
+            };
 
-    case 'EMPTY_RECYCLE_BIN':
-        return {
-            ...state,
+        case 'EMPTY_RECYCLE_BIN':
+            return {
+                ...state,
                 // showingRecycleBin: false,
                 // currentFolderId: state.currentFolderIdTmp,
-        };
+            };
 
-    case 'RECYCLE_BIN_EMPTIED':
-        return {
-            ...state,
-            selected: action.payload.selected,
-        };
+        case 'RECYCLE_BIN_EMPTIED':
+            return {
+                ...state,
+                selected: action.payload.selected,
+            };
 
-    case 'ERROR_EMPTY_RECYCLE_BIN':
-        return {
-            ...state,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_EMPTY_RECYCLE_BIN':
+            return {
+                ...state,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
         //  case 'RESTORED_FROM_RECYCLE_BIN':
         //     return {
@@ -340,11 +349,11 @@ export const ui = (
          * User has selected files to upload; show progress indicator while they are
          * uploaded to the server
          */
-    case 'UPLOAD_START':
-        return {
-            ...state,
-            isUploadingFiles: true,
-        };
+        case 'UPLOAD_START':
+            return {
+                ...state,
+                isUploadingFiles: true,
+            };
 
         /**
          * Files have been uploaded successfully, we set sort to ascending and
@@ -353,25 +362,25 @@ export const ui = (
          * for instance if some of the uploaded files are too large or of an
          * unsupported file type.
          */
-    case 'UPLOAD_DONE':
-        return {
-            ...state,
-            ascending: false,
-            sort: 'create_ts',
-            scrollPosition: 0,
-            isUploadingFiles: false,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'UPLOAD_DONE':
+            return {
+                ...state,
+                ascending: false,
+                sort: 'create_ts',
+                scrollPosition: 0,
+                isUploadingFiles: false,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
         /**
          * This happens only in case of a network or server error
          */
-    case 'ERROR_UPLOADING_FILE':
-        return {
-            ...state,
-            isUploadingFiles: false,
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_UPLOADING_FILE':
+            return {
+                ...state,
+                isUploadingFiles: false,
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
         /**
          * User has clicked on one of the columns of the tool bar. If the chosen
@@ -379,89 +388,92 @@ export const ui = (
          * Otherwise a new sorting column will be set and the current sort order
          * (ascending or descending) will be left unaffected.
          */
-    case 'CHANGE_SORTING':
-        const sort = action.payload.sort;
-        let ascending = state.ascending;
-        if (state.sort === sort) {
-            ascending = !ascending;
-        }
-        return {
-            ...state,
-            ascending,
-            sort,
+        case 'CHANGE_SORTING':
+            const sort = action.payload.sort;
+            let ascending = state.ascending;
+            if (state.sort === sort) {
+                ascending = !ascending;
+            }
+            return {
+                ...state,
+                ascending,
+                sort,
                 // errors: [...state.errors, {
                 //     id: 7777,
                 //     type: 'generic',
                 //     messages: ['oh my, this is an error!'],
                 // }],
-        };
+            };
 
         /**
          * User dismisses an error message. Error messages don't disappear
          * automatically; every new error message is added to the existing error
          * messages.
          */
-    case 'DISMISS_ERROR':
-        const dismissId = action.payload.id;
-        const errors: Array<ErrorType> = state.errors.filter((error: ErrorType): boolean =>
+        case 'DISMISS_ERROR':
+            const dismissId = action.payload.id;
+            const errors: Array<ErrorType> = state.errors.filter((error: ErrorType): boolean =>
                 error.id !== dismissId);
-        return {
-            ...state,
-            errors,
-        };
+            return {
+                ...state,
+                errors,
+            };
 
         /**
          * User has clicked on a file to show its full screen preview: currently only
          * implemented for images.
          */
-    case 'SHOW_PREVIEW':
-        return {
-            ...state,
-            previewUrl: action.payload.imageUrl,
-        };
+        case 'SHOW_PREVIEW':
+            return {
+                ...state,
+                previewUrl: action.payload.imageUrl,
+                renameFolderWithId: null,
+                deleteFolderWithId: null,
+                deleteFileWithId: null,
+            };
 
         /**
          * The user can select files by using the up and down arrow keys of her
          * keyboard. We calculate the new index with 'diff' and 'max':
          */
-    case 'SET_HOVER':
-        const {
+        case 'SET_HOVER':
+            const {
             diff = 0,          // direction: -1 = down, 1 = up
                 max = state.hover, // number of items (files and folders) in the current folder
             } = action.payload;
 
-        let hover = state.hover + diff;
-        if (hover > max) {
-            hover = 0;
-        } else if (hover < 0) {
-            hover = max - 1;
-        }
+            let hover = state.hover + diff;
+            if (hover > max) {
+                hover = 0;
+            } else if (hover < 0) {
+                hover = max - 1;
+            }
 
-        return {
-            ...state,
-            hover,
-        };
+            return {
+                ...state,
+                hover,
+            };
 
         /**
          * Sometimes we need to be able to set the scroll position of the browser list
          * by code, for instance if new files have been added we want to show them on
          * top of the list and scroll the list to the top.
          */
-    case 'SET_SCROLL_POSITION':
-        return {
-            ...state,
-            scrollPosition: action.payload.scroll,
-        };
+        case 'SET_SCROLL_POSITION':
+            return {
+                ...state,
+                scrollPosition: action.payload.scroll,
+            };
 
         /**
          * In filepicker mode the user can collapse and expand the browser window. In
          * browser mode the browser is always expanded.
          */
-    case 'EXPAND_BROWSER':
-        return {
-            ...state,
-            expanded: !state.expanded,
-        };
+        case 'EXPAND_BROWSER':
+            return {
+                ...state,
+                expanded: !state.expanded,
+            };
 
         /**
          * User has clicked the checkbox of a file: if this file is not already
@@ -473,116 +485,119 @@ export const ui = (
          * @param      {boolean}  multiple  Whether it is allowed to have multiple
          *                                  files selected
          */
-    case 'SELECT_FILE':
-    case 'SELECT_FOLDER':
-        const itemId = action.payload.id;
-        const isFolder = action.type === 'SELECT_FOLDER';
+        case 'SELECT_FILE':
+        case 'SELECT_FOLDER':
+            const itemId = action.payload.id;
+            const isFolder = action.type === 'SELECT_FOLDER';
 
-        if (typeof itemId === 'undefined' || itemId === null) {
-            return state;
-        }
+            if (typeof itemId === 'undefined' || itemId === null) {
+                return state;
+            }
 
-        const itemIds: string[] = isFolder ?
+            const itemIds: string[] = isFolder ?
                 [...state.selected.folderIds] : [...state.selected.fileIds];
-        const index = itemIds.findIndex((id: string): boolean => id === itemId);
-        let fileIds = [...state.selected.fileIds];
-        let folderIds = [...state.selected.folderIds];
-        if (state.browser === false && state.multiple === false) {
-            if (index === -1) {
-                if (isFolder) {
-                    folderIds = [itemId];
+            const index = itemIds.findIndex((id: string): boolean => id === itemId);
+            let fileIds = [...state.selected.fileIds];
+            let folderIds = [...state.selected.folderIds];
+            if (state.browser === false && state.multiple === false) {
+                if (index === -1) {
+                    if (isFolder) {
+                        folderIds = [itemId];
+                    } else {
+                        fileIds = [itemId];
+                    }
+                } else if (isFolder) {
+                    folderIds = [];
                 } else {
-                    fileIds = [itemId];
+                    fileIds = [];
+                }
+            } else if (index === -1) {
+                if (isFolder) {
+                    folderIds.push(itemId);
+                } else {
+                    fileIds.push(itemId);
                 }
             } else if (isFolder) {
-                folderIds = [];
+                folderIds.splice(index, 1);
             } else {
-                fileIds = [];
+                fileIds.splice(index, 1);
             }
-        } else if (index === -1) {
-            if (isFolder) {
-                folderIds.push(itemId);
-            } else {
-                fileIds.push(itemId);
-            }
-        } else if (isFolder) {
-            folderIds.splice(index, 1);
-        } else {
-            fileIds.splice(index, 1);
-        }
 
-        return {
-            ...state,
-            selected: {
-                folderIds,
-                fileIds,
-            },
-        };
+            return {
+                ...state,
+                selected: {
+                    folderIds,
+                    fileIds,
+                },
+                renameFolderWithId: null,
+                deleteFolderWithId: null,
+                deleteFileWithId: null,
+            };
 
         /**
          * The user cuts the selected file into another folder: as you can see the
          * selected files are moved from the selected array to the clipboard array of
          * the state.
          */
-    case 'CUT_ITEMS':
-        return {
-            ...state,
-            clipboard: { ...state.selected },
-            selected: {
-                fileIds: [],
-                folderIds: [],
-            },
-        };
+        case 'CUT_ITEMS':
+            return {
+                ...state,
+                clipboard: { ...state.selected },
+                selected: {
+                    fileIds: [],
+                    folderIds: [],
+                },
+            };
 
         /**
          * The user cancels a cut action. The contents of the clipboard array is moved
          * back to the selected array.
          */
-    case 'CANCEL_MOVE_ITEMS':
-        return {
-            ...state,
-            clipboard: {
-                fileIds: [],
-                folderIds: [],
-            },
-            selected: { ...state.clipboard },
-        };
+        case 'CANCEL_MOVE_ITEMS':
+            return {
+                ...state,
+                clipboard: {
+                    fileIds: [],
+                    folderIds: [],
+                },
+                selected: { ...state.clipboard },
+            };
 
         /**
          * The paste action of the cut files yields an error. In most cases this is a
          * network or server error. The contents of the clipboard array is moved back
          * to the selected array of the state.
          */
-    case 'ERROR_MOVING_ITEMS':
-        return {
-            ...state,
-            clipboard: {
-                fileIds: [],
-                folderIds: [],
-            },
-            selected: { ...state.clipboard },
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ERROR_MOVING_ITEMS':
+            return {
+                ...state,
+                clipboard: {
+                    fileIds: [],
+                    folderIds: [],
+                },
+                selected: { ...state.clipboard },
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
         /**
          * Files are successfully moved to another folder. This action is processed by
          * the tree reducer as well.
          */
-    case 'ITEMS_MOVED':
-        return {
-            ...state,
-            clipboard: {
-                fileIds: [],
-                folderIds: [],
-            },
-            selected: {
-                fileIds: [],
-                folderIds: [],
-            },
-            errors: [...state.errors, ...action.payload.errors],
-        };
+        case 'ITEMS_MOVED':
+            return {
+                ...state,
+                clipboard: {
+                    fileIds: [],
+                    folderIds: [],
+                },
+                selected: {
+                    fileIds: [],
+                    folderIds: [],
+                },
+                errors: [...state.errors, ...action.payload.errors],
+            };
 
-    default:
-        return state;
+        default:
+            return state;
     }
 };
