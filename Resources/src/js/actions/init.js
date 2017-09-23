@@ -19,6 +19,7 @@ type PayloadInitType = {
     allowNewFolder: boolean,
     allowUpload: boolean,
     allowDelete: boolean,
+    allowDeleteFolder: boolean,
     allowEdit: boolean,
     selected: ClipboardType,
     errors: ErrorType[],
@@ -45,6 +46,7 @@ export type OptionsType = {
     allowUpload: boolean,
     allowDelete: boolean,
     allowNewFolder: boolean,
+    allowDeleteFolder: boolean,
     rootFolderId: string,
 };
 
@@ -52,30 +54,20 @@ export type OptionsType = {
 
 const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
-const defaultOptions: OptionsType = {
-    language: 'nl',
-    multiple: true,
-    selected: [],
-    imagesOnly: false,
-    allowEdit: true,
-    allowUpload: true,
-    allowDelete: false,
-    allowNewFolder: true,
-    rootFolderId: 'null',
-};
 
 const init = (options: OptionsType, browser: boolean = true) => {
-    const opts = options === null ? defaultOptions : options;
+    const opts = options;
     const {
-        language = defaultOptions.language,
-        multiple = defaultOptions.multiple,
-        selected = defaultOptions.selected,
-        imagesOnly = defaultOptions.imagesOnly,
-        allowEdit = defaultOptions.allowEdit,
-        allowUpload = defaultOptions.allowUpload,
-        allowDelete = defaultOptions.allowDelete,
-        allowNewFolder = defaultOptions.allowNewFolder,
-        rootFolderId = defaultOptions.rootFolderId,
+        language,
+        multiple,
+        selected,
+        imagesOnly,
+        allowEdit,
+        allowUpload,
+        allowDelete,
+        allowNewFolder,
+        allowDeleteFolder,
+        rootFolderId,
     } = opts;
 
     const {
@@ -130,6 +122,7 @@ const init = (options: OptionsType, browser: boolean = true) => {
             language,
             imagesOnly,
             allowNewFolder,
+            allowDeleteFolder,
             allowUpload,
             allowDelete,
             allowEdit,

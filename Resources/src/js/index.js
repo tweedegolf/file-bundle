@@ -16,10 +16,31 @@ import i18n from './util/i18n';
 import type { OptionsType } from './actions/init';
 
 const store: StoreType<StateType, GenericActionType> = getStore();
-const getOptions = (element: HTMLElement): OptionsType | null => R.cond([
-    [R.isNil, R.always(null)],
-    [R.T, (data: string): OptionsType => JSON.parse(data)],
-])(element.dataset.options);
+// const getOptions = (element: HTMLElement): OptionsType | null => R.cond([
+//     [R.isNil, R.always(null)],
+//     [R.T, (data: string): OptionsType => JSON.parse(data)],
+// ])(element.dataset.options);
+const getOptions = (element: HTMLElement): OptionsType | null => {
+    let dataset = element.dataset.options;
+    if (R.isNil(dataset)) {
+        return null;
+    }
+    dataset = JSON.parse(dataset);
+    const options = {
+        language: dataset.language || 'nl',
+        multiple: dataset.multiple || false,
+        selected: dataset.selected || [],
+        imagesOnly: dataset.imagesOnly || dataset.images_only || false,
+        allowEdit: dataset.allowEdit || dataset.allow_edit || false,
+        allowUpload: dataset.allowUpload || dataset.allow_upload || false,
+        allowDelete: dataset.allowDelete || dataset.allow_delete || false,
+        allowDeleteFolder: dataset.allowDeleteFolder || dataset.allow_delete_folder || false,
+        allowNewFolder: dataset.allowNewFolder || dataset.allow_new_folder || false,
+        rootFolderId: dataset.rootFolderId || dataset.rootfolder_id || 'null',
+    }
+    return options;
+};
+
 
 // an element with the id 'tg_file_browser' will be converted to a interactive file browser
 // note that there can only be one of these
