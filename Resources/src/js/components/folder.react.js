@@ -158,23 +158,25 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             className,
         };
 
-
+        // console.log(selectedFolderIds.length);
         let checkboxTD = <td />;
-        if (hasSelectedItems) {
-            checkboxTD = <td><span className={onClipboard ? 'fa fa-thumb-tack' : ''} /></td>;
-            if (onClipboard) {
-                className += ' cut';
+        if (this.props.browser === true) {
+            if (hasSelectedItems) {
+                checkboxTD = <td><span className={onClipboard ? 'fa fa-thumb-tack' : ''} /></td>;
+                if (onClipboard) {
+                    className += ' cut';
+                }
+            } else if (this.props.allowEdit === true) {
+                const p1 = {
+                    onClick: (e: SyntheticEvent) => {
+                        e.stopPropagation();
+                        if (clipboardFolderIds.length === 0) {
+                            this.props.selectFolder(folder.id);
+                        }
+                    },
+                };
+                checkboxTD = <td {...p1}><span><input type="checkbox" checked={isSelected} readOnly /></span></td>;
             }
-        } else if (this.props.allowEdit === true) {
-            const p1 = {
-                onClick: (e: SyntheticEvent) => {
-                    e.stopPropagation();
-                    if (clipboardFolderIds.length === 0) {
-                        this.props.selectFolder(folder.id);
-                    }
-                },
-            };
-            checkboxTD = <td {...p1}><span><input type="checkbox" checked={isSelected} readOnly /></span></td>;
         }
 
 
