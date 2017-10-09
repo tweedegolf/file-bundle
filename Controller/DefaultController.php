@@ -22,8 +22,8 @@ class DefaultController extends Controller
             'options' => [
                 'language' => $this->getParameter('locale'),
                 'allow_upload' => true,
-                'allow_delete' => true,
                 'allow_new_folder' => true,
+                'allow_delete_file' => true,
                 'allow_delete_folder' => true,
             ]
         ]);
