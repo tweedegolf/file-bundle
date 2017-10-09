@@ -46,13 +46,17 @@ class FileType extends AbstractType
     {
         $resolver->setDefaults([
             'class' => 'TGFileBundle:File',
-            'images_only' => false,
             'required' => true,
+            'root_folder_id' => null,
             'multiple' => false,
-            'allow_upload' => true,
-            'allow_delete' => true,
-            'allow_new_folder' => true,
-            'allow_delete_folder' => true,
+            'images_only' => false,
+            'allow_move' => false,
+            'allow_upload' => false,
+            'allow_new_folder' => false,
+            'allow_delete_file' => false,
+            'allow_delete_folder' => false,
+            'allow_rename_folder' => false,
+            'allow_empty_recycle_bin' => false,
         ]);
     }
 
@@ -69,15 +73,19 @@ class FileType extends AbstractType
         }
 
         $view->vars['options'] = json_encode([
-            'multiple' => $options['multiple'],
             'name' => $view->vars['full_name'],
-            'images_only' => $options['images_only'],
-            'selected' => $serializer->normalize($data),
             'language' => $this->locale,
+            'selected' => $serializer->normalize($data),
+            'root_folder_id' => $options['root_folder_id'],
+            'multiple' => $options['multiple'],
+            'images_only' => $options['images_only'],
+            'allow_move' => $options['allow_move'],
             'allow_upload' => $options['allow_upload'],
-            'allow_delete' => $options['allow_delete'],
             'allow_new_folder' => $options['allow_new_folder'],
+            'allow_delete_file' => $options['allow_delete_file'],
             'allow_delete_folder' => $options['allow_delete_folder'],
+            'allow_rename_folder' => $options['allow_rename_folder'],
+            'allow_empty_recycle_bin' => $options['allow_empty_recycle_bin'],
         ]);
     }
 
