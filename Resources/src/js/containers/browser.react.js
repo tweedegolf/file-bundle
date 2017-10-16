@@ -19,11 +19,11 @@ import Errors from '../components/errors.react';
 import getSelectedFiles from '../reducers/get_selected_files';
 import * as Actions from '../actions';
 import { RECYCLE_BIN_ID } from '../util/constants';
-import type { OptionsType } from '../actions/init';
+import type { DatasetType, PermissionsType } from '../actions/init';
 
 type PassedPropsType = {
     browser: boolean,
-    options: OptionsType,
+    dataset: DatasetType,
     t: (string) => string,
 };
 
@@ -32,11 +32,7 @@ type OtherPropsType = {
 };
 
 type PropsType = {
-    multiple: boolean,
-    imagesOnly: boolean,
-    allowUpload: boolean,
-    allowDelete: boolean,
-    allowNewFolder: boolean,
+    permissions: PermissionsType,
     scrollPosition: null | number,
     sort: string,
     previewUrl: null | string,
@@ -115,11 +111,7 @@ const mapStateToProps = (state: StateType): PropsType => {
         isUploadingFiles: state.ui.isUploadingFiles, // true or false
         scrollPosition: state.ui.scrollPosition, // null or numeric value
         errors: state.ui.errors,
-        multiple: state.ui.multiple,
-        imagesOnly: state.ui.imagesOnly,
-        allowUpload: state.ui.allowUpload,
-        allowDelete: state.ui.allowDelete,
-        allowNewFolder: state.ui.allowNewFolder,
+        permissions: state.ui.permissions,
         showingRecycleBin: state.ui.showingRecycleBin,
         currentFolderName,
     };
@@ -178,7 +170,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // Filepicker mode: the selected files can be set in the dataset of the HTML
         // element.
         if (this.props.browser === false) {
-            Actions.init(this.props.options, this.props.browser);
+            Actions.init(this.props.dataset, this.props.browser);
         }
 
         // Browser mode: by default, the browser is not expanded, therefor we have
@@ -188,7 +180,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown, false);
             Actions.expandBrowser();
-            Actions.init(this.props.options, this.props.browser);
+            Actions.init(this.props.dataset, this.props.browser);
         }
     }
 
@@ -235,10 +227,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             />, columnHeaderIds);
 
         const toolbar = (<Toolbar
-            multiple={this.props.multiple}
-            allowUpload={this.props.allowUpload}
-            allowDelete={this.props.allowDelete}
-            allowNewFolder={this.props.allowNewFolder}
+            permissions={this.props.permissions}
             selected={this.props.selected}
             clipboard={this.props.clipboard}
             currentFolderId={this.props.currentFolderId}

@@ -13,32 +13,36 @@ import R from 'ramda';
 import Browser from './containers/browser.react';
 import { getStore } from './reducers/store';
 import i18n from './util/i18n';
-import type { OptionsType } from './actions/init';
+import type { DatasetType } from './actions/init';
 
 const store: StoreType<StateType, GenericActionType> = getStore();
-// const getOptions = (element: HTMLElement): OptionsType | null => R.cond([
+// const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
 // ])(element.dataset.options);
-const getOptions = (element: HTMLElement): OptionsType | null => {
+const getDataset = (element: HTMLElement): DatasetType | null => {
     let dataset = element.dataset.options;
     if (R.isNil(dataset)) {
         return null;
     }
     dataset = JSON.parse(dataset);
-    const options = {
+    dataset = {
         language: dataset.language || 'nl',
-        multiple: dataset.multiple || false,
+        rootFolderId: dataset.rootFolderId || dataset.root_folder_id || 'null',
         selected: dataset.selected || [],
+
+        // permissions
+        multiple: dataset.multiple || false,
         imagesOnly: dataset.imagesOnly || dataset.images_only || false,
-        allowEdit: dataset.allowEdit || dataset.allow_edit || false,
+        allowMove: dataset.allowMove || dataset.allow_move || false,
         allowUpload: dataset.allowUpload || dataset.allow_upload || false,
-        allowDelete: dataset.allowDelete || dataset.allow_delete || false,
-        allowDeleteFolder: dataset.allowDeleteFolder || dataset.allow_delete_folder || false,
         allowNewFolder: dataset.allowNewFolder || dataset.allow_new_folder || false,
-        rootFolderId: dataset.rootFolderId || dataset.rootfolder_id || 'null',
+        allowDeleteFile: dataset.allowDeleteFile || dataset.allow_delete_file || false,
+        allowDeleteFolder: dataset.allowDeleteFolder || dataset.allow_delete_folder || false,
+        allowRenameFolder: dataset.allowRenameFolder || dataset.allow_rename_folder || false,
+        allowEmptyRecycleBin: dataset.allowEmptyRecycleBin || dataset.allow_empty_recycle_bin || false,
     }
-    return options;
+    return dataset;
 };
 
 
@@ -46,10 +50,10 @@ const getOptions = (element: HTMLElement): OptionsType | null => {
 // note that there can only be one of these
 const browser: HTMLElement | null = document.getElementById('tg_file_browser');
 if (browser !== null) {
-    const options = getOptions(browser);
+    const dataset = getDataset(browser);
     let language;
-    if (options !== null) {
-        language = options.language;
+    if (dataset !== null) {
+        language = dataset.language;
     }
     // language = 'nl';
     // language = 'de';
@@ -58,7 +62,7 @@ if (browser !== null) {
             <Provider store={store} >
                 <Browser
                     browser={true}
-                    options={options}
+                    dataset={dataset}
                 />
             </Provider>
         </I18nextProvider>, browser);
@@ -70,10 +74,10 @@ if (browser !== null) {
 // note there can be multiple file selectors in a single form
 const pickers: HTMLElement[] = Array.from(document.getElementsByClassName('tg_file_picker'));
 R.forEach((element: HTMLElement) => {
-    const options = getOptions(element);
+    const dataset = getDataset(element);
     let language;
-    if (options !== null) {
-        language = options.language;
+    if (dataset !== null) {
+        language = dataset.language;
     }
     // language = 'nl-NL';
     // language = 'de-DE';
@@ -82,7 +86,7 @@ R.forEach((element: HTMLElement) => {
             <Provider store={store} >
                 <Browser
                     browser={false}
-                    options={options}
+                    dataset={dataset}
                 />
             </Provider>
         </I18nextProvider>, element);

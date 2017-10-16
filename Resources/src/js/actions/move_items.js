@@ -45,12 +45,8 @@ const moveFiles = (
     const currentFolderId: string = uiState.currentFolderId;
     const currentFolder: FolderType = foldersById[currentFolderId];
 
-    // filter files and folders that have been pasted into their original folder
-    let fileIds: string[] = R.filter((id: string): boolean =>
-        (R.contains(id, tree[currentFolderId].fileIds) === false || filesById[id].is_trashed === true), uiState.clipboard.fileIds);
-
-    let folderIds: string[] = R.filter((id: string): boolean =>
-        (R.contains(id, tree[currentFolderId].folderIds) === false || foldersById[id].is_trashed === true), uiState.clipboard.folderIds);
+    let fileIds = [...uiState.clipboard.fileIds];
+    let folderIds = [...uiState.clipboard.folderIds];
 
     if (fileIds.length === 0 && folderIds.length === 0) {
         resolve({
@@ -85,21 +81,25 @@ const moveFiles = (
             fileIds = excludeIds(fileIds, errorFileIds);
             folderIds = excludeIds(folderIds, errorFolderIds);
 
+            // add the ids of the moved files to the current folder
             fileIds.forEach((id: string) => {
                 tree[currentFolderId].fileIds.push(id);
             });
+            // get the unique ids in case files are moved to their current parent
             tree[currentFolderId].fileIds = R.uniq(tree[currentFolderId].fileIds);
-
-            folderIds.forEach((id: string) => {
-                tree[currentFolderId].folderIds.push(id);
-            });
-            tree[currentFolderId].folderIds = R.uniq(tree[currentFolderId].folderIds);
 
             const collectedItemIds = {
                 fileIds: [],
                 folderIds: [],
             };
-            getItemIds(currentFolderId, collectedItemIds, tree);
+
+            // get the ids of the files and subfolders inside all folders that have been moved
+            folderIds.forEach((id: string) => {
+                tree[currentFolderId].folderIds.push(id);
+                getItemIds(id, collectedItemIds, tree);
+            });
+            // get the unique ids in case folder are moved to their current parent
+            tree[currentFolderId].folderIds = R.uniq(tree[currentFolderId].folderIds);
 
             // set is_trashed flag to false and is_new flag to true
             R.forEach((id: string) => {
@@ -110,7 +110,12 @@ const moveFiles = (
             R.forEach((id: string) => {
                 const folder = foldersById[id];
                 foldersById[id] = { ...folder, parent: currentFolderId, is_trashed: false, is_new: true };
-            }, [...folderIds, ...collectedItemIds.folderIds]);
+            }, folderIds);
+
+            R.forEach((id: string) => {
+                const folder = foldersById[id];
+                foldersById[id] = { ...folder, is_trashed: false, is_new: true };
+            }, collectedItemIds.folderIds);
 
             // update count files and folders
             currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);

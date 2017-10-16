@@ -110,6 +110,13 @@ body {
                 margin: 0px;
             }
         }
+        .recycle-bin {
+            margin-right: 0;
+            .fa {
+                margin-right: 0;
+            }
+            text-align: center;
+        }
     }
     .alert {
         transition: all 2s;
@@ -256,6 +263,7 @@ body {
                 text-overflow: ellipsis;
             }
             &:nth-child(4) {
+                text-align: right;
                 width: 80px;
             }
             &:nth-child(5) {

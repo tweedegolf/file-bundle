@@ -14,6 +14,7 @@ import Folder from '../components/folder.react';
 import ParentFolder from '../components/parent_folder.react';
 import * as Actions from '../actions';
 import currentFolderSelector from '../reducers/current_folder_selector';
+import type { PermissionsType } from '../actions/init';
 
 type PassedPropsType = {
     browser: boolean,
@@ -25,10 +26,7 @@ type PropsType = {
     folders: FolderType[],
     selected: ClipboardType,
     clipboard: ClipboardType,
-    allowEdit: boolean,
-    allowDelete: boolean,
-    allowDeleteFolder: boolean,
-    imagesOnly: boolean,
+    permissions: PermissionsType,
     ascending: boolean,
     isUploadingFiles: boolean,
     hover: null | number,
@@ -72,6 +70,7 @@ const mapStateToProps = (state: StateType): PropsType => {
 
         // ui props
         currentFolderId: state.ui.currentFolderId,
+        permissions: state.ui.permissions,
         sort: state.ui.sort,
         ascending: state.ui.ascending,
         preview: state.ui.previewUrl,
@@ -79,10 +78,6 @@ const mapStateToProps = (state: StateType): PropsType => {
         hover: state.ui.hover,
         selected: state.ui.selected,
         clipboard: state.ui.clipboard,
-        allowEdit: state.ui.allowEdit,
-        allowDelete: state.ui.allowDelete,
-        allowDeleteFolder: state.ui.allowDeleteFolder,
-        imagesOnly: state.ui.imagesOnly,
         loadingFolderWithId: state.ui.loadingFolderWithId, // null or number
         deleteFileWithId: state.ui.deleteFileWithId, // null or number
         deletingFileWithId: state.ui.deletingFileWithId, // null or number
@@ -122,7 +117,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         this.confirmRenameFolder = (folderId: string) => {
             if (this.props.isUploadingFiles === true ||
                 this.props.loadingFolderWithId !== null ||
-                this.props.allowEdit === false
+                this.props.permissions.allowRenameFolder === false
             ) {
                 return;
             }
@@ -145,7 +140,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             // hide non-images in filepicker mode when the imagesOnly option is
             // set to true and passed to the form
             if (this.props.browser === false && // filepicker mode
-                this.props.imagesOnly === true &&
+                this.props.permissions.imagesOnly === true &&
                 file.thumb === null) {          // only image file types have a thumb
                 return null;
             }
@@ -162,8 +157,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
                 deleteFileWithId={this.props.deleteFileWithId}
-                allowEdit={this.props.allowEdit}
-                allowDelete={this.props.allowDelete}
+                permissions={this.props.permissions}
                 showingRecycleBin={this.props.showingRecycleBin}
             />);
         }, this.props.files);
@@ -173,8 +167,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             hovering={this.props.hover === (i -= 1)}
             key={`folder-${folder.id === null ? 'null' : folder.id}`}
             folder={folder}
-            allowEdit={this.props.allowEdit}
-            allowDelete={this.props.allowDeleteFolder}
+            permissions={this.props.permissions}
             selectFolder={Actions.selectFolder}
             deleteFolder={Actions.deleteFolder}
             selected={this.props.selected}

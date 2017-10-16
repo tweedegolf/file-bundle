@@ -108,7 +108,7 @@ const getItemIds = (folderId: string,
 ) => {
     const folder: TreeFolderType = tree[folderId];
     if (typeof folder === 'undefined') {
-        return;
+        return
     }
     collectedItemIds.fileIds.push(...folder.fileIds);
     // collectedItemIds.files = R.uniq(collectedItemIds.files);

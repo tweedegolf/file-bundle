@@ -14,19 +14,19 @@ const mapIndexed = R.addIndex(R.map);
 type PropsType = {
     errors: ErrorType[],
     onDismiss: (id: string) => void,
-    t: (string, ?{[string]: (null | string)}) => string,
+    t: (string, ?{ [string]: string }) => string,
 };
 
 const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =>
     mapIndexed((error: ErrorType, index: number): React$Element<*> => {
         let message: string = '';
-        let interpolation: {[string]: string} = {};
+        let interpolation: { [string]: string } = {};
         if (typeof error.data !== 'undefined') {
             interpolation = error.data;
         }
 
         if (error.type === ErrorTypes.ERROR_UPLOADING_FILE) {
-            message = t('error.upload', { interpolation });
+            message = t('error.upload', interpolation);
         } else if (error.type === ErrorTypes.ERROR_DELETING_FILE) {
             if (typeof interpolation.name !== 'undefined') {
                 message = t('error.deleteFile', interpolation);
@@ -65,13 +65,13 @@ const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =
 
         return (<div key={`error_${index}`} className="alert alert-danger alert-dismissible">
             <button
-              type="button"
-              className="close"
-              onClick={() => {
-                  onDismiss(error.id);
-              }}
+                type="button"
+                className="close"
+                onClick={() => {
+                    onDismiss(error.id);
+                }}
             >
-            &times;
+                &times;
             </button>
             <span className="fa fa-bell-o" />
             {span}

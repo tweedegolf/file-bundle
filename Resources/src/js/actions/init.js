@@ -6,21 +6,47 @@ import { openFolder, openRecycleBin, getMetaData } from '../actions';
 
 // START FLOW TYPES
 
+export type DatasetType = {
+    language: string,
+    selected: FileType[],
+    rootFolderId: string,
+    multiple: boolean,
+    imagesOnly: boolean,
+    allowMove: boolean,
+    allowUpload: boolean,
+    allowNewFolder: boolean,
+    allowDeleteFile: boolean,
+    allowDeleteFolder: boolean,
+    allowRenameFolder: boolean,
+    allowEmptyRecycleBin: boolean,
+};
+
+export type PermissionsType = {
+    multiple: boolean,
+    imagesOnly: boolean,
+    allowMove: boolean,
+    allowUpload: boolean,
+    allowNewFolder: boolean,
+    allowDeleteFile: boolean,
+    allowDeleteFolder: boolean,
+    allowRenameFolder: boolean,
+    allowEmptyRecycleBin: boolean,
+};
+
+export type ActionInitType = {
+    type: 'INIT',
+    payload: PayloadInitType,
+};
+
 type PayloadInitType = {
     // ui reducer
+    permissions: PermissionsType,
     browser: boolean,
     rootFolderId: string,
     currentFolderId: string,
     selected: Array<FileType>,
     language: string,
-    multiple: boolean,
     expanded: boolean,
-    imagesOnly: boolean,
-    allowNewFolder: boolean,
-    allowUpload: boolean,
-    allowDelete: boolean,
-    allowDeleteFolder: boolean,
-    allowEdit: boolean,
     selected: ClipboardType,
     errors: ErrorType[],
     isUploadingFile: boolean,
@@ -32,43 +58,22 @@ type PayloadInitType = {
     foldersById: FoldersByIdType,
 };
 
-export type ActionInitType = {
-    type: 'INIT',
-    payload: PayloadInitType,
-};
-
-export type OptionsType = {
-    language: string,
-    multiple: boolean,
-    selected: FileType[],
-    imagesOnly: boolean,
-    allowEdit: boolean, // rename and cut & paste
-    allowUpload: boolean,
-    allowDelete: boolean,
-    allowNewFolder: boolean,
-    allowDeleteFolder: boolean,
-    rootFolderId: string,
-};
-
 // END FLOW TYPES
 
 const store: StoreType<StateType, GenericActionType> = getStore();
 const dispatch: Dispatch = store.dispatch;
 
-const init = (options: OptionsType, browser: boolean = true) => {
-    const opts = options;
+const init = (options: DatasetType, browser: boolean = true) => {
+    const permissions = { ...options };
     const {
         language,
-        multiple,
         selected,
-        imagesOnly,
-        allowEdit,
-        allowUpload,
-        allowDelete,
-        allowNewFolder,
-        allowDeleteFolder,
         rootFolderId,
-    } = opts;
+    } = permissions;
+
+    delete permissions.language;
+    delete permissions.selected;
+    delete permissions.rootFolderId;
 
     const {
         ui: uiState,
@@ -118,20 +123,14 @@ const init = (options: OptionsType, browser: boolean = true) => {
             browser,
             expanded: browser === true,
             selected: allSelected,
-            multiple,
             language,
-            imagesOnly,
-            allowNewFolder,
-            allowDeleteFolder,
-            allowUpload,
-            allowDelete,
-            allowEdit,
             rootFolderId,
             isUploadingFile: false,
             isAddingFolder: false,
             loadingFolderWithId: null,
             currentFolderId,
             errors: [],
+            permissions,
             // tree reducer
             tree: treeState.tree,
             filesById,
@@ -151,7 +150,8 @@ const init = (options: OptionsType, browser: boolean = true) => {
     }
 };
 
-export default (options: OptionsType, browser: boolean) => {
+export default (options: DatasetType, browser: boolean) => {
+    // init(options, browser);
     if (browser === true) {
         persistStore(store, {}, () => {
             init(options, browser);

@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\Serializer;
 use TweedeGolf\FileBundle\Entity\File;
 use TweedeGolf\FileBundle\Entity\Folder;
 
+
 /**
  * Class FileController.
  *
@@ -20,6 +21,21 @@ use TweedeGolf\FileBundle\Entity\Folder;
  */
 class FileController extends Controller
 {
+    /**
+    * @param Folder $folder
+    * @param Array $result
+    *
+    * @return Array
+    */
+    function getSubFolders($folder, $result) {
+        $result[] = $folder;
+        $sub_folders = $folder->getChildren();
+        foreach ($sub_folders as $sub_folder) {
+            $result = array_merge($result, $this->getSubFolders($sub_folder, []));
+        }
+        return $result;
+    }
+
     /**
      * @param Folder  $folder
      * @param Request $request
@@ -37,6 +53,8 @@ class FileController extends Controller
         $error = 'false';
         $file_errors = [];
         $folder_errors = [];
+        $all_files = [];
+        $all_folders = [];
 
         /** @var File $file */
         foreach ($files as $file) {
@@ -48,6 +66,17 @@ class FileController extends Controller
         foreach ($folders as $folder) {
             $folder->setIsTrashed(false);
             $folder->setParent($new_parent_folder);
+            $this->getSubFolders($folder, $all_folders);
+            foreach($folder->getFiles() as $file) {
+                $file->setIsTrashed(false);
+            }
+        }
+
+        foreach($all_folders as $folder) {
+            $folder->setIsTrashed(false);
+            foreach($folder->getFiles() as $file) {
+                $file->setIsTrashed(false);
+            }
         }
 
         try {

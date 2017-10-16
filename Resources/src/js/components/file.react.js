@@ -10,6 +10,7 @@
 import R from 'ramda';
 import React from 'react';
 import { translate } from 'react-i18next';
+import type { PermissionsType } from '../actions/init';
 
 const icons = {
     pdf: 'file-pdf-o',
@@ -23,8 +24,7 @@ const icons = {
 
 type PropsType = {
     file: FileType,
-    allowEdit: boolean,
-    allowDelete: boolean,
+    permissions: PermissionsType,
     confirmDelete: (id: null | string) => void,
     showPreview: (id: string) => void,
     selectFile: (fileId: string) => void,
@@ -38,8 +38,15 @@ type PropsType = {
     t: (string) => string,
 };
 
-const File = (props: PropsType): React$Element<*> => {
+const isImage = (file: FileType): boolean => {
+    return file.type === 'png' || file.type === 'jpg' || file.type === 'jpeg' || file.type === 'gif';
+}
+
+const File = (props: PropsType): null | React$Element<*> => {
     const file = props.file;
+    if (props.permissions.imagesOnly === true && isImage(file) === false) {
+        return null;
+    }
     const clipboardFileIds = props.clipboard.fileIds;
     const selectedFileIds = props.selected.fileIds;
     let onClipboard = false;
@@ -65,73 +72,70 @@ const File = (props: PropsType): React$Element<*> => {
     if (props.deleteFileWithId === file.id) {
         confirmPane = (<div className="confirm">
             <button
-                type="button"
-                className="btn btn-xs btn-primary"
-                onClick={(e: SyntheticEvent) => {
-                    e.stopPropagation();
-                    props.confirmDelete(null);
-                }}
+              type="button"
+              className="btn btn-xs btn-primary"
+              onClick={
+                    (e: SyntheticEvent) => {
+                        e.stopPropagation();
+                        props.confirmDelete(null);
+                    }}
             >
                 <span className="text-label">{props.t('remove.cancel')}</span>
                 <span className="fa fa-times" />
             </button>
             &nbsp;
             <button
-                type="button"
-                className="btn btn-xs btn-danger"
-                onClick={(e: SyntheticEvent) => {
-                    e.stopPropagation();
-                    props.deleteFile(file.id);
-                }}
+              type="button"
+              className="btn btn-xs btn-danger"
+              onClick={
+                    (e: SyntheticEvent) => {
+                        e.stopPropagation();
+                        props.deleteFile(file.id);
+                    }}
             >
                 <span className="text-label">{props.t('remove.permanently')}</span>
                 <span className="fa fa-trash-o" />
             </button>
         </div>);
-    } else if (
-        selectedFileIds.length + clipboardFileIds.length === 0 &&
-        props.allowDelete === true &&
-        props.showingRecycleBin === false
-    ) {
-        buttonDelete = (<button
-            type="button"
-            className="btn btn-xs btn-danger"
-            onClick={(e: SyntheticEvent) => {
-                e.stopPropagation();
-                props.confirmDelete(file.id);
-            }}
-        >
-            <span className="fa fa-trash-o" />
-        </button>);
+    } else if (props.showingRecycleBin === false) {
+        if (isSelected === false) {
+            if (props.permissions.allowDeleteFile === true) {
+                buttonDelete = (<button
+                  type="button"
+                  className="btn btn-xs btn-danger"
+                  onClick={
+                        (e: SyntheticEvent) => {
+                            e.stopPropagation();
+                            props.confirmDelete(file.id);
+                        }}
+                >
+                    <span className="fa fa-trash-o" />
+                </button>);
+            }
+            buttonDownload = (<a
+              className="btn btn-xs btn-primary"
+              title="Download"
+              download={file.name}
+              href={file.original}
+              onClick={(e: SyntheticEvent): void => e.stopPropagation()}
+            >
+                <span className="fa fa-download" />
+            </a>);
+        }
     }
 
-    if (props.browser === true) {
-        if (props.deleteFileWithId !== file.id && props.showingRecycleBin === false) {
-            buttonDownload =
-                (<a
-                    className="btn btn-xs btn-primary"
-                    title="Download"
-                    download={file.name}
-                    href={file.original}
-                    onClick={(e: SyntheticEvent): void => e.stopPropagation()}
-                >
-                    <span className="fa fa-download" />
-                </a>);
-        }
-        if (props.allowEdit) {
-            checkbox = <input type="checkbox" checked={isSelected} readOnly />;
-        }
-        const separator = buttonDelete !== null && buttonDownload !== null ? '\ ' : null;
-        actions = (<div className="actions">
-            {buttonDelete}
-            {separator}
-            {buttonDownload}
-            {confirmPane}
-        </div>);
-    } else {
+    if (props.permissions.allowMove === true || props.browser === false) {
         checkbox = <span className={isSelected ? 'fa fa-check-square-o' : 'fa fa-square-o'} />;
         className = isSelected ? 'selected' : 'selectable';
     }
+
+    const separator = buttonDelete !== null && buttonDownload !== null ? '\ ' : null;
+    actions = (<div className="actions">
+        {buttonDelete}
+        {separator}
+        {buttonDownload}
+        {confirmPane}
+    </div>);
 
     if (clipboardFileIds.length + props.clipboard.folderIds.length > 0) {
         checkbox = <span className={onClipboard ? 'fa fa-thumb-tack' : ''} />;

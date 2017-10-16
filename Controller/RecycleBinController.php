@@ -21,8 +21,7 @@ class RecycleBinController extends Controller
 {
     /**
     * @param Folder $folder
-    * @param Manager $manager
-    * @param Array $errors
+    * @param Array $result
     *
     * @return Array
     */

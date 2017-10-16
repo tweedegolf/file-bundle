@@ -70,12 +70,17 @@ export const uiInitialState: UIStateType = {
     clipboard: { fileIds: [], folderIds: [] },
     multiple: true,
     language: 'en-GB',
-    imagesOnly: false,
-    allowNewFolder: false,
-    allowDeleteFolder: false,
-    allowUpload: false,
-    allowDelete: false,
-    allowEdit: false,
+    permissions: {
+        multiple: false,
+        imagesOnly: false,
+        allowMove: false,
+        allowUpload: false,
+        allowNewFolder: false,
+        allowDeleteFile: false,
+        allowDeleteFolder: false,
+        allowRenameFolder: false,
+        allowEmptyRecycleBin: false,
+    },
     showingRecycleBin: false,
 };
 
@@ -89,15 +94,8 @@ export const ui = (
             return {
                 ...state,
                 language: action.payload.language,
-                imagesOnly: action.payload.imagesOnly,
-                multiple: action.payload.multiple,
                 browser: action.payload.browser,
                 expanded: action.payload.expanded,
-                allowNewFolder: action.payload.allowNewFolder,
-                allowUpload: action.payload.allowUpload,
-                allowDelete: action.payload.allowDelete,
-                allowDeleteFolder: action.payload.allowDeleteFolder,
-                allowEdit: action.payload.allowEdit,
                 rootFolderId: action.payload.rootFolderId,
                 currentFolderId: action.payload.currentFolderId,
                 errors: action.payload.errors,
@@ -105,6 +103,7 @@ export const ui = (
                 isAddingFolder: action.payload.isAddingFolder,
                 loadingFolderWithId: action.payload.loadingFolderWithId,
                 selected: action.payload.selected,
+                permissions: action.payload.permissions,
             };
 
         case 'META_DATA_RECEIVED':
