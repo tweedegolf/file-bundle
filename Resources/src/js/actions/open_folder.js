@@ -53,10 +53,11 @@ export type ActionErrorOpenFolderType = {
 
 
 const DELAY: number = 0; // 100
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
 
-const optimisticUpdate = (folderId: string): boolean => {
+const optimisticUpdate = (
+    store: StoreType<StateType, GenericActionType>,
+    folderId: string
+): boolean => {
     const treeState: TreeStateType = store.getState().tree;
     if (typeof treeState.foldersById[folderId] === 'undefined') {
         // folder has not yet been opened before
@@ -68,11 +69,12 @@ const optimisticUpdate = (folderId: string): boolean => {
             currentFolderId: folderId,
         },
     };
-    dispatch(a);
+    store.dispatch(a);
     return true;
 };
 
 const openFolder = (
+    store: StoreType<StateType, GenericActionType>,
     folderId: string,
     resolve: (PayloadFolderOpenedType) => mixed,
     reject: (PayloadErrorOpenFolderType) => mixed,
@@ -135,6 +137,8 @@ const openFolder = (
 };
 
 export default (data: { id: string, forceLoad?: boolean }) => {
+    const store: StoreType<StateType, GenericActionType> = getStore();
+    const dispatch: DispatchType = store.dispatch;
     const { id, forceLoad = false } = data;
     let delay = 0;
     dispatch({
@@ -142,7 +146,7 @@ export default (data: { id: string, forceLoad?: boolean }) => {
         payload: { id },
     });
     if (forceLoad === false) {
-        const fromCache = optimisticUpdate(id);
+        const fromCache = optimisticUpdate(store, id);
         if (fromCache) {
             delay = DELAY;
         }
@@ -154,6 +158,7 @@ export default (data: { id: string, forceLoad?: boolean }) => {
             payload: { id },
         });
         openFolder(
+            store,
             id,
             (payload: PayloadFolderOpenedType) => {
                 dispatch({

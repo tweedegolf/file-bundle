@@ -27,10 +27,7 @@ export type ActionFolderAddedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
-const addFolder = (folderName: string,
+const addFolder = (store: StoreType<StateType, GenericActionType>, folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
@@ -74,12 +71,15 @@ const addFolder = (folderName: string,
 };
 
 export default (folderName: string) => {
+    const store: StoreType<StateType, GenericActionType> = getStore();
+    const dispatch: DispatchType = store.dispatch;
     const a: ActionAddFolderType = {
         type: ADD_FOLDER,
     };
     dispatch(a);
 
     addFolder(
+        store,
         folderName,
         (payload: PayloadFolderAddedType) => {
             const a1: ActionFolderAddedType = {

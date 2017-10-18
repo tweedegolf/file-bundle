@@ -11,11 +11,10 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import R from 'ramda';
 import Browser from './containers/browser.react';
-import { getStore } from './reducers/store';
+import { getNewStore } from './reducers/store';
 import i18n from './util/i18n';
 import type { DatasetType } from './actions/init';
 
-const store: StoreType<StateType, GenericActionType> = getStore();
 // const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
@@ -59,10 +58,10 @@ if (browser !== null) {
     // language = 'de';
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={store} >
+            <Provider store={getNewStore()} >
                 <Browser
-                    browser={true}
-                    dataset={dataset}
+                  browser={true}
+                  dataset={dataset}
                 />
             </Provider>
         </I18nextProvider>, browser);
@@ -83,10 +82,10 @@ R.forEach((element: HTMLElement) => {
     // language = 'de-DE';
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={store} >
+            <Provider store={getNewStore()} >
                 <Browser
-                    browser={false}
-                    dataset={dataset}
+                  browser={false}
+                  dataset={dataset}
                 />
             </Provider>
         </I18nextProvider>, element);

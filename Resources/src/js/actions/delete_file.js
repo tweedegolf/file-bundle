@@ -33,10 +33,9 @@ export type ActionFileDeletedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
-const deleteFile = (fileId: string,
+const deleteFile = (
+    store: StoreType<StateType, GenericActionType>,
+    fileId: string,
     resolve: (payload: PayloadFileDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
@@ -93,6 +92,8 @@ const deleteFile = (fileId: string,
 };
 
 export default (fileId: string) => {
+    const store: StoreType<StateType, GenericActionType> = getStore();
+    const dispatch: DispatchType = store.dispatch;
     const a: ActionDeleteFileType = {
         type: DELETE_FILE,
         payload: { id: fileId },
@@ -100,6 +101,7 @@ export default (fileId: string) => {
     dispatch(a);
 
     deleteFile(
+        store,
         fileId,
         (payload: PayloadFileDeletedType) => {
             const a1: ActionFileDeletedType = {

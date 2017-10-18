@@ -10,9 +10,6 @@ import {
 } from '../util/constants';
 import { createError } from '../util/util';
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
 // START FLOW TYPES
 
 type PayloadEmptyRecycleBinType = {
@@ -37,6 +34,7 @@ export type ActionRecycleBinEmptiedType = {
 // @TODO: clear selected files and folders that were in the recycle bin!
 
 const emptyRecycleBin = (
+    store: StoreType<StateType, GenericActionType>,
     resolve: (payload: PayloadEmptyRecycleBinType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
@@ -111,12 +109,15 @@ const emptyRecycleBin = (
 };
 
 export default () => {
+    const store: StoreType<StateType, GenericActionType> = getStore();
+    const dispatch: DispatchType = store.dispatch;
     const a: ActionEmptyRecycleBinType = {
         type: EMPTY_RECYCLE_BIN,
     };
     dispatch(a);
 
     emptyRecycleBin(
+        store,
         (payload: PayloadEmptyRecycleBinType) => {
             const a1: ActionRecycleBinEmptiedType = {
                 type: RECYCLE_BIN_EMPTIED,

@@ -16,24 +16,22 @@ const combinedReducers: CombinedReducer<StateType, GenericActionType> = combineR
 // create dummy store to prevent a null value, use the boolean initialized instead of a null check
 // to see if a store has already been created (singleton-ish)
 let store: StoreType<StateType, GenericActionType> = createStore(combinedReducers, initialState);
-let initialized: boolean = false;
 
-export const getNewStore = (): StoreType<StateType, GenericActionType> => createStore(
-  combinedReducers,
-  initialState,
-  compose(
-    autoRehydrate(),
-    applyMiddleware(
-      // thunkMiddleware,
-      createLogger({ collapsed: true }),
-    ),
-  ),
-);
+export const getNewStore = (): StoreType<StateType, GenericActionType> => {
+    store = createStore(
+        combinedReducers,
+        initialState,
+        compose(
+            autoRehydrate(),
+            applyMiddleware(
+                // thunkMiddleware,
+                createLogger({ collapsed: true }),
+            ),
+        ),
+    );
+    return store;
+}
 
 export function getStore(): StoreType<StateType, GenericActionType> {
-    if (initialized === false) {
-        initialized = true;
-        store = getNewStore();
-    }
     return store;
 }

@@ -60,10 +60,11 @@ type PayloadInitType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: Dispatch = store.dispatch;
-
-const init = (options: DatasetType, browser: boolean = true) => {
+const init = (
+    store: StoreType<StateType, GenericActionType>,
+    options: DatasetType,
+    browser: boolean = true
+) => {
     const permissions = { ...options };
     const {
         language,
@@ -137,7 +138,7 @@ const init = (options: DatasetType, browser: boolean = true) => {
             foldersById,
         },
     };
-    dispatch(action);
+    store.dispatch(action);
 
     if (currentFolderId === RECYCLE_BIN_ID) {
         openRecycleBin();
@@ -152,11 +153,12 @@ const init = (options: DatasetType, browser: boolean = true) => {
 
 export default (options: DatasetType, browser: boolean) => {
     // init(options, browser);
+    const store: StoreType<StateType, GenericActionType> = getStore();
     if (browser === true) {
         persistStore(store, {}, () => {
-            init(options, browser);
+            init(store, options, browser);
         });
     } else {
-        init(options, browser);
+        init(store, options, browser);
     }
 };

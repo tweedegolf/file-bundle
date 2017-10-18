@@ -46,9 +46,8 @@ export type ActionWithPayloadIdType = {
 
 // END FLOW TYPES
 
-const dispatch: Dispatch = getStore().dispatch;
-
 export const selectFile = (id: string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     const a: ActionWithPayloadIdType = {
         type: 'SELECT_FILE',
         payload: { id },
@@ -57,6 +56,7 @@ export const selectFile = (id: string) => {
 };
 
 export const selectFolder = (id: string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     const a: ActionWithPayloadIdType = {
         type: 'SELECT_FOLDER',
         payload: { id },
@@ -68,6 +68,7 @@ export const selectFolder = (id: string) => {
  * Cut files, i.e. move the currently selected files to the clipboard
  */
 export const cutFiles = () => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'CUT_ITEMS',
     });
@@ -77,6 +78,7 @@ export const cutFiles = () => {
  * Move files in clipboard array back to the selected array
  */
 export const cancelMoveItems = () => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'CANCEL_MOVE_ITEMS',
     });
@@ -90,6 +92,7 @@ export const cancelMoveItems = () => {
  *                               be reversed.
  */
 export const changeSorting = (sort: string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'CHANGE_SORTING',
         payload: { sort },
@@ -103,6 +106,7 @@ export const changeSorting = (sort: string) => {
  * @param      {number}  error_id  The unique identifier of the error.
  */
 export const dismissError = (id: string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     const a: ActionWithPayloadIdType = {
         type: 'DISMISS_ERROR',
         payload: { id },
@@ -117,6 +121,7 @@ export const dismissError = (id: string) => {
  * @param      {string}  image_url  The url of the full size image.
  */
 export const showPreview = (imageUrl: null | string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'SHOW_PREVIEW',
         payload: { imageUrl },
@@ -132,6 +137,7 @@ export const showPreview = (imageUrl: null | string) => {
  *                               confirmation
  */
 export const confirmDeleteFile = (id: null | string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'CONFIRM_DELETE_FILE',
         payload: { id },
@@ -139,6 +145,7 @@ export const confirmDeleteFile = (id: null | string) => {
 };
 
 export const confirmDeleteFolder = (id: null | string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'CONFIRM_DELETE_FOLDER',
         payload: { id },
@@ -146,6 +153,7 @@ export const confirmDeleteFolder = (id: null | string) => {
 };
 
 export const confirmRenameFolder = (id: null | string) => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'CONFIRM_RENAME_FOLDER',
         payload: { id },
@@ -168,6 +176,7 @@ export const confirmRenameFolder = (id: null | string) => {
  *                               first item in the list being selected.
  */
 export const setHover = (diff: number, max: number) => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'SET_HOVER',
         payload: { diff, max },
@@ -182,6 +191,7 @@ export const setHover = (diff: number, max: number) => {
  *                               from the top.
  */
 export const setScrollPosition = (scroll: null | number) => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'SET_SCROLL_POSITION',
         payload: { scroll },
@@ -194,6 +204,7 @@ export const setScrollPosition = (scroll: null | number) => {
  * In Browser mode the browser is always expanded.
  */
 export const expandBrowser = () => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'EXPAND_BROWSER',
     });
@@ -201,6 +212,7 @@ export const expandBrowser = () => {
 
 
 export const closeRecycleBin = () => {
+    const dispatch: Dispatch = getStore().dispatch;
     dispatch({
         type: 'CLOSE_RECYCLE_BIN',
     });

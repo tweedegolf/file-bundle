@@ -27,10 +27,8 @@ export type ActionItemsMovedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
 const moveFiles = (
+    store: StoreType<StateType, GenericActionType>,
     resolve: (payload: PayloadItemsMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
@@ -151,7 +149,10 @@ const moveFiles = (
 
 export default () => {
     // dispatch ui state action here?
+    const store: StoreType<StateType, GenericActionType> = getStore();
+    const dispatch: DispatchType = store.dispatch;
     moveFiles(
+        store,
         (payload: PayloadItemsMovedType) => {
             dispatch({
                 type: Constants.ITEMS_MOVED,

@@ -40,10 +40,9 @@ export type ActionFolderDeletedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
-const deleteFolder = (folderId: string,
+const deleteFolder = (
+    store: StoreType<StateType, GenericActionType>,
+    folderId: string,
     resolve: (payload: PayloadFolderDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
@@ -58,7 +57,7 @@ const deleteFolder = (folderId: string,
     const folder = foldersById[folderId];
     const {
          files: filesInRecycleBin,
-         folders: foldersInRecycleBin,
+        folders: foldersInRecycleBin,
     } = { ...treeState[RECYCLE_BIN_ID] };
 
     api.deleteFolder(
@@ -121,6 +120,8 @@ const deleteFolder = (folderId: string,
 };
 
 export default (folderId: string) => {
+    const store: StoreType<StateType, GenericActionType> = getStore();
+    const dispatch: DispatchType = store.dispatch;
     const a: ActionDeleteFolderType = {
         type: DELETE_FOLDER,
         payload: { id: folderId },
@@ -128,6 +129,7 @@ export default (folderId: string) => {
     dispatch(a);
 
     deleteFolder(
+        store,
         folderId,
         (payload: PayloadFolderDeletedType) => {
             const a1: ActionFolderDeletedType = {

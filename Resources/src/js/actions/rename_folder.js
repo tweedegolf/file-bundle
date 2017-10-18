@@ -36,10 +36,9 @@ export type ActionFolderRenamedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
-const renameFolder = (folderId: string,
+const renameFolder = (
+    store: StoreType<StateType, GenericActionType>,
+    folderId: string,
     newName: string,
     resolve: (payload: PayloadFolderRenamedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -61,13 +60,7 @@ const renameFolder = (folderId: string,
                 return;
             }
             foldersById[folderId] = { ...foldersById[folderId], name: newName };
-            const a: ActionFolderRenamedType = {
-                type: FOLDER_RENAMED,
-                payload: {
-                    foldersById,
-                },
-            };
-            dispatch(a);
+            resolve({ foldersById });
         },
         (errorMessages: string[]) => {
             const err = createError(ERROR_RENAMING_FOLDER, errorMessages, { folder: folderId, name: newName });
@@ -79,6 +72,8 @@ const renameFolder = (folderId: string,
 };
 
 export default (folderId: string, newName: string) => {
+    const store: StoreType<StateType, GenericActionType> = getStore();
+    const dispatch: DispatchType = store.dispatch;
     const a: ActionRenameFolderType = {
         type: RENAME_FOLDER,
         payload: { id: folderId },
@@ -86,6 +81,7 @@ export default (folderId: string, newName: string) => {
     dispatch(a);
 
     renameFolder(
+        store,
         folderId,
         newName,
         (payload: PayloadFolderRenamedType) => {
