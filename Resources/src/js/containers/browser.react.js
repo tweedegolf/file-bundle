@@ -4,10 +4,10 @@
  *             application are child of this component, as such, it ties
  *             together the application.
  */
+import R from 'ramda';
 import React from 'react';
 import { connect } from 'react-redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
-import R from 'ramda';
 import classNames from 'classnames';
 import { translate } from 'react-i18next';
 import List from '../containers/list.react';
@@ -24,6 +24,7 @@ import type { DatasetType, PermissionsType } from '../actions/init';
 type PassedPropsType = {
     browser: boolean,
     dataset: DatasetType,
+    storeId: string,
     t: (string) => string,
 };
 
@@ -135,9 +136,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         this.onKeyDown = (event: Event) => {
             event.stopPropagation();
             if (event.keyCode === 38) {
-                Actions.setHover(+1, this.props.numItemsInCurrentFolder);
+                Actions.setHover(this.props.storeId, +1, this.props.numItemsInCurrentFolder);
             } else if (event.keyCode === 40) {
-                Actions.setHover(-1, this.props.numItemsInCurrentFolder);
+                Actions.setHover(this.props.storeId, -1, this.props.numItemsInCurrentFolder);
             }
         };
 
@@ -149,16 +150,16 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // Phantomjs' page object does not recognize SyntheticEvent nor DataTransfer, so this
             // flow error can not be fixed
             if (typeof DataTransfer === 'undefined') {
-                Actions.uploadFiles(event.target.files);
+                Actions.uploadFiles(this.props.storeId, event.target.files);
                 return;
             }
 
             if (event instanceof DataTransfer) {
-                Actions.uploadFiles(event.files);
+                Actions.uploadFiles(this.props.storeId, event.files);
             } else {
                 const target = event.target;
                 if (target instanceof HTMLInputElement) {
-                    Actions.uploadFiles(Array.from(target.files));
+                    Actions.uploadFiles(this.props.storeId, Array.from(target.files));
                 }
             }
         };
@@ -170,7 +171,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // Filepicker mode: the selected files can be set in the dataset of the HTML
         // element.
         if (this.props.browser === false) {
-            Actions.init(this.props.dataset, this.props.browser);
+            Actions.init(this.props.storeId, this.props.dataset, this.props.browser);
         }
 
         // Browser mode: by default, the browser is not expanded, therefor we have
@@ -179,8 +180,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // The keydown listener listens for arrow up and down keys allowing the
             // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown, false);
-            Actions.expandBrowser();
-            Actions.init(this.props.dataset, this.props.browser);
+            Actions.expandBrowser(this.props.storeId);
+            Actions.init(this.props.storeId, this.props.dataset, this.props.browser);
         }
     }
 
@@ -194,7 +195,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // visible area if needed.
         if (this.props.scrollPosition !== null) {
             this.containerRef.scrollTop = this.props.scrollPosition;
-            Actions.setScrollPosition(null);
+            Actions.setScrollPosition(this.props.storeId, null);
         }
     }
 
@@ -216,58 +217,61 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // if (typeof this.props.currentFolderId === 'undefined') {
         //     return <div>initializing...</div>;
         // }
-
         const headers = R.map((columnId: string): SortHeader =>
             <SortHeader
-                key={columnId}
-                sortBy={Actions.changeSorting}
-                sort={this.props.sort}
-                ascending={this.props.ascending}
-                columnId={columnId}
+              key={columnId}
+              sortBy={R.curry(Actions.changeSorting)(this.props.storeId)}
+              sort={this.props.sort}
+              ascending={this.props.ascending}
+              columnId={columnId}
             />, columnHeaderIds);
 
         const toolbar = (<Toolbar
-            permissions={this.props.permissions}
-            selected={this.props.selected}
-            clipboard={this.props.clipboard}
-            currentFolderId={this.props.currentFolderId}
-            isAddingFolder={this.props.isAddingFolder}
-            browser={this.props.browser}
-            openFolder={Actions.openFolder}
-            onCut={Actions.cutFiles}
-            onPaste={Actions.moveItems}
-            onCancel={Actions.cancelMoveItems}
-            uploadFiles={this.uploadFiles}
-            onAddFolder={Actions.addFolder}
-            showRecycleBin={Actions.openRecycleBin}
-            hideRecycleBin={Actions.closeRecycleBin}
-            emptyRecycleBin={Actions.emptyRecycleBin}
-            isUploadingFiles={this.props.isUploadingFiles}
-            loadingFolderWithId={this.props.loadingFolderWithId}
-            showingRecycleBin={this.props.showingRecycleBin}
-            currentFolderName={this.props.currentFolderName}
+          permissions={this.props.permissions}
+          selected={this.props.selected}
+          clipboard={this.props.clipboard}
+          currentFolderId={this.props.currentFolderId}
+          isAddingFolder={this.props.isAddingFolder}
+          browser={this.props.browser}
+          openFolder={R.curry(Actions.openFolder)(this.props.storeId)}
+          onCut={() => { Actions.cutFiles(this.props.storeId); }}
+          onPaste={() => { Actions.moveItems(this.props.storeId); }}
+          onCancel={() => { Actions.cancelMoveItems(this.props.storeId); }}
+          uploadFiles={this.uploadFiles}
+          onAddFolder={R.curry(Actions.addFolder)(this.props.storeId)}
+          showRecycleBin={() => { Actions.openRecycleBin(this.props.storeId); }}
+          hideRecycleBin={() => { Actions.closeRecycleBin(this.props.storeId); }}
+          emptyRecycleBin={() => { Actions.emptyRecycleBin(this.props.storeId); }}
+          isUploadingFiles={this.props.isUploadingFiles}
+          loadingFolderWithId={this.props.loadingFolderWithId}
+          showingRecycleBin={this.props.showingRecycleBin}
+          currentFolderName={this.props.currentFolderName}
         />);
+
 
         let selected = null;
         if (this.props.browser === false) {
             // selected files for filepicker mode
             selected = (<SelectedFiles
-                selectedFiles={this.props.selectedFiles}
-                selectFile={Actions.selectFile}
-                showPreview={Actions.showPreview}
+              selectedFiles={this.props.selectedFiles}
+              selectFile={R.curry(Actions.selectFile)(this.props.storeId)}
+              showPreview={R.curry(Actions.showPreview)(this.props.storeId)}
             />);
         }
 
-        const preview = <Preview url={this.props.previewUrl} />;
+        const preview = <Preview
+          url={this.props.previewUrl}
+          showPreview={R.curry(Actions.showPreview)(this.props.storeId)}
+        />;
 
         if (this.props.expanded === false) {
             return (<div>
                 {selected}
                 {preview}
                 <button
-                    type="button"
-                    className="btn btn-default expand-button"
-                    onClick={Actions.expandBrowser}
+                  type="button"
+                  className="btn btn-default expand-button"
+                  onClick={() => { Actions.expandBrowser(this.props.storeId); }}
                 >
                     {this.props.t('browse')}
                     <span className="fa fa-folder-open-o" />
@@ -278,9 +282,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         let buttonExpand = null;
         if (this.props.browser === false) {
             buttonExpand = (<button
-                type="button"
-                className="btn btn-default btn-xs collapse-button"
-                onClick={Actions.expandBrowser}
+              type="button"
+              className="btn btn-default btn-xs collapse-button"
+              onClick={() => { Actions.expandBrowser(this.props.storeId); }}
             >
                 <span className="fa fa-chevron-up" />
             </button>);
@@ -298,8 +302,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                     <FileDragAndDrop onDrop={this.uploadFiles}>
                         {toolbar}
                         <Errors
-                            errors={this.props.errors}
-                            onDismiss={Actions.dismissError}
+                          errors={this.props.errors}
+                          onDismiss={R.curry(Actions.dismissError)(this.props.storeId)}
                         />
                         <div ref={(div: HTMLElement) => { this.containerRef = div; }} className="table-container">
                             <table className="table table-condensed">
@@ -312,8 +316,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                     </tr>
                                 </thead>
                                 <List
-                                    // deleteFile={R.curry(deleteFile)(this.props.currentFolder.id)}
-                                    browser={this.props.browser}
+                                  storeId={this.props.storeId}
+                                  browser={this.props.browser}
                                 />
                             </table>
                         </div>

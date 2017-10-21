@@ -20,6 +20,7 @@ const getColumnHeader = (columnId: string, t: (string) => string): string =>
     t(`columns.${columns[columnId]}`);
 
 type PropsType = {
+    storeId: string,
     columnId: string,
     sort: string,
     ascending: boolean,

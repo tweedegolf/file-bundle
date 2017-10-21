@@ -136,10 +136,10 @@ const openFolder = (
     );
 };
 
-export default (data: { id: string, forceLoad?: boolean }) => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+
+export default (storeId: string, id: string, forceLoad: boolean = false) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
-    const { id, forceLoad = false } = data;
     let delay = 0;
     dispatch({
         type: OPEN_FOLDER,

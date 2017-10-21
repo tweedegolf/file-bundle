@@ -70,8 +70,8 @@ const addFolder = (store: StoreType<StateType, GenericActionType>, folderName: s
     );
 };
 
-export default (folderName: string) => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+export default (storeId: string, folderName: string) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     const a: ActionAddFolderType = {
         type: ADD_FOLDER,

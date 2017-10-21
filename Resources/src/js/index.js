@@ -15,6 +15,7 @@ import { getNewStore } from './reducers/store';
 import i18n from './util/i18n';
 import type { DatasetType } from './actions/init';
 
+let index = 0;
 // const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
@@ -54,20 +55,18 @@ if (browser !== null) {
     if (dataset !== null) {
         language = dataset.language;
     }
-    // language = 'nl';
-    // language = 'de';
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={getNewStore()} >
+            <Provider store={getNewStore('browser')} >
                 <Browser
                   browser={true}
                   dataset={dataset}
+                  storeId={'browser'}
                 />
             </Provider>
         </I18nextProvider>, browser);
     });
 }
-
 
 // an element with the class 'tg_file_picker' will be converted to a file selector
 // note there can be multiple file selectors in a single form
@@ -78,16 +77,16 @@ R.forEach((element: HTMLElement) => {
     if (dataset !== null) {
         language = dataset.language;
     }
-    // language = 'nl-NL';
-    // language = 'de-DE';
+    const storeId = `filepicker_${index += 1}`;
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={getNewStore()} >
+            <Provider store={getNewStore(storeId)} >
                 <Browser
                   browser={false}
                   dataset={dataset}
+                  storeId={storeId}
                 />
             </Provider>
-        </I18nextProvider>, element);
+        </I18nextProvider >, element);
     });
 }, pickers);

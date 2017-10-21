@@ -13,10 +13,11 @@ import { createError, getFileCount } from '../util/util';
 // START FLOW TYPES
 
 export type PayloadFileDeletedType = {
-    tree: TreeType,
     recycleBin: RecycleBinType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
+    selectedFileIds: string[],
+    clipboardFileIds: string[],
 };
 
 export type ActionDeleteFileType = {
@@ -46,8 +47,10 @@ const deleteFile = (
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
-    const tree: TreeType = R.clone(treeState.tree);
     let recycleBin = { ...treeState[RECYCLE_BIN_ID] };
+
+    const selectedFileIds = uiState.selected.fileIds;
+    const clipboardFileIds = uiState.clipboard.fileIds;
 
     api.deleteFile(fileId,
         (error: string) => {
@@ -67,7 +70,7 @@ const deleteFile = (
             filesById[fileId] = R.merge(file, { is_trashed: true });
 
             const currentFolder: FolderType = foldersById[currentFolderId];
-            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
+            currentFolder.file_count = getFileCount(treeState.tree[currentFolderId].fileIds, filesById);
             foldersById[currentFolderId] = currentFolder;
 
             recycleBin = {
@@ -76,10 +79,11 @@ const deleteFile = (
             };
 
             resolve({
-                tree,
-                filesById,
                 recycleBin,
+                filesById,
                 foldersById,
+                selectedFileIds: R.without(fileId, selectedFileIds),
+                clipboardFileIds: R.without(fileId, clipboardFileIds),
             });
         },
         (messages: Array<string>) => {
@@ -91,8 +95,8 @@ const deleteFile = (
     );
 };
 
-export default (fileId: string) => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+export default (storeId: string, fileId: string) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     const a: ActionDeleteFileType = {
         type: DELETE_FILE,

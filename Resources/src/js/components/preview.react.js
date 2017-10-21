@@ -1,10 +1,9 @@
 // @flow
 import React from 'react';
-import R from 'ramda';
-import { showPreview } from '../actions';
 
 type PropsType = {
     url: null | string,
+    showPreview: (string | null) => void,
 };
 
 const Preview = (props: PropsType): null | React$Element<*> => {
@@ -15,7 +14,7 @@ const Preview = (props: PropsType): null | React$Element<*> => {
         className: 'preview-image',
         onClick: (e: SyntheticEvent) => {
             e.stopPropagation();
-            showPreview(null);
+            this.props.showPreview(null);
         },
     };
     return (<div {...p}>

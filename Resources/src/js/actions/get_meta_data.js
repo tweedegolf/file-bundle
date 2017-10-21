@@ -92,8 +92,8 @@ const getMetaData = (
     );
 };
 
-export default () => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+export default (storeId: string) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     getMetaData(
         store,

@@ -13,10 +13,13 @@ import { createError, getItemIds } from '../util/util';
 // START FLOW TYPES
 
 type PayloadFolderDeletedType = {
-    tree: TreeType,
     recycleBin: RecycleBinType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
+    selectedFileIds: string[],
+    clipboardFileIds: string[],
+    selectedFolderIds: string[],
+    clipboardFolderIds: string[],
 };
 
 export type ActionConfirmDeleteFolderType = {
@@ -53,12 +56,15 @@ const deleteFolder = (
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
-    const tree: TreeType = R.clone(treeState.tree);
     const folder = foldersById[folderId];
     const {
          files: filesInRecycleBin,
         folders: foldersInRecycleBin,
     } = { ...treeState[RECYCLE_BIN_ID] };
+    const selectedFileIds = uiState.selected.fileIds;
+    const clipboardFileIds = uiState.clipboard.fileIds;
+    const selectedFolderIds = uiState.selected.folderIds;
+    const clipboardFolderIds = uiState.clipboard.folderIds;
 
     api.deleteFolder(
         folderId,
@@ -78,7 +84,7 @@ const deleteFolder = (
                 fileIds: [],
                 folderIds: [],
             };
-            getItemIds(folderId, collectedItemIds, tree);
+            getItemIds(folderId, collectedItemIds, treeState.tree);
             collectedItemIds.fileIds.forEach((id: string) => {
                 const f = filesById[id];
                 filesInRecycleBin.push(f);
@@ -102,13 +108,16 @@ const deleteFolder = (
             foldersById[folderId] = deletedFolder;
 
             resolve({
-                tree,
                 filesById,
                 foldersById,
                 recycleBin: {
                     files: filesInRecycleBin,
                     folders: foldersInRecycleBin,
                 },
+                selectedFileIds: R.without(collectedItemIds.fileIds, selectedFileIds),
+                clipboardFileIds: R.without(collectedItemIds.fileIds, clipboardFileIds),
+                selectedFolderIds: R.without(collectedItemIds.folderIds, selectedFolderIds),
+                clipboardFolderIds: R.without(collectedItemIds.folderIds, clipboardFolderIds),
             });
         },
         (messages: Array<string>) => {
@@ -119,8 +128,8 @@ const deleteFolder = (
     );
 };
 
-export default (folderId: string) => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+export default (storeId: string, folderId: string) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     const a: ActionDeleteFolderType = {
         type: DELETE_FOLDER,

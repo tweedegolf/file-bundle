@@ -147,9 +147,9 @@ const moveFiles = (
     );
 };
 
-export default () => {
+export default (storeId: string) => {
     // dispatch ui state action here?
-    const store: StoreType<StateType, GenericActionType> = getStore();
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     moveFiles(
         store,

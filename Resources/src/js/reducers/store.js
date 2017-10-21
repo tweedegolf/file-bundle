@@ -7,19 +7,24 @@ import type { CombinedReducer } from 'redux';
 import { ui, uiInitialState } from './ui_reducer';
 import { tree, treeInitialState } from './tree_reducer';
 
-const initialState: StateType = {
-    ui: uiInitialState,
-    tree: treeInitialState,
+
+export type State2Type = {
+    [id: string]: StateType,
 };
 
-const combinedReducers: CombinedReducer<StateType, GenericActionType> = combineReducers({ ui, tree });
-// create dummy store to prevent a null value, use the boolean initialized instead of a null check
-// to see if a store has already been created (singleton-ish)
-let store: StoreType<StateType, GenericActionType> = createStore(combinedReducers, initialState);
+const stores: {
+    [id: string]: StoreType<StateType, GenericActionType>
+} = {};
 
-export const getNewStore = (): StoreType<StateType, GenericActionType> => {
-    store = createStore(
-        combinedReducers,
+
+export const getNewStore = (id: string): StoreType<StateType, GenericActionType> => {
+    const combinedReducer: CombinedReducer<StateType, GenericActionType> = combineReducers({ ui, tree });
+    const initialState: StateType = {
+        ui: uiInitialState,
+        tree: treeInitialState,
+    };
+    stores[id] = createStore(
+        combinedReducer,
         initialState,
         compose(
             autoRehydrate(),
@@ -29,9 +34,7 @@ export const getNewStore = (): StoreType<StateType, GenericActionType> => {
             ),
         ),
     );
-    return store;
+    return stores[id];
 }
 
-export function getStore(): StoreType<StateType, GenericActionType> {
-    return store;
-}
+export const getStore = (id: string): StoreType<StateType, GenericActionType> => stores[id];

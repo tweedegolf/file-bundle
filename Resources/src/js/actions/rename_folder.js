@@ -71,8 +71,8 @@ const renameFolder = (
     );
 };
 
-export default (folderId: string, newName: string) => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+export default (storeId: string, folderId: string, newName: string) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     const a: ActionRenameFolderType = {
         type: RENAME_FOLDER,

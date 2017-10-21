@@ -69,7 +69,7 @@ const openRecycleBin = (
 ) => {
     api.openRecycleBin(
         (folders: Array<FolderType>, files: Array<FileType>) => {
-            const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
+            const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(store);
             resolve({
                 recycleBin: {
                     files,
@@ -88,8 +88,8 @@ const openRecycleBin = (
     );
 };
 
-export default () => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+export default (storeId: string) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     const id = RECYCLE_BIN_ID;
     const forceLoad = false;

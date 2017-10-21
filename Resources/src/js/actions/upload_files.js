@@ -73,8 +73,8 @@ const uploadFiles = (
     );
 };
 
-export default (fileList: global.FileList) => {
-    const store: StoreType<StateType, GenericActionType> = getStore();
+export default (storeId: string, fileList: global.FileList) => {
+    const store = getStore(storeId);
     const dispatch: DispatchType = store.dispatch;
     const files: File[] = Array.from(fileList);
     const a: ActionUploadStartType = {

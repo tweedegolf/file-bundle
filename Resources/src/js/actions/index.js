@@ -3,6 +3,7 @@ import { getStore } from '../reducers/store';
 
 export { default as openFolder } from './open_folder';
 export { default as openRecycleBin } from './open_recycle_bin';
+export { default as closeRecycleBin } from './close_recycle_bin';
 export { default as init } from './init';
 export { default as getMetaData } from './get_meta_data';
 export { default as addFolder } from './add_folder';
@@ -46,30 +47,36 @@ export type ActionWithPayloadIdType = {
 
 // END FLOW TYPES
 
-export const selectFile = (id: string) => {
-    const dispatch: Dispatch = getStore().dispatch;
+const getDispatch = (storeId: string): DispatchType => {
+    const store = getStore(storeId);
+    if (typeof store === 'undefined') {
+        console.error('this should not happen!');
+        return () => { };
+    }
+    return store.dispatch;
+};
+
+export const selectFile = (storeId: string, id: string) => {
     const a: ActionWithPayloadIdType = {
         type: 'SELECT_FILE',
         payload: { id },
     };
-    dispatch(a);
+    getDispatch(storeId)(a);
 };
 
-export const selectFolder = (id: string) => {
-    const dispatch: Dispatch = getStore().dispatch;
+export const selectFolder = (storeId: string, id: string) => {
     const a: ActionWithPayloadIdType = {
         type: 'SELECT_FOLDER',
         payload: { id },
     };
-    dispatch(a);
+    getDispatch(storeId)(a);
 };
 
 /**
  * Cut files, i.e. move the currently selected files to the clipboard
  */
-export const cutFiles = () => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const cutFiles = (storeId: string) => {
+    getDispatch(storeId)({
         type: 'CUT_ITEMS',
     });
 };
@@ -77,9 +84,8 @@ export const cutFiles = () => {
 /**
  * Move files in clipboard array back to the selected array
  */
-export const cancelMoveItems = () => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const cancelMoveItems = (storeId: string) => {
+    getDispatch(storeId)({
         type: 'CANCEL_MOVE_ITEMS',
     });
 };
@@ -91,9 +97,8 @@ export const cancelMoveItems = () => {
  *                               current sorting column, the sorting order will
  *                               be reversed.
  */
-export const changeSorting = (sort: string) => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const changeSorting = (storeId: string, sort: string) => {
+    getDispatch(storeId)({
         type: 'CHANGE_SORTING',
         payload: { sort },
     });
@@ -105,13 +110,12 @@ export const changeSorting = (sort: string) => {
  *
  * @param      {number}  error_id  The unique identifier of the error.
  */
-export const dismissError = (id: string) => {
-    const dispatch: Dispatch = getStore().dispatch;
+export const dismissError = (storeId: string, id: string) => {
     const a: ActionWithPayloadIdType = {
         type: 'DISMISS_ERROR',
         payload: { id },
     };
-    dispatch(a);
+    getDispatch(storeId)(a);
 };
 
 
@@ -120,9 +124,8 @@ export const dismissError = (id: string) => {
  *
  * @param      {string}  image_url  The url of the full size image.
  */
-export const showPreview = (imageUrl: null | string) => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const showPreview = (storeId: string, imageUrl: null | string) => {
+    getDispatch(storeId)({
         type: 'SHOW_PREVIEW',
         payload: { imageUrl },
     });
@@ -136,25 +139,22 @@ export const showPreview = (imageUrl: null | string) => {
  * @param      {number}  id      The id of the file will be deleted after
  *                               confirmation
  */
-export const confirmDeleteFile = (id: null | string) => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const confirmDeleteFile = (storeId: string, id: null | string) => {
+    getDispatch(storeId)({
         type: 'CONFIRM_DELETE_FILE',
         payload: { id },
     });
 };
 
-export const confirmDeleteFolder = (id: null | string) => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const confirmDeleteFolder = (storeId: string, id: null | string) => {
+    getDispatch(storeId)({
         type: 'CONFIRM_DELETE_FOLDER',
         payload: { id },
     });
 };
 
-export const confirmRenameFolder = (id: null | string) => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const confirmRenameFolder = (storeId: string, id: null | string) => {
+    getDispatch(storeId)({
         type: 'CONFIRM_RENAME_FOLDER',
         payload: { id },
     });
@@ -175,9 +175,8 @@ export const confirmRenameFolder = (id: null | string) => {
  *                               selection will wrap around resulting in the
  *                               first item in the list being selected.
  */
-export const setHover = (diff: number, max: number) => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const setHover = (storeId: string, diff: number, max: number) => {
+    getDispatch(storeId)({
         type: 'SET_HOVER',
         payload: { diff, max },
     });
@@ -190,9 +189,8 @@ export const setHover = (diff: number, max: number) => {
  * @param      {number}  scroll  The position of the list in pixels measured
  *                               from the top.
  */
-export const setScrollPosition = (scroll: null | number) => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const setScrollPosition = (storeId: string, scroll: null | number) => {
+    getDispatch(storeId)({
         type: 'SET_SCROLL_POSITION',
         payload: { scroll },
     });
@@ -203,18 +201,8 @@ export const setScrollPosition = (scroll: null | number) => {
  * In Filepicker mode the user sees a button to expand and collapse the browser.
  * In Browser mode the browser is always expanded.
  */
-export const expandBrowser = () => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
+export const expandBrowser = (storeId: string) => {
+    getDispatch(storeId)({
         type: 'EXPAND_BROWSER',
     });
 };
-
-
-export const closeRecycleBin = () => {
-    const dispatch: Dispatch = getStore().dispatch;
-    dispatch({
-        type: 'CLOSE_RECYCLE_BIN',
-    });
-};
-

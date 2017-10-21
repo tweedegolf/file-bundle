@@ -16,10 +16,10 @@ type PropsType = {
     showRecycleBin: () => void,
     hideRecycleBin: () => void,
     emptyRecycleBin: () => void,
-    openFolder: ({ id: string, forceLoad: boolean }) => void,
-    onCancel: () => void,
-    onPaste: () => void,
-    onCut: () => void,
+    openFolder: (id: string, forceLoad?: boolean) => void,
+    onCancel: (storeId: string) => void,
+    onPaste: (storeId: string) => void,
+    onCut: (storeId: string) => void,
     isUploadingFiles: boolean,
     isAddingFolder: boolean,
     browser: boolean,
@@ -227,7 +227,12 @@ class Toolbar
           type="button"
           className="reload btn btn-sm btn-default btn-file pull-left"
           disabled={this.props.loadingFolderWithId !== null}
-          onClick={(): void => this.props.openFolder({ id: this.props.currentFolderId, forceLoad: true })}
+          onClick={
+                () => {
+                    if (this.props.showingRecycleBin === false) {
+                        this.props.openFolder(this.props.currentFolderId, true);
+                    }
+                }}
         >
             <span className={spinnerClass} aria-hidden="true" />
         </button >);
