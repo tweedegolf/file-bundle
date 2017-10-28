@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     OPEN_FOLDER,
@@ -55,33 +54,31 @@ export type ActionErrorOpenFolderType = {
 const DELAY: number = 0; // 100
 
 const optimisticUpdate = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     folderId: string
-): boolean => {
-    const treeState: TreeStateType = store.getState().tree;
+): null | ActionFolderFromCacheType => {
+    const treeState: TreeStateType = state.tree;
     if (typeof treeState.foldersById[folderId] === 'undefined') {
         // folder has not yet been opened before
-        return false;
+        return null;
     }
-    const a: ActionFolderFromCacheType = {
+    return {
         type: FOLDER_FROM_CACHE,
         payload: {
             currentFolderId: folderId,
         },
     };
-    store.dispatch(a);
-    return true;
 };
 
 const openFolder = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     folderId: string,
     resolve: (PayloadFolderOpenedType) => mixed,
     reject: (PayloadErrorOpenFolderType) => mixed,
 ) => {
     const {
         tree: treeState,
-    } = store.getState();
+    } = state;
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -125,7 +122,7 @@ const openFolder = (
             });
         },
         (messages: Array<string>) => {
-            const rootFolder = store.getState().ui.rootFolderId;
+            const rootFolder = state.ui.rootFolderId;
             const fallback = currentFolder.parent === null ? rootFolder : currentFolder.parent;
             const err = createError(ERROR_OPENING_FOLDER, messages, { id: folderId });
             reject({
@@ -137,42 +134,44 @@ const openFolder = (
 };
 
 
-export default (storeId: string, id: string, forceLoad: boolean = false) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    let delay = 0;
-    dispatch({
-        type: OPEN_FOLDER,
-        payload: { id },
-    });
-    if (forceLoad === false) {
-        const fromCache = optimisticUpdate(store, id);
-        if (fromCache) {
-            delay = DELAY;
-        }
-    }
-
-    setTimeout(() => {
+export default (id: string, forceLoad: boolean = false): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        let delay = 0;
         dispatch({
             type: OPEN_FOLDER,
             payload: { id },
         });
-        openFolder(
-            store,
-            id,
-            (payload: PayloadFolderOpenedType) => {
-                dispatch({
-                    type: FOLDER_OPENED,
-                    payload,
-                });
-            },
-            (payload: PayloadErrorOpenFolderType) => {
-                dispatch({
-                    type: ERROR_OPENING_FOLDER,
-                    payload,
-                });
-            },
-        );
-    }, delay);
+        if (forceLoad === false) {
+            const action = optimisticUpdate(state, id);
+            if (action !== null) {
+                delay = DELAY;
+                dispatch(action);
+            }
+        }
+
+        setTimeout(() => {
+            dispatch({
+                type: OPEN_FOLDER,
+                payload: { id },
+            });
+            openFolder(
+                state,
+                id,
+                (payload: PayloadFolderOpenedType) => {
+                    dispatch({
+                        type: FOLDER_OPENED,
+                        payload,
+                    });
+                },
+                (payload: PayloadErrorOpenFolderType) => {
+                    dispatch({
+                        type: ERROR_OPENING_FOLDER,
+                        payload,
+                    });
+                },
+            );
+        }, delay);
+    }
 };
 

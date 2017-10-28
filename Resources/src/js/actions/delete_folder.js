@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     DELETE_FOLDER,
@@ -44,7 +43,7 @@ export type ActionFolderDeletedType = {
 // END FLOW TYPES
 
 const deleteFolder = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     folderId: string,
     resolve: (payload: PayloadFolderDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -52,13 +51,13 @@ const deleteFolder = (
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const folder = foldersById[folderId];
     const {
-         files: filesInRecycleBin,
+        files: filesInRecycleBin,
         folders: foldersInRecycleBin,
     } = { ...treeState[RECYCLE_BIN_ID] };
     const selectedFileIds = uiState.selected.fileIds;
@@ -128,31 +127,32 @@ const deleteFolder = (
     );
 };
 
-export default (storeId: string, folderId: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    const a: ActionDeleteFolderType = {
-        type: DELETE_FOLDER,
-        payload: { id: folderId },
-    };
-    dispatch(a);
+export default (folderId: string): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const a: ActionDeleteFolderType = {
+            type: DELETE_FOLDER,
+            payload: { id: folderId },
+        };
+        dispatch(a);
 
-    deleteFolder(
-        store,
-        folderId,
-        (payload: PayloadFolderDeletedType) => {
-            const a1: ActionFolderDeletedType = {
-                type: FOLDER_DELETED,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: ERROR_DELETING_FOLDER,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        deleteFolder(
+            state,
+            folderId,
+            (payload: PayloadFolderDeletedType) => {
+                const a1: ActionFolderDeletedType = {
+                    type: FOLDER_DELETED,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: ERROR_DELETING_FOLDER,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import { createError } from '../util/util';
@@ -29,7 +28,7 @@ export type ActionUploadDoneType = {
 // END FLOW TYPES
 
 const uploadFiles = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -37,7 +36,7 @@ const uploadFiles = (
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
 
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
@@ -73,32 +72,33 @@ const uploadFiles = (
     );
 };
 
-export default (storeId: string, fileList: global.FileList) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    const files: File[] = Array.from(fileList);
-    const a: ActionUploadStartType = {
-        type: Constants.UPLOAD_START,
-        payload: { files },
-    };
-    dispatch(a);
+export default (fileList: global.FileList): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const files: File[] = Array.from(fileList);
+        const a: ActionUploadStartType = {
+            type: Constants.UPLOAD_START,
+            payload: { files },
+        };
+        dispatch(a);
 
-    uploadFiles(
-        store,
-        files,
-        (payload: PayloadUploadDoneType) => {
-            const a1: ActionUploadDoneType = {
-                type: Constants.UPLOAD_DONE,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: Constants.ERROR_UPLOADING_FILE,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        uploadFiles(
+            state,
+            files,
+            (payload: PayloadUploadDoneType) => {
+                const a1: ActionUploadDoneType = {
+                    type: Constants.UPLOAD_DONE,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: Constants.ERROR_UPLOADING_FILE,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

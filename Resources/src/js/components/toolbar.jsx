@@ -17,19 +17,19 @@ type PropsType = {
     hideRecycleBin: () => void,
     emptyRecycleBin: () => void,
     openFolder: (id: string, forceLoad?: boolean) => void,
-    onCancel: (storeId: string) => void,
-    onPaste: (storeId: string) => void,
-    onCut: (storeId: string) => void,
+    onCancel: () => void,
+    onPaste: () => void,
+    onCut: () => void,
     isUploadingFiles: boolean,
     isAddingFolder: boolean,
     browser: boolean,
     selected: ClipboardType,
     clipboard: ClipboardType,
     loadingFolderWithId?: null | string,
-    t: (string) => string,
     showingRecycleBin: boolean,
     currentFolderName: string,
     currentFolderId: string,
+    t: (string) => string,
 };
 
 type DefaultPropsType = {
@@ -127,18 +127,18 @@ class Toolbar
 
         if (this.props.showingRecycleBin === true) {
             buttonRecycleBin = (<button
-              type="button"
-              className="btn btn-sm btn-default btn-file pull-right"
-              onClick={this.props.hideRecycleBin}
+                type="button"
+                className="btn btn-sm btn-default btn-file pull-right"
+                onClick={this.props.hideRecycleBin}
             >
                 <span className="text-label">{this.props.t('toolbar.back')}</span>
             </button>);
 
             if (this.props.permissions.allowEmptyRecycleBin === true) {
                 buttonEmptyRecycleBin = (<button
-                  type="button"
-                  className="btn btn-sm btn-default btn-file pull-right"
-                  onClick={this.props.emptyRecycleBin}
+                    type="button"
+                    className="btn btn-sm btn-default btn-file pull-right"
+                    onClick={this.props.emptyRecycleBin}
                 >
                     <span className="fa fa-remove" />
                     <span className="text-label">{this.props.t('toolbar.purge')}</span>
@@ -146,9 +146,9 @@ class Toolbar
             }
         } else {
             buttonRecycleBin = (<button
-              type="button"
-              className="btn btn-sm btn-default btn-file pull-right recycle-bin"
-              onClick={this.props.showRecycleBin}
+                type="button"
+                className="btn btn-sm btn-default btn-file pull-right recycle-bin"
+                onClick={this.props.showRecycleBin}
             // disabled={this.props.recycleBinEmpty}
             >
                 <span className="fa fa-trash-o" />
@@ -156,26 +156,26 @@ class Toolbar
 
             if (this.props.permissions.allowUpload === true) {
                 buttonUpload = (<span
-                  className="btn btn-sm btn-default btn-file pull-right"
-                  disabled={this.props.isUploadingFiles}
+                    className="btn btn-sm btn-default btn-file pull-right"
+                    disabled={this.props.isUploadingFiles}
                 >
                     <span className="fa fa-arrow-circle-o-up" />
                     <span className="text-label">{this.props.t('toolbar.upload')}</span>
                     {loader}
                     <input
-                      type="file"
-                      multiple={this.props.permissions.multiple}
-                      onChange={this.props.uploadFiles}
+                        type="file"
+                        multiple={this.props.permissions.multiple}
+                        onChange={this.props.uploadFiles}
                     />
                 </span>);
             }
 
             if (this.props.permissions.allowNewFolder === true) {
                 buttonCreateFolder = (<button
-                  type="button"
-                  className={newFolderClass}
-                  onClick={this.onShowForm}
-                  disabled={this.props.isAddingFolder}
+                    type="button"
+                    className={newFolderClass}
+                    onClick={this.onShowForm}
+                    disabled={this.props.isAddingFolder}
                 >
                     <span className="fa fa-folder-o" />
                     <span className="text-label">{this.props.t('toolbar.createFolder')}</span>
@@ -187,31 +187,31 @@ class Toolbar
         if (this.props.permissions.allowMove) {
             actions = (<div className="pull-left">
                 <button
-                  type="button"
-                  className="btn btn-sm btn-default"
-                  disabled={numItemsSelected === 0}
+                    type="button"
+                    className="btn btn-sm btn-default"
+                    disabled={numItemsSelected === 0}
                     // files that are currently in selected will be moved to the clipboard
-                  onClick={this.props.onCut}
+                    onClick={this.props.onCut}
                 >
                     <span className="fa fa-cut" />
                     <span className="text-label">{this.props.t('toolbar.cut')}</span>
                     {numItemsSelected > 0 ? ` (${numItemsSelected})` : null}
                 </button>
                 <button
-                  type="button"
-                  className="btn btn-sm btn-default"
-                  disabled={numItemsOnClipboard === 0 || this.props.showingRecycleBin === true}
-                  onClick={this.props.onPaste}
+                    type="button"
+                    className="btn btn-sm btn-default"
+                    disabled={numItemsOnClipboard === 0 || this.props.showingRecycleBin === true}
+                    onClick={this.props.onPaste}
                 >
                     <span className="fa fa-paste" />
                     <span className="text-label">{this.props.t('toolbar.paste')}</span>
                     {numItemsOnClipboard > 0 ? ` (${numItemsOnClipboard})` : null}
                 </button>
                 <button
-                  type="button"
-                  className="btn btn-sm btn-default"
-                  disabled={numItemsOnClipboard + numItemsSelected === 0}
-                  onClick={this.props.onCancel}
+                    type="button"
+                    className="btn btn-sm btn-default"
+                    disabled={numItemsOnClipboard + numItemsSelected === 0}
+                    onClick={this.props.onCancel}
                 >
                     <span className="fa fa-times-circle-o" />
                     <span className="text-label">{this.props.t('toolbar.cancel')}</span>
@@ -224,10 +224,10 @@ class Toolbar
         //     spinnerClass += ' fa-spin fa-fw';
         // }
         buttonRefresh = (<button
-          type="button"
-          className="reload btn btn-sm btn-default btn-file pull-left"
-          disabled={this.props.loadingFolderWithId !== null}
-          onClick={
+            type="button"
+            className="reload btn btn-sm btn-default btn-file pull-left"
+            disabled={this.props.loadingFolderWithId !== null}
+            onClick={
                 () => {
                     if (this.props.showingRecycleBin === false) {
                         this.props.openFolder(this.props.currentFolderId, true);
@@ -248,22 +248,22 @@ class Toolbar
                 {buttonCreateFolder}
                 <div className={`form-inline pull-right ${this.state.showForm ? '' : 'hide'}`}>
                     <input
-                      className="form-control input-sm"
-                      ref={(input: HTMLInputElement) => { this.folderName = input; }}
-                      type="text"
-                      placeholder={this.props.t('toolbar.folderName')}
-                      onKeyUp={this.onKeyUp}
+                        className="form-control input-sm"
+                        ref={(input: HTMLInputElement) => { this.folderName = input; }}
+                        type="text"
+                        placeholder={this.props.t('toolbar.folderName')}
+                        onKeyUp={this.onKeyUp}
                     />
                     <button
-                      type="button"
-                      ref={(button: HTMLButtonElement) => { this.submitNewFolder = button; }}
-                      className="btn btn-sm btn-success pull-right"
-                      onClick={this.onAddFolder}
+                        type="button"
+                        ref={(button: HTMLButtonElement) => { this.submitNewFolder = button; }}
+                        className="btn btn-sm btn-success pull-right"
+                        onClick={this.onAddFolder}
                     >
                         <span className="fa fa-save" />
                         <span
-                          className="text-label"
-                          ref={(span: HTMLSpanElement) => { this.submitNewFolderLabel = span; }}
+                            className="text-label"
+                            ref={(span: HTMLSpanElement) => { this.submitNewFolderLabel = span; }}
                         >
                             {this.props.t('toolbar.save')}
                         </span>

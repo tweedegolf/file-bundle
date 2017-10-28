@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     EMPTY_RECYCLE_BIN,
@@ -34,14 +33,14 @@ export type ActionRecycleBinEmptiedType = {
 // @TODO: clear selected files and folders that were in the recycle bin!
 
 const emptyRecycleBin = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     resolve: (payload: PayloadEmptyRecycleBinType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
         ui: uiState,
         tree: treeState,
-     } = store.getState();
+    } = state;
 
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -108,29 +107,30 @@ const emptyRecycleBin = (
     );
 };
 
-export default (storeId: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    const a: ActionEmptyRecycleBinType = {
-        type: EMPTY_RECYCLE_BIN,
-    };
-    dispatch(a);
+export default (): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const a: ActionEmptyRecycleBinType = {
+            type: EMPTY_RECYCLE_BIN,
+        };
+        dispatch(a);
 
-    emptyRecycleBin(
-        store,
-        (payload: PayloadEmptyRecycleBinType) => {
-            const a1: ActionRecycleBinEmptiedType = {
-                type: RECYCLE_BIN_EMPTIED,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: ERROR_EMPTY_RECYCLE_BIN,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        emptyRecycleBin(
+            state,
+            (payload: PayloadEmptyRecycleBinType) => {
+                const a1: ActionRecycleBinEmptiedType = {
+                    type: RECYCLE_BIN_EMPTIED,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: ERROR_EMPTY_RECYCLE_BIN,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

@@ -1,6 +1,4 @@
 // @flow
-import { persistStore } from 'redux-persist';
-import { getStore } from '../reducers/store';
 import { INIT, RECYCLE_BIN_ID } from '../util/constants';
 import { openFolder, openRecycleBin, getMetaData } from '../actions';
 
@@ -53,7 +51,6 @@ type PayloadInitType = {
     isAddingFolder: boolean,
     loadingFolderWithId: null | string,
     // tree reducer
-    tree: TreeType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
 };
@@ -61,7 +58,8 @@ type PayloadInitType = {
 // END FLOW TYPES
 
 const init = (
-    storeId: string,
+    state: StateType,
+    dispatch: DispatchType,
     options: DatasetType,
     browser: boolean = true
 ) => {
@@ -76,11 +74,10 @@ const init = (
     delete permissions.selected;
     delete permissions.rootFolderId;
 
-    const store = getStore(storeId);
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
 
     const rfId = rootFolderId === null ? 'null' : rootFolderId;
     let foldersById = { ...treeState.foldersById };
@@ -134,31 +131,26 @@ const init = (
             errors: [],
             permissions,
             // tree reducer
-            tree: treeState.tree,
             filesById,
             foldersById,
         },
     };
-    store.dispatch(action);
+    dispatch(action);
 
     if (currentFolderId === RECYCLE_BIN_ID) {
-        openRecycleBin(storeId);
+        dispatch(openRecycleBin());
     } else {
-        openFolder(storeId, currentFolderId);
+        dispatch(openFolder(currentFolderId));
     }
 
     if (browser === true && allSelected.fileIds.length + allSelected.folderIds.length > 0) {
-        getMetaData(storeId);
+        dispatch(getMetaData());
     }
 };
 
-export default (storeId: string, options: DatasetType, browser: boolean) => {
-    const store = getStore(storeId);
-    if (browser === true) {
-        persistStore(store, {}, () => {
-            init(storeId, options, browser);
-        });
-    } else {
-        init(storeId, options, browser);
-    }
+export default (options: DatasetType, browser: boolean): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        init(state, dispatch, options, browser);
+    };
 };

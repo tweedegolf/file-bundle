@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     OPEN_RECYCLE_BIN,
@@ -36,9 +35,9 @@ export type ActionRecycleBinOpenedType = {
 
 const DELAY: number = 100;
 
-const getCurrentFolder = (store: StoreType<StateType, GenericActionType>): [string, string] => {
-    let currentFolderId = store.getState().ui.currentFolderId;
-    let currentFolderIdTmp = store.getState().ui.currentFolderIdTmp;
+const getCurrentFolder = (state: StateType): [string, string] => {
+    let currentFolderId = state.ui.currentFolderId;
+    let currentFolderIdTmp = state.ui.currentFolderIdTmp;
     if (currentFolderId !== RECYCLE_BIN_ID) {
         currentFolderIdTmp = currentFolderId;
         currentFolderId = RECYCLE_BIN_ID;
@@ -46,30 +45,28 @@ const getCurrentFolder = (store: StoreType<StateType, GenericActionType>): [stri
     return [currentFolderId, currentFolderIdTmp];
 };
 
-const optimisticUpdate = (store: StoreType<StateType, GenericActionType>): boolean => {
-    const recycleBin = store.getState().tree[RECYCLE_BIN_ID];
-    const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(store);
+const optimisticUpdate = (state: StateType): GenericActionType => {
+    const recycleBin = state.tree[RECYCLE_BIN_ID];
+    const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(state);
     const payload: PayloadRecycleBinOpenedType = {
         recycleBin,
         currentFolderId,
         currentFolderIdTmp,
     };
-    const a: ActionRecycleBinFromCacheType = {
+    return {
         type: RECYCLE_BIN_FROM_CACHE,
         payload,
     };
-    store.dispatch(a);
-    return true;
 };
 
 const openRecycleBin = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     resolve: (PayloadRecycleBinOpenedType) => mixed,
     reject: (PayloadErrorType) => mixed,
 ) => {
     api.openRecycleBin(
         (folders: Array<FolderType>, files: Array<FileType>) => {
-            const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(store);
+            const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(state);
             resolve({
                 recycleBin: {
                     files,
@@ -88,39 +85,39 @@ const openRecycleBin = (
     );
 };
 
-export default (storeId: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    const id = RECYCLE_BIN_ID;
-    const forceLoad = false;
-    let delay = 0;
-    dispatch({
-        type: OPEN_RECYCLE_BIN,
-        payload: { id },
-    });
+export default (): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const id = RECYCLE_BIN_ID;
+        const forceLoad = false;
+        let delay = 0;
+        dispatch({
+            type: OPEN_RECYCLE_BIN,
+            payload: { id },
+        });
 
-    if (forceLoad === false) {
-        const fromCache = optimisticUpdate(store);
-        if (fromCache) {
+        if (forceLoad === false) {
+            const action = optimisticUpdate(state);
+            dispatch(action);
             delay = DELAY;
         }
-    }
 
-    setTimeout(() => {
-        openRecycleBin(
-            store,
-            (payload: PayloadRecycleBinOpenedType) => {
-                dispatch({
-                    type: RECYCLE_BIN_OPENED,
-                    payload,
-                });
-            },
-            (payload: PayloadErrorType) => {
-                dispatch({
-                    type: ERROR_OPENING_RECYCLE_BIN,
-                    payload,
-                });
-            },
-        );
-    }, delay);
+        setTimeout(() => {
+            openRecycleBin(
+                state,
+                (payload: PayloadRecycleBinOpenedType) => {
+                    dispatch({
+                        type: RECYCLE_BIN_OPENED,
+                        payload,
+                    });
+                },
+                (payload: PayloadErrorType) => {
+                    dispatch({
+                        type: ERROR_OPENING_RECYCLE_BIN,
+                        payload,
+                    });
+                },
+            );
+        }, delay);
+    };
 };

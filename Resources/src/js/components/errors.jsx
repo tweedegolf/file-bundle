@@ -65,9 +65,9 @@ const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =
 
         return (<div key={`error_${index}`} className="alert alert-danger alert-dismissible">
             <button
-              type="button"
-              className="close"
-              onClick={
+                type="button"
+                className="close"
+                onClick={
                     () => {
                         onDismiss(error.id);
                     }}

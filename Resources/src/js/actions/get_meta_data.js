@@ -1,7 +1,6 @@
 // @flow
 // get meta data for files and folders that are selected; only used once during initialization
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     ERROR_GETTING_META_DATA,
@@ -25,14 +24,14 @@ export type ActionMetaDataReceivedType = {
 // END FLOW TYPES
 
 const getMetaData = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     resolve: (payload: PayloadActionMetaDataReceivedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
     const filesById: FilesByIdType = { ...treeState.filesById };
     const foldersById: FoldersByIdType = { ...treeState.foldersById };
     const {
@@ -92,24 +91,25 @@ const getMetaData = (
     );
 };
 
-export default (storeId: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    getMetaData(
-        store,
-        (payload: PayloadActionMetaDataReceivedType) => {
-            const a: ActionMetaDataReceivedType = {
-                type: META_DATA_RECEIVED,
-                payload,
-            };
-            dispatch(a);
-        },
-        (payload: PayloadErrorType) => {
-            const a: ActionErrorType = {
-                type: ERROR_GETTING_META_DATA,
-                payload,
-            };
-            dispatch(a);
-        },
-    );
+export default (): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        getMetaData(
+            state,
+            (payload: PayloadActionMetaDataReceivedType) => {
+                const a: ActionMetaDataReceivedType = {
+                    type: META_DATA_RECEIVED,
+                    payload,
+                };
+                dispatch(a);
+            },
+            (payload: PayloadErrorType) => {
+                const a: ActionErrorType = {
+                    type: ERROR_GETTING_META_DATA,
+                    payload,
+                };
+                dispatch(a);
+            },
+        );
+    };
 };

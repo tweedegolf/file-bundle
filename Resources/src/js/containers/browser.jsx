@@ -7,24 +7,27 @@
 import R from 'ramda';
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import FileDragAndDrop from 'react-file-drag-and-drop';
 import classNames from 'classnames';
 import { translate } from 'react-i18next';
-import List from '../containers/list.react';
-import SelectedFiles from '../components/selected_files.react';
-import SortHeader from '../components/sort_header.react';
-import Toolbar from '../components/toolbar.react';
-import Preview from '../components/preview.react';
-import Errors from '../components/errors.react';
+import List from '../containers/list.jsx';
+import SelectedFiles from '../components/selected_files.jsx';
+import SortHeader from '../components/sort_header.jsx';
+import Toolbar from '../components/toolbar.jsx';
+import Preview from '../components/preview.jsx';
+import Errors from '../components/errors.jsx';
 import getSelectedFiles from '../reducers/get_selected_files';
-import * as Actions from '../actions';
+import * as Actions from '../actions/index';
 import { RECYCLE_BIN_ID } from '../util/constants';
 import type { DatasetType, PermissionsType } from '../actions/init';
+import type { SortEnumType, ActionChangeSortingType } from '../actions/index';
+
+// START FLOW TYPES
 
 type PassedPropsType = {
     browser: boolean,
     dataset: DatasetType,
-    storeId: string,
     t: (string) => string,
 };
 
@@ -61,7 +64,28 @@ type DefaultPropsType = {
     children: null,
 };
 
-type AllPropsType = PassedPropsType & PropsType & OtherPropsType;
+
+type ActionsPropsType = {
+    init: (DatasetType, boolean) => ReduxThunkType,
+    setHover: (number, number) => GenericActionType,
+    uploadFiles: (File[] | FileList) => ReduxThunkType,
+    expandBrowser: () => BasicActionType,
+    setScrollPosition: (number | null) => GenericActionType,
+    changeSorting: (SortEnumType) => ActionChangeSortingType,
+    openFolder: (string) => ReduxThunkType,
+    cutFiles: () => BasicActionType,
+    moveItems: () => ReduxThunkType,
+    cancelMoveItems: () => BasicActionType,
+    addFolder: (string) => ReduxThunkType,
+    openRecycleBin: () => ReduxThunkType,
+    closeRecycleBin: () => ReduxThunkType,
+    emptyRecycleBin: () => ReduxThunkType,
+    selectFile: (string) => GenericActionType,
+    showPreview: (null | string) => GenericActionType,
+    dismissError: (string) => GenericActionType,
+};
+
+type AllPropsType = PassedPropsType & PropsType & OtherPropsType & ActionsPropsType;
 type BrowserStateType = {};
 
 // type DivConfigType = {
@@ -70,9 +94,11 @@ type BrowserStateType = {};
 //     key: ?string;
 // };
 
+// END FLOW TYPES
+
 const columnHeaderIds: [string, string, string] = ['name', 'size_bytes', 'create_ts'];
 
-const mapStateToProps = (state: StateType): PropsType => {
+const mapStateToProps = (state: StateType, ownProps: PassedPropsType): PropsType => {
     const {
         sort,
         ascending,
@@ -85,7 +111,7 @@ const mapStateToProps = (state: StateType): PropsType => {
     if (currentFolderId === RECYCLE_BIN_ID) {
         const bin = state.tree.recycleBin;
         numItemsInCurrentFolder = R.length(bin.folders) + R.length(bin.files);
-        currentFolderName = translate('recycleBin');
+        currentFolderName = ownProps.t('recycleBin');
     } else {
         const currentFolder: TreeFolderType = state.tree.tree[currentFolderId];
         if (typeof currentFolder !== 'undefined') {
@@ -118,7 +144,29 @@ const mapStateToProps = (state: StateType): PropsType => {
     };
 };
 
-const mapDispatchToProps = (dispatch: DispatchType): { dispatch: () => void } => ({ dispatch });
+const mapDispatchToProps = (dispatch: DispatchType): ActionsPropsType => {
+    return {
+        ...bindActionCreators({
+            init: Actions.init,
+            setHover: Actions.setHover,
+            uploadFiles: Actions.uploadFiles,
+            expandBrowser: Actions.expandBrowser,
+            setScrollPosition: Actions.setScrollPosition,
+            changeSorting: Actions.changeSorting,
+            openFolder: Actions.openFolder,
+            cutFiles: Actions.cutFiles,
+            moveItems: Actions.moveItems,
+            cancelMoveItems: Actions.cancelMoveItems,
+            addFolder: Actions.addFolder,
+            openRecycleBin: Actions.openRecycleBin,
+            closeRecycleBin: Actions.closeRecycleBin,
+            emptyRecycleBin: Actions.emptyRecycleBin,
+            selectFile: Actions.selectFile,
+            showPreview: Actions.showPreview,
+            dismissError: Actions.dismissError,
+        }, dispatch)
+    };
+}
 
 class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserStateType> {
     static defaultProps = {
@@ -130,15 +178,15 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         children: null,
     }
 
-    constructor() {
-        super();
+    constructor(props: AllPropsType) {
+        super(props);
         // select files and folders using the arrow up and -down key of your keyboard
         this.onKeyDown = (event: Event) => {
             event.stopPropagation();
             if (event.keyCode === 38) {
-                Actions.setHover(this.props.storeId, +1, this.props.numItemsInCurrentFolder);
+                this.props.setHover(+1, this.props.numItemsInCurrentFolder);
             } else if (event.keyCode === 40) {
-                Actions.setHover(this.props.storeId, -1, this.props.numItemsInCurrentFolder);
+                this.props.setHover(-1, this.props.numItemsInCurrentFolder);
             }
         };
 
@@ -150,16 +198,16 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // Phantomjs' page object does not recognize SyntheticEvent nor DataTransfer, so this
             // flow error can not be fixed
             if (typeof DataTransfer === 'undefined') {
-                Actions.uploadFiles(this.props.storeId, event.target.files);
+                this.props.uploadFiles(event.target.files);
                 return;
             }
 
             if (event instanceof DataTransfer) {
-                Actions.uploadFiles(this.props.storeId, event.files);
+                this.props.uploadFiles(event.files);
             } else {
                 const target = event.target;
                 if (target instanceof HTMLInputElement) {
-                    Actions.uploadFiles(this.props.storeId, Array.from(target.files));
+                    this.props.uploadFiles(Array.from(target.files));
                 }
             }
         };
@@ -171,7 +219,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // Filepicker mode: the selected files can be set in the dataset of the HTML
         // element.
         if (this.props.browser === false) {
-            Actions.init(this.props.storeId, this.props.dataset, this.props.browser);
+            document.addEventListener('keydown', this.onKeyDown, false);
+            this.props.init(this.props.dataset, this.props.browser);
         }
 
         // Browser mode: by default, the browser is not expanded, therefor we have
@@ -180,8 +229,8 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // The keydown listener listens for arrow up and down keys allowing the
             // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown, false);
-            Actions.expandBrowser(this.props.storeId);
-            Actions.init(this.props.storeId, this.props.dataset, this.props.browser);
+            this.props.expandBrowser();
+            this.props.init(this.props.dataset, this.props.browser);
         }
     }
 
@@ -195,7 +244,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // visible area if needed.
         if (this.props.scrollPosition !== null) {
             this.containerRef.scrollTop = this.props.scrollPosition;
-            Actions.setScrollPosition(this.props.storeId, null);
+            this.props.setScrollPosition(null);
         }
     }
 
@@ -219,33 +268,33 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // }
         const headers = R.map((columnId: string): SortHeader =>
             <SortHeader
-              key={columnId}
-              sortBy={R.curry(Actions.changeSorting)(this.props.storeId)}
-              sort={this.props.sort}
-              ascending={this.props.ascending}
-              columnId={columnId}
+                key={columnId}
+                sortBy={this.props.changeSorting}
+                sort={this.props.sort}
+                ascending={this.props.ascending}
+                columnId={columnId}
             />, columnHeaderIds);
 
         const toolbar = (<Toolbar
-          permissions={this.props.permissions}
-          selected={this.props.selected}
-          clipboard={this.props.clipboard}
-          currentFolderId={this.props.currentFolderId}
-          isAddingFolder={this.props.isAddingFolder}
-          browser={this.props.browser}
-          openFolder={R.curry(Actions.openFolder)(this.props.storeId)}
-          onCut={() => { Actions.cutFiles(this.props.storeId); }}
-          onPaste={() => { Actions.moveItems(this.props.storeId); }}
-          onCancel={() => { Actions.cancelMoveItems(this.props.storeId); }}
-          uploadFiles={this.uploadFiles}
-          onAddFolder={R.curry(Actions.addFolder)(this.props.storeId)}
-          showRecycleBin={() => { Actions.openRecycleBin(this.props.storeId); }}
-          hideRecycleBin={() => { Actions.closeRecycleBin(this.props.storeId); }}
-          emptyRecycleBin={() => { Actions.emptyRecycleBin(this.props.storeId); }}
-          isUploadingFiles={this.props.isUploadingFiles}
-          loadingFolderWithId={this.props.loadingFolderWithId}
-          showingRecycleBin={this.props.showingRecycleBin}
-          currentFolderName={this.props.currentFolderName}
+            permissions={this.props.permissions}
+            selected={this.props.selected}
+            clipboard={this.props.clipboard}
+            currentFolderId={this.props.currentFolderId}
+            isAddingFolder={this.props.isAddingFolder}
+            browser={this.props.browser}
+            uploadFiles={this.uploadFiles}
+            openFolder={this.props.openFolder}
+            onCut={this.props.cutFiles}
+            onPaste={this.props.moveItems}
+            onCancel={this.props.cancelMoveItems}
+            onAddFolder={this.props.addFolder}
+            showRecycleBin={this.props.openRecycleBin}
+            hideRecycleBin={this.props.closeRecycleBin}
+            emptyRecycleBin={this.props.emptyRecycleBin}
+            isUploadingFiles={this.props.isUploadingFiles}
+            loadingFolderWithId={this.props.loadingFolderWithId}
+            showingRecycleBin={this.props.showingRecycleBin}
+            currentFolderName={this.props.currentFolderName}
         />);
 
 
@@ -253,15 +302,15 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         if (this.props.browser === false) {
             // selected files for filepicker mode
             selected = (<SelectedFiles
-              selectedFiles={this.props.selectedFiles}
-              selectFile={R.curry(Actions.selectFile)(this.props.storeId)}
-              showPreview={R.curry(Actions.showPreview)(this.props.storeId)}
+                selectedFiles={this.props.selectedFiles}
+                selectFile={this.props.selectFile}
+                showPreview={this.props.showPreview}
             />);
         }
 
         const preview = <Preview
-          url={this.props.previewUrl}
-          showPreview={R.curry(Actions.showPreview)(this.props.storeId)}
+            url={this.props.previewUrl}
+            showPreview={this.props.showPreview}
         />;
 
         if (this.props.expanded === false) {
@@ -269,9 +318,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                 {selected}
                 {preview}
                 <button
-                  type="button"
-                  className="btn btn-default expand-button"
-                  onClick={() => { Actions.expandBrowser(this.props.storeId); }}
+                    type="button"
+                    className="btn btn-default expand-button"
+                    onClick={this.props.expandBrowser}
                 >
                     {this.props.t('browse')}
                     <span className="fa fa-folder-open-o" />
@@ -282,9 +331,9 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         let buttonExpand = null;
         if (this.props.browser === false) {
             buttonExpand = (<button
-              type="button"
-              className="btn btn-default btn-xs collapse-button"
-              onClick={() => { Actions.expandBrowser(this.props.storeId); }}
+                type="button"
+                className="btn btn-default btn-xs collapse-button"
+                onClick={this.props.expandBrowser}
             >
                 <span className="fa fa-chevron-up" />
             </button>);
@@ -295,15 +344,15 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         });
 
         return (
-            <div className="text-center">
+            <div className="text-center" >
                 {selected}
                 {preview}
-                <div className={browserClassName}>
+                <div className={browserClassName} >
                     <FileDragAndDrop onDrop={this.uploadFiles}>
                         {toolbar}
                         <Errors
-                          errors={this.props.errors}
-                          onDismiss={R.curry(Actions.dismissError)(this.props.storeId)}
+                            errors={this.props.errors}
+                            onDismiss={this.props.dismissError}
                         />
                         <div ref={(div: HTMLElement) => { this.containerRef = div; }} className="table-container">
                             <table className="table table-condensed">
@@ -316,8 +365,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                     </tr>
                                 </thead>
                                 <List
-                                  storeId={this.props.storeId}
-                                  browser={this.props.browser}
+                                    browser={this.props.browser}
                                 />
                             </table>
                         </div>
@@ -330,4 +378,3 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
 }
 
 export default translate('common')(connect(mapStateToProps, mapDispatchToProps)(Browser));
-

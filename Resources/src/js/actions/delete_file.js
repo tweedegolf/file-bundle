@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     DELETE_FILE,
@@ -35,7 +34,7 @@ export type ActionFileDeletedType = {
 // END FLOW TYPES
 
 const deleteFile = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     fileId: string,
     resolve: (payload: PayloadFileDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -43,7 +42,7 @@ const deleteFile = (
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -95,31 +94,32 @@ const deleteFile = (
     );
 };
 
-export default (storeId: string, fileId: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    const a: ActionDeleteFileType = {
-        type: DELETE_FILE,
-        payload: { id: fileId },
-    };
-    dispatch(a);
+export default (fileId: string): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const a: ActionDeleteFileType = {
+            type: DELETE_FILE,
+            payload: { id: fileId },
+        };
+        dispatch(a);
 
-    deleteFile(
-        store,
-        fileId,
-        (payload: PayloadFileDeletedType) => {
-            const a1: ActionFileDeletedType = {
-                type: FILE_DELETED,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: ERROR_DELETING_FILE,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        deleteFile(
+            state,
+            fileId,
+            (payload: PayloadFileDeletedType) => {
+                const a1: ActionFileDeletedType = {
+                    type: FILE_DELETED,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: ERROR_DELETING_FILE,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

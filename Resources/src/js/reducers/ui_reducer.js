@@ -68,7 +68,6 @@ export const uiInitialState: UIStateType = {
     errors: [],
     selected: { fileIds: [], folderIds: [] },
     clipboard: { fileIds: [], folderIds: [] },
-    multiple: true,
     language: 'en-GB',
     permissions: {
         multiple: false,
@@ -88,8 +87,11 @@ export const ui = (
     state: UIStateType = uiInitialState,
     action: ActionUnionType,
 ): UIStateType => {
+    // let type = action.type;
+    // if (type.indexOf('@@redux') === -1) {
+    //     type = type.substring(type.indexOf('/') + 1);
+    // }
     switch (action.type) {
-
         case 'INIT':
             return {
                 ...state,

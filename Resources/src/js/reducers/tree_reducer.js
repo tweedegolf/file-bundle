@@ -55,11 +55,14 @@ export const tree = (
     state: TreeStateType = treeInitialState,
     action: ActionUnionType,
 ): TreeStateType => {
+    // let type = action.type;
+    // if (type.indexOf('@@redux') === -1) {
+    //     type = type.substring(type.indexOf('/') + 1);
+    // }
     switch (action.type) {
         case 'INIT':
             return {
                 ...state,
-                tree: action.payload.tree,
                 filesById: action.payload.filesById,
                 foldersById: action.payload.foldersById,
             };

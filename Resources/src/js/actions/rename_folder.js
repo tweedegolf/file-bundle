@@ -1,5 +1,4 @@
 // @flow
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     RENAME_FOLDER,
@@ -37,7 +36,7 @@ export type ActionFolderRenamedType = {
 // END FLOW TYPES
 
 const renameFolder = (
-    store: StoreType<StateType, GenericActionType>,
+    state: StateType,
     folderId: string,
     newName: string,
     resolve: (payload: PayloadFolderRenamedType) => mixed,
@@ -45,7 +44,7 @@ const renameFolder = (
 ) => {
     const {
         tree: treeState,
-    } = store.getState();
+    } = state;
     const foldersById: FoldersByIdType = { ...treeState.foldersById };
     api.renameFolder(
         folderId,
@@ -71,32 +70,33 @@ const renameFolder = (
     );
 };
 
-export default (storeId: string, folderId: string, newName: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
-    const a: ActionRenameFolderType = {
-        type: RENAME_FOLDER,
-        payload: { id: folderId },
-    };
-    dispatch(a);
+export default (folderId: string, newName: string): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const a: ActionRenameFolderType = {
+            type: RENAME_FOLDER,
+            payload: { id: folderId },
+        };
+        dispatch(a);
 
-    renameFolder(
-        store,
-        folderId,
-        newName,
-        (payload: PayloadFolderRenamedType) => {
-            const a1: ActionFolderRenamedType = {
-                type: FOLDER_RENAMED,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: ERROR_RENAMING_FOLDER,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        renameFolder(
+            state,
+            folderId,
+            newName,
+            (payload: PayloadFolderRenamedType) => {
+                const a1: ActionFolderRenamedType = {
+                    type: FOLDER_RENAMED,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: ERROR_RENAMING_FOLDER,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

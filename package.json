@@ -1,6 +1,0 @@
-{
-  "name": "file-bundle",
-  "dependencies": {
-    "file-bundle-frontend": "git://github.com/tweedegolf/file-bundle-frontend.git"
-  }
-}

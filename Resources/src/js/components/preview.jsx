@@ -3,7 +3,8 @@ import React from 'react';
 
 type PropsType = {
     url: null | string,
-    showPreview: (string | null) => void,
+    // showPreview: (imageUrl: null | string) => void,
+    showPreview: (imageUrl: null | string) => GenericActionType, // this is very weird!
 };
 
 const Preview = (props: PropsType): null | React$Element<*> => {
@@ -14,14 +15,13 @@ const Preview = (props: PropsType): null | React$Element<*> => {
         className: 'preview-image',
         onClick: (e: SyntheticEvent) => {
             e.stopPropagation();
-            this.props.showPreview(null);
+            props.showPreview(null);
         },
     };
     return (<div {...p}>
         <div style={{ backgroundImage: `url(${props.url})` }} />
     </div>);
 };
-
 
 Preview.defaultProps = {
     url: null,
