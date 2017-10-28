@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import * as Constants from '../util/constants';
 import {
@@ -27,17 +26,15 @@ export type ActionItemsMovedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
 const moveFiles = (
+    state: StateType,
     resolve: (payload: PayloadItemsMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
 
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
@@ -149,21 +146,24 @@ const moveFiles = (
     );
 };
 
-export default () => {
-    // dispatch ui state action here?
-    moveFiles(
-        (payload: PayloadItemsMovedType) => {
-            dispatch({
-                type: Constants.ITEMS_MOVED,
-                payload,
-            });
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: Constants.ERROR_MOVING_ITEMS,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+export default (): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        moveFiles(
+            state,
+            (payload: PayloadItemsMovedType) => {
+                dispatch({
+                    type: Constants.ITEMS_MOVED,
+                    payload,
+                });
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: Constants.ERROR_MOVING_ITEMS,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

@@ -68,7 +68,6 @@ export const uiInitialState: UIStateType = {
     errors: [],
     selected: { fileIds: [], folderIds: [] },
     clipboard: { fileIds: [], folderIds: [] },
-    multiple: true,
     language: 'en-GB',
     permissions: {
         multiple: false,
@@ -88,8 +87,11 @@ export const ui = (
     state: UIStateType = uiInitialState,
     action: ActionUnionType,
 ): UIStateType => {
+    // let type = action.type;
+    // if (type.indexOf('@@redux') === -1) {
+    //     type = type.substring(type.indexOf('/') + 1);
+    // }
     switch (action.type) {
-
         case 'INIT':
             return {
                 ...state,
@@ -213,6 +215,14 @@ export const ui = (
                 ...state,
                 deleteFileWithId: null,
                 deletingFileWithId: null,
+                selected: {
+                    ...state.selected,
+                    fileIds: action.payload.selectedFileIds,
+                },
+                clipboard: {
+                    ...state.clipboard,
+                    fileIds: action.payload.clipboardFileIds,
+                }
             };
 
         /**
@@ -248,6 +258,14 @@ export const ui = (
                 ...state,
                 deleteFolderWithId: null,
                 deletingFolderWithId: null,
+                selected: {
+                    fileIds: action.payload.selectedFileIds,
+                    folderIds: action.payload.selectedFolderIds,
+                },
+                clipboard: {
+                    fileIds: action.payload.clipboardFileIds,
+                    folderIds: action.payload.clipboardFolderIds,
+                }
             };
 
         /**

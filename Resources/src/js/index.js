@@ -8,14 +8,16 @@ import 'core-js/fn/array/find-index';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import { SubspaceProvider } from 'react-redux-subspace';
 import { I18nextProvider } from 'react-i18next';
 import R from 'ramda';
-import Browser from './containers/browser.react';
-import { getStore } from './reducers/store';
+import Browser from './containers/browser.jsx';
+import createNameSpacedStore from './reducers/store';
 import i18n from './util/i18n';
 import type { DatasetType } from './actions/init';
 
-const store: StoreType<StateType, GenericActionType> = getStore();
+let index = 0;
 // const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
@@ -49,46 +51,82 @@ const getDataset = (element: HTMLElement): DatasetType | null => {
 // an element with the id 'tg_file_browser' will be converted to a interactive file browser
 // note that there can only be one of these
 const browser: HTMLElement | null = document.getElementById('tg_file_browser');
+
+// an element with the class 'tg_file_picker' will be converted to a file selector
+// note there can be multiple file selectors in a single form
+const pickers: HTMLElement[] = Array.from(document.getElementsByClassName('tg_file_picker'));
+
+const apps = [];
+
+if (browser !== null) {
+    apps.push('browser');
+}
+R.forEach(() => {
+    apps.push(`filepicker_${index += 1}`)
+}, pickers);
+
+const { store, persistor } = createNameSpacedStore(apps);
+
 if (browser !== null) {
     const dataset = getDataset(browser);
     let language;
     if (dataset !== null) {
         language = dataset.language;
     }
-    // language = 'nl';
-    // language = 'de';
+    const storeId = 'browser';
     i18n.changeLanguage(language, () => {
-        ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={store} >
-                <Browser
-                    browser={true}
-                    dataset={dataset}
-                />
-            </Provider>
-        </I18nextProvider>, browser);
+        ReactDOM.render(
+            <I18nextProvider i18n={i18n}>
+                <Provider store={store}>
+                    <PersistGate
+                        loading={<div>loading</div>}
+                        persistor={persistor}
+                    >
+                        <SubspaceProvider
+                            mapState={(state: State2Type): StoreType<StateType, GenericActionType> => state[storeId]}
+                            namespace={storeId}
+                        >
+                            <Browser
+                                browser={true}
+                                dataset={dataset}
+                            />
+                        </SubspaceProvider>
+                    </PersistGate>
+                </Provider>
+            </I18nextProvider>
+            , browser);
     });
 }
 
+index = 0;
 
-// an element with the class 'tg_file_picker' will be converted to a file selector
-// note there can be multiple file selectors in a single form
-const pickers: HTMLElement[] = Array.from(document.getElementsByClassName('tg_file_picker'));
 R.forEach((element: HTMLElement) => {
     const dataset = getDataset(element);
     let language;
     if (dataset !== null) {
         language = dataset.language;
     }
-    // language = 'nl-NL';
-    // language = 'de-DE';
+    const storeId = `filepicker_${index += 1}`;
     i18n.changeLanguage(language, () => {
-        ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={store} >
-                <Browser
-                    browser={false}
-                    dataset={dataset}
-                />
-            </Provider>
-        </I18nextProvider>, element);
+        ReactDOM.render(
+            <I18nextProvider i18n={i18n}>
+                <Provider store={store}>
+                    <PersistGate
+                        loading={<div>loading</div>}
+                        persistor={persistor}
+                    >
+                        <SubspaceProvider
+                            mapState={(state: State2Type): StoreType<StateType, GenericActionType> => state[storeId]}
+                            namespace={storeId}
+                        >
+                            <Browser
+                                browser={false}
+                                dataset={dataset}
+                            />
+                        </SubspaceProvider>
+                    </PersistGate>
+                </Provider>
+            </I18nextProvider>
+            , element);
     });
 }, pickers);

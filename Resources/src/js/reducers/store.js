@@ -1,39 +1,46 @@
 // @flow
-import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
+import { compose, createStore, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
-import { autoRehydrate } from 'redux-persist';
-// import thunkMiddleware from 'redux-thunk'
+import { persistStore, persistReducer } from 'redux-persist';
+import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 import type { CombinedReducer } from 'redux';
+import thunk from 'redux-thunk';
+import { applyMiddleware, namespaced } from 'redux-subspace'
 import { ui, uiInitialState } from './ui_reducer';
 import { tree, treeInitialState } from './tree_reducer';
 
-const initialState: StateType = {
-    ui: uiInitialState,
-    tree: treeInitialState,
+const config = {
+    key: 'root',
+    storage: createWebStorage('local'),
 };
 
-const combinedReducers: CombinedReducer<StateType, GenericActionType> = combineReducers({ ui, tree });
-// create dummy store to prevent a null value, use the boolean initialized instead of a null check
-// to see if a store has already been created (singleton-ish)
-let store: StoreType<StateType, GenericActionType> = createStore(combinedReducers, initialState);
-let initialized: boolean = false;
-
-export const getNewStore = (): StoreType<StateType, GenericActionType> => createStore(
-  combinedReducers,
-  initialState,
-  compose(
-    autoRehydrate(),
-    applyMiddleware(
-      // thunkMiddleware,
-      createLogger({ collapsed: true }),
-    ),
-  ),
-);
-
-export function getStore(): StoreType<StateType, GenericActionType> {
-    if (initialized === false) {
-        initialized = true;
-        store = getNewStore();
-    }
-    return store;
+const createNameSpacedStore = (apps: string[]): StoreType<StateType, GenericActionType> => {
+    const combined = {};
+    const initialState = {};
+    apps.forEach((id: string) => {
+        combined[id] = combineReducers({
+            ui: namespaced(id)(ui),
+            tree: namespaced(id)(tree),
+        });
+        initialState[id] = {
+            ui: uiInitialState,
+            tree: treeInitialState,
+        }
+    });
+    const combinedReducers: CombinedReducer<State2Type, GenericActionType> = combineReducers(combined);
+    const reducer = persistReducer(config, combinedReducers);
+    const store = createStore(
+        reducer,
+        initialState,
+        compose(
+            applyMiddleware(
+                thunk,
+                createLogger({ collapsed: true }),
+            ),
+        ),
+    );
+    const persistor = persistStore(store);
+    return { persistor, store };
 }
+
+export default createNameSpacedStore;

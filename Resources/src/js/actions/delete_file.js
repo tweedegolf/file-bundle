@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     DELETE_FILE,
@@ -13,10 +12,11 @@ import { createError, getFileCount } from '../util/util';
 // START FLOW TYPES
 
 export type PayloadFileDeletedType = {
-    tree: TreeType,
     recycleBin: RecycleBinType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
+    selectedFileIds: string[],
+    clipboardFileIds: string[],
 };
 
 export type ActionDeleteFileType = {
@@ -33,22 +33,23 @@ export type ActionFileDeletedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
-const deleteFile = (fileId: string,
+const deleteFile = (
+    state: StateType,
+    fileId: string,
     resolve: (payload: PayloadFileDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
-    const tree: TreeType = R.clone(treeState.tree);
     let recycleBin = { ...treeState[RECYCLE_BIN_ID] };
+
+    const selectedFileIds = uiState.selected.fileIds;
+    const clipboardFileIds = uiState.clipboard.fileIds;
 
     api.deleteFile(fileId,
         (error: string) => {
@@ -68,7 +69,7 @@ const deleteFile = (fileId: string,
             filesById[fileId] = R.merge(file, { is_trashed: true });
 
             const currentFolder: FolderType = foldersById[currentFolderId];
-            currentFolder.file_count = getFileCount(tree[currentFolderId].fileIds, filesById);
+            currentFolder.file_count = getFileCount(treeState.tree[currentFolderId].fileIds, filesById);
             foldersById[currentFolderId] = currentFolder;
 
             recycleBin = {
@@ -77,10 +78,11 @@ const deleteFile = (fileId: string,
             };
 
             resolve({
-                tree,
-                filesById,
                 recycleBin,
+                filesById,
                 foldersById,
+                selectedFileIds: R.without(fileId, selectedFileIds),
+                clipboardFileIds: R.without(fileId, clipboardFileIds),
             });
         },
         (messages: Array<string>) => {
@@ -92,28 +94,32 @@ const deleteFile = (fileId: string,
     );
 };
 
-export default (fileId: string) => {
-    const a: ActionDeleteFileType = {
-        type: DELETE_FILE,
-        payload: { id: fileId },
-    };
-    dispatch(a);
+export default (fileId: string): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const a: ActionDeleteFileType = {
+            type: DELETE_FILE,
+            payload: { id: fileId },
+        };
+        dispatch(a);
 
-    deleteFile(
-        fileId,
-        (payload: PayloadFileDeletedType) => {
-            const a1: ActionFileDeletedType = {
-                type: FILE_DELETED,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: ERROR_DELETING_FILE,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        deleteFile(
+            state,
+            fileId,
+            (payload: PayloadFileDeletedType) => {
+                const a1: ActionFileDeletedType = {
+                    type: FILE_DELETED,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: ERROR_DELETING_FILE,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

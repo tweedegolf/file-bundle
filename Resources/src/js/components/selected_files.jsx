@@ -9,8 +9,8 @@ import { translate } from 'react-i18next';
 
 type PropsType = {
     selectedFiles: FileType[],
-    selectFile: (file: string) => void,
-    showPreview: (id: null | string) => void,
+    selectFile: (string) => void,
+    showPreview: (imageUrl: null | string) => GenericActionType,
     t: (string) => string,
 };
 
@@ -35,10 +35,10 @@ class SelectedFiles extends
                 const original = typeof file.original === 'undefined' ? null : file.original;
                 const p = { onClick: () => { this.props.showPreview(original); } };
                 preview = (<img
-                  src={file.thumb}
-                  // alt={file.name}
-                  alt={'no thumb'}
-                  {...p}
+                    src={file.thumb}
+                    // alt={file.name}
+                    alt={'no thumb'}
+                    {...p}
                 />);
             }
             let p = {};

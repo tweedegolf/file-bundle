@@ -67,9 +67,10 @@ const createErrors = ({ errors, onDismiss, t }: PropsType): React$Element<*>[] =
             <button
                 type="button"
                 className="close"
-                onClick={() => {
-                    onDismiss(error.id);
-                }}
+                onClick={
+                    () => {
+                        onDismiss(error.id);
+                    }}
             >
                 &times;
             </button>

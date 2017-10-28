@@ -4,17 +4,20 @@
  *             items are shown as a row. See the files file.react.js and
  *             folder.react.js
  */
+import R from 'ramda';
 import React from 'react';
 // import PropTypes from 'prop-types';
-import R from 'ramda';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { translate } from 'react-i18next';
-import File from '../components/file.react';
-import Folder from '../components/folder.react';
-import ParentFolder from '../components/parent_folder.react';
+import File from '../components/file.jsx';
+import Folder from '../components/folder.jsx';
+import ParentFolder from '../components/parent_folder.jsx';
 import * as Actions from '../actions';
 import currentFolderSelector from '../reducers/current_folder_selector';
 import type { PermissionsType } from '../actions/init';
+
+// START FLOW TYPES
 
 type PassedPropsType = {
     browser: boolean,
@@ -52,8 +55,23 @@ type DefaultPropsType = {
     parentFolder: null,
 };
 
-type AllPropsType = PassedPropsType & PropsType;
+type ActionsPropsType = {
+    openFolder: (string) => ReduxThunkType,
+    renameFolder: (string, string) => ReduxThunkType,
+    confirmRenameFolder: (null | string) => GenericActionType,
+    selectFile: (string) => GenericActionType,
+    deleteFile: (string) => ReduxThunkType,
+    showPreview: (null | string) => GenericActionType,
+    confirmDeleteFile: (null | string) => GenericActionType,
+    selectFolder: (string) => GenericActionType,
+    deleteFolder: (string) => ReduxThunkType,
+    confirmDeleteFolder: (null | string) => GenericActionType,
+};
+
+type AllPropsType = PassedPropsType & PropsType & ActionsPropsType;
 type ListStateType = {};
+
+// END FLOW TYPES
 
 const mapStateToProps = (state: StateType): PropsType => {
     const {
@@ -91,6 +109,23 @@ const mapStateToProps = (state: StateType): PropsType => {
     };
 };
 
+const mapDispatchToProps = (dispatch: DispatchType): ActionsPropsType => {
+    return {
+        ...bindActionCreators({
+            openFolder: Actions.openFolder,
+            renameFolder: Actions.renameFolder,
+            confirmRenameFolder: Actions.confirmRenameFolder,
+            selectFile: Actions.selectFile,
+            deleteFile: Actions.deleteFile,
+            showPreview: Actions.showPreview,
+            confirmDeleteFile: Actions.confirmDeleteFile,
+            selectFolder: Actions.selectFolder,
+            deleteFolder: Actions.deleteFolder,
+            confirmDeleteFolder: Actions.confirmDeleteFolder,
+        }, dispatch)
+    }
+}
+
 // export default class List extends React.Component {
 class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType> {
     static defaultProps = {
@@ -109,10 +144,10 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
                 return;
             }
-            Actions.openFolder({ id: folderId });
+            this.props.openFolder(folderId);
         };
         this.renameFolder = (folderId: string, newName: string) => {
-            Actions.renameFolder(folderId, newName);
+            this.props.renameFolder(folderId, newName);
         };
         this.confirmRenameFolder = (folderId: string) => {
             if (this.props.isUploadingFiles === true ||
@@ -121,7 +156,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             ) {
                 return;
             }
-            Actions.confirmRenameFolder(folderId);
+            this.props.confirmRenameFolder(folderId);
         };
     }
 
@@ -149,10 +184,10 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
                 key={`file-${file.id}`}
                 file={file}
                 hovering={this.props.hover === (i -= 1)}
-                selectFile={Actions.selectFile}
-                deleteFile={Actions.deleteFile}
-                showPreview={Actions.showPreview}
-                confirmDelete={Actions.confirmDeleteFile}
+                selectFile={this.props.selectFile}
+                deleteFile={this.props.deleteFile}
+                showPreview={this.props.showPreview}
+                confirmDelete={this.props.confirmDeleteFile}
                 selected={this.props.selected}
                 clipboard={this.props.clipboard}
                 browser={this.props.browser}
@@ -168,15 +203,15 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             key={`folder-${folder.id === null ? 'null' : folder.id}`}
             folder={folder}
             permissions={this.props.permissions}
-            selectFolder={Actions.selectFolder}
-            deleteFolder={Actions.deleteFolder}
+            selectFolder={this.props.selectFolder}
+            deleteFolder={this.props.deleteFolder}
             selected={this.props.selected}
             clipboard={this.props.clipboard}
             browser={this.props.browser}
             openFolder={this.openFolder}
             renameFolder={this.renameFolder}
             confirmRenameFolder={this.confirmRenameFolder}
-            confirmDelete={Actions.confirmDeleteFolder}
+            confirmDelete={this.props.confirmDeleteFolder}
             deleteFolderWithId={this.props.deleteFolderWithId}
             loadingFolderWithId={this.props.loadingFolderWithId}
             renameFolderWithId={this.props.renameFolderWithId}
@@ -184,7 +219,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         />), this.props.folders);
 
         // reverse listings when the sort direction is reversed
-        if (!this.props.ascending) {
+        if (!this.props.ascending && files !== null && folders !== null) {
             folders = folders.reverse();
             files = files.reverse();
         }
@@ -207,4 +242,4 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
     }
 }
 
-export default translate('common')(connect(mapStateToProps)(List));
+export default translate('common')(connect(mapStateToProps, mapDispatchToProps)(List));

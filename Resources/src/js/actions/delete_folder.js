@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     DELETE_FOLDER,
@@ -13,10 +12,13 @@ import { createError, getItemIds } from '../util/util';
 // START FLOW TYPES
 
 type PayloadFolderDeletedType = {
-    tree: TreeType,
     recycleBin: RecycleBinType,
     filesById: FilesByIdType,
     foldersById: FoldersByIdType,
+    selectedFileIds: string[],
+    clipboardFileIds: string[],
+    selectedFolderIds: string[],
+    clipboardFolderIds: string[],
 };
 
 export type ActionConfirmDeleteFolderType = {
@@ -40,26 +42,28 @@ export type ActionFolderDeletedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
-const deleteFolder = (folderId: string,
+const deleteFolder = (
+    state: StateType,
+    folderId: string,
     resolve: (payload: PayloadFolderDeletedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
-    const tree: TreeType = R.clone(treeState.tree);
     const folder = foldersById[folderId];
     const {
-         files: filesInRecycleBin,
-         folders: foldersInRecycleBin,
+        files: filesInRecycleBin,
+        folders: foldersInRecycleBin,
     } = { ...treeState[RECYCLE_BIN_ID] };
+    const selectedFileIds = uiState.selected.fileIds;
+    const clipboardFileIds = uiState.clipboard.fileIds;
+    const selectedFolderIds = uiState.selected.folderIds;
+    const clipboardFolderIds = uiState.clipboard.folderIds;
 
     api.deleteFolder(
         folderId,
@@ -79,7 +83,7 @@ const deleteFolder = (folderId: string,
                 fileIds: [],
                 folderIds: [],
             };
-            getItemIds(folderId, collectedItemIds, tree);
+            getItemIds(folderId, collectedItemIds, treeState.tree);
             collectedItemIds.fileIds.forEach((id: string) => {
                 const f = filesById[id];
                 filesInRecycleBin.push(f);
@@ -103,13 +107,16 @@ const deleteFolder = (folderId: string,
             foldersById[folderId] = deletedFolder;
 
             resolve({
-                tree,
                 filesById,
                 foldersById,
                 recycleBin: {
                     files: filesInRecycleBin,
                     folders: foldersInRecycleBin,
                 },
+                selectedFileIds: R.without(collectedItemIds.fileIds, selectedFileIds),
+                clipboardFileIds: R.without(collectedItemIds.fileIds, clipboardFileIds),
+                selectedFolderIds: R.without(collectedItemIds.folderIds, selectedFolderIds),
+                clipboardFolderIds: R.without(collectedItemIds.folderIds, clipboardFolderIds),
             });
         },
         (messages: Array<string>) => {
@@ -120,28 +127,32 @@ const deleteFolder = (folderId: string,
     );
 };
 
-export default (folderId: string) => {
-    const a: ActionDeleteFolderType = {
-        type: DELETE_FOLDER,
-        payload: { id: folderId },
-    };
-    dispatch(a);
+export default (folderId: string): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const a: ActionDeleteFolderType = {
+            type: DELETE_FOLDER,
+            payload: { id: folderId },
+        };
+        dispatch(a);
 
-    deleteFolder(
-        folderId,
-        (payload: PayloadFolderDeletedType) => {
-            const a1: ActionFolderDeletedType = {
-                type: FOLDER_DELETED,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: ERROR_DELETING_FOLDER,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        deleteFolder(
+            state,
+            folderId,
+            (payload: PayloadFolderDeletedType) => {
+                const a1: ActionFolderDeletedType = {
+                    type: FOLDER_DELETED,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: ERROR_DELETING_FOLDER,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

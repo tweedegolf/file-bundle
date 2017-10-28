@@ -1,6 +1,5 @@
 // @flow
 import R from 'ramda';
-import { getStore } from '../reducers/store';
 import api from '../util/api';
 import {
     ADD_FOLDER,
@@ -27,17 +26,16 @@ export type ActionFolderAddedType = {
 
 // END FLOW TYPES
 
-const store: StoreType<StateType, GenericActionType> = getStore();
-const dispatch: DispatchType = store.dispatch;
-
-const addFolder = (folderName: string,
+const addFolder = (
+    state: StateType,
+    folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
         ui: uiState,
         tree: treeState,
-    } = store.getState();
+    } = state;
     const currentFolderId: string = uiState.currentFolderId;
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
@@ -73,27 +71,31 @@ const addFolder = (folderName: string,
     );
 };
 
-export default (folderName: string) => {
-    const a: ActionAddFolderType = {
-        type: ADD_FOLDER,
-    };
-    dispatch(a);
+export default (folderName: string): ReduxThunkType => {
+    return (dispatch: DispatchType, getState: () => StateType) => {
+        const state = getState();
+        const a: ActionAddFolderType = {
+            type: ADD_FOLDER,
+        };
+        dispatch(a);
 
-    addFolder(
-        folderName,
-        (payload: PayloadFolderAddedType) => {
-            const a1: ActionFolderAddedType = {
-                type: FOLDER_ADDED,
-                payload,
-            };
-            dispatch(a1);
-        },
-        (payload: PayloadErrorType) => {
-            const a1: ActionErrorType = {
-                type: ERROR_ADDING_FOLDER,
-                payload,
-            };
-            dispatch(a1);
-        },
-    );
+        addFolder(
+            state,
+            folderName,
+            (payload: PayloadFolderAddedType) => {
+                const a1: ActionFolderAddedType = {
+                    type: FOLDER_ADDED,
+                    payload,
+                };
+                dispatch(a1);
+            },
+            (payload: PayloadErrorType) => {
+                const a1: ActionErrorType = {
+                    type: ERROR_ADDING_FOLDER,
+                    payload,
+                };
+                dispatch(a1);
+            },
+        );
+    };
 };

@@ -18,7 +18,7 @@
         "develop_with_local_server": "PORT=8000 npm run gulp:develop",
         "develop": "npm run gulp:develop",
         "build": "npm run gulp:production && npm run webpack:production && gulp copy",
-        "copy": "cpx './_backend/src/TweedeGolf/FileBundle/**' ../",
+        "copy": "cpx '../_backend/src/TweedeGolf/FileBundle/**' ../",
         "dist": "npm run build && npm run copy"
     },
     "author": "tweede golf",

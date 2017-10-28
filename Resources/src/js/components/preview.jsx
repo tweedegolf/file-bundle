@@ -1,10 +1,10 @@
 // @flow
 import React from 'react';
-import R from 'ramda';
-import { showPreview } from '../actions';
 
 type PropsType = {
     url: null | string,
+    // showPreview: (imageUrl: null | string) => void,
+    showPreview: (imageUrl: null | string) => GenericActionType, // this is very weird!
 };
 
 const Preview = (props: PropsType): null | React$Element<*> => {
@@ -15,14 +15,13 @@ const Preview = (props: PropsType): null | React$Element<*> => {
         className: 'preview-image',
         onClick: (e: SyntheticEvent) => {
             e.stopPropagation();
-            showPreview(null);
+            props.showPreview(null);
         },
     };
     return (<div {...p}>
         <div style={{ backgroundImage: `url(${props.url})` }} />
     </div>);
 };
-
 
 Preview.defaultProps = {
     url: null,
