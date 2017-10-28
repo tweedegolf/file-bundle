@@ -84,8 +84,6 @@ const openFolder = (
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const currentFolder = foldersById[folderId];
 
-    console.log('opening folder', folderId);
-
     api.openFolder(
         folderId,
         (folders: Array<FolderType>, files: Array<FileType>) => {

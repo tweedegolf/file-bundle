@@ -33,9 +33,8 @@ const sources = {
 };
 
 const targets = {
-    js1: './build/scripts/',
-    js2: '../_backend/web/assets/scripts',
-    js3: '../_backend/_backend/src/TweedeGolf/FileBundle/Resources/scripts',
+    js1: '../_backend/web/assets/scripts',
+    js2: '../_backend/src/TweedeGolf/FileBundle/Resources/scripts',
     css: './build/styles/',
 };
 
@@ -56,7 +55,6 @@ const rebundle = b => b.bundle()
     .pipe(buffer())
     .pipe(gulp.dest(path.join(targets.js1)))
     .pipe(gulp.dest(path.join(targets.js2)))
-    .pipe(gulp.dest(path.join(targets.js3)))
     .pipe(reload());
 
 gulp.task('watch_js', () => {
@@ -107,8 +105,7 @@ gulp.task('build_js', () => {
         }))
         .pipe(sourcemaps.write(path.join('./')))
         .pipe(gulp.dest(targets.js1))
-        .pipe(gulp.dest(targets.js2))
-        .pipe(gulp.dest(targets.js3));
+        .pipe(gulp.dest(targets.js2));
 });
 
 const buildCss = () => gulp.src(sources.css)
@@ -164,10 +161,14 @@ const copyBuild = () => gulp.src(['./build/**'])
     .pipe(gulp.dest('../_backend/src/TweedeGolf/FileBundle/Resources/'))
     .pipe(gulp.dest('../_backend/web/assets/'))
 
+const copyHtml = () => gulp.src(['./src/*.html'])
+    .pipe(gulp.dest('../_backend/web/assets/'))
+
 gulp.task('copy', gulp.series(
     copySource,
     copyBuild,
     copyFonts,
+    copyHtml,
 ));
 
 

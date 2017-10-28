@@ -25,10 +25,9 @@ let index = 0;
 const getDataset = (element: HTMLElement): DatasetType | null => {
     let dataset = element.dataset.options;
     if (R.isNil(dataset)) {
-        dataset = {};
-    } else {
-        dataset = JSON.parse(dataset);
+        return null;
     }
+    dataset = JSON.parse(dataset);
     dataset = {
         language: dataset.language || 'nl',
         rootFolderId: dataset.rootFolderId || dataset.root_folder_id || 'null',
@@ -63,7 +62,6 @@ if (browser !== null) {
     apps.push('browser');
 }
 R.forEach(() => {
-    return null
     apps.push(`filepicker_${index += 1}`)
 }, pickers);
 
@@ -71,8 +69,12 @@ const { store, persistor } = createNameSpacedStore(apps);
 
 if (browser !== null) {
     const dataset = getDataset(browser);
+    let language;
+    if (dataset !== null) {
+        language = dataset.language;
+    }
     const storeId = 'browser';
-    i18n.changeLanguage(dataset.language, () => {
+    i18n.changeLanguage(language, () => {
         ReactDOM.render(
             <I18nextProvider i18n={i18n}>
                 <Provider store={store}>
@@ -100,8 +102,12 @@ index = 0;
 
 R.forEach((element: HTMLElement) => {
     const dataset = getDataset(element);
+    let language;
+    if (dataset !== null) {
+        language = dataset.language;
+    }
     const storeId = `filepicker_${index += 1}`;
-    i18n.changeLanguage(dataset.language, () => {
+    i18n.changeLanguage(language, () => {
         ReactDOM.render(
             <I18nextProvider i18n={i18n}>
                 <Provider store={store}>
