@@ -113,7 +113,7 @@ const buildCss = () => gulp.src(sources.css)
         outputStyle: 'compressed',
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(concat('file-bundle-complete.css'))
+    .pipe(concat('file-bundle.css'))
     .pipe(gulp.dest(targets.css));
 gulp.task('build_css', buildCss);
 
