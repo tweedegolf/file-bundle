@@ -24,8 +24,10 @@ export type ActionMetaDataReceivedType = {
 
 // END FLOW TYPES
 
+const store: StoreType<StateType, GenericActionType> = getStore();
+const dispatch: DispatchType = store.dispatch;
+
 const getMetaData = (
-    store: StoreType<StateType, GenericActionType>,
     resolve: (payload: PayloadActionMetaDataReceivedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
@@ -92,11 +94,8 @@ const getMetaData = (
     );
 };
 
-export default (storeId: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
+export default () => {
     getMetaData(
-        store,
         (payload: PayloadActionMetaDataReceivedType) => {
             const a: ActionMetaDataReceivedType = {
                 type: META_DATA_RECEIVED,

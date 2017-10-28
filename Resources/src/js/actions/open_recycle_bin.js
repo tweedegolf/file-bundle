@@ -35,8 +35,10 @@ export type ActionRecycleBinOpenedType = {
 // END FLOW TYPES
 
 const DELAY: number = 100;
+const store: StoreType<StateType, GenericActionType> = getStore();
+const dispatch: DispatchType = store.dispatch;
 
-const getCurrentFolder = (store: StoreType<StateType, GenericActionType>): [string, string] => {
+const getCurrentFolder = (): [string, string] => {
     let currentFolderId = store.getState().ui.currentFolderId;
     let currentFolderIdTmp = store.getState().ui.currentFolderIdTmp;
     if (currentFolderId !== RECYCLE_BIN_ID) {
@@ -46,9 +48,9 @@ const getCurrentFolder = (store: StoreType<StateType, GenericActionType>): [stri
     return [currentFolderId, currentFolderIdTmp];
 };
 
-const optimisticUpdate = (store: StoreType<StateType, GenericActionType>): boolean => {
+const optimisticUpdate = (): boolean => {
     const recycleBin = store.getState().tree[RECYCLE_BIN_ID];
-    const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(store);
+    const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
     const payload: PayloadRecycleBinOpenedType = {
         recycleBin,
         currentFolderId,
@@ -58,18 +60,17 @@ const optimisticUpdate = (store: StoreType<StateType, GenericActionType>): boole
         type: RECYCLE_BIN_FROM_CACHE,
         payload,
     };
-    store.dispatch(a);
+    dispatch(a);
     return true;
 };
 
 const openRecycleBin = (
-    store: StoreType<StateType, GenericActionType>,
     resolve: (PayloadRecycleBinOpenedType) => mixed,
     reject: (PayloadErrorType) => mixed,
 ) => {
     api.openRecycleBin(
         (folders: Array<FolderType>, files: Array<FileType>) => {
-            const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(store);
+            const [currentFolderId, currentFolderIdTmp] = getCurrentFolder();
             resolve({
                 recycleBin: {
                     files,
@@ -88,9 +89,7 @@ const openRecycleBin = (
     );
 };
 
-export default (storeId: string) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
+export default () => {
     const id = RECYCLE_BIN_ID;
     const forceLoad = false;
     let delay = 0;
@@ -100,7 +99,7 @@ export default (storeId: string) => {
     });
 
     if (forceLoad === false) {
-        const fromCache = optimisticUpdate(store);
+        const fromCache = optimisticUpdate();
         if (fromCache) {
             delay = DELAY;
         }
@@ -108,7 +107,6 @@ export default (storeId: string) => {
 
     setTimeout(() => {
         openRecycleBin(
-            store,
             (payload: PayloadRecycleBinOpenedType) => {
                 dispatch({
                     type: RECYCLE_BIN_OPENED,

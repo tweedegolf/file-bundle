@@ -60,11 +60,10 @@ type PayloadInitType = {
 
 // END FLOW TYPES
 
-const init = (
-    storeId: string,
-    options: DatasetType,
-    browser: boolean = true
-) => {
+const store: StoreType<StateType, GenericActionType> = getStore();
+const dispatch: Dispatch = store.dispatch;
+
+const init = (options: DatasetType, browser: boolean = true) => {
     const permissions = { ...options };
     const {
         language,
@@ -76,7 +75,6 @@ const init = (
     delete permissions.selected;
     delete permissions.rootFolderId;
 
-    const store = getStore(storeId);
     const {
         ui: uiState,
         tree: treeState,
@@ -139,26 +137,26 @@ const init = (
             foldersById,
         },
     };
-    store.dispatch(action);
+    dispatch(action);
 
     if (currentFolderId === RECYCLE_BIN_ID) {
-        openRecycleBin(storeId);
+        openRecycleBin();
     } else {
-        openFolder(storeId, currentFolderId);
+        openFolder({ id: currentFolderId });
     }
 
     if (browser === true && allSelected.fileIds.length + allSelected.folderIds.length > 0) {
-        getMetaData(storeId);
+        getMetaData();
     }
 };
 
-export default (storeId: string, options: DatasetType, browser: boolean) => {
-    const store = getStore(storeId);
+export default (options: DatasetType, browser: boolean) => {
+    // init(options, browser);
     if (browser === true) {
         persistStore(store, {}, () => {
-            init(storeId, options, browser);
+            init(options, browser);
         });
     } else {
-        init(storeId, options, browser);
+        init(options, browser);
     }
 };

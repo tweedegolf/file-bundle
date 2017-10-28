@@ -11,11 +11,11 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import R from 'ramda';
 import Browser from './containers/browser.react';
-import { getNewStore } from './reducers/store';
+import { getStore } from './reducers/store';
 import i18n from './util/i18n';
 import type { DatasetType } from './actions/init';
 
-let index = 0;
+const store: StoreType<StateType, GenericActionType> = getStore();
 // const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
@@ -55,18 +55,20 @@ if (browser !== null) {
     if (dataset !== null) {
         language = dataset.language;
     }
+    // language = 'nl';
+    // language = 'de';
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={getNewStore('browser')} >
+            <Provider store={store} >
                 <Browser
-                  browser={true}
-                  dataset={dataset}
-                  storeId={'browser'}
+                    browser={true}
+                    dataset={dataset}
                 />
             </Provider>
         </I18nextProvider>, browser);
     });
 }
+
 
 // an element with the class 'tg_file_picker' will be converted to a file selector
 // note there can be multiple file selectors in a single form
@@ -77,16 +79,16 @@ R.forEach((element: HTMLElement) => {
     if (dataset !== null) {
         language = dataset.language;
     }
-    const storeId = `filepicker_${index += 1}`;
+    // language = 'nl-NL';
+    // language = 'de-DE';
     i18n.changeLanguage(language, () => {
         ReactDOM.render(<I18nextProvider i18n={i18n}>
-            <Provider store={getNewStore(storeId)} >
+            <Provider store={store} >
                 <Browser
-                  browser={false}
-                  dataset={dataset}
-                  storeId={storeId}
+                    browser={false}
+                    dataset={dataset}
                 />
             </Provider>
-        </I18nextProvider >, element);
+        </I18nextProvider>, element);
     });
 }, pickers);

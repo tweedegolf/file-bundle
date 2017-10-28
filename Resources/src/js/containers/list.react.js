@@ -4,9 +4,9 @@
  *             items are shown as a row. See the files file.react.js and
  *             folder.react.js
  */
-import R from 'ramda';
 import React from 'react';
 // import PropTypes from 'prop-types';
+import R from 'ramda';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import File from '../components/file.react';
@@ -17,7 +17,6 @@ import currentFolderSelector from '../reducers/current_folder_selector';
 import type { PermissionsType } from '../actions/init';
 
 type PassedPropsType = {
-    storeId: string,
     browser: boolean,
     t: (string) => string,
 };
@@ -110,10 +109,10 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             if (this.props.isUploadingFiles === true || this.props.loadingFolderWithId !== null) {
                 return;
             }
-            Actions.openFolder(this.props.storeId, folderId);
+            Actions.openFolder({ id: folderId });
         };
         this.renameFolder = (folderId: string, newName: string) => {
-            Actions.renameFolder(this.props.storeId, folderId, newName);
+            Actions.renameFolder(folderId, newName);
         };
         this.confirmRenameFolder = (folderId: string) => {
             if (this.props.isUploadingFiles === true ||
@@ -122,7 +121,7 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             ) {
                 return;
             }
-            Actions.confirmRenameFolder(this.props.storeId, folderId);
+            Actions.confirmRenameFolder(folderId);
         };
     }
 
@@ -147,41 +146,41 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
             }
 
             return (<File
-              key={`file-${file.id}`}
-              file={file}
-              hovering={this.props.hover === (i -= 1)}
-              selectFile={R.curry(Actions.selectFile)(this.props.storeId)}
-              deleteFile={R.curry(Actions.deleteFile)(this.props.storeId)}
-              showPreview={R.curry(Actions.showPreview)(this.props.storeId)}
-              confirmDelete={R.curry(Actions.confirmDeleteFile)(this.props.storeId)}
-              selected={this.props.selected}
-              clipboard={this.props.clipboard}
-              browser={this.props.browser}
-              deleteFileWithId={this.props.deleteFileWithId}
-              permissions={this.props.permissions}
-              showingRecycleBin={this.props.showingRecycleBin}
+                key={`file-${file.id}`}
+                file={file}
+                hovering={this.props.hover === (i -= 1)}
+                selectFile={Actions.selectFile}
+                deleteFile={Actions.deleteFile}
+                showPreview={Actions.showPreview}
+                confirmDelete={Actions.confirmDeleteFile}
+                selected={this.props.selected}
+                clipboard={this.props.clipboard}
+                browser={this.props.browser}
+                deleteFileWithId={this.props.deleteFileWithId}
+                permissions={this.props.permissions}
+                showingRecycleBin={this.props.showingRecycleBin}
             />);
         }, this.props.files);
 
         // sorted folder listing
         let folders = R.map((folder: FolderType): React$Element<*> => (<Folder
-          hovering={this.props.hover === (i -= 1)}
-          key={`folder-${folder.id === null ? 'null' : folder.id}`}
-          folder={folder}
-          permissions={this.props.permissions}
-          selectFolder={R.curry(Actions.selectFolder)(this.props.storeId)}
-          deleteFolder={R.curry(Actions.deleteFolder)(this.props.storeId)}
-          selected={this.props.selected}
-          clipboard={this.props.clipboard}
-          browser={this.props.browser}
-          openFolder={this.openFolder}
-          renameFolder={this.renameFolder}
-          confirmRenameFolder={this.confirmRenameFolder}
-          confirmDelete={R.curry(Actions.confirmDeleteFolder)(this.props.storeId)}
-          deleteFolderWithId={this.props.deleteFolderWithId}
-          loadingFolderWithId={this.props.loadingFolderWithId}
-          renameFolderWithId={this.props.renameFolderWithId}
-          showingRecycleBin={this.props.showingRecycleBin}
+            hovering={this.props.hover === (i -= 1)}
+            key={`folder-${folder.id === null ? 'null' : folder.id}`}
+            folder={folder}
+            permissions={this.props.permissions}
+            selectFolder={Actions.selectFolder}
+            deleteFolder={Actions.deleteFolder}
+            selected={this.props.selected}
+            clipboard={this.props.clipboard}
+            browser={this.props.browser}
+            openFolder={this.openFolder}
+            renameFolder={this.renameFolder}
+            confirmRenameFolder={this.confirmRenameFolder}
+            confirmDelete={Actions.confirmDeleteFolder}
+            deleteFolderWithId={this.props.deleteFolderWithId}
+            loadingFolderWithId={this.props.loadingFolderWithId}
+            renameFolderWithId={this.props.renameFolderWithId}
+            showingRecycleBin={this.props.showingRecycleBin}
         />), this.props.folders);
 
         // reverse listings when the sort direction is reversed
@@ -194,9 +193,9 @@ class List extends React.Component<DefaultPropsType, AllPropsType, ListStateType
         let backToParent = null;
         if (this.props.parentFolder !== null) {
             backToParent = (<ParentFolder
-              key={`folder-${this.props.parentFolder.name}`}
-              folder={this.props.parentFolder}
-              openFolder={this.openFolder}
+                key={`folder-${this.props.parentFolder.name}`}
+                folder={this.props.parentFolder}
+                openFolder={this.openFolder}
             />);
         }
 

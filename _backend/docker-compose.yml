@@ -1,0 +1,79 @@
+version: '2'
+services:
+    app:
+        build:
+            context: ./tasks/docker/app_debug
+            args: {USER_ID: $USER_ID}
+        depends_on: [psql, mailhog]
+        volumes:
+            - ".:/app"
+            - "./tasks/files/php.ini:/usr/local/etc/php/php.ini"
+            - "~/.composer:/home/tg/.composer"
+        command: bash
+        environment:
+            USE_POLLING_WATCHES: 1
+            DOCKER: 1
+            PGHOST: psql
+            SYMFONY_OKOA_CACHE_DIR: /tmp/symfony/cache/__ENV__
+            # SYMFONY_OKOA_LOG_DIR: /tmp/symfony/logs
+        networks: [default]
+
+    sphinx:
+        build:
+            context: ./tasks/docker/app_debug
+            args: {USER_ID: $USER_ID}
+        volumes:
+            - ".:/app"
+        ports: ["2080:2080"]
+        command: /usr/local/bin/sphinx-autobuild -H 0.0.0.0 -p 2080 --poll /app/docs /app/docs/_build/html
+        networks: [default]
+        stop_signal: SIGINT
+
+    php:
+        build:
+            context: ./tasks/docker/php_fpm
+            args: {USER_ID: $USER_ID}
+        depends_on: [psql, mailhog]
+        volumes:
+            - ".:/app"
+            - "./tasks/files/php.ini:/usr/local/etc/php/php.ini"
+            - "./tasks/files/php-fpm.conf:/usr/local/etc/php-fpm.conf"
+            - "~/.composer:/home/tg/.composer"
+        command: /usr/local/sbin/php-fpm
+        environment:
+            SYMFONY_OKOA_CACHE_DIR: /tmp/symfony/cache/__ENV__
+            # SYMFONY_OKOA_LOG_DIR: /tmp/symfony/logs
+        networks: [default]
+
+    nginx:
+        image: nginx:latest
+        depends_on: [php]
+        volumes:
+            - ".:/app"
+            - "./tasks/files/nginx.dev.conf:/etc/nginx/conf.d/dev.conf"
+            - "./tasks/files/nginx.prod.conf:/etc/nginx/conf.d/default.conf"
+        ports: ["80:80", "8080:8080"]
+        networks:
+            default:
+                aliases:
+                    - tas.dev
+                    - app.dev
+
+    psql:
+        image: postgres:9.4
+        environment:
+            POSTGRES_USER: tg
+        ports: ["5432:5432"]
+        networks: [default]
+
+    mailhog:
+        image: mailhog/mailhog:latest
+        environment:
+            MH_API_BIND_ADDR: 0.0.0.0:1080
+            MH_UI_BIND_ADDR: 0.0.0.0:1080
+            MH_SMTP_BIND_ADDR: 0.0.0.0:1025
+        ports: ["1080:1080"]
+        networks: [default]
+
+networks:
+    default: ~

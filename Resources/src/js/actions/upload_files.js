@@ -28,9 +28,10 @@ export type ActionUploadDoneType = {
 
 // END FLOW TYPES
 
-const uploadFiles = (
-    store: StoreType<StateType, GenericActionType>,
-    files: Array<File>,
+const store: StoreType<StateType, GenericActionType> = getStore();
+const dispatch: DispatchType = store.dispatch;
+
+const uploadFiles = (files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
@@ -73,9 +74,7 @@ const uploadFiles = (
     );
 };
 
-export default (storeId: string, fileList: global.FileList) => {
-    const store = getStore(storeId);
-    const dispatch: DispatchType = store.dispatch;
+export default (fileList: global.FileList) => {
     const files: File[] = Array.from(fileList);
     const a: ActionUploadStartType = {
         type: Constants.UPLOAD_START,
@@ -84,7 +83,6 @@ export default (storeId: string, fileList: global.FileList) => {
     dispatch(a);
 
     uploadFiles(
-        store,
         files,
         (payload: PayloadUploadDoneType) => {
             const a1: ActionUploadDoneType = {

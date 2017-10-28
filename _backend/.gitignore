@@ -1,0 +1,42 @@
+# Installation specific parameters
+/app/config/parameters.yml
+/phpunit.xml
+
+# Build artifacts and assets
+/web/bundles/
+/web/css/
+/web/js/
+/web/assets/
+/web/favicon.ico
+/web/robots.txt
+/docs/_build
+
+# Caches, logs and sessions
+/var/bootstrap.php.cache
+/var/cache/*
+/var/logs/*
+/var/sessions/*
+/var/run/*
+/*.log
+!/var/cache/.gitkeep
+!/var/sessions/.gitkeep
+!/var/logs/.gitkeep
+!/var/run/.gitkeep
+
+# Dependency manager folders
+/vendor
+/node_modules
+/assets/vendor
+
+# Uploads
+/web/files/*
+/web/media/*
+
+# Utility and OS files
+/.vagrant
+/.idea
+.DS_Store
+._*
+*.orig
+*~
+.eslintrc

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+composer install --no-interaction
+npm install
+bin/symfony doctrine:schema:update --no-interaction --force
+bin/symfony doctrine:fixtures:load --no-interaction

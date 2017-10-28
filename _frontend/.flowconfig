@@ -1,0 +1,11 @@
+# all=error
+# untyped-type-import=error
+# sketchy-null-bool=off
+[libs]
+./types/
+[ignore]
+.*public.*
+.*node_modules.*
+[include]
+./node_modules/react-i18next/**/*
+
