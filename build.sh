@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd ./_frontend
+cd ./frontend
 npm run dist
 cd ../

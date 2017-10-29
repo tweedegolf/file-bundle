@@ -33,8 +33,8 @@ const sources = {
 };
 
 const targets = {
-    js1: '../_backend/web/assets/scripts',
-    js2: '../_backend/src/TweedeGolf/FileBundle/Resources/scripts',
+    js1: '../backend/web/assets/scripts',
+    js2: '../backend/src/TweedeGolf/FileBundle/Resources/scripts',
     css: './build/styles/',
 };
 
@@ -151,18 +151,18 @@ gulp.task('build_css_no_font-awesome', buildCssNoFontAwesome);
 
 
 const copySource = () => gulp.src(['src/**'])
-    .pipe(copy('../_backend/src/TweedeGolf/FileBundle/Resources/'));
+    .pipe(copy('../backend/src/TweedeGolf/FileBundle/Resources/'));
 
 const copyFonts = () => gulp.src(['./fonts/**'])
-    .pipe(gulp.dest('../_backend/src/TweedeGolf/FileBundle/Resources/fonts'))
-    .pipe(gulp.dest('../_backend/web/assets/fonts'));
+    .pipe(gulp.dest('../backend/src/TweedeGolf/FileBundle/Resources/fonts'))
+    .pipe(gulp.dest('../backend/web/assets/fonts'));
 
 const copyBuild = () => gulp.src(['./build/**'])
-    .pipe(gulp.dest('../_backend/src/TweedeGolf/FileBundle/Resources/'))
-    .pipe(gulp.dest('../_backend/web/assets/'))
+    .pipe(gulp.dest('../backend/src/TweedeGolf/FileBundle/Resources/'))
+    .pipe(gulp.dest('../backend/web/assets/'))
 
 const copyHtml = () => gulp.src(['./src/*.html'])
-    .pipe(gulp.dest('../_backend/web/assets/'))
+    .pipe(gulp.dest('../backend/web/assets/'))
 
 gulp.task('copy', gulp.series(
     copySource,
