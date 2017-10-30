@@ -100,6 +100,7 @@ const columnHeaderIds: [string, string, string] = ['name', 'size_bytes', 'create
 
 const mapStateToProps = (state: StateType, ownProps: PassedPropsType): PropsType => {
     const {
+        name,
         sort,
         ascending,
         currentFolderId,
@@ -126,6 +127,7 @@ const mapStateToProps = (state: StateType, ownProps: PassedPropsType): PropsType
         currentFolderId,
 
         // ui props
+        name,
         sort,
         ascending,
         selectedFiles: getSelectedFiles(state),
@@ -266,6 +268,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // if (typeof this.props.currentFolderId === 'undefined') {
         //     return <div>initializing...</div>;
         // }
+
         const headers = R.map((columnId: string): SortHeader =>
             <SortHeader
                 key={columnId}
@@ -302,6 +305,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         if (this.props.browser === false) {
             // selected files for filepicker mode
             selected = (<SelectedFiles
+                name={this.props.name}
                 selectedFiles={this.props.selectedFiles}
                 selectFile={this.props.selectFile}
                 showPreview={this.props.showPreview}

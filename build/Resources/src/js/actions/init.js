@@ -5,6 +5,7 @@ import { openFolder, openRecycleBin, getMetaData } from '../actions';
 // START FLOW TYPES
 
 export type DatasetType = {
+    name: string,
     language: string,
     selected: FileType[],
     rootFolderId: string,
@@ -43,6 +44,7 @@ type PayloadInitType = {
     rootFolderId: string,
     currentFolderId: string,
     selected: Array<FileType>,
+    name: string,
     language: string,
     expanded: boolean,
     selected: ClipboardType,
@@ -65,11 +67,13 @@ const init = (
 ) => {
     const permissions = { ...options };
     const {
+        name,
         language,
         selected,
         rootFolderId,
     } = permissions;
 
+    delete permissions.name;
     delete permissions.language;
     delete permissions.selected;
     delete permissions.rootFolderId;
@@ -122,6 +126,7 @@ const init = (
             browser,
             expanded: browser === true,
             selected: allSelected,
+            name,
             language,
             rootFolderId,
             isUploadingFile: false,

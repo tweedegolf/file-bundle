@@ -69,6 +69,7 @@ export const uiInitialState: UIStateType = {
     selected: { fileIds: [], folderIds: [] },
     clipboard: { fileIds: [], folderIds: [] },
     language: 'en-GB',
+    name: '',
     permissions: {
         multiple: false,
         imagesOnly: false,
@@ -95,6 +96,7 @@ export const ui = (
         case 'INIT':
             return {
                 ...state,
+                name: action.payload.name,
                 language: action.payload.language,
                 browser: action.payload.browser,
                 expanded: action.payload.expanded,

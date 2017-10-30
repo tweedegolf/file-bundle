@@ -17,7 +17,8 @@ import createNameSpacedStore from './reducers/store';
 import i18n from './util/i18n';
 import type { DatasetType } from './actions/init';
 
-let index = 0;
+const mapIndexed = R.addIndex(R.map);
+const datasets = {};
 // const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
@@ -25,10 +26,12 @@ let index = 0;
 const getDataset = (element: HTMLElement): DatasetType | null => {
     let dataset = element.dataset.options;
     if (R.isNil(dataset)) {
-        return null;
+        dataset = {};
+    } else {
+        dataset = JSON.parse(dataset);
     }
-    dataset = JSON.parse(dataset);
     dataset = {
+        name: dataset.name || '',
         language: dataset.language || 'nl',
         rootFolderId: dataset.rootFolderId || dataset.root_folder_id || 'null',
         selected: dataset.selected || [],
@@ -56,25 +59,31 @@ const browser: HTMLElement | null = document.getElementById('tg_file_browser');
 // note there can be multiple file selectors in a single form
 const pickers: HTMLElement[] = Array.from(document.getElementsByClassName('tg_file_picker'));
 
-const apps = [];
-
-if (browser !== null) {
-    apps.push('browser');
-}
-R.forEach(() => {
-    apps.push(`filepicker_${index += 1}`)
+const storeIds = mapIndexed((picker, index) => {
+    const dataset = getDataset(picker);
+    let id = dataset.name;
+    if (id === '') {
+        id = `filepicker_${Date.now() + index}`;
+        dataset.name = id;
+    }
+    datasets[id] = dataset;
+    return id;
 }, pickers);
 
-const { store, persistor } = createNameSpacedStore(apps);
+if (browser !== null) {
+    storeIds.push('browser');
+    datasets.browser = getDataset(browser);
+}
+
+console.log(datasets);
+console.log(storeIds);
+
+const { store, persistor } = createNameSpacedStore(storeIds);
 
 if (browser !== null) {
-    const dataset = getDataset(browser);
-    let language;
-    if (dataset !== null) {
-        language = dataset.language;
-    }
+    const dataset = datasets.browser;
     const storeId = 'browser';
-    i18n.changeLanguage(language, () => {
+    i18n.changeLanguage(dataset.language, () => {
         ReactDOM.render(
             <I18nextProvider i18n={i18n}>
                 <Provider store={store}>
@@ -98,16 +107,10 @@ if (browser !== null) {
     });
 }
 
-index = 0;
-
-R.forEach((element: HTMLElement) => {
-    const dataset = getDataset(element);
-    let language;
-    if (dataset !== null) {
-        language = dataset.language;
-    }
-    const storeId = `filepicker_${index += 1}`;
-    i18n.changeLanguage(language, () => {
+mapIndexed((element: HTMLElement, index: number) => {
+    const storeId = storeIds[index];
+    const dataset = datasets[storeId];
+    i18n.changeLanguage(dataset.language, () => {
         ReactDOM.render(
             <I18nextProvider i18n={i18n}>
                 <Provider store={store}>
