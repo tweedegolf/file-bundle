@@ -164,6 +164,8 @@ const copyBuild = () => gulp.src(['./build/**'])
 const copyHtml = () => gulp.src(['./src/*.html'])
     .pipe(gulp.dest('../backend/web/assets/'))
 
+gulp.task('copy_html', copyHtml);
+
 gulp.task('copy', gulp.series(
     copySource,
     copyBuild,

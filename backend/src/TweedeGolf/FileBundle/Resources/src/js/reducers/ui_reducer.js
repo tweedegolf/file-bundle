@@ -71,7 +71,6 @@ export const uiInitialState: UIStateType = {
     language: 'en-GB',
     name: '',
     permissions: {
-        multiple: false,
         imagesOnly: false,
         allowMove: false,
         allowUpload: false,
@@ -79,6 +78,8 @@ export const uiInitialState: UIStateType = {
         allowDeleteFile: false,
         allowDeleteFolder: false,
         allowRenameFolder: false,
+        allowSelectMultiple: false,
+        allowUploadMultiple: false,
         allowEmptyRecycleBin: false,
     },
     showingRecycleBin: false,
@@ -502,9 +503,6 @@ export const ui = (
          *
          * @param      {file}     file      The file whose select checkbox has been
          *                                  clicked
-         * @param      {boolean}  browser   False if the tool is in filepicker mode
-         * @param      {boolean}  multiple  Whether it is allowed to have multiple
-         *                                  files selected
          */
         case 'SELECT_FILE':
         case 'SELECT_FOLDER':
@@ -520,7 +518,8 @@ export const ui = (
             const index = itemIds.findIndex((id: string): boolean => id === itemId);
             let fileIds = [...state.selected.fileIds];
             let folderIds = [...state.selected.folderIds];
-            if (state.browser === false && state.multiple === false) {
+            // if (state.browser === false && state.permissions.allowSelectMultiple === false) {
+            if (state.permissions.allowSelectMultiple === false) {
                 if (index === -1) {
                     if (isFolder) {
                         folderIds = [itemId];

@@ -9,7 +9,6 @@ export type DatasetType = {
     language: string,
     selected: FileType[],
     rootFolderId: string,
-    multiple: boolean,
     imagesOnly: boolean,
     allowMove: boolean,
     allowUpload: boolean,
@@ -17,11 +16,12 @@ export type DatasetType = {
     allowDeleteFile: boolean,
     allowDeleteFolder: boolean,
     allowRenameFolder: boolean,
+    allowSelectMultiple: boolean,
+    allowUploadMultiple: boolean,
     allowEmptyRecycleBin: boolean,
 };
 
 export type PermissionsType = {
-    multiple: boolean,
     imagesOnly: boolean,
     allowMove: boolean,
     allowUpload: boolean,
@@ -29,6 +29,8 @@ export type PermissionsType = {
     allowDeleteFile: boolean,
     allowDeleteFolder: boolean,
     allowRenameFolder: boolean,
+    allowSelectMultiple: boolean,
+    allowUploadMultiple: boolean,
     allowEmptyRecycleBin: boolean,
 };
 

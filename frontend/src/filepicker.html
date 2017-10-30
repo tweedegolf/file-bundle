@@ -3,25 +3,26 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>The Art of State</title>
+    <title>FileBundle FilePicker</title>
     <link rel="stylesheet" href="./styles/file-bundle-complete.css">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 
 <body>
     <div class="container">
-        <h1>The Art of State</h1>
+        <h1>FileBundle FilePicker</h1>
         <div class="tg_file_picker" data-options='{
             "rootFolderId": "0",
             "language": "en",
-            "multiple": false,
             "images_only": false,
             "allow_move": false,
-            "allow_upload": false,
+            "allow_upload": true,
             "allow_delete_file": false,
             "allow_delete_folder": false,
             "allow_new_folder": false,
             "allow_rename_folder": false,
+            "allow_select_multiple": true,
+            "allow_upload_multiple": false,
             "allow_empty_recycle_bin": false,
             "selected": [{
                 "id":1,
@@ -52,7 +53,6 @@
             "name": "file_picker_2",
             "rootFolderId": "0",
             "language": "de",
-            "multiple": false,
             "images_only": true,
             "allow_move": true,
             "allow_upload": true,
@@ -60,6 +60,8 @@
             "allow_delete_folder": true,
             "allow_new_folder": true,
             "allow_rename_folder": true,
+            "allow_select_multiple": false,
+            "allow_upload_multiple": true,
             "allow_empty_recycle_bin": true,
             "selected": [{
                 "id":1,

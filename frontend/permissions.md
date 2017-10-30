@@ -1,7 +1,8 @@
 # Permissions
 
-* `multiple`
 * `images_only`
+* `allow_select_multiple`
+* `allow_upload_multiple`
 * `allow_move`
 * `allow_rename_folder`
 * `allow_upload`
@@ -12,13 +13,17 @@
 
 All permissions default to `false`. Lower camel case variants will work as well, for instance `allowDeleteFolder`.
 
-#### `multiple`
-
-If `true` the user can select multiple files for uploading.
-
 #### `images_only`
 
 If `true` the file list only shows images and folders.
+
+#### `allow_select_multiple`
+
+If `true` the user can select multiple files in the file list.
+
+#### `allow_upload_multiple`
+
+If `true` the user can select multiple files for uploading.
 
 #### `allow_move`
 
