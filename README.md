@@ -1,6 +1,18 @@
-# TweedeGolf File Bundle
 
-Add a compact, modern and full-featured file browser to your Symfony 3 projects
+* [TweedeGolf File Bundle](#tweedegolf-file-bundle)
+    * [Project setup](#project-setup)
+        * [Dependencies](#dependencies)
+        * [Start test project](#start-test-project)
+        * [Make changes in the frontend](#make-changes-in-the-frontend)
+        * [Make changes in the backend](#make-changes-in-the-backend)
+        * [Build new version after updates](#build-new-version-after-updates)
+    * [More in-depth](#more-in-depth)
+
+<sub>toc created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)</sub>
+
+# Tweede Golf File Bundle
+
+Add a compact, modern and full-featured file browser to your Symfony 3 projects. The frontend uses React and optionally Bootstrap and Font Awesome.
 
 ## Project setup
 
@@ -61,3 +73,38 @@ Now the stylesheets and javascript files are build and minified and then copied 
 After that the contents of the folder `./backend/src/TweedeGolf/FileBundle` is copied to the `build` folder.
 
 This version can be used in your Symfony project.
+
+## More in-depth
+
+The architecture of the frontend:
+
+    +------------------------------+   +-----------------+
+    |Browser                       |   |                 |
+    |                              |   | Cache           |
+    | +-------------------------+  +<->+                 |
+    | |Selected files           |  |   |                 |
+    | +-------------------------+  |   |                 |
+    |                              |   +-------+---------+
+    | +--------------------------+ |           ^
+    | |                          | |           |
+    | | +---------------------+  | |           v
+    | | |Toolbar / Errors     |  | |   +-------+---------+
+    | | +---------------------+  | |   |                 |
+    | |                          | |   | Api             |
+    | | +---------------------+  | |   |                 |
+    | | |List                 |  | |   |                 |
+    | | |                     |  | |   +-----------------+
+    | | | +----------------+  |  | |
+    | | | |File / Folder   |  |  | |
+    | | | +----------------+  |  | |
+    | | +---------------------+  | |
+    | |                          | |
+    | +--------------------------+ |
+    |                              |
+    +------------------------------+
+
+The browser react component contains all state en propagates this state to the sub-components. The file and directory information is stored in the cache module - which will query the php backend when new folders are opened.
+
+The selected files component is used when this plugin is used in a form; in that case the files can be selected (filepicker mode). When the browser operates as a separate file manager, clicking on a file means selecting it in order to, for example, put it on the clipboard.
+
+The table of files can be sorted by clicking on the table headers.

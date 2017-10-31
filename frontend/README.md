@@ -2,7 +2,7 @@
 
 # TweedeGolf File Bundle
 
-Add a compact, modern and full-featured file browser to your Symfony 3 projects
+Add a compact, modern and full-featured file browser to your Symfony 3 projects.
 
 ## Asset requirements
 
