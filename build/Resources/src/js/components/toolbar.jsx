@@ -164,7 +164,7 @@ class Toolbar
                     {loader}
                     <input
                         type="file"
-                        multiple={this.props.permissions.multiple}
+                        multiple={this.props.permissions.allowUploadMultiple}
                         onChange={this.props.uploadFiles}
                     />
                 </span>);

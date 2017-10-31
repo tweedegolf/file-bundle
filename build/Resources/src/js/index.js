@@ -37,7 +37,6 @@ const getDataset = (element: HTMLElement): DatasetType | null => {
         selected: dataset.selected || [],
 
         // permissions
-        multiple: dataset.multiple || false,
         imagesOnly: dataset.imagesOnly || dataset.images_only || false,
         allowMove: dataset.allowMove || dataset.allow_move || false,
         allowUpload: dataset.allowUpload || dataset.allow_upload || false,
@@ -45,7 +44,12 @@ const getDataset = (element: HTMLElement): DatasetType | null => {
         allowDeleteFile: dataset.allowDeleteFile || dataset.allow_delete_file || false,
         allowDeleteFolder: dataset.allowDeleteFolder || dataset.allow_delete_folder || false,
         allowRenameFolder: dataset.allowRenameFolder || dataset.allow_rename_folder || false,
+        allowSelectMultiple: dataset.allowSelectMultiple || dataset.allow_select_multiple || false,
+        allowUploadMultiple: dataset.allowUploadMultiple || dataset.allow_upload_multiple || false,
         allowEmptyRecycleBin: dataset.allowEmptyRecycleBin || dataset.allow_empty_recycle_bin || false,
+    }
+    if (dataset.allowSelectMultiple === false && dataset.selected.length > 1) {
+        dataset.selected = [dataset.selected[0]];
     }
     return dataset;
 };
@@ -75,8 +79,8 @@ if (browser !== null) {
     datasets.browser = getDataset(browser);
 }
 
-console.log(datasets);
-console.log(storeIds);
+// console.log(datasets);
+// console.log(storeIds);
 
 const { store, persistor } = createNameSpacedStore(storeIds);
 

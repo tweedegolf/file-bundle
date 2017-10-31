@@ -503,6 +503,9 @@ export const ui = (
          *
          * @param      {file}     file      The file whose select checkbox has been
          *                                  clicked
+         * @param      {boolean}  browser   False if the tool is in filepicker mode
+         * @param      {boolean}  multiple  Whether it is allowed to have multiple
+         *                                  files selected
          */
         case 'SELECT_FILE':
         case 'SELECT_FOLDER':
