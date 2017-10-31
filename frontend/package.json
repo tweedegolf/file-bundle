@@ -7,6 +7,7 @@
         "phantom": "./node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs ./tests/phantom/tests.compiled.es5",
         "jasmine": "./node_modules/.bin/babel-node ./tests/index.js",
         "test": "npm run build-phantom && npm start | npm run jasmine",
+        "test2": "npm run build-phantom && npm run jasmine",
         "start": "API=1 PORT=8000 ./node_modules/.bin/babel-node ./server/src/index.js",
         "watch-server": "nodemon --exec babel-node ./server/src/index.js",
         "build-phantom": "browserify --exclude webpage --exclude system --exclude fs ./tests/phantom/src/index.js -t [ babelify ] -o ./tests/phantom/tests.compiled.es5",

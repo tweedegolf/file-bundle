@@ -39,7 +39,7 @@ const phantom = (script, ...params) => new Promise((resolve, reject) => {
         let errorMessage = '';
 
         if (err !== null) {
-        // errorMessage += `err: ${err.Error.replace(/\n/g, ' ')}`
+            // errorMessage += `err: ${err.Error.replace(/\n/g, ' ')}`
             errorMessage += `err: ${err.toString()}`;
         }
         if (stderr !== '') {
@@ -71,15 +71,15 @@ describe('User interaction tests with phantomjs', () => {
 
     beforeAll((done) => {
         const port = process.env.PORT || 8080;
-        phantom(path.join(__dirname, './phantom/tests.compiled.es5'), `url=http://localhost:${port}/browser.html`)
-        .then((data) => {
-            const index1 = data.indexOf('$DATA') + 5;
-            const index2 = data.lastIndexOf('$DATA');
-            const filtered = data.substring(index1, index2);
-            result = JSON.parse(filtered);
-            fs.writeFileSync(path.join(__dirname, 'result.json'), filtered);
-            done();
-        });
+        phantom(path.join(__dirname, './phantom/tests.compiled.es5'), `url=http://localhost:${port}/assets/browser.html`)
+            .then((data) => {
+                const index1 = data.indexOf('$DATA') + 5;
+                const index2 = data.lastIndexOf('$DATA');
+                const filtered = data.substring(index1, index2);
+                result = JSON.parse(filtered);
+                fs.writeFileSync(path.join(__dirname, 'result.json'), filtered);
+                done();
+            });
     });
 
     it('Open the page', () => {

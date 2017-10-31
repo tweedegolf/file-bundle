@@ -194,6 +194,8 @@ gulp.task('generate_config', (done) => {
 });
 
 gulp.task('develop', gulp.series(
+    'copyHtml',
+    'copyFonts',
     'generate_config',
     'build_css_complete',
     'watch_js',

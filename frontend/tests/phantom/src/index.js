@@ -18,7 +18,7 @@ import { args } from 'system';
 
 // default values for command line arguments
 const port = process.env.PORT || 8080;
-let url = `http://localhost:${port}/browser.html`;
+let url = `http://localhost:${port}/assets/browser.html`;
 // overrule the default values if set
 args.forEach((arg) => {
     if (arg.indexOf('url') === 0) {
@@ -209,7 +209,7 @@ page.open(url, () => {
         debug,
         tasks,
         onReady: printResults,
-    //  maxIndex: 2,
+        //  maxIndex: 2,
     }).runTask();
 });
 
