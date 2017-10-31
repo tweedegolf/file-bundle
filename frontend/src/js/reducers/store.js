@@ -35,7 +35,7 @@ const createNameSpacedStore = (apps: string[]): StoreType<StateType, GenericActi
         compose(
             applyMiddleware(
                 thunk,
-                // createLogger({ collapsed: true }),
+                createLogger({ collapsed: true }),
             ),
         ),
     );
