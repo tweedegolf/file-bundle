@@ -48,7 +48,6 @@ class FileType extends AbstractType
             'class' => 'TGFileBundle:File',
             'required' => true,
             'root_folder_id' => null,
-            'multiple' => false,
             'images_only' => false,
             'allow_move' => false,
             'allow_upload' => false,
@@ -56,8 +55,10 @@ class FileType extends AbstractType
             'allow_delete_file' => false,
             'allow_delete_folder' => false,
             'allow_rename_folder' => false,
+            'allow_select_multiple' => false,
+            'allow_upload_multiple' => false,
             'allow_empty_recycle_bin' => false,
-        ]);
+            ]);
     }
 
     /**
@@ -77,7 +78,6 @@ class FileType extends AbstractType
             'language' => $this->locale,
             'selected' => $serializer->normalize($data),
             'root_folder_id' => $options['root_folder_id'],
-            'multiple' => $options['multiple'],
             'images_only' => $options['images_only'],
             'allow_move' => $options['allow_move'],
             'allow_upload' => $options['allow_upload'],
@@ -85,6 +85,8 @@ class FileType extends AbstractType
             'allow_delete_file' => $options['allow_delete_file'],
             'allow_delete_folder' => $options['allow_delete_folder'],
             'allow_rename_folder' => $options['allow_rename_folder'],
+            'allow_select_multiple' => $options['allow_select_multiple'],
+            'allow_upload_multiple' => $options['allow_upload_multiple'],
             'allow_empty_recycle_bin' => $options['allow_empty_recycle_bin'],
         ]);
     }
