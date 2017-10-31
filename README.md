@@ -1,18 +1,16 @@
-
-* [TweedeGolf File Bundle](#tweedegolf-file-bundle)
-    * [Project setup](#project-setup)
-        * [Dependencies](#dependencies)
-        * [Start test project](#start-test-project)
-        * [Make changes in the frontend](#make-changes-in-the-frontend)
-        * [Make changes in the backend](#make-changes-in-the-backend)
-        * [Build new version after updates](#build-new-version-after-updates)
-    * [More in-depth](#more-in-depth)
-
-<sub>toc created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)</sub>
-
 # Tweede Golf File Bundle
 
 Add a compact, modern and full-featured file browser to your Symfony 3 projects. The frontend uses React and optionally Bootstrap and Font Awesome.
+
+* [Project setup](#project-setup)
+    * [Dependencies](#dependencies)
+    * [Start test project](#start-test-project)
+    * [Make changes in the frontend](#make-changes-in-the-frontend)
+    * [Make changes in the backend](#make-changes-in-the-backend)
+    * [Build new version after updates](#build-new-version-after-updates)
+* [More in-depth](#more-in-depth)
+
+<sub>toc created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)</sub>
 
 ## Project setup
 
