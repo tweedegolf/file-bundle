@@ -15,7 +15,7 @@ Add a compact, modern and full-featured file browser to your Symfony 3 projects.
     * [Browser mode](#browser-mode)
     * [Filepicker mode](#filepicker-mode)
     * [Styling](#styling)
-        * [Permissions](#permissions)
+    * [Permissions](#permissions)
         * [images_only](#images_only)
         * [allow_select_multiple](#allow_select_multiple)
         * [allow_upload_multiple](#allow_upload_multiple)
@@ -257,23 +257,21 @@ Changes in UI when `true`
 
 ### Datasets
 
+In the folder `./frontend/src/` you will find 2 html files:
+
 - `browser.html` example html file for browser mode
 - `filepicker.html` example html file for file-picker mode
 
-In the html file you will notice that you can pass arguments to the file-bundle via the `data-options` attribute:
+In these html file you will notice that you can pass arguments via the `data-options` attribute.
+
+The `data-options` attribute is a stringified json object and you can add any of the permissions listed above to this object. You can use both the underscore notation and the lowerCamelCase notation, e.g.: `allow_select_multiple` or `allowSelectMultiple`.
+
+Additionally you can add the following keys:
 
 - `rootFolderId: string`: Change the root (chroot) for this user, e.g. the top-most folder in the tree that this user is allowed to enter.
 - `language: string`: The default or fallback language, this project uses IETF language tags (e.g. `en-GB`) but you can use any standard you like. The locales are located in the folder `./src/js/locales`. The locales are bundled with the javascript files to avoid extra http calls.
-- `imagesOnly: bool`: Whether or not the file-bundle should only display images.
-- `allowEdit: bool`: Whether of not the user is allowed to:
-    - cut & paste folders and files
-    - delete folders and files
-    - rename folders
-- `allowUpload: bool`: Whether or not the user is allowed to upload new files.
-- `allowDelete: bool`: Whether or not the user is allowed to delete files and folders.
-- `allowNewFolder: bool`: Whether or not the user is allowed to create new folders.
 
-Additionally in file-picker mode only you can add an array that holds the currently selected files:
+In file-picker mode you can also add an array that holds the currently selected files:
 ```javascript
  selected: [{
     id: string,
