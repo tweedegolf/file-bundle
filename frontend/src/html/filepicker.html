@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FileBundle FilePicker</title>
+    <link rel="stylesheet" href="./styles/file-bundle-complete.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+    <div class="container">
+        <h1>FileBundle FilePicker</h1>
+        <div class="tg_file_picker" data-options='{
+            "rootFolderId": "0",
+            "language": "en",
+            "images_only": false,
+            "allow_move": false,
+            "allow_upload": true,
+            "allow_delete_file": false,
+            "allow_delete_folder": false,
+            "allow_new_folder": false,
+            "allow_rename_folder": false,
+            "allow_select_multiple": true,
+            "allow_upload_multiple": false,
+            "allow_empty_recycle_bin": false,
+            "selected": [{
+                "id":1,
+                "name":"Olive.jpg",
+                "size_bytes":2087,
+                "size":"2 kB",
+                "create_ts":1470914525,
+                "created":"11-08-2016 13:22",
+                "thumb":"/media/thumb/57ac5fdd4aa99_OliveDrab.jpg",
+                "original":"/media/57ac5fdd4aa99_OliveDrab.jpg",
+                "type":"jpg"
+            }, {
+                "id":2,
+                "name":"DodgerBlue.jpg",
+                "size_bytes":2086,
+                "size":"2 kB",
+                "create_ts":1470914525,
+                "created":"11-08-2016 13:22",
+                "thumb":"/media/thumb/57ac5fdd4f51a_DodgerBlue.jpg",
+                "original":"/media/57ac5fdd4f51a_DodgerBlue.jpg",
+                "type":"jpg"
+            }]
+        }'>
+        </div>
+        <br>
+        <br>
+        <div class="tg_file_picker" data-options='{
+            "name": "file_picker_2",
+            "rootFolderId": "0",
+            "language": "de",
+            "images_only": true,
+            "allow_move": true,
+            "allow_upload": true,
+            "allow_delete_file": true,
+            "allow_delete_folder": true,
+            "allow_new_folder": true,
+            "allow_rename_folder": true,
+            "allow_select_multiple": false,
+            "allow_upload_multiple": true,
+            "allow_empty_recycle_bin": true,
+            "selected": [{
+                "id":1,
+                "name":"Olive.jpg",
+                "size_bytes":2087,
+                "size":"2 kB",
+                "create_ts":1470914525,
+                "created":"11-08-2016 13:22",
+                "thumb":"/media/thumb/57ac5fdd4aa99_OliveDrab.jpg",
+                "original":"/media/57ac5fdd4aa99_OliveDrab.jpg",
+                "type":"jpg"
+            }]
+        }'>
+        </div>
+    </div>
+    <script src="./scripts/file-bundle.js"></script>
+</body>
+
+</html>

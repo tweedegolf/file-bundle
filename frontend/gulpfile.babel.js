@@ -150,7 +150,7 @@ const buildCssNoFontAwesome = () => gulp.src(sources.cssNoFontAwesome)
 gulp.task('build_css_no_font-awesome', buildCssNoFontAwesome);
 
 
-const copySource = () => gulp.src(['src/**'])
+const copySource = () => gulp.src(['src/js/**', 'src/scss/*'])
     .pipe(copy('../backend/src/TweedeGolf/FileBundle/Resources/'));
 
 const copyFonts = () => gulp.src(['./fonts/**'])
@@ -161,18 +161,17 @@ const copyBuild = () => gulp.src(['./build/**'])
     .pipe(gulp.dest('../backend/src/TweedeGolf/FileBundle/Resources/'))
     .pipe(gulp.dest('../backend/web/assets/'))
 
-const copyHtml = () => gulp.src(['./src/*.html'])
+const copyHtml = () => gulp.src(['./html/*'])
     .pipe(gulp.dest('../backend/web/assets/'))
 
 gulp.task('copy_html', copyHtml);
 
 gulp.task('copy', gulp.series(
     copySource,
+    copySource,
     copyBuild,
     copyFonts,
-    copyHtml,
 ));
-
 
 gulp.task('watch_css', () => gulp.watch('./src/scss/*.scss',
     () => {
@@ -194,8 +193,8 @@ gulp.task('generate_config', (done) => {
 });
 
 gulp.task('develop', gulp.series(
-    'copyHtml',
-    'copyFonts',
+    copyHtml,
+    copyFonts,
     'generate_config',
     'build_css_complete',
     'watch_js',

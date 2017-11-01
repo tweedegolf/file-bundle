@@ -2,7 +2,9 @@
 
 # Tweede Golf File Bundle
 
-Add a compact, modern and full-featured file browser to your Symfony 3 projects. The frontend is built React and optionally uses Bootstrap styling and Font Awesome icons. Note that the Bootstrap javascript components are not required.
+This branch contains the development version of the File Bundle. If you are looking for the distribution branch please follow [this link](https://github.com/tweedegolf/file-bundle/tree/npm).
+
+The File Bundle is a compact, modern and full-featured file browser for your Symfony 3 projects. The frontend is built with React and optionally uses Bootstrap styling and Font Awesome icons. The Bootstrap javascript components are not required.
 
 * [Project setup](#project-setup)
     * [Dependencies](#dependencies)
@@ -37,9 +39,13 @@ Add a compact, modern and full-featured file browser to your Symfony 3 projects.
 
 This project contains 3 folders:
 
-1. `build` &rarr; the build version of the File Bundle, ready to be used in your project
+1. `dist` &rarr; the build version of the File Bundle, ready to be used in your project
 2. `frontend` &rarr; all javascript, scss and build files that are needed to build the frontend
-3. `backend` &rarr; a simple Symfony test app that uses the File Bundle; the File Bundle is not added via composer.json but added in the folder `./src/TweedeGolf/FileBundle` instead.
+3. `backend` &rarr; a simple Symfony test app that uses the File Bundle
+
+The Symfony test app in the `backend` folder does not add the File Bundle as a dependency using composer, but it is added in the folder `./backend/src/TweedeGolf/FileBundle` instead. The idea behind this is that you are able to make changes in the File Bundle code and see these changes immediately in the test app without having update dependencies via composer.
+
+When you run the command `./dist.sh`, see below, only the folder `./backend/src/TweedeGolf/FileBundle` get copied to the `dist` folder so we end up with a clean codebase for distributing the File Bundle.
 
 ### Dependencies
 
@@ -82,25 +88,25 @@ The backend files of the FileBundle are stored in this folder:
 
 ### Build new version after updates
 
-After you have updated the frontend and/or the backend you have to build this version to the `build` folder.
+After you have updated the frontend and/or the backend you have to build this version to the `dist` folder.
 
 1. open a terminal and `cd` to the root folder of the project
-2. run `./update.sh`
+2. run `./dist.sh`
 
 Now the stylesheets and javascript files are build and minified and then together with some other files copied over to the FileBundle backend folder; `./backend/src/TweedeGolf/FileBundle/Resources`:
 
 * `scripts` &rarr; javascript bundle
 * `styles` &rarr; compiled scss files
 * `fonts` &rarr; fonts required by Bootstrap and Font Awesome
-* `src` &rarr; es6 source code, can be to include in the javasript code of the embedding Symfony project; use `import` to import code as a module
+* `src` &rarr; es6 source code, can be to include in the javascript code of the embedding Symfony project; use `import` to import code as a module
 
-After that the contents of the folder `./backend/src/TweedeGolf/FileBundle` is copied to the `build` folder.
+After that the contents of the folder `./backend/src/TweedeGolf/FileBundle` is copied to the `dist` folder.
 
-This version can be used in your Symfony project.
+This is the distribution version that can be used in your Symfony project.
 
 ## More in-depth
 
-The architecture of the frontend can be pictured as follows:
+The architecture of the frontend can be depicted as follows:
 
     +------------------------------+   +-----------------+
     |Browser                       |   |                 |
@@ -129,23 +135,23 @@ The architecture of the frontend can be pictured as follows:
 
 The `Browser` react component is the main container, the state is kept in a Redux store and the state is queried via Redux' `mapStateToProps` method.
 
-Besides the `Browser` component only the `List` queries the state; all other components get their state propagated in the form of properties from either `Browser` or `List`.
+Besides the `Browser` component only the `List` component queries the state; all other components get their state propagated in the form of properties from either `Browser` or `List`.
 
 The folder structure reflects this separation: `Browser` and `List` are put in the folder `containers` and all other React components are put in the `components` folder.
 
 ### Optimistic update
 
-The file and directory information is stored in the store which gets hydrated from local storage.
+The file and directory information is stored in the Redux store which gets initially hydrated from local storage.
 
-When a user for instance opens a folder, the content of that folder as stored will be shown first. Secondly the API module will query the php backend to check if the folder's content is still up to date.
+When a user opens a folder for instance, the content of that folder as stored in the Redux store will be shown first. Secondly the API module will query the php backend to check if the folder's content is still up to date.
 
-If the folder hasn't been opened yet, there is no information about this folder available on the client, in this case the API module will consult the php backend right away.
+If the folder hasn't been opened yet, there is no information about this folder available on the client, and in this case the API module will consult the php backend right away.
 
-The API module is in the `./src/js/util` folder, the store and the reduces in the folder `./src/reducers`.
+The API module can be found in the `./src/js/util` folder, the store and the reducers are put in the folder `./src/reducers`.
 
 ### Browser mode
 
-This mode the user can organize files and folders:
+In this mode the user can browse, organize and edit files and folders:
 
 * create folders
 * rename folders
@@ -157,13 +163,13 @@ This mode the user can organize files and folders:
 * cut and paste files and folders to another location
 * browse the files in the recycle bin
 * cut and paste files from the recycle bin (restore)
-* order files and folders by name, size or creation date
+* sort files and folders by name, size or creation date
 
 ### Filepicker mode
 
 Whereas the FileBundle's browser mode operates more akin to a regular desktop file manager, the file-picker mode simply allows users to select one or more files.
 
-The file-picker is typically used in a form, for instance when the user creates a blog article that has an input field for text and a file-picker for selecting an image that will be put alongside the text.
+The file-picker is typically used in a form, for instance when the user creates a blog article that has an input field for text and a file-picker for selecting an image that will be put in or alongside the text.
 
 ### Styling
 
@@ -174,7 +180,11 @@ The styling of the frontend uses Bootstrap templates and Font Awesome icons. The
 * `file-bundle-no-font-awesome.css` &rarr; use this if your project already includes font-awesome
 * `file-bundle-complete.css` &rarr; the complete css code
 
+These files will be copied to `./backend/src/TweedeGolf/FileBundle/Resources/styles`.
+
 ### Permissions
+
+You can set the following user permission per File Bundle instance:
 
 * `images_only`
 * `allow_select_multiple`
@@ -210,7 +220,7 @@ Changes in UI when `true`
 * check boxes in front of all files and folders in the list
 * cut, paste, cancel buttons in toolbar
 
-Note that if `allow_move` is `false` in file-picker mode, the check boxes will still be rendered in front of the files in the list. By checking the boxes the user can select files but can not be move them.
+Note that if `allow_move` is `false` in file-picker mode, the check boxes will still be rendered in front of the files in the list. By checking the boxes the user can select files but she can't subsequently move them.
 
 #### `allow_rename_folder`
 
@@ -262,13 +272,15 @@ In the folder `./frontend/src/` you will find 2 html files:
 - `browser.html` example html file for browser mode
 - `filepicker.html` example html file for file-picker mode
 
-In these html file you will notice that you can pass arguments via the `data-options` attribute.
+When you run `npm run develop` these files are copied over to the folder `./backend/web/assets` so you can access them via localhost if the Symfony test app is running. Note that unlike javascript and scss files, these files are not watched, so if you change them you need to run `npm run copy_html` to see the effect in the test app.
 
-The `data-options` attribute is a stringified json object and you can add any of the permissions listed above to this object. You can use both the underscore notation and the lowerCamelCase notation, e.g.: `allow_select_multiple` or `allowSelectMultiple`.
+In the html files you will notice that you can pass arguments to a File Bundle instance via the `data-options` attribute.
+
+The `data-options` attribute is a stringified json object and you can add any of the permissions listed above to this object. You can use both underscore notation and lowerCamelCase notation, e.g.: `allow_select_multiple` or `allowSelectMultiple`.
 
 Additionally you can add the following keys:
 
-- `rootFolderId: string`: Change the root (chroot) for this user, e.g. the top-most folder in the tree that this user is allowed to enter.
+- `rootFolderId: string`: Change the root (chroot) for this user, e.g. the top-most folder in the tree that this user is allowed to enter. You can use the key `root_folder_id` as well.
 - `language: string`: The default or fallback language, this project uses IETF language tags (e.g. `en-GB`) but you can use any standard you like. The locales are located in the folder `./src/js/locales`. The locales are bundled with the javascript files to avoid extra http calls.
 
 In file-picker mode you can also add an array that holds the currently selected files:
@@ -288,11 +300,13 @@ In file-picker mode you can also add an array that holds the currently selected 
 
 ### Internationalization
 
-The interface supports internationalization by using [i18next](https://www.i18next.com/). Currently the project has translations for English and Dutch. Translation files are stored in the folder `./frontend/src/js/locales`. You can use these files as a starting point for your own translation. Don't forget to import your translation file at the top of `./frontend/src/js/util/i18n.js`.
+The interface supports internationalization by using [i18next](https://www.i18next.com/). Currently the project has translations for English and Dutch. Translation files are stored in the folder `./frontend/src/js/locales`. You can use these files as a starting point for your own translation. Don't forget to import your translation file at the top of `./frontend/src/js/util/i18n.js`; here the locale files get bundled with the javascript code to avoid additional http calls. This also allows for instantaneously switch between languages (not implemented).
 
 ### Flow
 
-The javascript code is written in es6 and to enforce strong typing the project uses Flow type-checker. You can find the flow types in the folder `./types`. The `.flowconfig` is in the root folder.
+The javascript code is written in es6 and to enforce strong typing the project uses Flow type-checker. You can find most global flow types in the folder `./types`, other flow types are defined at the top of the javascript file that uses these flow types.
+
+The `.flowconfig` is in the root of the `frontend` folder.
 
 ## Testing
 
@@ -314,4 +328,3 @@ Should you wish to change anything in the Phantomjs tests you need to recompile 
 
  - `yarn run build-phantom`
  - `yarn run watch-phantom` for compiling while you are editing the code
-
