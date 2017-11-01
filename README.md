@@ -45,7 +45,7 @@ This project contains 3 folders:
 
 The Symfony test app in the `backend` folder does not add the File Bundle as a dependency using composer, but it is added in the folder `./backend/src/TweedeGolf/FileBundle` instead. The idea behind this is that you are able to make changes in the File Bundle code and see these changes immediately in the test app without having update dependencies via composer.
 
-When you run the command `./dist.sh`, see below, only the folder `./backend/src/TweedeGolf/FileBundle` get copied to the `dist` folder so we end up with a clean codebase for distributing the File Bundle.
+When you run the command `./dist.sh`, see below, only the folder `./backend/src/TweedeGolf/FileBundle` get copied to the `dist` folder so we end up with a clean codebase for distributing the File Bundle. This new version can be merged with the distribution branch, see this [readme](https://github.com/tweedegolf/file-bundle/tree/npm/README.md).
 
 ### Dependencies
 
@@ -148,6 +148,8 @@ When a user opens a folder for instance, the content of that folder as stored in
 If the folder hasn't been opened yet, there is no information about this folder available on the client, and in this case the API module will consult the php backend right away.
 
 The API module can be found in the `./src/js/util` folder, the store and the reducers are put in the folder `./src/reducers`.
+
+For documentation of the API see this [document](./API.md).
 
 ### Browser mode
 
