@@ -1,0 +1,81 @@
+openapi: 3.0.0
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/abumarkub/filebundle/1.0.0'
+info:
+  description: File Bundle API
+  version: 1.0.0
+  title: File Bundle API
+  contact:
+    email: daniel@tweedegolf.nl
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  '/admin/file/list/{id}':
+    get:
+      operationId: openFolder
+      description: Returns files and folder in the folder whose id is in the path
+      responses:
+        '200':
+          description: A list of files and folders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/list'
+components:
+  schemas:
+    list:
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/file'
+        folders:
+          type: array
+          items:
+            $ref: '#/components/schemas/folder'
+    file:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+    folder:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        parent:
+          oneOf:
+          - type: string
+          - nullable: true
+        create_ts:
+          type: integer
+        created:
+          type: string
+        file_count:
+         type: integer
+        folder_count:
+          type: integer
+        type:
+          type: string
+        size:
+          type: string
+        size_bytes:
+          type: integer
+        is_trashed:
+          type: boolean
+      required:
+        - id
+        - name
+        - parent
