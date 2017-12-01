@@ -1,7 +1,12 @@
 openapi: 3.0.0
 servers:
+# Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
-    url: 'https://virtserver.swaggerhub.com/abumarkub/filebundle/1.0.0'
+    url: https://virtserver.swaggerhub.com/abumarkub/filebundle/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/abumarkub/fllebundle/1.0.0
+  - description: Docker test server
+    url: 'http://localhost:8080/'
 info:
   description: File Bundle API
   version: 1.0.0
@@ -28,8 +33,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/list'
+  '/admin/file/upload':
+    post:
+      operationId: upload
+      description: Upload files to the server
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Successfully uploaded files
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/uploadResponse'
 components:
   schemas:
+    uploadResponse:
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+            items:
+              type: string
+        uploads:
+          type: array
+          items:
+            $ref: '#/components/schemas/file'
+    error:
+      properties:
+        error:
+          type: string
     list:
       properties:
         files:
@@ -46,6 +84,25 @@ components:
           type: string
         name:
           type: string
+        create_ts:
+            type: number
+        created:
+            type: string
+        type:
+            type: string
+        size:
+            type: string
+        size_bytes:
+            type: number
+        original:
+            type: string
+        thumb:
+            type: string
+            nullable: true
+        is_new:
+            type: boolean
+        is_trashed:
+            type: boolean
       required:
         - id
         - name

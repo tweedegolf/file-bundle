@@ -161,14 +161,14 @@ const copyBuild = () => gulp.src(['./build/**'])
     .pipe(gulp.dest('../backend/src/TweedeGolf/FileBundle/Resources/'))
     .pipe(gulp.dest('../backend/web/assets/'))
 
-const copyHtml = () => gulp.src(['./html/*'])
+const copyHtml = () => gulp.src(['./src/html/*'])
     .pipe(gulp.dest('../backend/web/assets/'))
 
 gulp.task('copy_html', copyHtml);
 
 gulp.task('copy', gulp.series(
     copySource,
-    copySource,
+    copyHtml,
     copyBuild,
     copyFonts,
 ));

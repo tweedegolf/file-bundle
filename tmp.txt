@@ -1,0 +1,11 @@
+{
+       "name": "File",
+       "description": "The file in zip format.",
+       "paramType": "body",
+       "required": true,
+       "allowMultiple": false,
+       "dataType": "file"
+}
+
+
+https://stackoverflow.com/questions/14455408/how-to-post-files-in-swagger
