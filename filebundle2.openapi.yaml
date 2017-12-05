@@ -50,6 +50,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/uploadResponse'
+  '/admin/file/move/{id}':
+    post:
+      operationId: moveItems
+      description: moves items (files and/or folders) to the folder whose is in the path
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              fileIds:
+                type: array
+                items: string
+              folderIds:
+                type: array
+                items: string
+      responses:
+        200:
+          description: the ids of the items that raised errors while moving will be returned
+          content:
+            application/json:
+              schema:
+                errors:
+                  fileIds:
+                    type: array
+                    items: string
+                  folderIds:
+                    type: array
+                    items: string
 components:
   schemas:
     uploadResponse:
