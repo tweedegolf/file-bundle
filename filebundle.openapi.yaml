@@ -1,12 +1,15 @@
 openapi: 3.0.0
-# Added by API Auto Mocking Plugin
 servers:
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/abumarkub/fllebundle/1.0.0
+    url: 'https://virtserver.swaggerhub.com/abumarkub/filebundle/1.0.0'
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/abumarkub/fllebundle/1.0.0'
+  - description: Docker test server
+    url: 'http://localhost:8080/'
 info:
   description: File Bundle API
-  version: "1.0.0"
-  title:  File Bundle API
+  version: 1.0.0
+  title: File Bundle API
   contact:
     email: daniel@tweedegolf.nl
   license:
@@ -18,99 +21,142 @@ tags:
   - name: developers
     description: Operations available to regular developers
 paths:
-  /admin/file/list/{id}:
+  '/admin/file/list/{id}':
     get:
       operationId: openFolder
       description: Returns files and folder in the folder whose id is in the path
       responses:
         '200':
-            description: A list of file and folders.
-            content:
-            application/json:
-                schema:
-                type: '#/components/schemas/folder'
-  /inventory:
-    get:
-      tags:
-        - developers
-      summary: searches inventory
-      operationId: searchInventory
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
-      parameters:
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: skip
-          description: number of records to skip for pagination
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 50
-      responses:
-        '200':
-          description: search results matching criteria
+          description: A list of files and folders.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/InventoryItem'
-        '400':
-          description: bad input parameter
+                $ref: '#/components/schemas/list'
+  /admin/file/upload:
     post:
-      tags:
-        - admins
-      summary: adds an inventory item
-      operationId: addInventory
-      description: Adds an item to the system
-      responses:
-        '201':
-          description: item created
-        '400':
-          description: 'invalid input, object invalid'
-        '409':
-          description: an existing item already exists
+      operationId: upload
+      description: Upload files to the server
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/InventoryItem'
-        description: Inventory item to add
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Successfully uploaded files
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/uploadResponse'
+  '/admin/file/move/{id}':
+    post:
+      operationId: moveItems
+      description: moves items (files and/or folders) to the folder whose is in the path
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/moveItemsRequest'
+      responses:
+        '200':
+          description: >-
+            the ids of the items that raised errors while moving will be
+            returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/moveItemsResponse'
 components:
   schemas:
+    uploadResponse:
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+            items:
+              type: string
+        uploads:
+          type: array
+          items:
+            $ref: '#/components/schemas/file'
+    moveItemsRequest:
+      type: object
+      properties:
+        fileIds:
+          type: array
+          items:
+            type: string
+        folderIds:
+          type: array
+          items:
+            type: string
+    moveItemsResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        file_errors:
+          type: array
+          items:
+            type: string
+        folder_errors:
+          type: array
+          items:
+            type: string
+    error:
+      properties:
+        error:
+          type: string
+    list:
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/file'
+        folders:
+          type: array
+          items:
+            $ref: '#/components/schemas/folder'
     file:
       properties:
+        id:
+          type: string
         name:
           type: string
-    folder:
+        create_ts:
+          type: number
+        created:
+          type: string
+        type:
+          type: string
+        size:
+          type: string
+        size_bytes:
+          type: number
+        original:
+          type: string
+        thumb:
+          type: string
+          nullable: true
+        is_new:
+          type: boolean
+        is_trashed:
+          type: boolean
       required:
         - id
         - name
-        - parent
+    folder:
       properties:
         id:
           type: string
         name:
           type: string
         parent:
-          type:
-              enum:
-                - string
-                - null
+          oneOf:
+            - type: string
+            - nullable: true
         create_ts:
           type: integer
         created:
@@ -127,39 +173,7 @@ components:
           type: integer
         is_trashed:
           type: boolean
-    InventoryItem:
-      type: object
       required:
         - id
         - name
-        - manufacturer
-        - releaseDate
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        name:
-          type: string
-          example: Widget Adapter
-        releaseDate:
-          type: string
-          format: int32
-          example: '2016-08-29T09:12:33.001Z'
-        manufacturer:
-          $ref: '#/components/schemas/Manufacturer'
-    Manufacturer:
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: ACME Corporation
-        homePage:
-          type: string
-          format: url
-          example: 'https://www.acme-corp.com'
-        phone:
-          type: string
-          example: 408-867-5309
-      type: object
+        - parent
