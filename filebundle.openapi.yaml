@@ -22,6 +22,13 @@ tags:
     description: Operations available to regular developers
 paths:
   '/admin/file/list/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: false
+        description: the folder identifier
+        schema:
+          type: string
     get:
       operationId: openFolder
       description: Returns files and folder in the folder whose id is in the path
@@ -67,6 +74,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/moveItemsResponse'
+  '/admin/file/delete/{id}':
+    post:
+      operationId: deleteFile
+      description: deletes the file with the specified id
+      responses:
+        '200':
+          description: >-
+            boolean indicating whether the file has been deleted successfully or
+            not
+          content:
+            application/json:
+              schema:
+                type: boolean
+  '/admin/file/delete/folder/{id}':
+    post:
+      operationId: deleteFolder
+      description: deletes the folder with the specified id
+      responses:
+        '200':
+          description: >-
+            boolean indicating whether the folder has been deleted successfully
+            or not
+          content:
+            application/json:
+              schema:
+                type: boolean
 components:
   schemas:
     uploadResponse:
