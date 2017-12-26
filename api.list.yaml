@@ -1,0 +1,18 @@
+'/admin/file/list/{id}':
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: the id of the folder whose contents we want to retreive
+      schema:
+        type: string
+  get:
+    operationId: openFolder
+    description: Returns files and folder in the folder whose id is in the path
+    responses:
+      '200':
+        description: A list of files and folders.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/list'

@@ -1,0 +1,69 @@
+openapi: 3.0.0
+servers:
+  - description: Docker test server
+    url: 'http://localhost:8080/'
+info:
+  description: File Bundle API
+  version: 1.0.0
+  title: File Bundle API
+  contact:
+    email: daniel@tweedegolf.nl
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  '/admin/file/move/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of the folder to move the files to
+        schema:
+          type: string
+    post:
+      operationId: moveItems
+      description: moves items (files and/or folders) to the folder whose is in the path
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                fileIds:
+                  type: array
+                  items:
+                    type: string
+                folderIds:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              simple:
+                value:
+                  fileIds:
+                    - '35'
+      responses:
+        '200':
+          description: >-
+            the ids of the items that raised errors while moving will be
+            returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  file_errors:
+                    type: array
+                    items:
+                      type: string
+                  folder_errors:
+                    type: array
+                    items:
+                      type: string

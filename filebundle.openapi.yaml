@@ -1,9 +1,5 @@
 openapi: 3.0.0
 servers:
-  - description: SwaggerHub API Auto Mocking
-    url: 'https://virtserver.swaggerhub.com/abumarkub/filebundle/1.0.0'
-  - description: SwaggerHub API Auto Mocking
-    url: 'https://virtserver.swaggerhub.com/abumarkub/fllebundle/1.0.0'
   - description: Docker test server
     url: 'http://localhost:8080/'
 info:
@@ -21,12 +17,19 @@ tags:
   - name: developers
     description: Operations available to regular developers
 paths:
+  /admin/file/list:
+    get:
+      operationId: openRootFolder
+      description: Returns files and folder in of the root folder
+      responses:
+        '200':
+          $ref: '#/components/responses/list'
   '/admin/file/list/{id}':
     parameters:
       - name: id
         in: path
-        required: false
-        description: the folder identifier
+        required: true
+        description: the id of the folder whose contents we want to retreive
         schema:
           type: string
     get:
@@ -34,29 +37,45 @@ paths:
       description: Returns files and folder in the folder whose id is in the path
       responses:
         '200':
-          description: A list of files and folders.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/list'
+          $ref: '#/components/responses/list'
   /admin/file/upload:
     post:
-      operationId: upload
-      description: Upload files to the server
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: string
-              format: binary
+      operationId: uploadToRootFolder
+      description: Upload files to the root folder
+      requestBody: null
       responses:
         '200':
-          description: Successfully uploaded files
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/uploadResponse'
+          $ref: '#/components/responses/upload'
+  '/admin/file/upload/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of the folder that will hold the the uploaded file(s)
+        schema:
+          type: string
+    post:
+      operationId: uploadToFolder
+      description: Upload files to specified folder
+      responses:
+        '200':
+          $ref: '#/components/responses/upload'
   '/admin/file/move/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of the folder to move the files to
+        schema:
+          type: string
+      - in: formData
+        name: fileIds
+        description: file name to upload
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
     post:
       operationId: moveItems
       description: moves items (files and/or folders) to the folder whose is in the path
@@ -64,7 +83,16 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/moveItemsRequest'
+              type: object
+              properties:
+                fileIds:
+                  type: array
+                  items:
+                    type: string
+                folderIds:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: >-
@@ -73,8 +101,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/moveItemsResponse'
+                type: object
+                properties:
+                  error:
+                    type: string
+                  file_errors:
+                    type: array
+                    items:
+                      type: string
+                  folder_errors:
+                    type: array
+                    items:
+                      type: string
   '/admin/file/delete/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of the file to be deleted
+        schema:
+          type: string
     post:
       operationId: deleteFile
       description: deletes the file with the specified id
@@ -88,6 +134,13 @@ paths:
               schema:
                 type: boolean
   '/admin/file/delete/folder/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of the folder to be deleted
+        schema:
+          type: string
     post:
       operationId: deleteFolder
       description: deletes the folder with the specified id
@@ -102,56 +155,6 @@ paths:
                 type: boolean
 components:
   schemas:
-    uploadResponse:
-      properties:
-        errors:
-          type: object
-          additionalProperties:
-            type: string
-            items:
-              type: string
-        uploads:
-          type: array
-          items:
-            $ref: '#/components/schemas/file'
-    moveItemsRequest:
-      type: object
-      properties:
-        fileIds:
-          type: array
-          items:
-            type: string
-        folderIds:
-          type: array
-          items:
-            type: string
-    moveItemsResponse:
-      type: object
-      properties:
-        error:
-          type: string
-        file_errors:
-          type: array
-          items:
-            type: string
-        folder_errors:
-          type: array
-          items:
-            type: string
-    error:
-      properties:
-        error:
-          type: string
-    list:
-      properties:
-        files:
-          type: array
-          items:
-            $ref: '#/components/schemas/file'
-        folders:
-          type: array
-          items:
-            $ref: '#/components/schemas/folder'
     file:
       properties:
         id:
@@ -210,3 +213,36 @@ components:
         - id
         - name
         - parent
+  responses:
+    list:
+      description: A list of files and folders.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              files:
+                type: array
+                items:
+                  $ref: '#/components/schemas/file'
+              folders:
+                type: array
+                items:
+                  $ref: '#/components/schemas/folder'
+    upload:
+      description: Successfully uploaded files
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: object
+                additionalProperties:
+                  type: string
+                  items:
+                    type: string
+              uploads:
+                type: array
+                items:
+                  $ref: '#/components/schemas/file'
