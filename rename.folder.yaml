@@ -1,0 +1,71 @@
+openapi: 3.0.0
+servers:
+  - description: Docker test server
+    url: 'http://localhost:8080/'
+info:
+  description: File Bundle API
+  version: 1.0.0
+  title: File Bundle API
+  contact:
+    email: daniel@tweedegolf.nl
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /admin/file/create/folder:
+    post:
+      operationId: createFolderInRootFolder
+      description: create a new folder in the root folder
+      requestBody:
+        $ref: '#/components/requestBodies/createFolder'
+      responses:
+        '200':
+          $ref: '#/components/responses/createFolder'
+  '/admin/file/create/folder/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of the parent folder of the new folder
+        schema:
+          type: string
+    post:
+      operationId: createFolder
+      description: create a new folder
+      requestBody:
+        $ref: '#/components/requestBodies/createFolder'
+      responses:
+        '200':
+          $ref: '#/components/responses/createFolder'
+components:
+  requestBodies:
+    createFolder:
+      description: the name of the new folder
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            properties:
+              name:
+                type: string
+  responses:
+    createFolder:
+      description: the new folder object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: array
+                items:
+                  type: string
+              new_folder:
+                $ref: '#components/schemas/folder'
+  schemas:
+    folder:
+      $ref: 'http://localhost:9000/schemas.yaml#/schemas/folder'

@@ -17,17 +17,10 @@ tags:
   - name: developers
     description: Operations available to regular developers
 paths:
-  '/admin/file/move/{id}':
-    parameters:
-      - name: id
-        in: path
-        required: true
-        description: the id of the folder to move the files to
-        schema:
-          type: string
+  /admin/file/move:
     post:
-      operationId: moveItems
-      description: moves items (files and/or folders) to the folder whose is in the path
+      operationId: moveItems to root folder
+      description: moves items (files and/or folders) to the root folder
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -38,15 +31,15 @@ paths:
                   type: array
                   items:
                     type: string
-                folderIds:
-                  type: array
-                  items:
-                    type: string
-            examples:
-              simple:
-                value:
-                  fileIds:
-                    - '35'
+              example:
+                fileIds:
+                  - '38'
+                  - '39'
+            encoding:
+              fileIds:
+                contentType: application/json
+                style: deepObject
+                explode: true
       responses:
         '200':
           description: >-
