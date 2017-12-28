@@ -6,7 +6,7 @@ renameFolderById:
       description: the id of the folder to be renamed
       schema:
         type: string
-  post:
+  put:
     operationId: renameFolderById
     description: renames the folder with the specified id
     requestBody:

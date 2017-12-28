@@ -115,7 +115,7 @@ class FolderController extends Controller
     * @return JsonResponse
     *
     * @Route("/delete/folder/{id}")
-    * @Method({"POST"})
+    * @Method({"DELETE"})
     */
     public function deleteAction(Folder $folder)
     {
