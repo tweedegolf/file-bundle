@@ -1,0 +1,55 @@
+uploadToRootFolder:
+  post:
+    operationId: uploadToRootFolder
+    description: Upload files to the root folder
+    requestBody:
+      $ref: '#components/requestBodies/uploadMultiple'
+    responses:
+      '200':
+        $ref: '#/components/responses/upload'
+uploadToFolderById:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: the id of the folder that will hold the the uploaded file(s)
+      schema:
+        type: string
+  post:
+    operationId: uploadToFolder
+    description: Upload files to specified folder
+    requestBody:
+      $ref: '#components/requestBodies/uploadMultiple'
+    responses:
+      '200':
+        $ref: '#/components/responses/upload'
+components:
+  requestBodies:
+    uploadMultiple:
+      content:
+        multipart/form-data:
+          schema:
+            properties:
+              filename:
+                type: array
+                items:
+                  type: string
+                  format: binary
+  responses:
+    upload:
+      description: Successfully uploaded files
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: object
+                additionalProperties:
+                  type: string
+                  items:
+                    type: string
+              uploads:
+                type: array
+                items:
+                  $ref: 'http://localhost:8080/assets/api/entities.yaml#/file'
