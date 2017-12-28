@@ -46,4 +46,4 @@ components:
                 items:
                   type: string
               new_folder:
-                $ref: 'http://localhost:8080/assets/api/entities.yaml#/folder'
+                $ref: 'http://localhost:8080/api/entities.yaml#/folder'

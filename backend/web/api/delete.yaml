@@ -1,0 +1,41 @@
+deleteFileById:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: the id of the file to be deleted
+      schema:
+        type: string
+  post:
+    operationId: deleteFileById
+    description: deletes the file with the specified id
+    responses:
+      '200':
+        $ref: '#components/responses/deleteFileOrFolder'
+deleteFolderById:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: the id of the folder to be deleted
+      schema:
+        type: string
+  post:
+    operationId: deleteFolderById
+    description: deletes the folder with the specified id
+    responses:
+      '200':
+        $ref: '#components/responses/deleteFileOrFolder'
+components:
+  responses:
+    deleteFileOrFolder:
+      description: >-
+        boolean indicating whether the file or folder has been deleted
+        successfully or not
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: boolean

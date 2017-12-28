@@ -1,0 +1,33 @@
+renameFolderById:
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: the id of the folder to be renamed
+      schema:
+        type: string
+  post:
+    operationId: renameFolderById
+    description: renames the folder with the specified id
+    requestBody:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+    responses:
+      '200':
+        description: >-
+          array containing error messages; if an empty array is passed, the
+          renaming operation has been successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                errors:
+                  type: array
+                  items:
+                    type: string

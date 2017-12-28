@@ -61,6 +61,8 @@ if (process.env.API === '1') {
 
     const mediaProxy = proxy('/media', { target: 'http://localhost:8080' });
     app.use('/media', mediaProxy);
+
+    app.use('/api', express.static('../api'));
 } else {
     app.use('/locales/', express.static('src/js/locales'));
     app.use('/media', express.static('server/media'));

@@ -29,9 +29,11 @@ components:
       content:
         multipart/form-data:
           schema:
-            properties:
-              filename:
-                type: array
+            type: array
+            items:
+              type: object
+              additionalProperties:
+                type: string
                 items:
                   type: string
                   format: binary
@@ -52,4 +54,4 @@ components:
               uploads:
                 type: array
                 items:
-                  $ref: 'http://localhost:8080/assets/api/entities.yaml#/file'
+                  $ref: 'http://localhost:8080/api/entities.yaml#/file'
