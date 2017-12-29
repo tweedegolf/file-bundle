@@ -1,6 +1,6 @@
-moveToRootFolder:
+getMetaData:
   post:
-    operationId: moveItemsToRootFolder
+    operationId: getMetaData
     description: moves items (files and/or folders) to the root folder
     requestBody:
       $ref: '#components/requestBodies/move'
@@ -24,7 +24,7 @@ moveToFolderById:
         items:
           type: string
   post:
-    operationId: moveItemsToFolderById
+    operationId: moveItems
     description: moves
     requestBody:
       $ref: '#components/requestBodies/move'

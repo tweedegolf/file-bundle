@@ -134,7 +134,7 @@ class FolderController extends Controller
      * @return JsonResponse
      *
      * @Route("/rename/folder/{id}", defaults={"id" = null})
-     * @Method({"POST"})
+     * @Method({"PUT"})
      */
      public function renameAction(Request $request, Folder $folder = null)
      {
