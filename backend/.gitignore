@@ -6,7 +6,8 @@
 /web/bundles/
 /web/css/
 /web/js/
-/web/assets/
+/web/assets/*
+!/web/assets/api
 /web/favicon.ico
 /web/robots.txt
 /docs/_build
