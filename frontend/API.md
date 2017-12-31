@@ -9,7 +9,7 @@
 
 #### upload files
 
-- POST      fileList: FileList
+- POST      fileList: FileList (name of the file is the 'name' field of the form-data)
 - RESPONSE  { files: FileType[], errors: { [id: string]: string } } (id is the name of the file that caused the error)
 - ERROR     error: string
 
@@ -24,21 +24,21 @@
 
 #### delete file
 
-- POST       /url/id:string
+- DELETE    /url/id:string
 - RESPONSE  { error: boolean }
 - ERROR     error: string
 
 
 #### delete folder
 
-- POST       /url/id:string
-- RESPONSE  { errors: string[] }
+- DELETE    /url/id:string
+- RESPONSE  { error: boolean }
 - ERROR     error: string
 
 
 #### add new folder
 
-- POST      /url/id:string (parent folder id)
+- POST     /url/id:string (parent folder id)
 - FORM     name: string
 - RESPONSE { errors: string[], new_folder: FolderType | null }
 - ERROR    error: string
@@ -46,9 +46,9 @@
 
 #### rename folder
 
-- POST      /url/id:string
+- PUT       /url/id:string
 - FORM      { name: string } (the new name of the folder)
-- RESPONSE  { errors: string[] }
+- RESPONSE  { errors: string[] } (validation errors if any)
 - ERROR     error: string
 
 
@@ -56,7 +56,7 @@
 
 - DELETE    /url
 - RESPONSE  { error: boolean }
-- ERROR    error: string
+- ERROR     error: string
 
 
 #### get metadata
@@ -64,4 +64,4 @@
 - POST      /url
 - FORM      { fileIds: string[], folderIds: string [] }
 - RESPONSE  { files: FileType[], folders: FolderType[] }
-- ERROR    error: string
+- ERROR     error: string

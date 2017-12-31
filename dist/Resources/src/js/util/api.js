@@ -34,7 +34,7 @@ type ResponseType = {
     },
     body: {
         error: string,
-        errors: string[] | {[id: string]: string},
+        errors: string[] | { [id: string]: string },
         new_folder: FolderType,
         folder: FolderType,
         uploads: FileType[],
@@ -165,7 +165,7 @@ const renameFolder = (
     onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
     const url = `${server}${api.renameFolder}/${folderId}`;
-    const req = request.post(url).type('form');
+    const req = request.put(url).type('form');
     req.send({ name: newName });
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
@@ -199,7 +199,7 @@ const deleteFolder = (
     } else {
         url = `${server}${api.deleteFolder}/${folderId}`;
     }
-    const req = request.post(url).type('form');
+    const req = request.delete(url).type('form');
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
             // console.log(err)

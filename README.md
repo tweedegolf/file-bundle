@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/tweedegolf/file-bundle.svg?branch=redux)](https://travis-ci.org/tweedegolf/file-bundle)
+<!-- [![Build Status](https://travis-ci.org/tweedegolf/file-bundle.svg?branch=redux)](https://travis-ci.org/tweedegolf/file-bundle) -->
 
 # Tweede Golf File Bundle
 
@@ -149,7 +149,7 @@ If the folder hasn't been opened yet, there is no information about this folder 
 
 The API module can be found in the `./src/js/util` folder, the store and the reducers are put in the folder `./src/reducers`.
 
-For documentation of the API see this [document](./API.md).
+For documentation of the API see this [document](./API.md) or follow this [link](https://tweedegolf.github.io/file-bundle-api) to browse an [Open API 3.0.0](https://swagger.io/specification/) description of the API that you can browse using a [Swagger.ui](https://swagger.io/swagger-ui/) frontend.
 
 ### Browser mode
 
@@ -199,7 +199,7 @@ You can set the following user permission per File Bundle instance:
 * `allow_empty_recycle_bin`
 * `allow_new_folder`
 
-All permissions default to `false`. Lower camel case variants will work as well, for instance `allowDeleteFolder`.
+Lower camel case variants will work as well, for instance `allowDeleteFolder`. All permissions default to `false`.
 
 #### `images_only`
 

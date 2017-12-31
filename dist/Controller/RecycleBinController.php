@@ -148,8 +148,11 @@ class RecycleBinController extends Controller
         foreach($files as $file) {
             $name = $file->getName();
             $folder = $file->getFolder();
-            $folderName = $folder->getName();
             $manager->remove($file);
+            $folderName = 'null';
+            if ($folder !== NULL) {
+                $folderName = $folder->getName();
+            }
             try {
                 $messages[] = "file '$name' in folder '$folderName'";
                 $manager->flush();
