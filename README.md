@@ -199,7 +199,26 @@ You can set the following user permission per File Bundle instance:
 * `allow_empty_recycle_bin`
 * `allow_new_folder`
 
-Lower camel case variants will work as well, for instance `allowDeleteFolder`. All permissions default to `false`.
+Lower camel case variants will work as well, for instance `allowDeleteFolder`. All permissions default to `false`. If you are using the FormBuilderInterface to build a form you can change the permissions according to your project's needs like so:
+
+```php
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use TweedeGolf\FileBundle\Form\FileType;
+
+/**
+ * @param FormBuilderInterface $builder
+ * @param array                $options
+ */
+public function buildForm(FormBuilderInterface $builder, array $options)
+{
+    $builder->add('image', FileType::class, [
+        'required' => false,
+        'images_only' => true,
+        'allow_select_multiple' => true,
+    ]);
+}
+```
 
 #### `images_only`
 
