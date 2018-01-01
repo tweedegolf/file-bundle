@@ -1,7 +1,7 @@
 #!/bin/bash
 
-git checkout npm-dev dist/
-echo -e "\033[0;32m1/4 checking out dist folder of branch 'npm-dev'"
+git checkout develop dist/
+echo -e "\033[0;32m1/4 checking out dist folder of branch 'develop'"
 wait
 
 cp -r ./dist/* ./
