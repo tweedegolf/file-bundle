@@ -28,6 +28,7 @@ import type { SortEnumType, ActionChangeSortingType } from '../actions/index';
 type PassedPropsType = {
     browser: boolean,
     dataset: DatasetType,
+    apiUrl: String,
     t: (string) => string,
 };
 
@@ -146,7 +147,8 @@ const mapStateToProps = (state: StateType, ownProps: PassedPropsType): PropsType
     };
 };
 
-const mapDispatchToProps = (dispatch: DispatchType): ActionsPropsType => {
+const mapDispatchToProps = (dispatch: DispatchType, ownProps: PassedPropsType): ActionsPropsType => {
+    const apiUrl = ownProps.apiUrl;
     return {
         ...bindActionCreators({
             init: Actions.init,
@@ -155,7 +157,7 @@ const mapDispatchToProps = (dispatch: DispatchType): ActionsPropsType => {
             expandBrowser: Actions.expandBrowser,
             setScrollPosition: Actions.setScrollPosition,
             changeSorting: Actions.changeSorting,
-            openFolder: Actions.openFolder,
+            openFolder: R.curry(Actions.openFolder)(apiUrl),
             cutFiles: Actions.cutFiles,
             moveItems: Actions.moveItems,
             cancelMoveItems: Actions.cancelMoveItems,

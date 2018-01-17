@@ -72,6 +72,7 @@ const optimisticUpdate = (
 
 const openFolder = (
     state: StateType,
+    apiUrl: string,
     folderId: string,
     resolve: (PayloadFolderOpenedType) => mixed,
     reject: (PayloadErrorOpenFolderType) => mixed,
@@ -85,6 +86,7 @@ const openFolder = (
     const currentFolder = foldersById[folderId];
 
     api.openFolder(
+        apiUrl,
         folderId,
         (folders: Array<FolderType>, files: Array<FileType>) => {
             // remove possibly deleted files and folders
@@ -134,7 +136,7 @@ const openFolder = (
 };
 
 
-export default (id: string, forceLoad: boolean = false): ReduxThunkType => {
+export default (apiUrl: string, id: string, forceLoad: boolean = false): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         let delay = 0;
@@ -157,6 +159,7 @@ export default (id: string, forceLoad: boolean = false): ReduxThunkType => {
             });
             openFolder(
                 state,
+                apiUrl,
                 id,
                 (payload: PayloadFolderOpenedType) => {
                     dispatch({

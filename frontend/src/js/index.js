@@ -19,6 +19,7 @@ import type { DatasetType } from './actions/init';
 
 const mapIndexed = R.addIndex(R.map);
 const datasets = {};
+const apiUrls = {};
 // const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
@@ -71,12 +72,16 @@ const storeIds = mapIndexed((picker, index) => {
         dataset.name = id;
     }
     datasets[id] = dataset;
+    //apiUrls[id] = picker.dataset.apiUrl;
+    apiUrls[id] = '/admin/file';
     return id;
 }, pickers);
 
 if (browser !== null) {
     storeIds.push('browser');
     datasets.browser = getDataset(browser);
+    // apiUrls.browser = browser.dataset.apiUrl;
+    apiUrls.browser = '/admin/file';
 }
 
 // console.log(datasets);
@@ -85,6 +90,7 @@ if (browser !== null) {
 const { store, persistor } = createNameSpacedStore(storeIds);
 
 if (browser !== null) {
+    const apiUrl = apiUrls.browser;
     const dataset = datasets.browser;
     const storeId = 'browser';
     i18n.changeLanguage(dataset.language, () => {
@@ -101,6 +107,7 @@ if (browser !== null) {
                         >
                             <Browser
                                 browser={true}
+                                apiUrl={apiUrl}
                                 dataset={dataset}
                             />
                         </SubspaceProvider>
@@ -113,6 +120,7 @@ if (browser !== null) {
 
 mapIndexed((element: HTMLElement, index: number) => {
     const storeId = storeIds[index];
+    const apiUrl = apiUrls[storeId];
     const dataset = datasets[storeId];
     i18n.changeLanguage(dataset.language, () => {
         ReactDOM.render(
@@ -128,6 +136,7 @@ mapIndexed((element: HTMLElement, index: number) => {
                         >
                             <Browser
                                 browser={false}
+                                apiUrl={apiUrl}
                                 dataset={dataset}
                             />
                         </SubspaceProvider>

@@ -322,14 +322,15 @@ const upload = (
  * the server will check if the requested folder is inside the chroot folder
  */
 const openFolder = (
+    apiUrl: string,
     folderId: string,
     onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
     let url;
     if (folderId === 'null') {
-        url = `${server}${api.openFolder}`;
+        url = `${server}${apiUrl}${api.openFolder}`;
     } else {
-        url = `${server}${api.openFolder}/${folderId}`;
+        url = `${server}${apiUrl}${api.openFolder}/${folderId}`;
     }
 
     const req = request.get(url);
