@@ -27,7 +27,6 @@ export type ActionItemsMovedType = {
 // END FLOW TYPES
 
 const moveFiles = (
-    apiUrl: string,
     state: StateType,
     resolve: (payload: PayloadItemsMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -37,6 +36,7 @@ const moveFiles = (
         tree: treeState,
     } = state;
 
+    const apiUrl: string = uiState.apiUrl;
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -151,11 +151,10 @@ const moveFiles = (
     );
 };
 
-export default (apiUrl: string): ReduxThunkType => {
+export default (): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         moveFiles(
-            apiUrl,
             state,
             (payload: PayloadItemsMovedType) => {
                 dispatch({

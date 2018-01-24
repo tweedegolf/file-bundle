@@ -148,24 +148,22 @@ const mapStateToProps = (state: StateType, ownProps: PassedPropsType): PropsType
 };
 
 const mapDispatchToProps = (dispatch: DispatchType, ownProps: PassedPropsType): ActionsPropsType => {
-    const apiUrl = ownProps.apiUrl;
     return {
         ...bindActionCreators({
-            init: R.curry(Actions.init)(apiUrl),
+            init: Actions.init,
             setHover: Actions.setHover,
-            uploadFiles: R.curry(Actions.uploadFiles)(apiUrl),
+            uploadFiles: Actions.uploadFiles,
             expandBrowser: Actions.expandBrowser,
             setScrollPosition: Actions.setScrollPosition,
             changeSorting: Actions.changeSorting,
-            openFolder: R.curry(Actions.openFolder)(apiUrl),
+            openFolder: Actions.openFolder,
             cutFiles: Actions.cutFiles,
-            moveItems: R.curry(Actions.moveItems)(apiUrl),
+            moveItems: Actions.moveItems,
             cancelMoveItems: Actions.cancelMoveItems,
-            addFolder: R.curry(Actions.addFolder)(apiUrl),
-            // openRecycleBin: R.curry(Actions.openRecycleBin)(apiUrl),
-            openRecycleBin: () => { Actions.openRecycleBin(apiUrl); },
-            closeRecycleBin: R.curry(Actions.closeRecycleBin)(apiUrl),
-            emptyRecycleBin: R.curry(Actions.emptyRecycleBin)(apiUrl),
+            addFolder: Actions.addFolder,
+            openRecycleBin: Actions.openRecycleBin,
+            closeRecycleBin: Actions.closeRecycleBin,
+            emptyRecycleBin: Actions.emptyRecycleBin,
             selectFile: Actions.selectFile,
             showPreview: Actions.showPreview,
             dismissError: Actions.dismissError,
@@ -225,7 +223,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // element.
         if (this.props.browser === false) {
             document.addEventListener('keydown', this.onKeyDown, false);
-            this.props.init(this.props.dataset, this.props.browser);
+            this.props.init(this.props.dataset, this.props.apiUrl, this.props.browser);
         }
 
         // Browser mode: by default, the browser is not expanded, therefor we have
@@ -235,7 +233,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown, false);
             this.props.expandBrowser();
-            this.props.init(this.props.dataset, this.props.browser);
+            this.props.init(this.props.dataset, this.props.apiUrl, this.props.browser);
         }
     }
 
@@ -373,7 +371,6 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                 </thead>
                                 <List
                                     browser={this.props.browser}
-                                    apiUrl={this.props.apiUrl}
                                 />
                             </table>
                         </div>

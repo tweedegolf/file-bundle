@@ -21,7 +21,6 @@ import type { PermissionsType } from '../actions/init';
 
 type PassedPropsType = {
     browser: boolean,
-    apiUrl: string,
     t: (string) => string,
 };
 
@@ -111,19 +110,18 @@ const mapStateToProps = (state: StateType): PropsType => {
 };
 
 const mapDispatchToProps = (dispatch: DispatchType, ownProps: PassedPropsType): ActionsPropsType => {
-    const apiUrl = ownProps.apiUrl;
     return {
         ...bindActionCreators({
-            openFolder: R.curry(Actions.openFolder)(apiUrl),
+            openFolder: Actions.openFolder,
             confirmRenameFolder: Actions.confirmRenameFolder,
-            renameFolder: R.curry(Actions.renameFolder)(apiUrl),
+            renameFolder: Actions.renameFolder,
             selectFile: Actions.selectFile,
             showPreview: Actions.showPreview,
             confirmDeleteFile: Actions.confirmDeleteFile,
             deleteFile: Actions.deleteFile,
             selectFolder: Actions.selectFolder,
             confirmDeleteFolder: Actions.confirmDeleteFolder,
-            deleteFolder: R.curry(Actions.deleteFolder)(apiUrl),
+            deleteFolder: Actions.deleteFolder,
         }, dispatch)
     }
 }

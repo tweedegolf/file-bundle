@@ -63,10 +63,10 @@ type PayloadInitType = {
 // END FLOW TYPES
 
 const init = (
-    apiUrl: string,
     state: StateType,
     dispatch: DispatchType,
     options: DatasetType,
+    apiUrl: string,
     browser: boolean = true
 ) => {
     const permissions = { ...options };
@@ -148,22 +148,19 @@ const init = (
     dispatch(action);
 
     if (currentFolderId === RECYCLE_BIN_ID) {
-        dispatch(openRecycleBin(apiUrl));
+        dispatch(openRecycleBin());
     } else {
-        const open = R.curry(openFolder)(apiUrl);
-        dispatch(open(currentFolderId));
-        // dispatch(openFolder(apiUrl, currentFolderId));
+        dispatch(openFolder(currentFolderId));
     }
 
     if (browser === true && allSelected.fileIds.length + allSelected.folderIds.length > 0) {
-        const gmd = R.curry(getMetaData)(apiUrl);
-        dispatch(gmd);
+        dispatch(getMetaData());
     }
 };
 
-export default (apiUrl: string, options: DatasetType, browser: boolean): ReduxThunkType => {
+export default (options: DatasetType, apiUrl: string, browser: boolean): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
-        init(apiUrl, state, dispatch, options, browser);
+        init(state, dispatch, options, apiUrl, browser);
     };
 };

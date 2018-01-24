@@ -33,7 +33,6 @@ export type ActionRecycleBinEmptiedType = {
 // @TODO: clear selected files and folders that were in the recycle bin!
 
 const emptyRecycleBin = (
-    apiUrl: string,
     state: StateType,
     resolve: (payload: PayloadEmptyRecycleBinType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -42,7 +41,7 @@ const emptyRecycleBin = (
         ui: uiState,
         tree: treeState,
     } = state;
-
+    const apiUrl: string = uiState.apiUrl;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
@@ -109,7 +108,7 @@ const emptyRecycleBin = (
     );
 };
 
-export default (apiUrl: string): ReduxThunkType => {
+export default (): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const a: ActionEmptyRecycleBinType = {
@@ -118,7 +117,6 @@ export default (apiUrl: string): ReduxThunkType => {
         dispatch(a);
 
         emptyRecycleBin(
-            apiUrl,
             state,
             (payload: PayloadEmptyRecycleBinType) => {
                 const a1: ActionRecycleBinEmptiedType = {

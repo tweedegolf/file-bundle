@@ -43,7 +43,6 @@ export type ActionFolderDeletedType = {
 // END FLOW TYPES
 
 const deleteFolder = (
-    apiUrl: string,
     state: StateType,
     folderId: string,
     resolve: (payload: PayloadFolderDeletedType) => mixed,
@@ -53,6 +52,7 @@ const deleteFolder = (
         ui: uiState,
         tree: treeState,
     } = state;
+    const apiUrl: string = uiState.apiUrl;
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -129,7 +129,7 @@ const deleteFolder = (
     );
 };
 
-export default (apiUrl: string, folderId: string): ReduxThunkType => {
+export default (folderId: string): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const a: ActionDeleteFolderType = {
@@ -139,7 +139,6 @@ export default (apiUrl: string, folderId: string): ReduxThunkType => {
         dispatch(a);
 
         deleteFolder(
-            apiUrl,
             state,
             folderId,
             (payload: PayloadFolderDeletedType) => {

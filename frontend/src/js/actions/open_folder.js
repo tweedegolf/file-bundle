@@ -71,15 +71,16 @@ const optimisticUpdate = (
 };
 
 const openFolder = (
-    apiUrl: string,
     state: StateType,
     folderId: string,
     resolve: (PayloadFolderOpenedType) => mixed,
     reject: (PayloadErrorOpenFolderType) => mixed,
 ) => {
     const {
+        ui: uiState,
         tree: treeState,
     } = state;
+    const apiUrl: string = uiState.apiUrl;
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -136,7 +137,7 @@ const openFolder = (
 };
 
 
-export default (apiUrl: string, id: string, forceLoad: boolean = false): ReduxThunkType => {
+export default (id: string, forceLoad: boolean = false): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         let delay = 0;
@@ -158,7 +159,6 @@ export default (apiUrl: string, id: string, forceLoad: boolean = false): ReduxTh
                 payload: { id },
             });
             openFolder(
-                apiUrl,
                 state,
                 id,
                 (payload: PayloadFolderOpenedType) => {
