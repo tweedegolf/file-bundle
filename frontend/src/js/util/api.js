@@ -71,11 +71,12 @@ if (typeof port !== 'undefined' && port !== null && port !== '80') {
  * @return     {void}      Calls success or error callback
  */
 const deleteFile = (
+    apiUrl: string,
     fileId: string,
     onSuccess: (error: string) => void,
     onError: (string[]) => void,
 ) => {
-    const url = `${server}${api.deleteFile}/${fileId}`;
+    const url = `${server}${apiUrl}${api.deleteFile}/${fileId}`;
     const req = request.post(url);
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
@@ -97,6 +98,7 @@ const deleteFile = (
  * @return     {void}      Calls success or error callback
  */
 const moveItems = (
+    apiUrl: string,
     fileIds: string[],
     folderIds: string[],
     folderId: string,
@@ -105,9 +107,9 @@ const moveItems = (
 ) => {
     let url;
     if (folderId === 'null') {
-        url = `${server}${api.moveItems}`;
+        url = `${server}${apiUrl}${api.moveItems}`;
     } else {
-        url = `${server}${api.moveItems}/${folderId}`;
+        url = `${server}${apiUrl}${api.moveItems}/${folderId}`;
     }
     const req = request.post(url).type('form');
     req.send({
@@ -134,15 +136,16 @@ const moveItems = (
  * @return     {void}      Calls success or error callback
  */
 const addFolder = (
+    apiUrl: string,
     name: string,
     folderId: string,
     onSuccess: (FolderType, string[]) => void,
     onError: (string[]) => void) => {
     let url;
     if (folderId === 'null') {
-        url = `${server}${api.addFolder}`;
+        url = `${server}${apiUrl}${api.addFolder}`;
     } else {
-        url = `${server}${api.addFolder}/${folderId}`;
+        url = `${server}${apiUrl}${api.addFolder}/${folderId}`;
     }
     const req = request.post(url).type('form');
     req.send({ name });
@@ -160,11 +163,12 @@ const addFolder = (
 };
 
 const renameFolder = (
+    apiUrl: string,
     folderId: string,
     newName: string,
     onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.renameFolder}/${folderId}`;
+    const url = `${server}${apiUrl}${api.renameFolder}/${folderId}`;
     const req = request.put(url).type('form');
     req.send({ name: newName });
     req.end((err: RequestErrorType, res: ResponseType) => {
@@ -190,14 +194,15 @@ const renameFolder = (
  * @return     {void}      Calls success or error callback
  */
 const deleteFolder = (
+    apiUrl: string,
     folderId: string,
     onSuccess: (string) => void,
     onError: (string[]) => void) => {
     let url;
     if (folderId === 'null') {
-        url = `${server}${api.deleteFolder}`;
+        url = `${server}${apiUrl}${api.deleteFolder}`;
     } else {
-        url = `${server}${api.deleteFolder}/${folderId}`;
+        url = `${server}${apiUrl}${api.deleteFolder}/${folderId}`;
     }
     const req = request.delete(url).type('form');
     req.end((err: RequestErrorType, res: ResponseType) => {
@@ -212,9 +217,10 @@ const deleteFolder = (
 
 
 const openRecycleBin = (
+    apiUrl: string,
     onSuccess: (FolderType[], FileType[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.getRecycleBin}`;
+    const url = `${server}${apiUrl}${api.getRecycleBin}`;
     const req = request.get(url);
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
@@ -228,9 +234,10 @@ const openRecycleBin = (
 
 
 const emptyRecycleBin = (
+    apiUrl: string,
     onSuccess: (string[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.emptyRecycleBin}`;
+    const url = `${server}${apiUrl}${api.emptyRecycleBin}`;
     const req = request.delete(url);
     req.end((err: RequestErrorType, res: ResponseType) => {
         if (err) {
@@ -243,11 +250,12 @@ const emptyRecycleBin = (
 
 
 const getMetaData = (
+    apiUrl: string,
     fileIds: string[],
     folderIds: string[],
     onSuccess: (files: FileType[], folders: FolderType[]) => void,
     onError: (string[]) => void) => {
-    const url = `${server}${api.getMetaData}`;
+    const url = `${server}${apiUrl}${api.getMetaData}`;
     const req = request.post(url).type('form');
     req.send({ fileIds, folderIds });
     req.end((err: RequestErrorType, res: ResponseType) => {
@@ -261,11 +269,12 @@ const getMetaData = (
 
 // not in use!
 const restoreFromRecycleBin = (
+    apiUrl: string,
     fileIds: string[],
     folderIds: string[],
     onSuccess: () => void,
     onError: (string[]) => void) => {
-    const url = `${server}/admin/file/recycle-bin/restore`;
+    const url = `${server}${apiUrl}/recycle-bin/restore`;
     const req = request.post(url).type('form');
     req.send({ fileIds, folderIds });
     req.end((err: RequestErrorType, res: ResponseType) => {
@@ -284,6 +293,7 @@ const restoreFromRecycleBin = (
  * folderId:  The id of the current folder, i.e. the folder that will contain the newly uploaded files
  */
 const upload = (
+    apiUrl: string,
     fileList: File[],
     folderId: string,
     onSuccess: (FileType[], { [string]: string }) => void,
@@ -291,9 +301,9 @@ const upload = (
 ) => {
     let url;
     if (folderId === 'null') {
-        url = `${server}${api.uploadFiles}`;
+        url = `${server}${apiUrl}${api.uploadFiles}`;
     } else {
-        url = `${server}${api.uploadFiles}/${folderId}`;
+        url = `${server}${apiUrl}${api.uploadFiles}/${folderId}`;
     }
     const req = request.post(url);
     fileList.forEach((file: File) => {

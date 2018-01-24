@@ -28,6 +28,7 @@ export type ActionUploadDoneType = {
 // END FLOW TYPES
 
 const uploadFiles = (
+    apiUrl: string,
     state: StateType,
     files: Array<File>,
     resolve: (payload: PayloadUploadDoneType) => mixed,
@@ -44,7 +45,10 @@ const uploadFiles = (
     const currentFolderId: string = uiState.currentFolderId;
     const currentFolder: FolderType = foldersById[currentFolderId];
 
-    api.upload(files, currentFolder.id,
+    api.upload(
+        apiUrl,
+        files,
+        currentFolder.id,
         (newFiles: FileType[], rejected: { [string]: string }) => {
             R.forEach((f: FileType) => {
                 const fc: FileType = { ...f, is_new: true };
@@ -72,7 +76,7 @@ const uploadFiles = (
     );
 };
 
-export default (fileList: global.FileList): ReduxThunkType => {
+export default (apiUrl: string, fileList: global.FileList): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const files: File[] = Array.from(fileList);
@@ -83,6 +87,7 @@ export default (fileList: global.FileList): ReduxThunkType => {
         dispatch(a);
 
         uploadFiles(
+            apiUrl,
             state,
             files,
             (payload: PayloadUploadDoneType) => {

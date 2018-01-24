@@ -149,6 +149,10 @@ class Toolbar
                 type="button"
                 className="btn btn-sm btn-default btn-file pull-right recycle-bin"
                 onClick={this.props.showRecycleBin}
+            // onClick={() => {
+            //     console.log('showRecycleBin');
+            //     this.props.showRecycleBin();
+            // }}
             // disabled={this.props.recycleBinEmpty}
             >
                 <span className="fa fa-trash-o" />

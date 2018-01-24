@@ -27,6 +27,7 @@ export type ActionItemsMovedType = {
 // END FLOW TYPES
 
 const moveFiles = (
+    apiUrl: string,
     state: StateType,
     resolve: (payload: PayloadItemsMovedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -55,7 +56,11 @@ const moveFiles = (
         return;
     }
 
-    api.moveItems(fileIds, folderIds, currentFolderId,
+    api.moveItems(
+        apiUrl,
+        fileIds,
+        folderIds,
+        currentFolderId,
         (error: string, errorFileIds: string[], errorFolderIds: string[]) => {
             if (error !== 'false') {
                 const err = createError(Constants.ERROR_MOVING_ITEMS, [error]);
@@ -146,10 +151,11 @@ const moveFiles = (
     );
 };
 
-export default (): ReduxThunkType => {
+export default (apiUrl: string): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         moveFiles(
+            apiUrl,
             state,
             (payload: PayloadItemsMovedType) => {
                 dispatch({

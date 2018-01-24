@@ -71,8 +71,8 @@ const optimisticUpdate = (
 };
 
 const openFolder = (
-    state: StateType,
     apiUrl: string,
+    state: StateType,
     folderId: string,
     resolve: (PayloadFolderOpenedType) => mixed,
     reject: (PayloadErrorOpenFolderType) => mixed,
@@ -158,8 +158,8 @@ export default (apiUrl: string, id: string, forceLoad: boolean = false): ReduxTh
                 payload: { id },
             });
             openFolder(
-                state,
                 apiUrl,
+                state,
                 id,
                 (payload: PayloadFolderOpenedType) => {
                     dispatch({

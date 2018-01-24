@@ -4,13 +4,13 @@ import {
 } from '../util/constants';
 import { openFolder } from '../actions';
 
-export default (): ReduxThunkType => {
+export default (apiUrl: string): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const id = state.ui.currentFolderIdTmp;
         dispatch({
             type: CLOSE_RECYCLE_BIN,
         });
-        openFolder(id);
+        openFolder(apiUrl, id);
     };
 };

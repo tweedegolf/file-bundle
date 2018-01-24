@@ -27,6 +27,7 @@ export type ActionFolderAddedType = {
 // END FLOW TYPES
 
 const addFolder = (
+    apiUrl: string,
     state: StateType,
     folderName: string,
     resolve: (payload: PayloadFolderAddedType) => mixed,
@@ -41,6 +42,7 @@ const addFolder = (
     const tree: TreeType = R.clone(treeState.tree);
 
     api.addFolder(
+        apiUrl,
         folderName,
         currentFolderId,
         (newFolder: FolderType, errors: string[]) => {
@@ -71,7 +73,7 @@ const addFolder = (
     );
 };
 
-export default (folderName: string): ReduxThunkType => {
+export default (apiUrl: string, folderName: string): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const a: ActionAddFolderType = {
@@ -80,6 +82,7 @@ export default (folderName: string): ReduxThunkType => {
         dispatch(a);
 
         addFolder(
+            apiUrl,
             state,
             folderName,
             (payload: PayloadFolderAddedType) => {

@@ -1,14 +1,1 @@
-{
-    "api": {
-        "openFolder": "/list",
-        "uploadFiles": "/upload",
-        "moveItems": "/move",
-        "deleteFile": "/delete",
-        "deleteFolder": "/delete/folder",
-        "addFolder": "/create/folder",
-        "renameFolder": "/rename/folder",
-        "getMetaData": "/metadata",
-        "getRecycleBin": "/recycle_bin",
-        "emptyRecycleBin": "/recycle_bin/empty"
-    }
-}
+{"api":{"openFolder":"/list","uploadFiles":"/upload","moveItems":"/move","deleteFile":"/delete","deleteFolder":"/delete/folder","addFolder":"/create/folder","renameFolder":"/rename/folder","getMetaData":"/metadata","getRecycleBin":"/recycle_bin","emptyRecycleBin":"/recycle_bin/empty"}}

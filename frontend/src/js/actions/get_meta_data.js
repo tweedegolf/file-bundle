@@ -24,6 +24,7 @@ export type ActionMetaDataReceivedType = {
 // END FLOW TYPES
 
 const getMetaData = (
+    apiUrl: string,
     state: StateType,
     resolve: (payload: PayloadActionMetaDataReceivedType) => mixed,
     reject: (payload: PayloadErrorType) => mixed,
@@ -40,6 +41,7 @@ const getMetaData = (
     } = uiState.selected;
 
     api.getMetaData(
+        apiUrl,
         fileIds,
         folderIds,
         (files: FileType[], folders: FolderType[]) => {
@@ -91,10 +93,11 @@ const getMetaData = (
     );
 };
 
-export default (): ReduxThunkType => {
+export default (apiUrl: string): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         getMetaData(
+            apiUrl,
             state,
             (payload: PayloadActionMetaDataReceivedType) => {
                 const a: ActionMetaDataReceivedType = {

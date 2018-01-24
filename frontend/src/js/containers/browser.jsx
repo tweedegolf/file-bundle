@@ -151,20 +151,21 @@ const mapDispatchToProps = (dispatch: DispatchType, ownProps: PassedPropsType): 
     const apiUrl = ownProps.apiUrl;
     return {
         ...bindActionCreators({
-            init: Actions.init,
+            init: R.curry(Actions.init)(apiUrl),
             setHover: Actions.setHover,
-            uploadFiles: Actions.uploadFiles,
+            uploadFiles: R.curry(Actions.uploadFiles)(apiUrl),
             expandBrowser: Actions.expandBrowser,
             setScrollPosition: Actions.setScrollPosition,
             changeSorting: Actions.changeSorting,
             openFolder: R.curry(Actions.openFolder)(apiUrl),
             cutFiles: Actions.cutFiles,
-            moveItems: Actions.moveItems,
+            moveItems: R.curry(Actions.moveItems)(apiUrl),
             cancelMoveItems: Actions.cancelMoveItems,
-            addFolder: Actions.addFolder,
-            openRecycleBin: Actions.openRecycleBin,
-            closeRecycleBin: Actions.closeRecycleBin,
-            emptyRecycleBin: Actions.emptyRecycleBin,
+            addFolder: R.curry(Actions.addFolder)(apiUrl),
+            // openRecycleBin: R.curry(Actions.openRecycleBin)(apiUrl),
+            openRecycleBin: () => { Actions.openRecycleBin(apiUrl); },
+            closeRecycleBin: R.curry(Actions.closeRecycleBin)(apiUrl),
+            emptyRecycleBin: R.curry(Actions.emptyRecycleBin)(apiUrl),
             selectFile: Actions.selectFile,
             showPreview: Actions.showPreview,
             dismissError: Actions.dismissError,
@@ -372,6 +373,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
                                 </thead>
                                 <List
                                     browser={this.props.browser}
+                                    apiUrl={this.props.apiUrl}
                                 />
                             </table>
                         </div>

@@ -1,4 +1,5 @@
 // @flow
+import R from 'ramda';
 import { INIT, RECYCLE_BIN_ID } from '../util/constants';
 import { openFolder, openRecycleBin, getMetaData } from '../actions';
 
@@ -62,6 +63,7 @@ type PayloadInitType = {
 // END FLOW TYPES
 
 const init = (
+    apiUrl: string,
     state: StateType,
     dispatch: DispatchType,
     options: DatasetType,
@@ -125,6 +127,7 @@ const init = (
         type: INIT,
         payload: {
             // ui reducer
+            apiUrl,
             browser,
             expanded: browser === true,
             selected: allSelected,
@@ -145,19 +148,22 @@ const init = (
     dispatch(action);
 
     if (currentFolderId === RECYCLE_BIN_ID) {
-        dispatch(openRecycleBin());
+        dispatch(openRecycleBin(apiUrl));
     } else {
-        dispatch(openFolder(currentFolderId));
+        const open = R.curry(openFolder)(apiUrl);
+        dispatch(open(currentFolderId));
+        // dispatch(openFolder(apiUrl, currentFolderId));
     }
 
     if (browser === true && allSelected.fileIds.length + allSelected.folderIds.length > 0) {
-        dispatch(getMetaData());
+        const gmd = R.curry(getMetaData)(apiUrl);
+        dispatch(gmd);
     }
 };
 
-export default (options: DatasetType, browser: boolean): ReduxThunkType => {
+export default (apiUrl: string, options: DatasetType, browser: boolean): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
-        init(state, dispatch, options, browser);
+        init(apiUrl, state, dispatch, options, browser);
     };
 };

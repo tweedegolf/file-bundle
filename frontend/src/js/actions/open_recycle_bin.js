@@ -60,11 +60,13 @@ const optimisticUpdate = (state: StateType): GenericActionType => {
 };
 
 const openRecycleBin = (
+    apiUrl: string,
     state: StateType,
     resolve: (PayloadRecycleBinOpenedType) => mixed,
     reject: (PayloadErrorType) => mixed,
 ) => {
     api.openRecycleBin(
+        apiUrl,
         (folders: Array<FolderType>, files: Array<FileType>) => {
             const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(state);
             resolve({
@@ -85,7 +87,8 @@ const openRecycleBin = (
     );
 };
 
-export default (): ReduxThunkType => {
+export default (apiUrl: string): ReduxThunkType => {
+    console.log('open_recycle_bin', apiUrl);
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const id = RECYCLE_BIN_ID;
@@ -104,6 +107,7 @@ export default (): ReduxThunkType => {
 
         setTimeout(() => {
             openRecycleBin(
+                apiUrl,
                 state,
                 (payload: PayloadRecycleBinOpenedType) => {
                     dispatch({

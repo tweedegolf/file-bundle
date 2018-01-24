@@ -36,6 +36,7 @@ export type ActionFolderRenamedType = {
 // END FLOW TYPES
 
 const renameFolder = (
+    apiUrl: string,
     state: StateType,
     folderId: string,
     newName: string,
@@ -47,6 +48,7 @@ const renameFolder = (
     } = state;
     const foldersById: FoldersByIdType = { ...treeState.foldersById };
     api.renameFolder(
+        apiUrl,
         folderId,
         newName,
         (errors: string[]) => {
@@ -70,7 +72,7 @@ const renameFolder = (
     );
 };
 
-export default (folderId: string, newName: string): ReduxThunkType => {
+export default (apiUrl: string, folderId: string, newName: string): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const a: ActionRenameFolderType = {
@@ -80,6 +82,7 @@ export default (folderId: string, newName: string): ReduxThunkType => {
         dispatch(a);
 
         renameFolder(
+            apiUrl,
             state,
             folderId,
             newName,
