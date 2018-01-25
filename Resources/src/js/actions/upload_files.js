@@ -37,14 +37,17 @@ const uploadFiles = (
         ui: uiState,
         tree: treeState,
     } = state;
-
+    const apiUrl: string = uiState.apiUrl;
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const currentFolderId: string = uiState.currentFolderId;
     const currentFolder: FolderType = foldersById[currentFolderId];
 
-    api.upload(files, currentFolder.id,
+    api.upload(
+        apiUrl,
+        files,
+        currentFolder.id,
         (newFiles: FileType[], rejected: { [string]: string }) => {
             R.forEach((f: FileType) => {
                 const fc: FileType = { ...f, is_new: true };

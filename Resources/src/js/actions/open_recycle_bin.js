@@ -64,7 +64,9 @@ const openRecycleBin = (
     resolve: (PayloadRecycleBinOpenedType) => mixed,
     reject: (PayloadErrorType) => mixed,
 ) => {
+    const apiUrl: string = state.ui.apiUrl;
     api.openRecycleBin(
+        apiUrl,
         (folders: Array<FolderType>, files: Array<FileType>) => {
             const [currentFolderId, currentFolderIdTmp] = getCurrentFolder(state);
             resolve({

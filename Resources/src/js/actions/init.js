@@ -1,4 +1,5 @@
 // @flow
+import R from 'ramda';
 import { INIT, RECYCLE_BIN_ID } from '../util/constants';
 import { openFolder, openRecycleBin, getMetaData } from '../actions';
 
@@ -65,6 +66,7 @@ const init = (
     state: StateType,
     dispatch: DispatchType,
     options: DatasetType,
+    apiUrl: string,
     browser: boolean = true
 ) => {
     const permissions = { ...options };
@@ -125,6 +127,7 @@ const init = (
         type: INIT,
         payload: {
             // ui reducer
+            apiUrl,
             browser,
             expanded: browser === true,
             selected: allSelected,
@@ -155,9 +158,9 @@ const init = (
     }
 };
 
-export default (options: DatasetType, browser: boolean): ReduxThunkType => {
+export default (options: DatasetType, apiUrl: string, browser: boolean): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
-        init(state, dispatch, options, browser);
+        init(state, dispatch, options, apiUrl, browser);
     };
 };

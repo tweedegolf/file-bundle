@@ -1,5 +1,6 @@
 parameters:
     normalize_image_filter_name: "admin_thumb"
+    tg_file.helper.api_url.class: 'TweedeGolf\FileBundle\Helper\ApiUrlHelper'
 
 services:
     tg_file.normalizer:
@@ -12,6 +13,11 @@ services:
         class: TweedeGolf\FileBundle\Form\FileType
         arguments:
           - "@tg_file.normalizer"
-          - "%locale%"
+          - "@tg_file.helper.api_url"
         tags:
             - { name: form.type }
+    tg_file.helper.api_url:
+        class: '%tg_file.helper.api_url.class%'
+        arguments:
+          - "@router"
+          - "@request_stack"

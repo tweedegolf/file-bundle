@@ -46,6 +46,7 @@ type ActionUnionType =
     ;
 
 export const uiInitialState: UIStateType = {
+    apiUrl: '',
     browser: true,
     rootFolderId: 'null',
     currentFolderId: 'null',
@@ -99,6 +100,7 @@ export const ui = (
                 ...state,
                 name: action.payload.name,
                 language: action.payload.language,
+                apiUrl: action.payload.apiUrl,
                 browser: action.payload.browser,
                 expanded: action.payload.expanded,
                 rootFolderId: action.payload.rootFolderId,

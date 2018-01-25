@@ -12,11 +12,6 @@ use Symfony\Component\Serializer\Serializer;
 use TweedeGolf\FileBundle\Entity\Folder;
 use Doctrine\ORM\EntityManager as Manager;
 
-/**
- * Class FolderController.
- *
- * @Route("/admin/file")
- */
 class RecycleBinController extends Controller
 {
     /**
