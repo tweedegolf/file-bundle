@@ -109,19 +109,19 @@ const mapStateToProps = (state: StateType): PropsType => {
     };
 };
 
-const mapDispatchToProps = (dispatch: DispatchType): ActionsPropsType => {
+const mapDispatchToProps = (dispatch: DispatchType, ownProps: PassedPropsType): ActionsPropsType => {
     return {
         ...bindActionCreators({
             openFolder: Actions.openFolder,
-            renameFolder: Actions.renameFolder,
             confirmRenameFolder: Actions.confirmRenameFolder,
+            renameFolder: Actions.renameFolder,
             selectFile: Actions.selectFile,
-            deleteFile: Actions.deleteFile,
             showPreview: Actions.showPreview,
             confirmDeleteFile: Actions.confirmDeleteFile,
+            deleteFile: Actions.deleteFile,
             selectFolder: Actions.selectFolder,
-            deleteFolder: Actions.deleteFolder,
             confirmDeleteFolder: Actions.confirmDeleteFolder,
+            deleteFolder: Actions.deleteFolder,
         }, dispatch)
     }
 }

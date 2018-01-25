@@ -36,6 +36,7 @@ const moveFiles = (
         tree: treeState,
     } = state;
 
+    const apiUrl: string = uiState.apiUrl;
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -55,7 +56,11 @@ const moveFiles = (
         return;
     }
 
-    api.moveItems(fileIds, folderIds, currentFolderId,
+    api.moveItems(
+        apiUrl,
+        fileIds,
+        folderIds,
+        currentFolderId,
         (error: string, errorFileIds: string[], errorFolderIds: string[]) => {
             if (error !== 'false') {
                 const err = createError(Constants.ERROR_MOVING_ITEMS, [error]);

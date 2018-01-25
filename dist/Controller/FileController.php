@@ -14,11 +14,6 @@ use TweedeGolf\FileBundle\Entity\File;
 use TweedeGolf\FileBundle\Entity\Folder;
 
 
-/**
- * Class FileController.
- *
- * @Route("/admin/file")
- */
 class FileController extends Controller
 {
     /**

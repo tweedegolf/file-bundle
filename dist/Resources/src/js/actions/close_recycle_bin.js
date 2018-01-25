@@ -8,9 +8,10 @@ export default (): ReduxThunkType => {
     return (dispatch: DispatchType, getState: () => StateType) => {
         const state = getState();
         const id = state.ui.currentFolderIdTmp;
+        const apiUrl = state.ui.apiUrl;
         dispatch({
             type: CLOSE_RECYCLE_BIN,
         });
-        openFolder(id);
+        openFolder(apiUrl, id);
     };
 };

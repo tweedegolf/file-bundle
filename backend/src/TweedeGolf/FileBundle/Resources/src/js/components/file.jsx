@@ -72,9 +72,9 @@ const File = (props: PropsType): null | React$Element<*> => {
     if (props.deleteFileWithId === file.id) {
         confirmPane = (<div className="confirm">
             <button
-              type="button"
-              className="btn btn-xs btn-primary"
-              onClick={
+                type="button"
+                className="btn btn-xs btn-primary"
+                onClick={
                     (e: SyntheticEvent) => {
                         e.stopPropagation();
                         props.confirmDelete(null);
@@ -85,9 +85,9 @@ const File = (props: PropsType): null | React$Element<*> => {
             </button>
             &nbsp;
             <button
-              type="button"
-              className="btn btn-xs btn-danger"
-              onClick={
+                type="button"
+                className="btn btn-xs btn-danger"
+                onClick={
                     (e: SyntheticEvent) => {
                         e.stopPropagation();
                         props.deleteFile(file.id);
@@ -101,9 +101,9 @@ const File = (props: PropsType): null | React$Element<*> => {
         if (isSelected === false) {
             if (props.permissions.allowDeleteFile === true) {
                 buttonDelete = (<button
-                  type="button"
-                  className="btn btn-xs btn-danger"
-                  onClick={
+                    type="button"
+                    className="btn btn-xs btn-danger"
+                    onClick={
                         (e: SyntheticEvent) => {
                             e.stopPropagation();
                             props.confirmDelete(file.id);
@@ -113,11 +113,11 @@ const File = (props: PropsType): null | React$Element<*> => {
                 </button>);
             }
             buttonDownload = (<a
-              className="btn btn-xs btn-primary"
-              title="Download"
-              download={file.name}
-              href={file.original}
-              onClick={(e: SyntheticEvent): void => e.stopPropagation()}
+                className="btn btn-xs btn-primary"
+                title="Download"
+                download={file.name}
+                href={file.original}
+                onClick={(e: SyntheticEvent): void => e.stopPropagation()}
             >
                 <span className="fa fa-download" />
             </a>);

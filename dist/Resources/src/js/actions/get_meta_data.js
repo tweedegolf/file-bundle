@@ -32,6 +32,7 @@ const getMetaData = (
         ui: uiState,
         tree: treeState,
     } = state;
+    const apiUrl: string = uiState.apiUrl;
     const filesById: FilesByIdType = { ...treeState.filesById };
     const foldersById: FoldersByIdType = { ...treeState.foldersById };
     const {
@@ -40,6 +41,7 @@ const getMetaData = (
     } = uiState.selected;
 
     api.getMetaData(
+        apiUrl,
         fileIds,
         folderIds,
         (files: FileType[], folders: FolderType[]) => {

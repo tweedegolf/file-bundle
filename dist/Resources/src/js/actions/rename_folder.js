@@ -43,10 +43,13 @@ const renameFolder = (
     reject: (payload: PayloadErrorType) => mixed,
 ) => {
     const {
+        ui: uiState,
         tree: treeState,
     } = state;
+    const apiUrl: string = uiState.apiUrl;
     const foldersById: FoldersByIdType = { ...treeState.foldersById };
     api.renameFolder(
+        apiUrl,
         folderId,
         newName,
         (errors: string[]) => {

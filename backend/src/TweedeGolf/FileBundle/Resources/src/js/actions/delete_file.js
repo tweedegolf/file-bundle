@@ -43,6 +43,7 @@ const deleteFile = (
         ui: uiState,
         tree: treeState,
     } = state;
+    const apiUrl: string = uiState.apiUrl;
     const currentFolderId: string = uiState.currentFolderId;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
@@ -50,8 +51,9 @@ const deleteFile = (
 
     const selectedFileIds = uiState.selected.fileIds;
     const clipboardFileIds = uiState.clipboard.fileIds;
-
-    api.deleteFile(fileId,
+    api.deleteFile(
+        apiUrl,
+        fileId,
         (error: string) => {
             if (error !== 'false') {
                 const file = filesById[fileId];

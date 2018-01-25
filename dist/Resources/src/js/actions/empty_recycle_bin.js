@@ -41,7 +41,7 @@ const emptyRecycleBin = (
         ui: uiState,
         tree: treeState,
     } = state;
-
+    const apiUrl: string = uiState.apiUrl;
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
@@ -59,6 +59,7 @@ const emptyRecycleBin = (
     } = { ...uiState.selected };
 
     api.emptyRecycleBin(
+        apiUrl,
         (errors: string[]) => {
             if (errors.length > 0) {
                 const err = createError(ERROR_EMPTY_RECYCLE_BIN, errors);

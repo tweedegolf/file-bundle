@@ -51,7 +51,6 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
         };
         this.cancelRename = (e: SyntheticEvent) => {
             e.preventDefault();
-            // this.props.confirmDelete(null);
             this.props.confirmRenameFolder(null);
         };
     }
@@ -186,9 +185,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 const deleteFolder = this.props.deleteFolder;
                 confirmPane = (<div className="confirm">
                     <button
-                      type="button"
-                      className="btn btn-xs btn-primary"
-                      onClick={
+                        type="button"
+                        className="btn btn-xs btn-primary"
+                        onClick={
                             (e: SyntheticEvent) => {
                                 e.stopPropagation();
                                 confirmDelete(null);
@@ -199,10 +198,10 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                     </button>
                     &nbsp;
                     <button
-                      type="button"
-                      ref={(button: HTMLButtonElement) => { this.buttonDelete = button; }}
-                      className="btn btn-xs btn-danger"
-                      onClick={
+                        type="button"
+                        ref={(button: HTMLButtonElement) => { this.buttonDelete = button; }}
+                        className="btn btn-xs btn-danger"
+                        onClick={
                             (e: SyntheticEvent) => {
                                 e.stopPropagation();
                                 deleteFolder(folder.id);
@@ -216,9 +215,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 // no delete action has started yet: show the delete button
                 const confirmDelete = this.props.confirmDelete;
                 buttonDelete = (<button
-                  type="button"
-                  className="btn btn-xs btn-danger"
-                  onClick={
+                    type="button"
+                    className="btn btn-xs btn-danger"
+                    onClick={
                         (e: SyntheticEvent) => {
                             e.stopPropagation();
                             confirmDelete(folder.id);
@@ -241,19 +240,19 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             if (isRenamingFolder === true) {
                 renamePane = (<div className="confirm">
                     <button
-                      type="button"
-                      className="btn btn-xs btn-primary"
-                      onClick={this.cancelRename}
-                      ref={(button: HTMLButtonElement) => { this.buttonRename = button; }}
+                        type="button"
+                        className="btn btn-xs btn-primary"
+                        onClick={this.cancelRename}
+                        ref={(button: HTMLButtonElement) => { this.buttonRename = button; }}
                     >
                         <span className="text-label">{this.props.t('rename.cancel')}</span>
                         <span className="fa fa-times" />
                     </button>
                     &nbsp;
                     <button
-                      type="button"
-                      className="btn btn-xs btn-success"
-                      onClick={this.rename}
+                        type="button"
+                        className="btn btn-xs btn-success"
+                        onClick={this.rename}
                     >
                         <span className="text-label">{this.props.t('rename.ok')}</span>
                         <span className="fa fa-check" />
@@ -261,9 +260,9 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
                 </div >);
             } else {
                 renameIcon = (<button
-                  type="button"
-                  className="btn btn-xs btn-primary icon-rename"
-                  onClick={
+                    type="button"
+                    className="btn btn-xs btn-primary icon-rename"
+                    onClick={
                         (e: SyntheticEvent) => {
                             e.stopPropagation();
                             if (isRenamingFolder === false) {
@@ -278,10 +277,10 @@ class Folder extends React.Component<DefaultPropsType, PropsType, FolderStateTyp
             folderNameTD = (<td>
                 <span className={`${isRenamingFolder ? 'hide' : ''}`}>{folder.name}</span>
                 <input
-                  className={`form-control input-sm rename ${isRenamingFolder ? '' : 'hide'}`}
-                  ref={(input: HTMLInputElement) => { this.inputRename = input; }}
-                  type="text"
-                  onKeyUp={this.onKeyUp}
+                    className={`form-control input-sm rename ${isRenamingFolder ? '' : 'hide'}`}
+                    ref={(input: HTMLInputElement) => { this.inputRename = input; }}
+                    type="text"
+                    onKeyUp={this.onKeyUp}
                 />
             </td>);
         }

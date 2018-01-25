@@ -28,6 +28,7 @@ import type { SortEnumType, ActionChangeSortingType } from '../actions/index';
 type PassedPropsType = {
     browser: boolean,
     dataset: DatasetType,
+    apiUrl: String,
     t: (string) => string,
 };
 
@@ -146,7 +147,7 @@ const mapStateToProps = (state: StateType, ownProps: PassedPropsType): PropsType
     };
 };
 
-const mapDispatchToProps = (dispatch: DispatchType): ActionsPropsType => {
+const mapDispatchToProps = (dispatch: DispatchType, ownProps: PassedPropsType): ActionsPropsType => {
     return {
         ...bindActionCreators({
             init: Actions.init,
@@ -222,7 +223,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
         // element.
         if (this.props.browser === false) {
             document.addEventListener('keydown', this.onKeyDown, false);
-            this.props.init(this.props.dataset, this.props.browser);
+            this.props.init(this.props.dataset, this.props.apiUrl, this.props.browser);
         }
 
         // Browser mode: by default, the browser is not expanded, therefor we have
@@ -232,7 +233,7 @@ class Browser extends React.Component<DefaultPropsType, AllPropsType, BrowserSta
             // user to select files and folders with her keyboard.
             document.addEventListener('keydown', this.onKeyDown, false);
             this.props.expandBrowser();
-            this.props.init(this.props.dataset, this.props.browser);
+            this.props.init(this.props.dataset, this.props.apiUrl, this.props.browser);
         }
     }
 

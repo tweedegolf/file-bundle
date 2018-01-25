@@ -36,11 +36,13 @@ const addFolder = (
         ui: uiState,
         tree: treeState,
     } = state;
+    const apiUrl: string = uiState.apiUrl;
     const currentFolderId: string = uiState.currentFolderId;
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const tree: TreeType = R.clone(treeState.tree);
 
     api.addFolder(
+        apiUrl,
         folderName,
         currentFolderId,
         (newFolder: FolderType, errors: string[]) => {

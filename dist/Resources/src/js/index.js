@@ -19,6 +19,7 @@ import type { DatasetType } from './actions/init';
 
 const mapIndexed = R.addIndex(R.map);
 const datasets = {};
+const apiUrls = {};
 // const getDataset = (element: HTMLElement): OptionsType | null => R.cond([
 //     [R.isNil, R.always(null)],
 //     [R.T, (data: string): OptionsType => JSON.parse(data)],
@@ -30,6 +31,7 @@ const getDataset = (element: HTMLElement): DatasetType | null => {
     } else {
         dataset = JSON.parse(dataset);
     }
+    console.log(dataset);
     dataset = {
         name: dataset.name || '',
         language: dataset.language || 'nl',
@@ -38,20 +40,29 @@ const getDataset = (element: HTMLElement): DatasetType | null => {
 
         // permissions
         imagesOnly: dataset.imagesOnly || dataset.images_only || false,
-        allowMove: dataset.allowMove || dataset.allow_move || false,
-        allowUpload: dataset.allowUpload || dataset.allow_upload || false,
-        allowNewFolder: dataset.allowNewFolder || dataset.allow_new_folder || false,
-        allowDeleteFile: dataset.allowDeleteFile || dataset.allow_delete_file || false,
-        allowDeleteFolder: dataset.allowDeleteFolder || dataset.allow_delete_folder || false,
-        allowRenameFolder: dataset.allowRenameFolder || dataset.allow_rename_folder || false,
-        allowSelectMultiple: dataset.allowSelectMultiple || dataset.allow_select_multiple || false,
-        allowUploadMultiple: dataset.allowUploadMultiple || dataset.allow_upload_multiple || false,
-        allowEmptyRecycleBin: dataset.allowEmptyRecycleBin || dataset.allow_empty_recycle_bin || false,
+        allowMove: dataset.allowMove || dataset.allow_move || true,
+        allowUpload: dataset.allowUpload || dataset.allow_upload || true,
+        allowNewFolder: dataset.allowNewFolder || dataset.allow_new_folder || true,
+        allowDeleteFile: dataset.allowDeleteFile || dataset.allow_delete_file || true,
+        allowDeleteFolder: dataset.allowDeleteFolder || dataset.allow_delete_folder || true,
+        allowRenameFolder: dataset.allowRenameFolder || dataset.allow_rename_folder || true,
+        allowSelectMultiple: dataset.allowSelectMultiple || dataset.allow_select_multiple || true,
+        allowUploadMultiple: dataset.allowUploadMultiple || dataset.allow_upload_multiple || true,
+        allowEmptyRecycleBin: dataset.allowEmptyRecycleBin || dataset.allow_empty_recycle_bin || true,
     }
     if (dataset.allowSelectMultiple === false && dataset.selected.length > 1) {
         dataset.selected = [dataset.selected[0]];
     }
     return dataset;
+};
+
+const getApiUrl = (element: HTMLElement): string => {
+    const url = element.dataset.apiUrl;
+    // console.log('apiUrl', element.dataset.apiUrl);
+    if (typeof url === 'undefined') {
+        return ''
+    }
+    return url;
 };
 
 
@@ -71,12 +82,14 @@ const storeIds = mapIndexed((picker, index) => {
         dataset.name = id;
     }
     datasets[id] = dataset;
+    apiUrls[id] = getApiUrl(picker);
     return id;
 }, pickers);
 
 if (browser !== null) {
     storeIds.push('browser');
     datasets.browser = getDataset(browser);
+    apiUrls.browser = getApiUrl(browser);
 }
 
 // console.log(datasets);
@@ -85,6 +98,7 @@ if (browser !== null) {
 const { store, persistor } = createNameSpacedStore(storeIds);
 
 if (browser !== null) {
+    const apiUrl = apiUrls.browser;
     const dataset = datasets.browser;
     const storeId = 'browser';
     i18n.changeLanguage(dataset.language, () => {
@@ -101,6 +115,7 @@ if (browser !== null) {
                         >
                             <Browser
                                 browser={true}
+                                apiUrl={apiUrl}
                                 dataset={dataset}
                             />
                         </SubspaceProvider>
@@ -113,6 +128,7 @@ if (browser !== null) {
 
 mapIndexed((element: HTMLElement, index: number) => {
     const storeId = storeIds[index];
+    const apiUrl = apiUrls[storeId];
     const dataset = datasets[storeId];
     i18n.changeLanguage(dataset.language, () => {
         ReactDOM.render(
@@ -128,6 +144,7 @@ mapIndexed((element: HTMLElement, index: number) => {
                         >
                             <Browser
                                 browser={false}
+                                apiUrl={apiUrl}
                                 dataset={dataset}
                             />
                         </SubspaceProvider>

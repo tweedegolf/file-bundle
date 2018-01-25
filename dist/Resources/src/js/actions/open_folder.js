@@ -77,14 +77,17 @@ const openFolder = (
     reject: (PayloadErrorOpenFolderType) => mixed,
 ) => {
     const {
+        ui: uiState,
         tree: treeState,
     } = state;
+    const apiUrl: string = uiState.apiUrl;
     const tree: TreeType = R.clone(treeState.tree);
     const filesById: FilesByIdType = R.clone(treeState.filesById);
     const foldersById: FoldersByIdType = R.clone(treeState.foldersById);
     const currentFolder = foldersById[folderId];
 
     api.openFolder(
+        apiUrl,
         folderId,
         (folders: Array<FolderType>, files: Array<FileType>) => {
             // remove possibly deleted files and folders

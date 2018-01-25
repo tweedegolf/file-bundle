@@ -12,11 +12,6 @@ use Symfony\Component\Validator\ConstraintViolation;
 use TweedeGolf\FileBundle\Entity\File;
 use TweedeGolf\FileBundle\Entity\Folder;
 
-/**
- * Class UploadController.
- *
- * @Route("/admin/file")
- */
 class UploadController extends Controller
 {
     /**

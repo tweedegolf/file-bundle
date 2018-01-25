@@ -8,8 +8,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Serializer;
 use TweedeGolf\FileBundle\Entity\File;
+use TweedeGolf\FileBundle\Helper\ApiUrlHelperInterface;
 use TweedeGolf\FileBundle\Normalizer\FileNormalizer;
 
 /**
@@ -18,7 +20,7 @@ use TweedeGolf\FileBundle\Normalizer\FileNormalizer;
 class FileType extends AbstractType
 {
     /**
-     * @var
+     * @var FileNormalizer
      */
     private $normalizer;
 
@@ -28,14 +30,21 @@ class FileType extends AbstractType
     private $locale;
 
     /**
+     * @var ApiUrlHelperInterface
+     */
+    private $urlHelper;
+
+     /**
      * FileType constructor.
      *
      * @param FileNormalizer $normalizer
+     * @param ApiUrlHelperInterface $urlHelper
      * @param $locale
      */
-    public function __construct(FileNormalizer $normalizer, $locale)
+    public function __construct(FileNormalizer $normalizer, ApiUrlHelperInterface $urlHelper, $locale)
     {
         $this->normalizer = $normalizer;
+        $this->urlHelper = $urlHelper;
         $this->locale = $locale;
     }
 
@@ -49,16 +58,16 @@ class FileType extends AbstractType
             'required' => true,
             'root_folder_id' => null,
             'images_only' => false,
-            'allow_move' => false,
-            'allow_upload' => false,
-            'allow_new_folder' => false,
-            'allow_delete_file' => false,
-            'allow_delete_folder' => false,
-            'allow_rename_folder' => false,
-            'allow_select_multiple' => false,
-            'allow_upload_multiple' => false,
-            'allow_empty_recycle_bin' => false,
-            ]);
+            'allow_move' => true,
+            'allow_upload' => true,
+            'allow_new_folder' => true,
+            'allow_delete_file' => true,
+            'allow_delete_folder' => true,
+            'allow_rename_folder' => true,
+            'allow_select_multiple' => true,
+            'allow_upload_multiple' => true,
+            'allow_empty_recycle_bin' => true,
+        ]);
     }
 
     /**
@@ -89,6 +98,8 @@ class FileType extends AbstractType
             'allow_upload_multiple' => $options['allow_upload_multiple'],
             'allow_empty_recycle_bin' => $options['allow_empty_recycle_bin'],
         ]);
+
+        $view->vars['api_url'] = $this->urlHelper->getApiUrl();
     }
 
     /**
