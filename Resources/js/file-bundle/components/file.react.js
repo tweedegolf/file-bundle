@@ -1,7 +1,10 @@
 import React from 'react';
 
-var icons = {
+const icons = {
     pdf: 'file-pdf-o',
+    mp4: 'file-movie-o',
+    webm: 'file-movie-o',
+    ogg: 'file-movie-o',
     doc: 'file-word-o',
     docx: 'file-word-o',
     ppt: 'file-powerpoint-o',

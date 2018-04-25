@@ -113,7 +113,7 @@ export default class Browser extends React.Component {
                 {this.state.preview ? <div
                     className="preview-image"
                     onClick={this.onPreview.bind(this, null)}>
-                    <div style={{backgroundImage: 'url(' + this.state.preview + ')'}}></div>
+                    <div style={{backgroundImage: 'url(' + this.state.preview + ')'}} />
                 </div> : null}
                 <div className={browser_class}>
                     <FileDragAndDrop onDrop={this.handleDrop.bind(this)}>
