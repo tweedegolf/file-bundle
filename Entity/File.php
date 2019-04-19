@@ -41,6 +41,7 @@ class File
      *     "video/mp4",
      *     "video/webm",
      *     "video/ogg",
+     *     "application/svg+xml",
      *     "application/pdf",
      *     "application/x-pdf",
      *     "application/msword",
