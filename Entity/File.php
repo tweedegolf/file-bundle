@@ -37,6 +37,7 @@ class File
      *     "image/jpg",
      *     "image/jpeg",
      *     "image/gif",
+     *     "image/svg+xml"
      *     "video/mp4",
      *     "video/webm",
      *     "video/ogg",
