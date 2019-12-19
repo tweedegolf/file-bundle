@@ -32,7 +32,7 @@ class File
      * @var HttpFile
      *
      * @Vich\UploadableField(mapping="media", fileNameProperty="name")
-     * @Assert\File(maxSize="20M", mimeTypes={
+     * @Assert\File(maxSize="50M", mimeTypes={
      *     "image/png",
      *     "image/jpg",
      *     "image/jpeg",
