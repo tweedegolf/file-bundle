@@ -27,12 +27,12 @@ class File
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
     /**
      * @var HttpFile
      *
      * @Vich\UploadableField(mapping="media", fileNameProperty="name")
      * @Assert\File(maxSize="50M", mimeTypes={
+     *     "audio/mpeg",
      *     "image/png",
      *     "image/jpg",
      *     "image/jpeg",
@@ -51,7 +51,7 @@ class File
      *     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
      *     "application/vnd.openxmlformats-officedocument.presentationml.presentation"
      *   },
-     *   mimeTypesMessage="File type not allowed, allowed files are images, or office and pdf documents."
+     *   mimeTypesMessage="File type not allowed, allowed files are images, videos, mp3 files, or office and pdf documents."
      * )
      */
     private $file;
